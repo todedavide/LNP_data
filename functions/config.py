@@ -12,21 +12,21 @@ CAMPIONATI = {
     'serie_b_girone_a': {
         'url_prefix': 'ita3_a_',
         'start_code': 1,
-        'end_code': 342,  # Auto-stop dopo 5 pagine vuote consecutive
+        'end_code': None,  # Auto-stop dopo 5 pagine vuote consecutive
         'output_file': os.path.join(DATA_DIR, 'season_stats_b_a.pkl'),
         'enabled': True
     },
     'serie_b_girone_b': {
         'url_prefix': 'ita3_b_',
         'start_code': 1,
-        'end_code': 342,
+        'end_code': None,  # Auto-stop dopo 5 pagine vuote consecutive
         'output_file': os.path.join(DATA_DIR, 'season_stats_b_b.pkl'),
         'enabled': True
     },
     'serie_a2': {
         'url_prefix': 'ita2_',
         'start_code': 1,
-        'end_code': None,
+        'end_code': None,  # Auto-stop dopo 5 pagine vuote consecutive
         'output_file': os.path.join(DATA_DIR, 'season_stats_a2.pkl'),
         'enabled': True
     },

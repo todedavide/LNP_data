@@ -1,59 +1,77 @@
 {
-  "updated_at": "2026-01-10T15:03:47.010508",
+  "updated_at": "2026-01-13T22:54:30.924921",
   "standings": [
+    {
+      "team": "Elachem Vigevano 1955",
+      "pts": 30,
+      "gp": 20,
+      "wins": 15,
+      "losses": 5,
+      "pf": 1690,
+      "ps": 1514
+    },
     {
       "team": "La T Tecnica Gema Montecatini",
       "pts": 28,
-      "gp": 19,
+      "gp": 20,
       "wins": 14,
-      "losses": 5,
-      "pf": 1574,
-      "ps": 1411
+      "losses": 6,
+      "pf": 1641,
+      "ps": 1480
     },
     {
-      "team": "Elachem Vigevano 1955",
+      "team": "Rucker San Vendemiano",
       "pts": 28,
-      "gp": 19,
+      "gp": 20,
       "wins": 14,
-      "losses": 5,
-      "pf": 1607,
-      "ps": 1456
+      "losses": 6,
+      "pf": 1695,
+      "ps": 1520
     },
     {
       "team": "Logiman Orzinuovi",
       "pts": 26,
-      "gp": 19,
+      "gp": 20,
       "wins": 13,
-      "losses": 6,
-      "pf": 1476,
-      "ps": 1402
+      "losses": 7,
+      "pf": 1553,
+      "ps": 1480
     },
     {
-      "team": "Rucker San Vendemiano",
+      "team": "Infodrive Capo d'Orlando",
       "pts": 26,
-      "gp": 19,
+      "gp": 20,
       "wins": 13,
-      "losses": 6,
-      "pf": 1611,
-      "ps": 1461
+      "losses": 7,
+      "pf": 1610,
+      "ps": 1565
+    },
+    {
+      "team": "S4 Energia Vicenza",
+      "pts": 26,
+      "gp": 20,
+      "wins": 13,
+      "losses": 7,
+      "pf": 1590,
+      "ps": 1561
     },
     {
       "team": "SAE Scientifica-Soevis Legnano",
       "pts": 26,
-      "gp": 19,
+      "gp": 20,
       "wins": 13,
-      "losses": 6,
-      "pf": 1511,
-      "ps": 1412
+      "losses": 7,
+      "pf": 1590,
+      "ps": 1492
     },
     {
       "team": "TAV Treviglio Brianza Basket",
       "pts": 26,
-      "gp": 19,
+      "gp": 20,
       "wins": 13,
-      "losses": 6,
-      "pf": 1569,
-      "ps": 1489
+      "losses": 7,
+      "pf": 1641,
+      "ps": 1581
     },
     {
       "team": "UCC Assigeco Piacenza",
@@ -65,112 +83,94 @@
       "ps": 1558
     },
     {
-      "team": "S4 Energia Vicenza",
+      "team": "Fabo Herons Montecatini",
       "pts": 24,
-      "gp": 19,
+      "gp": 20,
       "wins": 12,
-      "losses": 7,
-      "pf": 1515,
-      "ps": 1492
-    },
-    {
-      "team": "Infodrive Capo d'Orlando",
-      "pts": 24,
-      "gp": 19,
-      "wins": 12,
-      "losses": 7,
-      "pf": 1541,
-      "ps": 1498
+      "losses": 8,
+      "pf": 1718,
+      "ps": 1601
     },
     {
       "team": "Paffoni Fulgor Basket Omegna",
       "pts": 22,
-      "gp": 19,
+      "gp": 20,
       "wins": 11,
-      "losses": 8,
-      "pf": 1535,
-      "ps": 1460
-    },
-    {
-      "team": "Fabo Herons Montecatini",
-      "pts": 22,
-      "gp": 19,
-      "wins": 11,
-      "losses": 8,
-      "pf": 1637,
-      "ps": 1536
+      "losses": 9,
+      "pf": 1600,
+      "ps": 1541
     },
     {
       "team": "Rimadesio Desio",
-      "pts": 18,
-      "gp": 19,
-      "wins": 9,
+      "pts": 20,
+      "gp": 20,
+      "wins": 10,
       "losses": 10,
-      "pf": 1626,
-      "ps": 1626
+      "pf": 1718,
+      "ps": 1698
     },
     {
       "team": "LuxArm Lumezzane",
-      "pts": 14,
-      "gp": 19,
-      "wins": 7,
+      "pts": 16,
+      "gp": 20,
+      "wins": 8,
       "losses": 12,
-      "pf": 1475,
-      "ps": 1513
+      "pf": 1555,
+      "ps": 1592
     },
     {
       "team": "Siaz Basket Piazza Armerina",
       "pts": 14,
-      "gp": 19,
+      "gp": 20,
       "wins": 7,
-      "losses": 12,
-      "pf": 1434,
-      "ps": 1475
+      "losses": 13,
+      "pf": 1497,
+      "ps": 1547
     },
     {
-      "team": "Fiorenzuola Bees",
+      "team": "Moncada Energy Agrigento",
       "pts": 12,
       "gp": 19,
       "wins": 6,
       "losses": 13,
-      "pf": 1379,
-      "ps": 1493
+      "pf": 1292,
+      "ps": 1387
     },
     {
-      "team": "Moncada Energy Agrigento",
-      "pts": 10,
-      "gp": 18,
-      "wins": 5,
-      "losses": 13,
-      "pf": 1214,
-      "ps": 1310
+      "team": "Fiorenzuola Bees",
+      "pts": 12,
+      "gp": 20,
+      "wins": 6,
+      "losses": 14,
+      "pf": 1438,
+      "ps": 1577
     },
     {
       "team": "Novipiù Monferrato Basket",
-      "pts": 6,
-      "gp": 19,
-      "wins": 3,
+      "pts": 8,
+      "gp": 20,
+      "wins": 4,
       "losses": 16,
-      "pf": 1432,
-      "ps": 1605
+      "pf": 1504,
+      "ps": 1668
     },
     {
       "team": "Bakery Basket Piacenza",
       "pts": 6,
-      "gp": 19,
+      "gp": 20,
       "wins": 3,
-      "losses": 16,
-      "pf": 1318,
-      "ps": 1514
+      "losses": 17,
+      "pf": 1376,
+      "ps": 1597
     },
     {
       "team": "Foppiani Fulgor Fidenza",
       "pts": 4,
-      "gp": 19,
+      "gp": 20,
       "wins": 2,
-      "losses": 17,
-      "pf": 1266,
-      "ps": 1524
+      "losses": 18,
+      "pf": 1335,
+      "ps": 1599
     }
   ]
 }
