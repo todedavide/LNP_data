@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Momenti Decisivi - Serie B - Girone B - LNP Stats</title>
+    <link rel="icon" type="image/png" href="../../../static/favicon180x180.png">
+    <link rel="stylesheet" href="../../../static/twinplay_brand.css">
+    <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--tp-gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--tp-spacing-lg);
+            z-index: 1000;
+            box-shadow: var(--tp-shadow-md);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-md);
+        }
+
+        .header-logo img {
+            height: 36px;
+        }
+
+        .header-logo a {
+            color: white;
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .header-breadcrumb {
+            margin-left: var(--tp-spacing-xl);
+            opacity: 0.8;
+            font-size: 0.875rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: var(--tp-spacing-md);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--tp-light);
+        }
+
+        .sidebar-section-header {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            color: var(--tp-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-sm);
+            transition: background 0.2s;
+        }
+
+        .sidebar-section-header:hover {
+            background: var(--tp-light);
+        }
+
+        .sidebar-section-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            font-size: 0.75rem;
+        }
+
+        .sidebar-section.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-subsection {
+            display: none;
+            background: var(--tp-light);
+        }
+
+        .sidebar-section.expanded .sidebar-subsection {
+            display: block;
+        }
+
+        .sidebar-category {
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: var(--tp-spacing-lg);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--tp-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: var(--tp-spacing-sm);
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: calc(var(--tp-spacing-lg) + 10px);
+            color: var(--tp-dark);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: white;
+            border-left-color: var(--tp-primary);
+        }
+
+        .sidebar-link.active {
+            background: white;
+            border-left-color: var(--tp-primary);
+            color: var(--tp-secondary);
+            font-weight: 600;
+        }
+
+        .sidebar-home-btn {
+            display: block;
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--tp-light);
+            transition: all 0.2s;
+        }
+
+        .sidebar-home-btn:hover {
+            background: var(--tp-light);
+            color: var(--tp-secondary);
+        }
+
+        .sidebar-competition {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            background: var(--tp-gradient-primary);
+            color: white;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: var(--tp-spacing-sm);
+        }
+
+        .sidebar:empty + .main {
+            margin-left: 0;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: var(--tp-spacing-xl);
+            min-height: calc(100vh - var(--header-height));
+            background: var(--tp-light);
+        }
+
+        .page-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.75rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-xs);
+        }
+
+        .page-subtitle {
+            color: var(--tp-gray);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .content-section {
+            background: white;
+            border-radius: var(--tp-radius-lg);
+            padding: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-lg);
+            box-shadow: var(--tp-shadow-sm);
+        }
+
+        .section-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.25rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-lg);
+            padding-bottom: var(--tp-spacing-sm);
+            border-bottom: 2px solid var(--tp-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .stat-card {
+            background: var(--tp-gradient-primary);
+            color: white;
+            padding: var(--tp-spacing-lg);
+            border-radius: var(--tp-radius-lg);
+            text-align: center;
+        }
+
+        .stat-card.accent {
+            background: var(--tp-gradient-accent);
+            color: var(--tp-dark);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+        }
+
+        .stat-value {
+            font-family: var(--tp-font-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: var(--tp-spacing-xs);
+        }
+
+        /* Plotly responsive */
+        .js-plotly-plot {
+            width: 100% !important;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            font-size: 0.8rem;
+        }
+
+        .site-footer img {
+            height: 24px;
+            margin-bottom: var(--tp-spacing-sm);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="header-logo">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <a href="../../../index.html">LNP Stats</a>
+        </div>
+        <div class="header-breadcrumb">Serie B - Girone B / Partite / Momenti Decisivi</div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        
+    <a href="../../../index.html" class="sidebar-home-btn">
+        ← Cambia campionato
+    </a>
+    <div class="sidebar-competition">
+        Serie B - Girone B
+    </div>
+    <div class="sidebar-category">Squadre</div><a href="../../../b/girone-b/squadre/classifiche.html" class="sidebar-link ">Classifiche & Stats</a><a href="../../../b/girone-b/squadre/radar.html" class="sidebar-link ">Radar Squadre</a><a href="../../../b/girone-b/squadre/vittorie-sconfitte.html" class="sidebar-link ">Vittorie vs Sconfitte</a><a href="../../../b/girone-b/squadre/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../../b/girone-b/squadre/quando-vince.html" class="sidebar-link ">Quando Vince</a><a href="../../../b/girone-b/squadre/andamento.html" class="sidebar-link ">Andamento & Parziali</a><div class="sidebar-category">Giocatori</div><a href="../../../b/girone-b/giocatori/statistiche.html" class="sidebar-link ">Statistiche & Percentili</a><a href="../../../b/girone-b/giocatori/radar.html" class="sidebar-link ">Radar Confronto</a><a href="../../../b/girone-b/giocatori/consistenza.html" class="sidebar-link ">Consistenza</a><a href="../../../b/girone-b/giocatori/simili.html" class="sidebar-link ">Giocatori Simili</a><a href="../../../b/girone-b/giocatori/forma.html" class="sidebar-link ">Forma Recente</a><a href="../../../b/girone-b/giocatori/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../../b/girone-b/giocatori/distribuzione-tiri.html" class="sidebar-link ">Distribuzione Tiri</a><a href="../../../b/girone-b/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../../b/girone-b/giocatori/clustering.html" class="sidebar-link ">Clustering & Tipologie</a><a href="../../../b/girone-b/giocatori/dipendenza.html" class="sidebar-link ">Dipendenza Squadra</a><a href="../../../b/girone-b/giocatori/momenti-decisivi.html" class="sidebar-link active">Momenti Decisivi</a>
+    </nav>
+
+    <main class="main">
+        <h1 class="page-title">Momenti Decisivi</h1>
+        <p class="page-subtitle">Serie B - Girone B - Clutch Stats & Q4 Heroes</p>
+
+        
+    <div class="content-section">
+        <h2 class="section-title">Cos'sono i Momenti Decisivi?</h2>
+        <p style="color: #666; margin-bottom: 20px;">
+            Analizziamo le performance nei <strong>momenti clutch</strong>: ultimi 2 minuti del 4° quarto
+            quando il punteggio è entro i 5 punti. Chi segna quando conta davvero?
+        </p>
+    </div>
+    
+        <div class="content-section">
+            <h2 class="section-title">🎯 Top Closer</h2>
+            <p style="color: #666; margin-bottom: 15px;">
+                Giocatori che segnano di più nei momenti clutch (ultimi 2 min, gap ≤5).
+            </p>
+            <div>                            <div id="3461a6ed-1352-44ac-8c94-b1d9ced93354" class="plotly-graph-div" style="height:500px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("3461a6ed-1352-44ac-8c94-b1d9ced93354")) {                    Plotly.newPlot(                        "3461a6ed-1352-44ac-8c94-b1d9ced93354",                        [{"customdata":{"dtype":"f8","bdata":"AAAAAAAAAkDsUbgehev5PwAAAAAAAABAuB6F61G4+j\u002fhehSuR+H2P+xRuB6F6\u002fE\u002fzczMzMzM\u002fD+kcD0K16P0P3sUrkfheuw\u002fmpmZmZmZ+T89CtejcD3yP5qZmZmZmfk\u002fmpmZmZmZ+T9I4XoUrkf1Pz0K16NwPfI\u002f"},"hovertemplate":"\u003cb\u003e%{y}\u003c\u002fb\u003e\u003cbr\u003ePunti clutch: %{x}\u003cbr\u003ePPG: %{customdata:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":{"dtype":"f8","bdata":"AAAAAAAAAkDsUbgehev5PwAAAAAAAABAuB6F61G4+j\u002fhehSuR+H2P+xRuB6F6\u002fE\u002fzczMzMzM\u002fD+kcD0K16P0P3sUrkfheuw\u002fmpmZmZmZ+T89CtejcD3yP5qZmZmZmfk\u002fmpmZmZmZ+T9I4XoUrkf1Pz0K16NwPfI\u002f"},"colorbar":{"title":{"text":"PPG Clutch"}},"colorscale":[[0.0,"rgb(165,0,38)"],[0.1,"rgb(215,48,39)"],[0.2,"rgb(244,109,67)"],[0.3,"rgb(253,174,97)"],[0.4,"rgb(254,224,139)"],[0.5,"rgb(255,255,191)"],[0.6,"rgb(217,239,139)"],[0.7,"rgb(166,217,106)"],[0.8,"rgb(102,189,99)"],[0.9,"rgb(26,152,80)"],[1.0,"rgb(0,104,55)"]],"showscale":true},"orientation":"h","text":["18 pts (8 partite)","13 pts (8 partite)","12 pts (6 partite)","10 pts (6 partite)","10 pts (7 partite)","9 pts (8 partite)","9 pts (5 partite)","9 pts (7 partite)","8 pts (9 partite)","8 pts (5 partite)","8 pts (7 partite)","8 pts (5 partite)","8 pts (5 partite)","8 pts (6 partite)","8 pts (7 partite)"],"textposition":"outside","x":{"dtype":"i1","bdata":"Eg0MCgoJCQkICAgICAgI"},"y":["Y.\u00a0Rodriguez","M.\u00a0Petrucci","K.\u00a0\u0160ilke-\u017eunda","D.\u00a0D'argenzio","M.\u00a0Bakovi?","L.\u00a0Raffaelli","S.\u00a0Bruno","T.\u00a0Molteni","E.\u00a0Leonzio","N.\u00a0Pellicano","S.\u00a0Angelucci","F.\u00a0Paolin","M.\u00a0Saladini","I.\u00a0Majcuni?","K.\u00a0Palsson"],"type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"yaxis":{"autorange":"reversed"},"margin":{"l":150,"r":100},"title":{"text":"Top Closer - Chi Segna nei Momenti Decisivi"},"xaxis":{"title":{"text":"Punti Totali in Clutch"}},"height":500},                        {"responsive": true}                    )                };            </script>        </div>
+        </div>
+        
+        <div class="content-section">
+            <h2 class="section-title">📊 Statistiche Clutch Complete</h2>
+            
+        <table class="stats-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+                <tr style="background: #302B8F; color: white;">
+                    <th style="padding: 12px; text-align: left;">Giocatore</th>
+                    <th style="padding: 12px; text-align: left;">Squadra</th>
+                    <th style="padding: 12px; text-align: center;">Punti</th>
+                    <th style="padding: 12px; text-align: center;">Partite</th>
+                    <th style="padding: 12px; text-align: center;">PPG</th>
+                    <th style="padding: 12px; text-align: center;">FG%</th>
+                    <th style="padding: 12px; text-align: center;">3PT%</th>
+                    <th style="padding: 12px; text-align: center;">FT%</th>
+                </tr>
+            </thead>
+            <tbody>
+        
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">Y. Rodriguez</td>
+                    <td style="padding: 10px;">Virtus GVM Roma 1960</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">18</td>
+                    <td style="padding: 10px; text-align: center;">8</td>
+                    <td style="padding: 10px; text-align: center;">2.2</td>
+                    <td style="padding: 10px; text-align: center;">58%</td>
+                    <td style="padding: 10px; text-align: center;">50%</td>
+                    <td style="padding: 10px; text-align: center;">100%</td>
+                </tr>
+            
+                <tr style="background: #f8f8f8;">
+                    <td style="padding: 10px; font-weight: 600;">M. Petrucci</td>
+                    <td style="padding: 10px;">Umana San Giobbe Chiusi</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">13</td>
+                    <td style="padding: 10px; text-align: center;">8</td>
+                    <td style="padding: 10px; text-align: center;">1.6</td>
+                    <td style="padding: 10px; text-align: center;">71%</td>
+                    <td style="padding: 10px; text-align: center;">100%</td>
+                    <td style="padding: 10px; text-align: center;">100%</td>
+                </tr>
+            
+                <tr style="background: #f8f8f8;">
+                    <td style="padding: 10px; font-weight: 600;">K. Šilke-žunda</td>
+                    <td style="padding: 10px;">Ristopro Fabriano</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">12</td>
+                    <td style="padding: 10px; text-align: center;">6</td>
+                    <td style="padding: 10px; text-align: center;">2.0</td>
+                    <td style="padding: 10px; text-align: center;">67%</td>
+                    <td style="padding: 10px; text-align: center;">67%</td>
+                    <td style="padding: 10px; text-align: center;">0%</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">D. D'argenzio</td>
+                    <td style="padding: 10px;">Paperdi Juvecaserta 2021</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">10</td>
+                    <td style="padding: 10px; text-align: center;">6</td>
+                    <td style="padding: 10px; text-align: center;">1.7</td>
+                    <td style="padding: 10px; text-align: center;">67%</td>
+                    <td style="padding: 10px; text-align: center;">50%</td>
+                    <td style="padding: 10px; text-align: center;">60%</td>
+                </tr>
+            
+                <tr style="background: #f8f8f8;">
+                    <td style="padding: 10px; font-weight: 600;">M. Bakovi?</td>
+                    <td style="padding: 10px;">Benacquista Assicurazioni Latina</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">10</td>
+                    <td style="padding: 10px; text-align: center;">7</td>
+                    <td style="padding: 10px; text-align: center;">1.4</td>
+                    <td style="padding: 10px; text-align: center;">83%</td>
+                    <td style="padding: 10px; text-align: center;">-</td>
+                    <td style="padding: 10px; text-align: center;">0%</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">L. Raffaelli</td>
+                    <td style="padding: 10px;">Umana San Giobbe Chiusi</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">9</td>
+                    <td style="padding: 10px; text-align: center;">8</td>
+                    <td style="padding: 10px; text-align: center;">1.1</td>
+                    <td style="padding: 10px; text-align: center;">50%</td>
+                    <td style="padding: 10px; text-align: center;">25%</td>
+                    <td style="padding: 10px; text-align: center;">100%</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">S. Bruno</td>
+                    <td style="padding: 10px;">General Contractor Jesi</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">9</td>
+                    <td style="padding: 10px; text-align: center;">5</td>
+                    <td style="padding: 10px; text-align: center;">1.8</td>
+                    <td style="padding: 10px; text-align: center;">100%</td>
+                    <td style="padding: 10px; text-align: center;">100%</td>
+                    <td style="padding: 10px; text-align: center;">-</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">T. Molteni</td>
+                    <td style="padding: 10px;">Consorzio Leonardo Dany Quarrata</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">9</td>
+                    <td style="padding: 10px; text-align: center;">7</td>
+                    <td style="padding: 10px; text-align: center;">1.3</td>
+                    <td style="padding: 10px; text-align: center;">50%</td>
+                    <td style="padding: 10px; text-align: center;">33%</td>
+                    <td style="padding: 10px; text-align: center;">0%</td>
+                </tr>
+            
+                <tr style="background: #f8f8f8;">
+                    <td style="padding: 10px; font-weight: 600;">E. Leonzio</td>
+                    <td style="padding: 10px;">Verodol CBD Pielle Livorno</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">8</td>
+                    <td style="padding: 10px; text-align: center;">9</td>
+                    <td style="padding: 10px; text-align: center;">0.9</td>
+                    <td style="padding: 10px; text-align: center;">40%</td>
+                    <td style="padding: 10px; text-align: center;">0%</td>
+                    <td style="padding: 10px; text-align: center;">100%</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">N. Pellicano</td>
+                    <td style="padding: 10px;">Adamant Ferrara</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">8</td>
+                    <td style="padding: 10px; text-align: center;">5</td>
+                    <td style="padding: 10px; text-align: center;">1.6</td>
+                    <td style="padding: 10px; text-align: center;">38%</td>
+                    <td style="padding: 10px; text-align: center;">40%</td>
+                    <td style="padding: 10px; text-align: center;">-</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">S. Angelucci</td>
+                    <td style="padding: 10px;">Consorzio Leonardo Dany Quarrata</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">8</td>
+                    <td style="padding: 10px; text-align: center;">7</td>
+                    <td style="padding: 10px; text-align: center;">1.1</td>
+                    <td style="padding: 10px; text-align: center;">43%</td>
+                    <td style="padding: 10px; text-align: center;">67%</td>
+                    <td style="padding: 10px; text-align: center;">67%</td>
+                </tr>
+            
+                <tr style="background: #f8f8f8;">
+                    <td style="padding: 10px; font-weight: 600;">F. Paolin</td>
+                    <td style="padding: 10px;">OraSì Ravenna</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">8</td>
+                    <td style="padding: 10px; text-align: center;">5</td>
+                    <td style="padding: 10px; text-align: center;">1.6</td>
+                    <td style="padding: 10px; text-align: center;">75%</td>
+                    <td style="padding: 10px; text-align: center;">100%</td>
+                    <td style="padding: 10px; text-align: center;">-</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">M. Saladini</td>
+                    <td style="padding: 10px;">Power Basket Nocera</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">8</td>
+                    <td style="padding: 10px; text-align: center;">5</td>
+                    <td style="padding: 10px; text-align: center;">1.6</td>
+                    <td style="padding: 10px; text-align: center;">43%</td>
+                    <td style="padding: 10px; text-align: center;">50%</td>
+                    <td style="padding: 10px; text-align: center;">-</td>
+                </tr>
+            
+                <tr style="background: #f8f8f8;">
+                    <td style="padding: 10px; font-weight: 600;">I. Majcuni?</td>
+                    <td style="padding: 10px;">Virtus GVM Roma 1960</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">8</td>
+                    <td style="padding: 10px; text-align: center;">6</td>
+                    <td style="padding: 10px; text-align: center;">1.3</td>
+                    <td style="padding: 10px; text-align: center;">60%</td>
+                    <td style="padding: 10px; text-align: center;">50%</td>
+                    <td style="padding: 10px; text-align: center;">-</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">K. Palsson</td>
+                    <td style="padding: 10px;">General Contractor Jesi</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">8</td>
+                    <td style="padding: 10px; text-align: center;">7</td>
+                    <td style="padding: 10px; text-align: center;">1.1</td>
+                    <td style="padding: 10px; text-align: center;">38%</td>
+                    <td style="padding: 10px; text-align: center;">40%</td>
+                    <td style="padding: 10px; text-align: center;">100%</td>
+                </tr>
+            </tbody></table>
+        </div>
+        
+        <div class="content-section">
+            <h2 class="section-title">💪 Responsabilità nei Momenti Chiave</h2>
+            <p style="color: #666; margin-bottom: 15px;">
+                Chi si prende più tiri nei momenti clutch? TS% (True Shooting) misura l'efficienza complessiva.
+            </p>
+            <div>                            <div id="e1c9013c-7bb2-4618-8873-a51db8454d17" class="plotly-graph-div" style="height:500px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("e1c9013c-7bb2-4618-8873-a51db8454d17")) {                    Plotly.newPlot(                        "e1c9013c-7bb2-4618-8873-a51db8454d17",                        [{"customdata":{"dtype":"f8","bdata":"MzMzMzOzPECamZmZmVlQQJqZmZmZGTtAAAAAAAAAIkDNzMzMzMxCQAAAAAAAADtAZmZmZmZmM0CamZmZmRlBQAAAAAAAgE5AZmZmZmamQ0AzMzMzM7M+QM3MzMzMzCZAMzMzMzMzLkAAAAAAAAA4QM3MzMzMDEhA"},"hovertemplate":"\u003cb\u003e%{y}\u003c\u002fb\u003e\u003cbr\u003eTiri totali: %{x}\u003cbr\u003eTS%: %{customdata:.1f}%\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":{"dtype":"f8","bdata":"MzMzMzOzPECamZmZmVlQQJqZmZmZGTtAAAAAAAAAIkDNzMzMzMxCQAAAAAAAADtAZmZmZmZmM0CamZmZmRlBQAAAAAAAgE5AZmZmZmamQ0AzMzMzM7M+QM3MzMzMzCZAMzMzMzMzLkAAAAAAAAA4QM3MzMzMDEhA"},"colorbar":{"title":{"text":"TS%"}},"colorscale":[[0.0,"rgb(165,0,38)"],[0.1,"rgb(215,48,39)"],[0.2,"rgb(244,109,67)"],[0.3,"rgb(253,174,97)"],[0.4,"rgb(254,224,139)"],[0.5,"rgb(255,255,191)"],[0.6,"rgb(217,239,139)"],[0.7,"rgb(166,217,106)"],[0.8,"rgb(102,189,99)"],[0.9,"rgb(26,152,80)"],[1.0,"rgb(0,104,55)"]],"showscale":true},"orientation":"h","text":["19 tiri (9 partite)","16 tiri (8 partite)","15 tiri (6 partite)","15 tiri (7 partite)","14 tiri (7 partite)","13 tiri (6 partite)","12 tiri (8 partite)","11 tiri (4 partite)","11 tiri (6 partite)","11 tiri (6 partite)","11 tiri (6 partite)","11 tiri (5 partite)","10 tiri (6 partite)","10 tiri (5 partite)","10 tiri (7 partite)"],"textposition":"outside","x":{"dtype":"i1","bdata":"ExAPDw4NDAsLCwsLCgoK"},"y":["E.\u00a0Leonzio","Y.\u00a0Rodriguez","A.\u00a0Fragonara","P.\u00a0Bandini","K.\u00a0Palsson","F.\u00a0Bugatti","M.\u00a0Arrigoni","M.\u00a0Graziani","D.\u00a0D'argenzio","A.\u00a0Gallo","M.\u00a0Ammannato","C.\u00a0Cappelletti","D.\u00a0Marchini","G.\u00a0Dron","S.\u00a0Angelucci"],"type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"yaxis":{"autorange":"reversed"},"margin":{"l":150,"r":100},"title":{"text":"Chi Si Prende la Responsabilit\u00e0 nei Momenti Decisivi"},"xaxis":{"title":{"text":"Tiri Totali in Clutch (FG + FT)"}},"height":500},                        {"responsive": true}                    )                };            </script>        </div>
+            
+        <table class="stats-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+                <tr style="background: #302B8F; color: white;">
+                    <th style="padding: 12px; text-align: left;">Giocatore</th>
+                    <th style="padding: 12px; text-align: left;">Squadra</th>
+                    <th style="padding: 12px; text-align: center;">Tiri</th>
+                    <th style="padding: 12px; text-align: center;">Tiri/G</th>
+                    <th style="padding: 12px; text-align: center;">Punti</th>
+                    <th style="padding: 12px; text-align: center;">TS%</th>
+                    <th style="padding: 12px; text-align: center;">FG%</th>
+                </tr>
+            </thead>
+            <tbody>
+        
+                <tr style="background: #f8f8f8;">
+                    <td style="padding: 10px; font-weight: 600;">E. Leonzio</td>
+                    <td style="padding: 10px;">Verodol CBD Pielle Livorno</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">19</td>
+                    <td style="padding: 10px; text-align: center;">2.1</td>
+                    <td style="padding: 10px; text-align: center;">8</td>
+                    <td style="padding: 10px; text-align: center; color: #ef4444; font-weight: 600;">28.7%</td>
+                    <td style="padding: 10px; text-align: center;">40%</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">Y. Rodriguez</td>
+                    <td style="padding: 10px;">Virtus GVM Roma 1960</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">16</td>
+                    <td style="padding: 10px; text-align: center;">2.0</td>
+                    <td style="padding: 10px; text-align: center;">18</td>
+                    <td style="padding: 10px; text-align: center; color: #22c55e; font-weight: 600;">65.4%</td>
+                    <td style="padding: 10px; text-align: center;">58%</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">A. Fragonara</td>
+                    <td style="padding: 10px;">Tema Sinergie Faenza</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">15</td>
+                    <td style="padding: 10px; text-align: center;">2.5</td>
+                    <td style="padding: 10px; text-align: center;">6</td>
+                    <td style="padding: 10px; text-align: center; color: #ef4444; font-weight: 600;">27.1%</td>
+                    <td style="padding: 10px; text-align: center;">38%</td>
+                </tr>
+            
+                <tr style="background: #f8f8f8;">
+                    <td style="padding: 10px; font-weight: 600;">P. Bandini</td>
+                    <td style="padding: 10px;">Allianz Pazienza San Severo</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">15</td>
+                    <td style="padding: 10px; text-align: center;">2.1</td>
+                    <td style="padding: 10px; text-align: center;">2</td>
+                    <td style="padding: 10px; text-align: center; color: #ef4444; font-weight: 600;">9.0%</td>
+                    <td style="padding: 10px; text-align: center;">12%</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">K. Palsson</td>
+                    <td style="padding: 10px;">General Contractor Jesi</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">14</td>
+                    <td style="padding: 10px; text-align: center;">2.0</td>
+                    <td style="padding: 10px; text-align: center;">8</td>
+                    <td style="padding: 10px; text-align: center; color: #ef4444; font-weight: 600;">37.6%</td>
+                    <td style="padding: 10px; text-align: center;">38%</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">F. Bugatti</td>
+                    <td style="padding: 10px;">Allianz Pazienza San Severo</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">13</td>
+                    <td style="padding: 10px; text-align: center;">2.2</td>
+                    <td style="padding: 10px; text-align: center;">4</td>
+                    <td style="padding: 10px; text-align: center; color: #ef4444; font-weight: 600;">27.0%</td>
+                    <td style="padding: 10px; text-align: center;">67%</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">M. Arrigoni</td>
+                    <td style="padding: 10px;">General Contractor Jesi</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">12</td>
+                    <td style="padding: 10px; text-align: center;">1.5</td>
+                    <td style="padding: 10px; text-align: center;">4</td>
+                    <td style="padding: 10px; text-align: center; color: #ef4444; font-weight: 600;">19.4%</td>
+                    <td style="padding: 10px; text-align: center;">22%</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">M. Graziani</td>
+                    <td style="padding: 10px;">Consultinvest Loreto Pesaro</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">11</td>
+                    <td style="padding: 10px; text-align: center;">2.8</td>
+                    <td style="padding: 10px; text-align: center;">6</td>
+                    <td style="padding: 10px; text-align: center; color: #ef4444; font-weight: 600;">34.2%</td>
+                    <td style="padding: 10px; text-align: center;">29%</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">D. D'argenzio</td>
+                    <td style="padding: 10px;">Paperdi Juvecaserta 2021</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">11</td>
+                    <td style="padding: 10px; text-align: center;">1.8</td>
+                    <td style="padding: 10px; text-align: center;">10</td>
+                    <td style="padding: 10px; text-align: center; color: #22c55e; font-weight: 600;">61.0%</td>
+                    <td style="padding: 10px; text-align: center;">67%</td>
+                </tr>
+            
+                <tr style="background: #f8f8f8;">
+                    <td style="padding: 10px; font-weight: 600;">A. Gallo</td>
+                    <td style="padding: 10px;">Benacquista Assicurazioni Latina</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">11</td>
+                    <td style="padding: 10px; text-align: center;">1.8</td>
+                    <td style="padding: 10px; text-align: center;">6</td>
+                    <td style="padding: 10px; text-align: center; color: #ef4444; font-weight: 600;">39.3%</td>
+                    <td style="padding: 10px; text-align: center;">60%</td>
+                </tr>
+            
+                <tr style="background: #f8f8f8;">
+                    <td style="padding: 10px; font-weight: 600;">M. Ammannato</td>
+                    <td style="padding: 10px;">Solbat Golfo Piombino</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">11</td>
+                    <td style="padding: 10px; text-align: center;">1.8</td>
+                    <td style="padding: 10px; text-align: center;">4</td>
+                    <td style="padding: 10px; text-align: center; color: #ef4444; font-weight: 600;">30.7%</td>
+                    <td style="padding: 10px; text-align: center;">67%</td>
+                </tr>
+            
+                <tr style="background: #f8f8f8;">
+                    <td style="padding: 10px; font-weight: 600;">C. Cappelletti</td>
+                    <td style="padding: 10px;">Power Basket Nocera</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">11</td>
+                    <td style="padding: 10px; text-align: center;">2.2</td>
+                    <td style="padding: 10px; text-align: center;">2</td>
+                    <td style="padding: 10px; text-align: center; color: #ef4444; font-weight: 600;">11.4%</td>
+                    <td style="padding: 10px; text-align: center;">14%</td>
+                </tr>
+            
+                <tr style="background: #f8f8f8;">
+                    <td style="padding: 10px; font-weight: 600;">D. Marchini</td>
+                    <td style="padding: 10px;">Adamant Ferrara</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">10</td>
+                    <td style="padding: 10px; text-align: center;">1.7</td>
+                    <td style="padding: 10px; text-align: center;">2</td>
+                    <td style="padding: 10px; text-align: center; color: #ef4444; font-weight: 600;">15.1%</td>
+                    <td style="padding: 10px; text-align: center;">25%</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">G. Dron</td>
+                    <td style="padding: 10px;">OraSì Ravenna</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">10</td>
+                    <td style="padding: 10px; text-align: center;">2.0</td>
+                    <td style="padding: 10px; text-align: center;">4</td>
+                    <td style="padding: 10px; text-align: center; color: #ef4444; font-weight: 600;">24.0%</td>
+                    <td style="padding: 10px; text-align: center;">29%</td>
+                </tr>
+            
+                <tr style="background: white;">
+                    <td style="padding: 10px; font-weight: 600;">S. Angelucci</td>
+                    <td style="padding: 10px;">Consorzio Leonardo Dany Quarrata</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700; color: #302B8F;">10</td>
+                    <td style="padding: 10px; text-align: center;">1.4</td>
+                    <td style="padding: 10px; text-align: center;">8</td>
+                    <td style="padding: 10px; text-align: center; color: #fbbf24; font-weight: 600;">48.1%</td>
+                    <td style="padding: 10px; text-align: center;">43%</td>
+                </tr>
+            </tbody></table>
+        </div>
+        
+            <div class="content-section">
+                <h2 class="section-title">🦸 4° Quarto Heroes</h2>
+                <p style="color: #666; margin-bottom: 15px;">
+                    Giocatori che aumentano la loro produzione nel 4° quarto rispetto ai primi tre.
+                    Il boost indica la % di miglioramento dei punti per partita.
+                </p>
+                <div>                            <div id="2e0c663d-0a11-4883-aa61-3ccb5161c467" class="plotly-graph-div" style="height:450px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("2e0c663d-0a11-4883-aa61-3ccb5161c467")) {                    Plotly.newPlot(                        "2e0c663d-0a11-4883-aa61-3ccb5161c467",                        [{"customdata":[[3.67,3.07],[3.75,3.15],[4.0,3.77],[4.0,3.83]],"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003eBoost Q4: +%{y:.1f}%\u003cbr\u003eQ4 PPG: %{customdata[0]:.1f}\u003cbr\u003eQ1-Q3 PPG: %{customdata[1]:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":{"dtype":"f8","bdata":"AAAAAACAM0AAAAAAAAAzQGZmZmZmZhhAmpmZmZmZEUA="},"colorscale":[[0,"#fbbf24"],[0.5,"#22c55e"],[1,"#059669"]]},"text":["+20%","+19%","+6%","+4%"],"textposition":"outside","x":["A.\u00a0Sylla","M.\u00a0Ghigo","A.\u00a0Bazan","R.\u00a0Romano"],"y":{"dtype":"f8","bdata":"AAAAAACAM0AAAAAAAAAzQGZmZmZmZhhAmpmZmZmZEUA="},"type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"tickangle":-45},"margin":{"b":120},"title":{"text":"4\u00b0 Quarto Heroes - Chi Migliora nel Finale"},"yaxis":{"title":{"text":"Boost Performance (%)"}},"height":450},                        {"responsive": true}                    )                };            </script>        </div>
+            </div>
+            
+            <div class="content-section">
+                <h2 class="section-title">📈 Confronto Q4 vs Resto Partita</h2>
+                <div>                            <div id="281d69e2-bb44-49c7-8762-24efa6eed975" class="plotly-graph-div" style="height:400px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("281d69e2-bb44-49c7-8762-24efa6eed975")) {                    Plotly.newPlot(                        "281d69e2-bb44-49c7-8762-24efa6eed975",                        [{"marker":{"color":"#94a3b8"},"name":"Q1-Q3 PPG","x":["A.\u00a0Sylla","M.\u00a0Ghigo","A.\u00a0Bazan","R.\u00a0Romano"],"y":{"dtype":"f8","bdata":"j8L1KFyPCEAzMzMzMzMJQClcj8L1KA5ApHA9CtejDkA="},"type":"bar"},{"marker":{"color":"#22c55e"},"name":"Q4 PPG","x":["A.\u00a0Sylla","M.\u00a0Ghigo","A.\u00a0Bazan","R.\u00a0Romano"],"y":{"dtype":"f8","bdata":"XI\u002fC9ShcDUAAAAAAAAAOQAAAAAAAABBAAAAAAAAAEEA="},"type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"tickangle":-45},"margin":{"b":120},"title":{"text":"Confronto Performance: Q4 vs Q1-Q3"},"yaxis":{"title":{"text":"Punti per Partita"}},"barmode":"group","height":400},                        {"responsive": true}                    )                };            </script>        </div>
+            </div>
+            
+
+        <div class="site-footer">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <div>Ultimo aggiornamento: 13/01/2026 22:35</div>
+            <div>Generato con LNP Stats</div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Espandi sezione corrente
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('expanded');
+            });
+        });
+
+        // Espandi automaticamente la sezione attiva
+        const activeLink = document.querySelector('.sidebar-link.active');
+        if (activeLink) {
+            let parent = activeLink.closest('.sidebar-section');
+            if (parent) parent.classList.add('expanded');
+        }
+    </script>
+</body>
+</html>

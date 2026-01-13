@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribuzione Tiri - Serie B - Girone B - LNP Stats</title>
+    <link rel="icon" type="image/png" href="../../../static/favicon180x180.png">
+    <link rel="stylesheet" href="../../../static/twinplay_brand.css">
+    <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--tp-gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--tp-spacing-lg);
+            z-index: 1000;
+            box-shadow: var(--tp-shadow-md);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-md);
+        }
+
+        .header-logo img {
+            height: 36px;
+        }
+
+        .header-logo a {
+            color: white;
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .header-breadcrumb {
+            margin-left: var(--tp-spacing-xl);
+            opacity: 0.8;
+            font-size: 0.875rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: var(--tp-spacing-md);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--tp-light);
+        }
+
+        .sidebar-section-header {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            color: var(--tp-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-sm);
+            transition: background 0.2s;
+        }
+
+        .sidebar-section-header:hover {
+            background: var(--tp-light);
+        }
+
+        .sidebar-section-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            font-size: 0.75rem;
+        }
+
+        .sidebar-section.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-subsection {
+            display: none;
+            background: var(--tp-light);
+        }
+
+        .sidebar-section.expanded .sidebar-subsection {
+            display: block;
+        }
+
+        .sidebar-category {
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: var(--tp-spacing-lg);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--tp-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: var(--tp-spacing-sm);
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: calc(var(--tp-spacing-lg) + 10px);
+            color: var(--tp-dark);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: white;
+            border-left-color: var(--tp-primary);
+        }
+
+        .sidebar-link.active {
+            background: white;
+            border-left-color: var(--tp-primary);
+            color: var(--tp-secondary);
+            font-weight: 600;
+        }
+
+        .sidebar-home-btn {
+            display: block;
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--tp-light);
+            transition: all 0.2s;
+        }
+
+        .sidebar-home-btn:hover {
+            background: var(--tp-light);
+            color: var(--tp-secondary);
+        }
+
+        .sidebar-competition {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            background: var(--tp-gradient-primary);
+            color: white;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: var(--tp-spacing-sm);
+        }
+
+        .sidebar:empty + .main {
+            margin-left: 0;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: var(--tp-spacing-xl);
+            min-height: calc(100vh - var(--header-height));
+            background: var(--tp-light);
+        }
+
+        .page-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.75rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-xs);
+        }
+
+        .page-subtitle {
+            color: var(--tp-gray);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .content-section {
+            background: white;
+            border-radius: var(--tp-radius-lg);
+            padding: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-lg);
+            box-shadow: var(--tp-shadow-sm);
+        }
+
+        .section-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.25rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-lg);
+            padding-bottom: var(--tp-spacing-sm);
+            border-bottom: 2px solid var(--tp-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .stat-card {
+            background: var(--tp-gradient-primary);
+            color: white;
+            padding: var(--tp-spacing-lg);
+            border-radius: var(--tp-radius-lg);
+            text-align: center;
+        }
+
+        .stat-card.accent {
+            background: var(--tp-gradient-accent);
+            color: var(--tp-dark);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+        }
+
+        .stat-value {
+            font-family: var(--tp-font-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: var(--tp-spacing-xs);
+        }
+
+        /* Plotly responsive */
+        .js-plotly-plot {
+            width: 100% !important;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            font-size: 0.8rem;
+        }
+
+        .site-footer img {
+            height: 24px;
+            margin-bottom: var(--tp-spacing-sm);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="header-logo">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <a href="../../../index.html">LNP Stats</a>
+        </div>
+        <div class="header-breadcrumb">Serie B - Girone B / Giocatori / Distribuzione Tiri</div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        
+    <a href="../../../index.html" class="sidebar-home-btn">
+        ← Cambia campionato
+    </a>
+    <div class="sidebar-competition">
+        Serie B - Girone B
+    </div>
+    <div class="sidebar-category">Squadre</div><a href="../../../b/girone-b/squadre/classifiche.html" class="sidebar-link ">Classifiche & Stats</a><a href="../../../b/girone-b/squadre/radar.html" class="sidebar-link ">Radar Squadre</a><a href="../../../b/girone-b/squadre/vittorie-sconfitte.html" class="sidebar-link ">Vittorie vs Sconfitte</a><a href="../../../b/girone-b/squadre/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../../b/girone-b/squadre/quando-vince.html" class="sidebar-link ">Quando Vince</a><a href="../../../b/girone-b/squadre/andamento.html" class="sidebar-link ">Andamento & Parziali</a><div class="sidebar-category">Giocatori</div><a href="../../../b/girone-b/giocatori/statistiche.html" class="sidebar-link ">Statistiche & Percentili</a><a href="../../../b/girone-b/giocatori/radar.html" class="sidebar-link ">Radar Confronto</a><a href="../../../b/girone-b/giocatori/consistenza.html" class="sidebar-link ">Consistenza</a><a href="../../../b/girone-b/giocatori/simili.html" class="sidebar-link ">Giocatori Simili</a><a href="../../../b/girone-b/giocatori/forma.html" class="sidebar-link ">Forma Recente</a><a href="../../../b/girone-b/giocatori/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../../b/girone-b/giocatori/distribuzione-tiri.html" class="sidebar-link active">Distribuzione Tiri</a><a href="../../../b/girone-b/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../../b/girone-b/giocatori/clustering.html" class="sidebar-link ">Clustering & Tipologie</a><a href="../../../b/girone-b/giocatori/dipendenza.html" class="sidebar-link ">Dipendenza Squadra</a><a href="../../../b/girone-b/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
+    </nav>
+
+    <main class="main">
+        <h1 class="page-title">Distribuzione Tiri</h1>
+        <p class="page-subtitle">Serie B - Girone B</p>
+
+        
+    <div class="content-section">
+        <h2 class="section-title">Distribuzione Tiri</h2>
+        <p style="color: #666; margin-bottom: 20px;">
+            <strong>Frequenza tiri/min</strong> (asse X) vs <strong>Efficienza %</strong> (asse Y).
+            La dimensione dei punti indica il volume totale di tiri.
+            <br><strong>In alto a destra</strong> = alta frequenza + alta efficienza (ideale).
+        </p>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+            <button id="btn-3PT" onclick="showChart('3PT')" style="padding: 10px 20px; border: 2px solid #302B8F; border-radius: 8px; cursor: pointer; font-weight: 600; background: #302B8F; color: white;">Tiri da 3</button>
+            <button id="btn-2PT" onclick="showChart('2PT')" style="padding: 10px 20px; border: 2px solid #302B8F; border-radius: 8px; cursor: pointer; font-weight: 600; background: white; color: #302B8F;">Tiri da 2</button>
+            <button id="btn-TL" onclick="showChart('TL')" style="padding: 10px 20px; border: 2px solid #302B8F; border-radius: 8px; cursor: pointer; font-weight: 600; background: white; color: #302B8F;">Tiri Liberi</button>
+        </div>
+
+        <div id="chart-container" style="height: 500px;"></div>
+    </div>
+
+    <script>
+        const shotData = {"3PT": {"players": [{"name": "N. Bertocco", "team": "Umana San Giobbe Chiusi", "made": 40, "att": 143, "pct": 28.0, "freq": 0.316, "min": 452}, {"name": "D. D'argenzio", "team": "Paperdi Juvecaserta 2021", "made": 57, "att": 141, "pct": 40.4, "freq": 0.276, "min": 510}, {"name": "F. Piccone", "team": "General Contractor Jesi", "made": 41, "att": 119, "pct": 34.5, "freq": 0.225, "min": 528}, {"name": "M. Graziani", "team": "Consultinvest Loreto Pesaro", "made": 39, "att": 117, "pct": 33.3, "freq": 0.24, "min": 486}, {"name": "F. Gravaghi", "team": "Umana San Giobbe Chiusi", "made": 35, "att": 114, "pct": 30.7, "freq": 0.23, "min": 495}, {"name": "E. Vettori", "team": "Tema Sinergie Faenza", "made": 38, "att": 112, "pct": 33.9, "freq": 0.203, "min": 553}, {"name": "K. Palsson", "team": "General Contractor Jesi", "made": 46, "att": 108, "pct": 42.6, "freq": 0.224, "min": 483}, {"name": "A. Mobio", "team": "Allianz Pazienza San Severo", "made": 36, "att": 107, "pct": 33.6, "freq": 0.176, "min": 607}, {"name": "A. Fragonara", "team": "Tema Sinergie Faenza", "made": 46, "att": 105, "pct": 43.8, "freq": 0.195, "min": 537}, {"name": "K. \u0160ilke-\u017eunda", "team": "Ristopro Fabriano", "made": 36, "att": 103, "pct": 35.0, "freq": 0.184, "min": 558}, {"name": "A. Petracca", "team": "PSA Basket Casoria", "made": 26, "att": 102, "pct": 25.5, "freq": 0.215, "min": 474}, {"name": "F. Dri", "team": "Ristopro Fabriano", "made": 37, "att": 102, "pct": 36.3, "freq": 0.219, "min": 465}, {"name": "G. Sanguinetti", "team": "UP Andrea Costa Imola", "made": 35, "att": 102, "pct": 34.3, "freq": 0.261, "min": 390}, {"name": "G. Berra", "team": "PSA Basket Casoria", "made": 40, "att": 101, "pct": 39.6, "freq": 0.234, "min": 431}, {"name": "R. Santiago", "team": "Adamant Ferrara", "made": 30, "att": 100, "pct": 30.0, "freq": 0.258, "min": 387}, {"name": "T. Kupstas", "team": "UP Andrea Costa Imola", "made": 33, "att": 99, "pct": 33.3, "freq": 0.166, "min": 598}, {"name": "D. Lucas", "team": "Allianz Pazienza San Severo", "made": 25, "att": 96, "pct": 26.0, "freq": 0.19, "min": 504}, {"name": "J. Fernandez", "team": "Luiss Roma", "made": 36, "att": 93, "pct": 38.7, "freq": 0.238, "min": 391}, {"name": "S. Centanni", "team": "Ristopro Fabriano", "made": 30, "att": 90, "pct": 33.3, "freq": 0.252, "min": 357}, {"name": "E. Leonzio", "team": "Verodol CBD Pielle Livorno", "made": 34, "att": 86, "pct": 39.5, "freq": 0.173, "min": 496}, {"name": "G. Dron", "team": "OraS\u00ec Ravenna", "made": 28, "att": 85, "pct": 32.9, "freq": 0.186, "min": 456}, {"name": "L. Maglietti", "team": "General Contractor Jesi", "made": 27, "att": 83, "pct": 32.5, "freq": 0.149, "min": 557}, {"name": "C. Cappelletti", "team": "Power Basket Nocera", "made": 29, "att": 82, "pct": 35.4, "freq": 0.201, "min": 407}, {"name": "D. Terenzi", "team": "Consultinvest Loreto Pesaro", "made": 20, "att": 82, "pct": 24.4, "freq": 0.189, "min": 433}, {"name": "L. Donadio", "team": "Power Basket Nocera", "made": 25, "att": 82, "pct": 30.5, "freq": 0.138, "min": 592}, {"name": "R. Chiti", "team": "Benacquista Assicurazioni Latina", "made": 24, "att": 82, "pct": 29.3, "freq": 0.21, "min": 390}, {"name": "A. Gallo", "team": "Benacquista Assicurazioni Latina", "made": 28, "att": 81, "pct": 34.6, "freq": 0.197, "min": 411}, {"name": "M. Pasqualin", "team": "Luiss Roma", "made": 34, "att": 81, "pct": 42.0, "freq": 0.201, "min": 403}, {"name": "M. Melchiorri", "team": "Virtus Imola", "made": 32, "att": 80, "pct": 40.0, "freq": 0.136, "min": 588}, {"name": "N. Moffa", "team": "UP Andrea Costa Imola", "made": 29, "att": 79, "pct": 36.7, "freq": 0.168, "min": 471}, {"name": "S. Angelucci", "team": "Consorzio Leonardo Dany Quarrata", "made": 27, "att": 79, "pct": 34.2, "freq": 0.144, "min": 546}, {"name": "A. Pastore", "team": "Benacquista Assicurazioni Latina", "made": 26, "att": 78, "pct": 33.3, "freq": 0.198, "min": 393}, {"name": "E. Cena", "team": "OraS\u00ec Ravenna", "made": 19, "att": 78, "pct": 24.4, "freq": 0.171, "min": 456}, {"name": "L. Baldi", "team": "Virtus Imola", "made": 25, "att": 78, "pct": 32.1, "freq": 0.165, "min": 471}, {"name": "M. Nicoli", "team": "General Contractor Jesi", "made": 28, "att": 78, "pct": 35.9, "freq": 0.181, "min": 431}, {"name": "D. Czerapowicz", "team": "Power Basket Nocera", "made": 28, "att": 77, "pct": 36.4, "freq": 0.179, "min": 429}, {"name": "M. Santiangeli", "team": "Tema Sinergie Faenza", "made": 23, "att": 77, "pct": 29.9, "freq": 0.208, "min": 369}, {"name": "M. Venucci", "team": "Verodol CBD Pielle Livorno", "made": 24, "att": 77, "pct": 31.2, "freq": 0.189, "min": 407}, {"name": "V. Nobile", "team": "Paperdi Juvecaserta 2021", "made": 22, "att": 77, "pct": 28.6, "freq": 0.155, "min": 498}, {"name": "M. Barattini", "team": "Virtus GVM Roma 1960", "made": 32, "att": 76, "pct": 42.1, "freq": 0.174, "min": 437}], "avg_pct": 34.0, "avg_freq": 0.2, "label": "Tiri da 3"}, "2PT": {"players": [{"name": "M. Gherardini", "team": "Allianz Pazienza San Severo", "made": 123, "att": 194, "pct": 63.4, "freq": 0.36, "min": 538}, {"name": "M. Arrigoni", "team": "General Contractor Jesi", "made": 113, "att": 190, "pct": 59.5, "freq": 0.327, "min": 580}, {"name": "N. Raivio", "team": "Solbat Golfo Piombino", "made": 98, "att": 189, "pct": 51.9, "freq": 0.325, "min": 581}, {"name": "F. Bugatti", "team": "Allianz Pazienza San Severo", "made": 83, "att": 160, "pct": 51.9, "freq": 0.27, "min": 592}, {"name": "L. Rasio", "team": "Umana San Giobbe Chiusi", "made": 75, "att": 149, "pct": 50.3, "freq": 0.307, "min": 485}, {"name": "L. Battistini", "team": "Virtus GVM Roma 1960", "made": 85, "att": 144, "pct": 59.0, "freq": 0.328, "min": 439}, {"name": "L. Donadio", "team": "Power Basket Nocera", "made": 66, "att": 144, "pct": 45.8, "freq": 0.243, "min": 592}, {"name": "T. Van Ounsem", "team": "Tema Sinergie Faenza", "made": 62, "att": 139, "pct": 44.6, "freq": 0.304, "min": 457}, {"name": "W. Tio Tiagande", "team": "Adamant Ferrara", "made": 97, "att": 139, "pct": 69.8, "freq": 0.301, "min": 462}, {"name": "R. Ponziani", "team": "Ristopro Fabriano", "made": 64, "att": 136, "pct": 47.1, "freq": 0.279, "min": 487}, {"name": "F. Tognacci", "team": "Consultinvest Loreto Pesaro", "made": 50, "att": 135, "pct": 37.0, "freq": 0.296, "min": 455}, {"name": "M. Bakovi?", "team": "Benacquista Assicurazioni Latina", "made": 85, "att": 134, "pct": 63.4, "freq": 0.374, "min": 358}, {"name": "D. Vavoli", "team": "Ristopro Fabriano", "made": 75, "att": 129, "pct": 58.1, "freq": 0.25, "min": 516}, {"name": "L. Delfino", "team": "Consultinvest Loreto Pesaro", "made": 66, "att": 125, "pct": 52.8, "freq": 0.237, "min": 526}, {"name": "S. Giunta", "team": "Solbat Golfo Piombino", "made": 64, "att": 124, "pct": 51.6, "freq": 0.234, "min": 530}, {"name": "M. Radunic", "team": "Paperdi Juvecaserta 2021", "made": 77, "att": 123, "pct": 62.6, "freq": 0.237, "min": 518}, {"name": "A. Renzi", "team": "Adamant Ferrara", "made": 54, "att": 122, "pct": 44.3, "freq": 0.304, "min": 400}, {"name": "F. Regoli", "team": "Consorzio Leonardo Dany Quarrata", "made": 67, "att": 122, "pct": 54.9, "freq": 0.215, "min": 568}, {"name": "T. Molteni", "team": "Consorzio Leonardo Dany Quarrata", "made": 59, "att": 121, "pct": 48.8, "freq": 0.224, "min": 539}, {"name": "K. Brigato", "team": "OraS\u00ec Ravenna", "made": 67, "att": 120, "pct": 55.8, "freq": 0.226, "min": 530}, {"name": "L. Pollini", "team": "Virtus Imola", "made": 45, "att": 119, "pct": 37.8, "freq": 0.273, "min": 435}, {"name": "A. Mobio", "team": "Allianz Pazienza San Severo", "made": 61, "att": 118, "pct": 51.7, "freq": 0.194, "min": 607}, {"name": "R. Jakstas", "team": "OraS\u00ec Ravenna", "made": 57, "att": 117, "pct": 48.7, "freq": 0.228, "min": 513}, {"name": "D. Gabrovsek", "team": "Verodol CBD Pielle Livorno", "made": 62, "att": 114, "pct": 54.4, "freq": 0.218, "min": 523}, {"name": "D. Lucas", "team": "Allianz Pazienza San Severo", "made": 59, "att": 111, "pct": 53.2, "freq": 0.22, "min": 504}, {"name": "E. Vettori", "team": "Tema Sinergie Faenza", "made": 56, "att": 111, "pct": 50.5, "freq": 0.201, "min": 553}, {"name": "J. Fernandez", "team": "Luiss Roma", "made": 47, "att": 110, "pct": 42.7, "freq": 0.281, "min": 391}, {"name": "M. Solaroli", "team": "Adamant Ferrara", "made": 59, "att": 108, "pct": 54.6, "freq": 0.231, "min": 467}, {"name": "M. Melchiorri", "team": "Virtus Imola", "made": 39, "att": 106, "pct": 36.8, "freq": 0.18, "min": 588}, {"name": "S. Angelucci", "team": "Consorzio Leonardo Dany Quarrata", "made": 49, "att": 106, "pct": 46.2, "freq": 0.194, "min": 546}, {"name": "F. Paolin", "team": "OraS\u00ec Ravenna", "made": 48, "att": 105, "pct": 45.7, "freq": 0.21, "min": 499}, {"name": "N. Moffa", "team": "UP Andrea Costa Imola", "made": 59, "att": 103, "pct": 57.3, "freq": 0.219, "min": 471}, {"name": "R. Salvioni", "team": "Luiss Roma", "made": 72, "att": 103, "pct": 69.9, "freq": 0.218, "min": 471}, {"name": "E. Sgarzini", "team": "Consultinvest Loreto Pesaro", "made": 56, "att": 101, "pct": 55.4, "freq": 0.199, "min": 508}, {"name": "D. Hadzic", "team": "Paperdi Juvecaserta 2021", "made": 59, "att": 100, "pct": 59.0, "freq": 0.222, "min": 450}, {"name": "F. Piccone", "team": "General Contractor Jesi", "made": 49, "att": 99, "pct": 49.5, "freq": 0.187, "min": 528}, {"name": "M. Di Pizzo", "team": "General Contractor Jesi", "made": 51, "att": 99, "pct": 51.5, "freq": 0.288, "min": 343}, {"name": "D. D'argenzio", "team": "Paperdi Juvecaserta 2021", "made": 52, "att": 97, "pct": 53.6, "freq": 0.19, "min": 510}, {"name": "D. Klyuchnyk", "team": "Verodol CBD Pielle Livorno", "made": 58, "att": 96, "pct": 60.4, "freq": 0.243, "min": 394}, {"name": "Y. Rodriguez", "team": "Virtus GVM Roma 1960", "made": 47, "att": 96, "pct": 49.0, "freq": 0.225, "min": 427}], "avg_pct": 52.5, "avg_freq": 0.252, "label": "Tiri da 2"}, "TL": {"players": [{"name": "D. D'argenzio", "team": "Paperdi Juvecaserta 2021", "made": 88, "att": 115, "pct": 76.5, "freq": 0.225, "min": 510}, {"name": "E. Vettori", "team": "Tema Sinergie Faenza", "made": 77, "att": 92, "pct": 83.7, "freq": 0.166, "min": 553}, {"name": "F. Bugatti", "team": "Allianz Pazienza San Severo", "made": 78, "att": 89, "pct": 87.6, "freq": 0.15, "min": 592}, {"name": "M. Barattini", "team": "Virtus GVM Roma 1960", "made": 71, "att": 87, "pct": 81.6, "freq": 0.199, "min": 437}, {"name": "E. Leonzio", "team": "Verodol CBD Pielle Livorno", "made": 83, "att": 85, "pct": 97.6, "freq": 0.171, "min": 496}, {"name": "M. Gherardini", "team": "Allianz Pazienza San Severo", "made": 59, "att": 85, "pct": 69.4, "freq": 0.158, "min": 538}, {"name": "M. Solaroli", "team": "Adamant Ferrara", "made": 49, "att": 79, "pct": 62.0, "freq": 0.169, "min": 467}, {"name": "L. Pollini", "team": "Virtus Imola", "made": 54, "att": 77, "pct": 70.1, "freq": 0.177, "min": 435}, {"name": "N. Bertocco", "team": "Umana San Giobbe Chiusi", "made": 65, "att": 77, "pct": 84.4, "freq": 0.17, "min": 452}, {"name": "R. Salvioni", "team": "Luiss Roma", "made": 50, "att": 77, "pct": 64.9, "freq": 0.163, "min": 471}, {"name": "K. Palsson", "team": "General Contractor Jesi", "made": 66, "att": 76, "pct": 86.8, "freq": 0.157, "min": 483}, {"name": "R. Jakstas", "team": "OraS\u00ec Ravenna", "made": 58, "att": 76, "pct": 76.3, "freq": 0.148, "min": 513}, {"name": "L. Baldi", "team": "Virtus Imola", "made": 54, "att": 75, "pct": 72.0, "freq": 0.159, "min": 471}, {"name": "F. Paolin", "team": "OraS\u00ec Ravenna", "made": 51, "att": 74, "pct": 68.9, "freq": 0.148, "min": 499}, {"name": "G. Lenti", "team": "Virtus GVM Roma 1960", "made": 60, "att": 74, "pct": 81.1, "freq": 0.156, "min": 475}, {"name": "M. Arrigoni", "team": "General Contractor Jesi", "made": 53, "att": 71, "pct": 74.6, "freq": 0.122, "min": 580}, {"name": "L. Rasio", "team": "Umana San Giobbe Chiusi", "made": 42, "att": 70, "pct": 60.0, "freq": 0.144, "min": 485}, {"name": "S. Angelucci", "team": "Consorzio Leonardo Dany Quarrata", "made": 56, "att": 70, "pct": 80.0, "freq": 0.128, "min": 546}, {"name": "L. Donadio", "team": "Power Basket Nocera", "made": 47, "att": 69, "pct": 68.1, "freq": 0.117, "min": 592}, {"name": "N. Raivio", "team": "Solbat Golfo Piombino", "made": 55, "att": 69, "pct": 79.7, "freq": 0.119, "min": 581}, {"name": "A. Valentini", "team": "Consultinvest Loreto Pesaro", "made": 49, "att": 66, "pct": 74.2, "freq": 0.192, "min": 344}, {"name": "G. Dron", "team": "OraS\u00ec Ravenna", "made": 62, "att": 66, "pct": 93.9, "freq": 0.145, "min": 456}, {"name": "M. Radunic", "team": "Paperdi Juvecaserta 2021", "made": 55, "att": 65, "pct": 84.6, "freq": 0.125, "min": 518}, {"name": "A. Gallo", "team": "Benacquista Assicurazioni Latina", "made": 54, "att": 64, "pct": 84.4, "freq": 0.156, "min": 411}, {"name": "M. Bakovi?", "team": "Benacquista Assicurazioni Latina", "made": 44, "att": 63, "pct": 69.8, "freq": 0.176, "min": 358}, {"name": "Y. Rodriguez", "team": "Virtus GVM Roma 1960", "made": 57, "att": 63, "pct": 90.5, "freq": 0.148, "min": 427}, {"name": "J. Fernandez", "team": "Luiss Roma", "made": 54, "att": 62, "pct": 87.1, "freq": 0.158, "min": 391}, {"name": "K. \u0160ilke-\u017eunda", "team": "Ristopro Fabriano", "made": 41, "att": 62, "pct": 66.1, "freq": 0.111, "min": 558}, {"name": "F. Mehmedoviq", "team": "PSA Basket Casoria", "made": 49, "att": 60, "pct": 81.7, "freq": 0.229, "min": 261}, {"name": "M. Graziani", "team": "Consultinvest Loreto Pesaro", "made": 52, "att": 60, "pct": 86.7, "freq": 0.123, "min": 486}, {"name": "N. Moffa", "team": "UP Andrea Costa Imola", "made": 51, "att": 60, "pct": 85.0, "freq": 0.127, "min": 471}, {"name": "A. Tiberti", "team": "Consorzio Leonardo Dany Quarrata", "made": 33, "att": 59, "pct": 55.9, "freq": 0.122, "min": 484}, {"name": "M. Venucci", "team": "Verodol CBD Pielle Livorno", "made": 55, "att": 59, "pct": 93.2, "freq": 0.145, "min": 407}, {"name": "S. Giunta", "team": "Solbat Golfo Piombino", "made": 38, "att": 59, "pct": 64.4, "freq": 0.111, "min": 530}, {"name": "A. Fragonara", "team": "Tema Sinergie Faenza", "made": 46, "att": 58, "pct": 79.3, "freq": 0.108, "min": 537}, {"name": "A. Mobio", "team": "Allianz Pazienza San Severo", "made": 34, "att": 58, "pct": 58.6, "freq": 0.096, "min": 607}, {"name": "A. Renzi", "team": "Adamant Ferrara", "made": 55, "att": 58, "pct": 94.8, "freq": 0.145, "min": 400}, {"name": "C. Cappelletti", "team": "Power Basket Nocera", "made": 52, "att": 58, "pct": 89.7, "freq": 0.142, "min": 407}, {"name": "D. Gabrovsek", "team": "Verodol CBD Pielle Livorno", "made": 48, "att": 58, "pct": 82.8, "freq": 0.111, "min": 523}, {"name": "T. Van Ounsem", "team": "Tema Sinergie Faenza", "made": 40, "att": 57, "pct": 70.2, "freq": 0.124, "min": 457}], "avg_pct": 78.0, "avg_freq": 0.148, "label": "Tiri Liberi"}};
+        let currentType = '3PT';
+
+        function showChart(type) {
+            currentType = type;
+            // Update buttons
+            ['3PT', '2PT', 'TL'].forEach(t => {
+                const btn = document.getElementById('btn-' + t);
+                if (t === type) {
+                    btn.style.background = '#302B8F';
+                    btn.style.color = 'white';
+                } else {
+                    btn.style.background = 'white';
+                    btn.style.color = '#302B8F';
+                }
+            });
+
+            renderChart();
+        }
+
+        function renderChart() {
+            const data = shotData[currentType];
+            if (!data) {
+                document.getElementById('chart-container').innerHTML = '<p>Dati non disponibili per questo tipo di tiro.</p>';
+                return;
+            }
+
+            const players = data.players;
+
+            // Calcola size per marker
+            const maxAtt = Math.max(...players.map(p => p.att));
+            const minAtt = Math.min(...players.map(p => p.att));
+            const sizes = players.map(p => 10 + (p.att - minAtt) / (maxAtt - minAtt + 1) * 25);
+
+            const trace = {
+                type: 'scatter',
+                mode: 'markers',
+                x: players.map(p => p.freq),
+                y: players.map(p => p.pct),
+                text: players.map(p => p.name),
+                customdata: players.map(p => [p.team, p.made, p.att, p.min]),
+                hovertemplate: '<b>%{text}</b><br>' +
+                    'Team: %{customdata[0]}<br>' +
+                    'Realizzati: %{customdata[1]}/%{customdata[2]}<br>' +
+                    'Efficienza: %{y:.1f}%<br>' +
+                    'Frequenza: %{x:.3f} tiri/min<br>' +
+                    '<extra></extra>',
+                marker: {
+                    size: sizes,
+                    color: players.map(p => p.pct),
+                    colorscale: 'RdYlGn',
+                    showscale: true,
+                    colorbar: { title: 'Eff %' },
+                    line: { width: 1, color: 'white' }
+                }
+            };
+
+            const layout = {
+                height: 500,
+                xaxis: {
+                    title: { text: data.label + ' per minuto', font: { size: 14 } },
+                    gridcolor: '#e5e5e5',
+                    range: [0, 0.5],
+                    tickformat: '.2f'
+                },
+                yaxis: {
+                    title: { text: 'Efficienza (%)', font: { size: 14 } },
+                    gridcolor: '#e5e5e5',
+                    range: [0, 100]
+                },
+                shapes: [
+                    { type: 'line', x0: data.avg_freq, x1: data.avg_freq, y0: 0, y1: 100, line: { dash: 'dash', color: 'gray', width: 1 } },
+                    { type: 'line', x0: 0, x1: 0.5, y0: data.avg_pct, y1: data.avg_pct, line: { dash: 'dash', color: 'gray', width: 1 } }
+                ],
+                annotations: [
+                    { x: 0.48, y: data.avg_pct + 3, text: 'Media: ' + data.avg_pct + '%', showarrow: false, font: { size: 11, color: 'gray' } }
+                ],
+                margin: { t: 20, b: 60, l: 70, r: 40 }
+            };
+
+            Plotly.newPlot('chart-container', [trace], layout, { responsive: true });
+        }
+
+        showChart('3PT');
+    </script>
+    
+
+        <div class="site-footer">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <div>Ultimo aggiornamento: 13/01/2026 22:35</div>
+            <div>Generato con LNP Stats</div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Espandi sezione corrente
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('expanded');
+            });
+        });
+
+        // Espandi automaticamente la sezione attiva
+        const activeLink = document.querySelector('.sidebar-link.active');
+        if (activeLink) {
+            let parent = activeLink.closest('.sidebar-section');
+            if (parent) parent.classList.add('expanded');
+        }
+    </script>
+</body>
+</html>

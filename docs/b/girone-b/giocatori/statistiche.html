@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistiche Giocatori - Serie B - Girone B - LNP Stats</title>
+    <link rel="icon" type="image/png" href="../../../static/favicon180x180.png">
+    <link rel="stylesheet" href="../../../static/twinplay_brand.css">
+    <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--tp-gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--tp-spacing-lg);
+            z-index: 1000;
+            box-shadow: var(--tp-shadow-md);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-md);
+        }
+
+        .header-logo img {
+            height: 36px;
+        }
+
+        .header-logo a {
+            color: white;
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .header-breadcrumb {
+            margin-left: var(--tp-spacing-xl);
+            opacity: 0.8;
+            font-size: 0.875rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: var(--tp-spacing-md);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--tp-light);
+        }
+
+        .sidebar-section-header {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            color: var(--tp-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-sm);
+            transition: background 0.2s;
+        }
+
+        .sidebar-section-header:hover {
+            background: var(--tp-light);
+        }
+
+        .sidebar-section-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            font-size: 0.75rem;
+        }
+
+        .sidebar-section.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-subsection {
+            display: none;
+            background: var(--tp-light);
+        }
+
+        .sidebar-section.expanded .sidebar-subsection {
+            display: block;
+        }
+
+        .sidebar-category {
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: var(--tp-spacing-lg);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--tp-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: var(--tp-spacing-sm);
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: calc(var(--tp-spacing-lg) + 10px);
+            color: var(--tp-dark);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: white;
+            border-left-color: var(--tp-primary);
+        }
+
+        .sidebar-link.active {
+            background: white;
+            border-left-color: var(--tp-primary);
+            color: var(--tp-secondary);
+            font-weight: 600;
+        }
+
+        .sidebar-home-btn {
+            display: block;
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--tp-light);
+            transition: all 0.2s;
+        }
+
+        .sidebar-home-btn:hover {
+            background: var(--tp-light);
+            color: var(--tp-secondary);
+        }
+
+        .sidebar-competition {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            background: var(--tp-gradient-primary);
+            color: white;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: var(--tp-spacing-sm);
+        }
+
+        .sidebar:empty + .main {
+            margin-left: 0;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: var(--tp-spacing-xl);
+            min-height: calc(100vh - var(--header-height));
+            background: var(--tp-light);
+        }
+
+        .page-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.75rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-xs);
+        }
+
+        .page-subtitle {
+            color: var(--tp-gray);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .content-section {
+            background: white;
+            border-radius: var(--tp-radius-lg);
+            padding: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-lg);
+            box-shadow: var(--tp-shadow-sm);
+        }
+
+        .section-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.25rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-lg);
+            padding-bottom: var(--tp-spacing-sm);
+            border-bottom: 2px solid var(--tp-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .stat-card {
+            background: var(--tp-gradient-primary);
+            color: white;
+            padding: var(--tp-spacing-lg);
+            border-radius: var(--tp-radius-lg);
+            text-align: center;
+        }
+
+        .stat-card.accent {
+            background: var(--tp-gradient-accent);
+            color: var(--tp-dark);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+        }
+
+        .stat-value {
+            font-family: var(--tp-font-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: var(--tp-spacing-xs);
+        }
+
+        /* Plotly responsive */
+        .js-plotly-plot {
+            width: 100% !important;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            font-size: 0.8rem;
+        }
+
+        .site-footer img {
+            height: 24px;
+            margin-bottom: var(--tp-spacing-sm);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="header-logo">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <a href="../../../index.html">LNP Stats</a>
+        </div>
+        <div class="header-breadcrumb">Serie B - Girone B / Giocatori / Statistiche</div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        
+    <a href="../../../index.html" class="sidebar-home-btn">
+        ← Cambia campionato
+    </a>
+    <div class="sidebar-competition">
+        Serie B - Girone B
+    </div>
+    <div class="sidebar-category">Squadre</div><a href="../../../b/girone-b/squadre/classifiche.html" class="sidebar-link ">Classifiche & Stats</a><a href="../../../b/girone-b/squadre/radar.html" class="sidebar-link ">Radar Squadre</a><a href="../../../b/girone-b/squadre/vittorie-sconfitte.html" class="sidebar-link ">Vittorie vs Sconfitte</a><a href="../../../b/girone-b/squadre/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../../b/girone-b/squadre/quando-vince.html" class="sidebar-link ">Quando Vince</a><a href="../../../b/girone-b/squadre/andamento.html" class="sidebar-link ">Andamento & Parziali</a><div class="sidebar-category">Giocatori</div><a href="../../../b/girone-b/giocatori/statistiche.html" class="sidebar-link active">Statistiche & Percentili</a><a href="../../../b/girone-b/giocatori/radar.html" class="sidebar-link ">Radar Confronto</a><a href="../../../b/girone-b/giocatori/consistenza.html" class="sidebar-link ">Consistenza</a><a href="../../../b/girone-b/giocatori/simili.html" class="sidebar-link ">Giocatori Simili</a><a href="../../../b/girone-b/giocatori/forma.html" class="sidebar-link ">Forma Recente</a><a href="../../../b/girone-b/giocatori/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../../b/girone-b/giocatori/distribuzione-tiri.html" class="sidebar-link ">Distribuzione Tiri</a><a href="../../../b/girone-b/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../../b/girone-b/giocatori/clustering.html" class="sidebar-link ">Clustering & Tipologie</a><a href="../../../b/girone-b/giocatori/dipendenza.html" class="sidebar-link ">Dipendenza Squadra</a><a href="../../../b/girone-b/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
+    </nav>
+
+    <main class="main">
+        <h1 class="page-title">Statistiche & Percentili</h1>
+        <p class="page-subtitle">Serie B - Girone B</p>
+
+        
+    <div class="content-section">
+        <h2 class="section-title">Classifiche Giocatori</h2>
+
+        <!-- Toggle Assoluti / Per Partita / Per 36 Min -->
+        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px; flex-wrap: wrap;">
+            <div style="display: flex; background: #e5e5e5; border-radius: 8px; padding: 4px;">
+                <button id="btn-abs" onclick="setMode('abs')" style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; background: #302B8F; color: white;">
+                    Totali
+                </button>
+                <button id="btn-pg" onclick="setMode('pg')" style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; background: transparent; color: #666;">
+                    Per Partita
+                </button>
+                <button id="btn-pm" onclick="setMode('pm')" style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; background: transparent; color: #666;">
+                    Per 40 Min
+                </button>
+            </div>
+            <span id="mode-note" style="color: #666; font-size: 13px;"></span>
+        </div>
+
+        <!-- Tab per categoria -->
+        <div style="display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;" id="stat-tabs">
+        </div>
+
+        <!-- Descrizione metrica corrente -->
+        <div id="stat-description" style="background: #f0f4ff; border-left: 4px solid #302B8F; padding: 12px 16px; margin-bottom: 20px; border-radius: 0 8px 8px 0; font-size: 14px; color: #333;">
+        </div>
+
+        <!-- Contenuto dinamico -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">
+            <div id="table-container"></div>
+            <div id="chart-container"></div>
+        </div>
+    </div>
+
+    <script>
+        const statsData = {"PT": {"abs": [{"giocatore": "D. D'argenzio", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 510, "value": 363.0, "pt": 363.0, "as": 70.0, "rt": 74.0}, {"giocatore": "N. Raivio", "team": "Solbat Golfo Piombino", "gp": 18, "min": 581, "value": 323.0, "pt": 323.0, "as": 52.0, "rt": 128.0}, {"giocatore": "M. Gherardini", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 538, "value": 320.0, "pt": 320.0, "as": 18.0, "rt": 138.0}, {"giocatore": "F. Bugatti", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 592, "value": 319.0, "pt": 319.0, "as": 45.0, "rt": 95.0}, {"giocatore": "E. Vettori", "team": "Tema Sinergie Faenza", "gp": 18, "min": 553, "value": 303.0, "pt": 303.0, "as": 26.0, "rt": 80.0}, {"giocatore": "M. Arrigoni", "team": "General Contractor Jesi", "gp": 19, "min": 580, "value": 285.0, "pt": 285.0, "as": 37.0, "rt": 152.0}, {"giocatore": "E. Leonzio", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 496, "value": 269.0, "pt": 269.0, "as": 58.0, "rt": 60.0}, {"giocatore": "A. Mobio", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 607, "value": 264.0, "pt": 264.0, "as": 33.0, "rt": 98.0}, {"giocatore": "N. Bertocco", "team": "Umana San Giobbe Chiusi", "gp": 19, "min": 452, "value": 263.0, "pt": 263.0, "as": 22.0, "rt": 78.0}, {"giocatore": "A. Fragonara", "team": "Tema Sinergie Faenza", "gp": 18, "min": 537, "value": 262.0, "pt": 262.0, "as": 104.0, "rt": 57.0}, {"giocatore": "D. Gabrovsek", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 523, "value": 259.0, "pt": 259.0, "as": 20.0, "rt": 95.0}, {"giocatore": "F. Piccone", "team": "General Contractor Jesi", "gp": 19, "min": 528, "value": 257.0, "pt": 257.0, "as": 58.0, "rt": 49.0}, {"giocatore": "J. Fernandez", "team": "Luiss Roma", "gp": 18, "min": 391, "value": 256.0, "pt": 256.0, "as": 48.0, "rt": 45.0}, {"giocatore": "N. Moffa", "team": "UP Andrea Costa Imola", "gp": 19, "min": 471, "value": 256.0, "pt": 256.0, "as": 32.0, "rt": 72.0}, {"giocatore": "L. Donadio", "team": "Power Basket Nocera", "gp": 18, "min": 592, "value": 254.0, "pt": 254.0, "as": 40.0, "rt": 97.0}, {"giocatore": "M. Radunic", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 518, "value": 254.0, "pt": 254.0, "as": 37.0, "rt": 126.0}, {"giocatore": "K. \u0160ilke-\u017eunda", "team": "Ristopro Fabriano", "gp": 19, "min": 558, "value": 249.0, "pt": 249.0, "as": 56.0, "rt": 98.0}, {"giocatore": "K. Brigato", "team": "OraS\u00ec Ravenna", "gp": 19, "min": 530, "value": 246.0, "pt": 246.0, "as": 15.0, "rt": 66.0}, {"giocatore": "T. Van Ounsem", "team": "Tema Sinergie Faenza", "gp": 18, "min": 457, "value": 239.0, "pt": 239.0, "as": 9.0, "rt": 87.0}, {"giocatore": "K. Palsson", "team": "General Contractor Jesi", "gp": 16, "min": 483, "value": 236.0, "pt": 236.0, "as": 37.0, "rt": 80.0}], "pg": [{"giocatore": "D. D'argenzio", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 510, "value": 19.11, "pt": 19.1, "as": 3.7, "rt": 3.9}, {"giocatore": "N. Raivio", "team": "Solbat Golfo Piombino", "gp": 18, "min": 581, "value": 17.94, "pt": 17.9, "as": 2.9, "rt": 7.1}, {"giocatore": "M. Gherardini", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 538, "value": 16.84, "pt": 16.8, "as": 0.9, "rt": 7.3}, {"giocatore": "E. Vettori", "team": "Tema Sinergie Faenza", "gp": 18, "min": 553, "value": 16.83, "pt": 16.8, "as": 1.4, "rt": 4.4}, {"giocatore": "F. Bugatti", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 592, "value": 16.79, "pt": 16.8, "as": 2.4, "rt": 5.0}, {"giocatore": "M. Arrigoni", "team": "General Contractor Jesi", "gp": 19, "min": 580, "value": 15.0, "pt": 15.0, "as": 1.9, "rt": 8.0}, {"giocatore": "S. Centanni", "team": "Ristopro Fabriano", "gp": 11, "min": 357, "value": 14.91, "pt": 14.9, "as": 3.0, "rt": 3.7}, {"giocatore": "K. Palsson", "team": "General Contractor Jesi", "gp": 16, "min": 483, "value": 14.75, "pt": 14.8, "as": 2.3, "rt": 5.0}, {"giocatore": "A. Fragonara", "team": "Tema Sinergie Faenza", "gp": 18, "min": 537, "value": 14.56, "pt": 14.6, "as": 5.8, "rt": 3.2}, {"giocatore": "J. Fernandez", "team": "Luiss Roma", "gp": 18, "min": 391, "value": 14.22, "pt": 14.2, "as": 2.7, "rt": 2.5}, {"giocatore": "E. Leonzio", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 496, "value": 14.16, "pt": 14.2, "as": 3.1, "rt": 3.2}, {"giocatore": "L. Donadio", "team": "Power Basket Nocera", "gp": 18, "min": 592, "value": 14.11, "pt": 14.1, "as": 2.2, "rt": 5.4}, {"giocatore": "A. Mobio", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 607, "value": 13.89, "pt": 13.9, "as": 1.7, "rt": 5.2}, {"giocatore": "N. Bertocco", "team": "Umana San Giobbe Chiusi", "gp": 19, "min": 452, "value": 13.84, "pt": 13.8, "as": 1.2, "rt": 4.1}, {"giocatore": "A. Gallo", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 411, "value": 13.76, "pt": 13.8, "as": 3.4, "rt": 4.1}, {"giocatore": "D. Gabrovsek", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 523, "value": 13.63, "pt": 13.6, "as": 1.1, "rt": 5.0}, {"giocatore": "F. Piccone", "team": "General Contractor Jesi", "gp": 19, "min": 528, "value": 13.53, "pt": 13.5, "as": 3.1, "rt": 2.6}, {"giocatore": "N. Moffa", "team": "UP Andrea Costa Imola", "gp": 19, "min": 471, "value": 13.47, "pt": 13.5, "as": 1.7, "rt": 3.8}, {"giocatore": "B. Sacchetti", "team": "Benacquista Assicurazioni Latina", "gp": 11, "min": 276, "value": 13.45, "pt": 13.5, "as": 2.5, "rt": 3.9}, {"giocatore": "M. Radunic", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 518, "value": 13.37, "pt": 13.4, "as": 1.9, "rt": 6.6}], "pm": [{"giocatore": "D. D'argenzio", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 510, "value": 28.5, "pt": 28.5, "as": 5.5, "rt": 5.8}, {"giocatore": "J. Fernandez", "team": "Luiss Roma", "gp": 18, "min": 391, "value": 26.2, "pt": 26.2, "as": 4.9, "rt": 4.6}, {"giocatore": "M. Bakovi?", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 358, "value": 25.2, "pt": 25.2, "as": 2.2, "rt": 10.5}, {"giocatore": "M. Gherardini", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 538, "value": 23.8, "pt": 23.8, "as": 1.3, "rt": 10.2}, {"giocatore": "N. Bertocco", "team": "Umana San Giobbe Chiusi", "gp": 19, "min": 452, "value": 23.2, "pt": 23.2, "as": 1.9, "rt": 6.9}, {"giocatore": "A. Gallo", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 411, "value": 22.7, "pt": 22.7, "as": 5.6, "rt": 6.7}, {"giocatore": "A. Renzi", "team": "Adamant Ferrara", "gp": 19, "min": 400, "value": 22.6, "pt": 22.6, "as": 1.6, "rt": 7.7}, {"giocatore": "N. Raivio", "team": "Solbat Golfo Piombino", "gp": 18, "min": 581, "value": 22.2, "pt": 22.2, "as": 3.6, "rt": 8.8}, {"giocatore": "E. Vettori", "team": "Tema Sinergie Faenza", "gp": 18, "min": 553, "value": 21.9, "pt": 21.9, "as": 1.9, "rt": 5.8}, {"giocatore": "N. Moffa", "team": "UP Andrea Costa Imola", "gp": 19, "min": 471, "value": 21.7, "pt": 21.7, "as": 2.7, "rt": 6.1}, {"giocatore": "E. Leonzio", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 496, "value": 21.7, "pt": 21.7, "as": 4.7, "rt": 4.8}, {"giocatore": "F. Bugatti", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 592, "value": 21.5, "pt": 21.5, "as": 3.0, "rt": 6.4}, {"giocatore": "B. Sacchetti", "team": "Benacquista Assicurazioni Latina", "gp": 11, "min": 276, "value": 21.4, "pt": 21.4, "as": 4.0, "rt": 6.2}, {"giocatore": "D. Marchini", "team": "Adamant Ferrara", "gp": 19, "min": 377, "value": 21.2, "pt": 21.2, "as": 5.5, "rt": 3.1}, {"giocatore": "T. Van Ounsem", "team": "Tema Sinergie Faenza", "gp": 18, "min": 457, "value": 20.9, "pt": 20.9, "as": 0.8, "rt": 7.6}, {"giocatore": "L. Battistini", "team": "Virtus GVM Roma 1960", "gp": 19, "min": 439, "value": 20.8, "pt": 20.8, "as": 1.5, "rt": 13.1}, {"giocatore": "D. Hadzic", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 450, "value": 20.5, "pt": 20.5, "as": 3.1, "rt": 7.5}, {"giocatore": "W. Tio Tiagande", "team": "Adamant Ferrara", "gp": 19, "min": 462, "value": 20.1, "pt": 20.1, "as": 1.6, "rt": 15.7}, {"giocatore": "L. Fabiani", "team": "Solbat Golfo Piombino", "gp": 18, "min": 307, "value": 19.9, "pt": 19.9, "as": 2.3, "rt": 8.2}, {"giocatore": "D. Gabrovsek", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 523, "value": 19.8, "pt": 19.8, "as": 1.5, "rt": 7.3}]}, "AS": {"abs": [{"giocatore": "A. Fragonara", "team": "Tema Sinergie Faenza", "gp": 18, "min": 537, "value": 104.0, "pt": 262.0, "as": 104.0, "rt": 57.0}, {"giocatore": "D. Lucas", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 504, "value": 86.0, "pt": 235.0, "as": 86.0, "rt": 35.0}, {"giocatore": "T. Molteni", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 539, "value": 78.0, "pt": 206.0, "as": 78.0, "rt": 85.0}, {"giocatore": "S. Giunta", "team": "Solbat Golfo Piombino", "gp": 18, "min": 530, "value": 75.0, "pt": 211.0, "as": 75.0, "rt": 97.0}, {"giocatore": "A. Pastore", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 393, "value": 72.0, "pt": 170.0, "as": 72.0, "rt": 53.0}, {"giocatore": "P. Bandini", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 407, "value": 72.0, "pt": 102.0, "as": 72.0, "rt": 40.0}, {"giocatore": "D. D'argenzio", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 510, "value": 70.0, "pt": 363.0, "as": 70.0, "rt": 74.0}, {"giocatore": "L. Maglietti", "team": "General Contractor Jesi", "gp": 19, "min": 557, "value": 69.0, "pt": 186.0, "as": 69.0, "rt": 66.0}, {"giocatore": "N. Pellicano", "team": "Adamant Ferrara", "gp": 19, "min": 452, "value": 69.0, "pt": 100.0, "as": 69.0, "rt": 35.0}, {"giocatore": "A. Tiberti", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 484, "value": 68.0, "pt": 168.0, "as": 68.0, "rt": 132.0}, {"giocatore": "M. Barattini", "team": "Virtus GVM Roma 1960", "gp": 19, "min": 437, "value": 64.0, "pt": 203.0, "as": 64.0, "rt": 45.0}, {"giocatore": "S. Bruno", "team": "General Contractor Jesi", "gp": 19, "min": 505, "value": 64.0, "pt": 130.0, "as": 64.0, "rt": 55.0}, {"giocatore": "Y. Rodriguez", "team": "Virtus GVM Roma 1960", "gp": 18, "min": 427, "value": 62.0, "pt": 208.0, "as": 62.0, "rt": 48.0}, {"giocatore": "E. Di Emidio", "team": "Benacquista Assicurazioni Latina", "gp": 18, "min": 424, "value": 61.0, "pt": 106.0, "as": 61.0, "rt": 34.0}, {"giocatore": "G. Dron", "team": "OraS\u00ec Ravenna", "gp": 18, "min": 456, "value": 59.0, "pt": 224.0, "as": 59.0, "rt": 60.0}, {"giocatore": "A. Gallo", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 411, "value": 58.0, "pt": 234.0, "as": 58.0, "rt": 69.0}, {"giocatore": "C. Cappelletti", "team": "Power Basket Nocera", "gp": 17, "min": 407, "value": 58.0, "pt": 199.0, "as": 58.0, "rt": 49.0}, {"giocatore": "C. Fumagalli", "team": "Tema Sinergie Faenza", "gp": 18, "min": 420, "value": 58.0, "pt": 130.0, "as": 58.0, "rt": 63.0}, {"giocatore": "E. Leonzio", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 496, "value": 58.0, "pt": 269.0, "as": 58.0, "rt": 60.0}, {"giocatore": "F. Piccone", "team": "General Contractor Jesi", "gp": 19, "min": 528, "value": 58.0, "pt": 257.0, "as": 58.0, "rt": 49.0}], "pg": [{"giocatore": "A. Fragonara", "team": "Tema Sinergie Faenza", "gp": 18, "min": 537, "value": 5.78, "pt": 14.6, "as": 5.8, "rt": 3.2}, {"giocatore": "Y. Moreno", "team": "Umana San Giobbe Chiusi", "gp": 8, "min": 175, "value": 5.0, "pt": 5.1, "as": 5.0, "rt": 2.5}, {"giocatore": "D. Lucas", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 504, "value": 4.53, "pt": 12.4, "as": 4.5, "rt": 1.8}, {"giocatore": "A. Pastore", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 393, "value": 4.24, "pt": 10.0, "as": 4.2, "rt": 3.1}, {"giocatore": "S. Giunta", "team": "Solbat Golfo Piombino", "gp": 18, "min": 530, "value": 4.17, "pt": 11.7, "as": 4.2, "rt": 5.4}, {"giocatore": "T. Molteni", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 539, "value": 4.11, "pt": 10.8, "as": 4.1, "rt": 4.5}, {"giocatore": "P. Bandini", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 407, "value": 3.79, "pt": 5.4, "as": 3.8, "rt": 2.1}, {"giocatore": "D. D'argenzio", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 510, "value": 3.68, "pt": 19.1, "as": 3.7, "rt": 3.9}, {"giocatore": "L. Abega", "team": "Ristopro Fabriano", "gp": 6, "min": 166, "value": 3.67, "pt": 10.5, "as": 3.7, "rt": 5.2}, {"giocatore": "L. Maglietti", "team": "General Contractor Jesi", "gp": 19, "min": 557, "value": 3.63, "pt": 9.8, "as": 3.6, "rt": 3.5}, {"giocatore": "N. Pellicano", "team": "Adamant Ferrara", "gp": 19, "min": 452, "value": 3.63, "pt": 5.3, "as": 3.6, "rt": 1.8}, {"giocatore": "A. Tiberti", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 484, "value": 3.58, "pt": 8.8, "as": 3.6, "rt": 6.9}, {"giocatore": "S. Vecerina", "team": "Paperdi Juvecaserta 2021", "gp": 16, "min": 383, "value": 3.5, "pt": 5.4, "as": 3.5, "rt": 2.8}, {"giocatore": "Y. Rodriguez", "team": "Virtus GVM Roma 1960", "gp": 18, "min": 427, "value": 3.44, "pt": 11.6, "as": 3.4, "rt": 2.7}, {"giocatore": "A. Gallo", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 411, "value": 3.41, "pt": 13.8, "as": 3.4, "rt": 4.1}, {"giocatore": "C. Cappelletti", "team": "Power Basket Nocera", "gp": 17, "min": 407, "value": 3.41, "pt": 11.7, "as": 3.4, "rt": 2.9}, {"giocatore": "E. Di Emidio", "team": "Benacquista Assicurazioni Latina", "gp": 18, "min": 424, "value": 3.39, "pt": 5.9, "as": 3.4, "rt": 1.9}, {"giocatore": "M. Barattini", "team": "Virtus GVM Roma 1960", "gp": 19, "min": 437, "value": 3.37, "pt": 10.7, "as": 3.4, "rt": 2.4}, {"giocatore": "S. Bruno", "team": "General Contractor Jesi", "gp": 19, "min": 505, "value": 3.37, "pt": 6.8, "as": 3.4, "rt": 2.9}, {"giocatore": "G. Dron", "team": "OraS\u00ec Ravenna", "gp": 18, "min": 456, "value": 3.28, "pt": 12.4, "as": 3.3, "rt": 3.3}], "pm": [{"giocatore": "Y. Moreno", "team": "Umana San Giobbe Chiusi", "gp": 8, "min": 175, "value": 9.1, "pt": 9.4, "as": 9.1, "rt": 4.6}, {"giocatore": "A. Fragonara", "team": "Tema Sinergie Faenza", "gp": 18, "min": 537, "value": 7.7, "pt": 19.5, "as": 7.7, "rt": 4.2}, {"giocatore": "A. Pastore", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 393, "value": 7.3, "pt": 17.3, "as": 7.3, "rt": 5.4}, {"giocatore": "P. Bandini", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 407, "value": 7.1, "pt": 10.0, "as": 7.1, "rt": 3.9}, {"giocatore": "D. Lucas", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 504, "value": 6.8, "pt": 18.6, "as": 6.8, "rt": 2.8}, {"giocatore": "G. Spizzichini", "team": "PSA Basket Casoria", "gp": 17, "min": 302, "value": 6.2, "pt": 10.6, "as": 6.2, "rt": 6.7}, {"giocatore": "N. Pellicano", "team": "Adamant Ferrara", "gp": 19, "min": 452, "value": 6.1, "pt": 8.8, "as": 6.1, "rt": 3.1}, {"giocatore": "M. Saladini", "team": "Power Basket Nocera", "gp": 17, "min": 329, "value": 6.0, "pt": 18.8, "as": 6.0, "rt": 4.9}, {"giocatore": "M. Barattini", "team": "Virtus GVM Roma 1960", "gp": 19, "min": 437, "value": 5.9, "pt": 18.6, "as": 5.9, "rt": 4.1}, {"giocatore": "S. Vecerina", "team": "Paperdi Juvecaserta 2021", "gp": 16, "min": 383, "value": 5.8, "pt": 9.1, "as": 5.8, "rt": 4.6}, {"giocatore": "Y. Rodriguez", "team": "Virtus GVM Roma 1960", "gp": 18, "min": 427, "value": 5.8, "pt": 19.5, "as": 5.8, "rt": 4.5}, {"giocatore": "T. Molteni", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 539, "value": 5.8, "pt": 15.3, "as": 5.8, "rt": 6.3}, {"giocatore": "E. Di Emidio", "team": "Benacquista Assicurazioni Latina", "gp": 18, "min": 424, "value": 5.8, "pt": 10.0, "as": 5.8, "rt": 3.2}, {"giocatore": "C. Cappelletti", "team": "Power Basket Nocera", "gp": 17, "min": 407, "value": 5.7, "pt": 19.5, "as": 5.7, "rt": 4.8}, {"giocatore": "S. Giunta", "team": "Solbat Golfo Piombino", "gp": 18, "min": 530, "value": 5.7, "pt": 15.9, "as": 5.7, "rt": 7.3}, {"giocatore": "M. Pasqualin", "team": "Luiss Roma", "gp": 18, "min": 403, "value": 5.6, "pt": 18.5, "as": 5.6, "rt": 3.4}, {"giocatore": "A. Gallo", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 411, "value": 5.6, "pt": 22.7, "as": 5.6, "rt": 6.7}, {"giocatore": "A. Tiberti", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 484, "value": 5.6, "pt": 13.9, "as": 5.6, "rt": 10.9}, {"giocatore": "C. Fumagalli", "team": "Tema Sinergie Faenza", "gp": 18, "min": 420, "value": 5.5, "pt": 12.4, "as": 5.5, "rt": 6.0}, {"giocatore": "D. Marchini", "team": "Adamant Ferrara", "gp": 19, "min": 377, "value": 5.5, "pt": 21.2, "as": 5.5, "rt": 3.1}]}, "RT": {"abs": [{"giocatore": "W. Tio Tiagande", "team": "Adamant Ferrara", "gp": 19, "min": 462, "value": 181.0, "pt": 232.0, "as": 18.0, "rt": 181.0, "ro": 79.0, "rd": 102.0}, {"giocatore": "L. Rasio", "team": "Umana San Giobbe Chiusi", "gp": 19, "min": 485, "value": 165.0, "pt": 231.0, "as": 51.0, "rt": 165.0, "ro": 41.0, "rd": 124.0}, {"giocatore": "R. Salvioni", "team": "Luiss Roma", "gp": 18, "min": 471, "value": 160.0, "pt": 227.0, "as": 23.0, "rt": 160.0, "ro": 59.0, "rd": 101.0}, {"giocatore": "M. Arrigoni", "team": "General Contractor Jesi", "gp": 19, "min": 580, "value": 152.0, "pt": 285.0, "as": 37.0, "rt": 152.0, "ro": 31.0, "rd": 121.0}, {"giocatore": "M. Mbacke", "team": "Tema Sinergie Faenza", "gp": 18, "min": 446, "value": 150.0, "pt": 160.0, "as": 18.0, "rt": 150.0, "ro": 46.0, "rd": 104.0}, {"giocatore": "L. Battistini", "team": "Virtus GVM Roma 1960", "gp": 19, "min": 439, "value": 144.0, "pt": 228.0, "as": 16.0, "rt": 144.0, "ro": 41.0, "rd": 103.0}, {"giocatore": "M. Gherardini", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 538, "value": 138.0, "pt": 320.0, "as": 18.0, "rt": 138.0, "ro": 35.0, "rd": 103.0}, {"giocatore": "D. Vavoli", "team": "Ristopro Fabriano", "gp": 19, "min": 516, "value": 135.0, "pt": 191.0, "as": 46.0, "rt": 135.0, "ro": 47.0, "rd": 88.0}, {"giocatore": "R. Jakstas", "team": "OraS\u00ec Ravenna", "gp": 19, "min": 513, "value": 134.0, "pt": 223.0, "as": 49.0, "rt": 134.0, "ro": 39.0, "rd": 95.0}, {"giocatore": "F. Regoli", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 568, "value": 133.0, "pt": 208.0, "as": 23.0, "rt": 133.0, "ro": 54.0, "rd": 79.0}, {"giocatore": "M. Ebeling", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 520, "value": 133.0, "pt": 125.0, "as": 26.0, "rt": 133.0, "ro": 27.0, "rd": 106.0}, {"giocatore": "A. Tiberti", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 484, "value": 132.0, "pt": 168.0, "as": 68.0, "rt": 132.0, "ro": 31.0, "rd": 101.0}, {"giocatore": "M. Seck", "team": "PSA Basket Casoria", "gp": 18, "min": 417, "value": 132.0, "pt": 93.0, "as": 11.0, "rt": 132.0, "ro": 51.0, "rd": 81.0}, {"giocatore": "M. Solaroli", "team": "Adamant Ferrara", "gp": 19, "min": 467, "value": 129.0, "pt": 173.0, "as": 29.0, "rt": 129.0, "ro": 38.0, "rd": 91.0}, {"giocatore": "N. Raivio", "team": "Solbat Golfo Piombino", "gp": 18, "min": 581, "value": 128.0, "pt": 323.0, "as": 52.0, "rt": 128.0, "ro": 13.0, "rd": 115.0}, {"giocatore": "M. Radunic", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 518, "value": 126.0, "pt": 254.0, "as": 37.0, "rt": 126.0, "ro": 30.0, "rd": 96.0}, {"giocatore": "A. Lo Biondo", "team": "Paperdi Juvecaserta 2021", "gp": 18, "min": 403, "value": 122.0, "pt": 127.0, "as": 25.0, "rt": 122.0, "ro": 29.0, "rd": 93.0}, {"giocatore": "D. Klyuchnyk", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 394, "value": 122.0, "pt": 165.0, "as": 8.0, "rt": 122.0, "ro": 37.0, "rd": 85.0}, {"giocatore": "M. Petrucci", "team": "Umana San Giobbe Chiusi", "gp": 19, "min": 565, "value": 113.0, "pt": 163.0, "as": 34.0, "rt": 113.0, "ro": 16.0, "rd": 97.0}, {"giocatore": "E. Sgarzini", "team": "Consultinvest Loreto Pesaro", "gp": 19, "min": 508, "value": 112.0, "pt": 158.0, "as": 52.0, "rt": 112.0, "ro": 30.0, "rd": 82.0}], "pg": [{"giocatore": "W. Tio Tiagande", "team": "Adamant Ferrara", "gp": 19, "min": 462, "value": 9.53, "pt": 12.2, "as": 0.9, "rt": 9.5, "ro": 4.2, "rd": 5.4}, {"giocatore": "R. Salvioni", "team": "Luiss Roma", "gp": 18, "min": 471, "value": 8.89, "pt": 12.6, "as": 1.3, "rt": 8.9, "ro": 3.3, "rd": 5.6}, {"giocatore": "L. Rasio", "team": "Umana San Giobbe Chiusi", "gp": 19, "min": 485, "value": 8.68, "pt": 12.2, "as": 2.7, "rt": 8.7, "ro": 2.2, "rd": 6.5}, {"giocatore": "M. Mbacke", "team": "Tema Sinergie Faenza", "gp": 18, "min": 446, "value": 8.33, "pt": 8.9, "as": 1.0, "rt": 8.3, "ro": 2.6, "rd": 5.8}, {"giocatore": "M. Arrigoni", "team": "General Contractor Jesi", "gp": 19, "min": 580, "value": 8.0, "pt": 15.0, "as": 1.9, "rt": 8.0, "ro": 1.6, "rd": 6.4}, {"giocatore": "L. Battistini", "team": "Virtus GVM Roma 1960", "gp": 19, "min": 439, "value": 7.58, "pt": 12.0, "as": 0.8, "rt": 7.6, "ro": 2.2, "rd": 5.4}, {"giocatore": "M. Seck", "team": "PSA Basket Casoria", "gp": 18, "min": 417, "value": 7.33, "pt": 5.2, "as": 0.6, "rt": 7.3, "ro": 2.8, "rd": 4.5}, {"giocatore": "M. Gherardini", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 538, "value": 7.26, "pt": 16.8, "as": 0.9, "rt": 7.3, "ro": 1.8, "rd": 5.4}, {"giocatore": "N. Raivio", "team": "Solbat Golfo Piombino", "gp": 18, "min": 581, "value": 7.11, "pt": 17.9, "as": 2.9, "rt": 7.1, "ro": 0.7, "rd": 6.4}, {"giocatore": "D. Vavoli", "team": "Ristopro Fabriano", "gp": 19, "min": 516, "value": 7.11, "pt": 10.1, "as": 2.4, "rt": 7.1, "ro": 2.5, "rd": 4.6}, {"giocatore": "R. Jakstas", "team": "OraS\u00ec Ravenna", "gp": 19, "min": 513, "value": 7.05, "pt": 11.7, "as": 2.6, "rt": 7.1, "ro": 2.1, "rd": 5.0}, {"giocatore": "F. Regoli", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 568, "value": 7.0, "pt": 10.9, "as": 1.2, "rt": 7.0, "ro": 2.8, "rd": 4.2}, {"giocatore": "M. Ebeling", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 520, "value": 7.0, "pt": 6.6, "as": 1.4, "rt": 7.0, "ro": 1.4, "rd": 5.6}, {"giocatore": "A. Tiberti", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 484, "value": 6.95, "pt": 8.8, "as": 3.6, "rt": 6.9, "ro": 1.6, "rd": 5.3}, {"giocatore": "M. Solaroli", "team": "Adamant Ferrara", "gp": 19, "min": 467, "value": 6.79, "pt": 9.1, "as": 1.5, "rt": 6.8, "ro": 2.0, "rd": 4.8}, {"giocatore": "A. Lo Biondo", "team": "Paperdi Juvecaserta 2021", "gp": 18, "min": 403, "value": 6.78, "pt": 7.1, "as": 1.4, "rt": 6.8, "ro": 1.6, "rd": 5.2}, {"giocatore": "M. Radunic", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 518, "value": 6.63, "pt": 13.4, "as": 1.9, "rt": 6.6, "ro": 1.6, "rd": 5.1}, {"giocatore": "D. Klyuchnyk", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 394, "value": 6.42, "pt": 8.7, "as": 0.4, "rt": 6.4, "ro": 1.9, "rd": 4.5}, {"giocatore": "E. Thioune", "team": "UP Andrea Costa Imola", "gp": 18, "min": 356, "value": 6.06, "pt": 5.3, "as": 0.3, "rt": 6.1, "ro": 1.8, "rd": 4.2}, {"giocatore": "M. Petrucci", "team": "Umana San Giobbe Chiusi", "gp": 19, "min": 565, "value": 5.95, "pt": 8.6, "as": 1.8, "rt": 5.9, "ro": 0.8, "rd": 5.1}], "pm": [{"giocatore": "W. Tio Tiagande", "team": "Adamant Ferrara", "gp": 19, "min": 462, "value": 15.7, "pt": 20.1, "as": 1.6, "rt": 15.7, "ro": 6.8, "rd": 8.8}, {"giocatore": "L. Rasio", "team": "Umana San Giobbe Chiusi", "gp": 19, "min": 485, "value": 13.6, "pt": 19.0, "as": 4.2, "rt": 13.6, "ro": 3.4, "rd": 10.2}, {"giocatore": "R. Salvioni", "team": "Luiss Roma", "gp": 18, "min": 471, "value": 13.6, "pt": 19.3, "as": 2.0, "rt": 13.6, "ro": 5.0, "rd": 8.6}, {"giocatore": "K. Ly-lee", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 189, "value": 13.5, "pt": 16.5, "as": 0.8, "rt": 13.5, "ro": 6.3, "rd": 7.2}, {"giocatore": "M. Mbacke", "team": "Tema Sinergie Faenza", "gp": 18, "min": 446, "value": 13.4, "pt": 14.3, "as": 1.6, "rt": 13.4, "ro": 4.1, "rd": 9.3}, {"giocatore": "R. Ndour", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 221, "value": 13.2, "pt": 11.9, "as": 1.3, "rt": 13.2, "ro": 3.8, "rd": 9.4}, {"giocatore": "L. Battistini", "team": "Virtus GVM Roma 1960", "gp": 19, "min": 439, "value": 13.1, "pt": 20.8, "as": 1.5, "rt": 13.1, "ro": 3.7, "rd": 9.4}, {"giocatore": "M. Seck", "team": "PSA Basket Casoria", "gp": 18, "min": 417, "value": 12.6, "pt": 8.9, "as": 1.1, "rt": 12.6, "ro": 4.9, "rd": 7.8}, {"giocatore": "D. Klyuchnyk", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 394, "value": 12.4, "pt": 16.7, "as": 0.8, "rt": 12.4, "ro": 3.8, "rd": 8.6}, {"giocatore": "E. Thioune", "team": "UP Andrea Costa Imola", "gp": 18, "min": 356, "value": 12.2, "pt": 10.8, "as": 0.7, "rt": 12.2, "ro": 3.7, "rd": 8.5}, {"giocatore": "A. Lo Biondo", "team": "Paperdi Juvecaserta 2021", "gp": 18, "min": 403, "value": 12.1, "pt": 12.6, "as": 2.5, "rt": 12.1, "ro": 2.9, "rd": 9.2}, {"giocatore": "C. Nwohuocha", "team": "Benacquista Assicurazioni Latina", "gp": 18, "min": 322, "value": 12.0, "pt": 9.4, "as": 1.2, "rt": 12.0, "ro": 4.6, "rd": 7.4}, {"giocatore": "S. Sackey", "team": "Adamant Ferrara", "gp": 19, "min": 345, "value": 11.7, "pt": 11.5, "as": 1.9, "rt": 11.7, "ro": 4.3, "rd": 7.4}, {"giocatore": "A. Sylla", "team": "Luiss Roma", "gp": 18, "min": 339, "value": 11.7, "pt": 11.9, "as": 1.3, "rt": 11.7, "ro": 4.1, "rd": 7.5}, {"giocatore": "A. Valentini", "team": "Consultinvest Loreto Pesaro", "gp": 19, "min": 344, "value": 11.1, "pt": 19.7, "as": 1.3, "rt": 11.1, "ro": 4.3, "rd": 6.8}, {"giocatore": "M. Solaroli", "team": "Adamant Ferrara", "gp": 19, "min": 467, "value": 11.0, "pt": 14.8, "as": 2.5, "rt": 11.0, "ro": 3.3, "rd": 7.8}, {"giocatore": "A. Tiberti", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 484, "value": 10.9, "pt": 13.9, "as": 5.6, "rt": 10.9, "ro": 2.6, "rd": 8.3}, {"giocatore": "F. Stefanini", "team": "Tema Sinergie Faenza", "gp": 18, "min": 281, "value": 10.8, "pt": 8.2, "as": 1.3, "rt": 10.8, "ro": 2.0, "rd": 8.8}, {"giocatore": "F. Matrone", "team": "Power Basket Nocera", "gp": 11, "min": 177, "value": 10.6, "pt": 8.8, "as": 1.4, "rt": 10.6, "ro": 1.4, "rd": 9.3}, {"giocatore": "M. Bakovi?", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 358, "value": 10.5, "pt": 25.2, "as": 2.2, "rt": 10.5, "ro": 3.9, "rd": 6.6}]}, "PR": {"abs": [{"giocatore": "A. Mobio", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 607, "value": 42.0, "pt": 264.0, "as": 33.0, "rt": 98.0}, {"giocatore": "A. Gallo", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 411, "value": 40.0, "pt": 234.0, "as": 58.0, "rt": 69.0}, {"giocatore": "E. Sgarzini", "team": "Consultinvest Loreto Pesaro", "gp": 19, "min": 508, "value": 38.0, "pt": 158.0, "as": 52.0, "rt": 112.0}, {"giocatore": "G. Dron", "team": "OraS\u00ec Ravenna", "gp": 18, "min": 456, "value": 36.0, "pt": 224.0, "as": 59.0, "rt": 60.0}, {"giocatore": "A. Tiberti", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 484, "value": 30.0, "pt": 168.0, "as": 68.0, "rt": 132.0}, {"giocatore": "N. Moffa", "team": "UP Andrea Costa Imola", "gp": 19, "min": 471, "value": 29.0, "pt": 256.0, "as": 32.0, "rt": 72.0}, {"giocatore": "D. D'argenzio", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 510, "value": 28.0, "pt": 363.0, "as": 70.0, "rt": 74.0}, {"giocatore": "M. Melchiorri", "team": "Virtus Imola", "gp": 18, "min": 588, "value": 27.0, "pt": 211.0, "as": 39.0, "rt": 87.0}, {"giocatore": "M. Visintin", "team": "Virtus GVM Roma 1960", "gp": 19, "min": 353, "value": 27.0, "pt": 122.0, "as": 39.0, "rt": 55.0}, {"giocatore": "S. Giunta", "team": "Solbat Golfo Piombino", "gp": 18, "min": 530, "value": 25.0, "pt": 211.0, "as": 75.0, "rt": 97.0}, {"giocatore": "T. Molteni", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 539, "value": 25.0, "pt": 206.0, "as": 78.0, "rt": 85.0}, {"giocatore": "F. Paolin", "team": "OraS\u00ec Ravenna", "gp": 19, "min": 499, "value": 24.0, "pt": 231.0, "as": 54.0, "rt": 74.0}, {"giocatore": "G. Sanguinetti", "team": "UP Andrea Costa Imola", "gp": 18, "min": 390, "value": 24.0, "pt": 189.0, "as": 48.0, "rt": 48.0}, {"giocatore": "K. \u0160ilke-\u017eunda", "team": "Ristopro Fabriano", "gp": 19, "min": 558, "value": 24.0, "pt": 249.0, "as": 56.0, "rt": 98.0}, {"giocatore": "P. Bandini", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 407, "value": 23.0, "pt": 102.0, "as": 72.0, "rt": 40.0}, {"giocatore": "K. Brigato", "team": "OraS\u00ec Ravenna", "gp": 19, "min": 530, "value": 22.0, "pt": 246.0, "as": 15.0, "rt": 66.0}, {"giocatore": "L. Maglietti", "team": "General Contractor Jesi", "gp": 19, "min": 557, "value": 22.0, "pt": 186.0, "as": 69.0, "rt": 66.0}, {"giocatore": "R. Casella", "team": "Luiss Roma", "gp": 18, "min": 442, "value": 22.0, "pt": 117.0, "as": 47.0, "rt": 40.0}, {"giocatore": "T. Kupstas", "team": "UP Andrea Costa Imola", "gp": 19, "min": 598, "value": 22.0, "pt": 207.0, "as": 37.0, "rt": 71.0}, {"giocatore": "D. Lucas", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 504, "value": 20.0, "pt": 235.0, "as": 86.0, "rt": 35.0}], "pg": [{"giocatore": "A. Gallo", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 411, "value": 2.35, "pt": 13.8, "as": 3.4, "rt": 4.1}, {"giocatore": "A. Mobio", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 607, "value": 2.21, "pt": 13.9, "as": 1.7, "rt": 5.2}, {"giocatore": "E. Sgarzini", "team": "Consultinvest Loreto Pesaro", "gp": 19, "min": 508, "value": 2.0, "pt": 8.3, "as": 2.7, "rt": 5.9}, {"giocatore": "G. Dron", "team": "OraS\u00ec Ravenna", "gp": 18, "min": 456, "value": 2.0, "pt": 12.4, "as": 3.3, "rt": 3.3}, {"giocatore": "A. Tiberti", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 484, "value": 1.58, "pt": 8.8, "as": 3.6, "rt": 6.9}, {"giocatore": "N. Moffa", "team": "UP Andrea Costa Imola", "gp": 19, "min": 471, "value": 1.53, "pt": 13.5, "as": 1.7, "rt": 3.8}, {"giocatore": "C. Vijber", "team": "PSA Basket Casoria", "gp": 6, "min": 162, "value": 1.5, "pt": 13.2, "as": 2.8, "rt": 3.7}, {"giocatore": "M. Melchiorri", "team": "Virtus Imola", "gp": 18, "min": 588, "value": 1.5, "pt": 11.7, "as": 2.2, "rt": 4.8}, {"giocatore": "D. D'argenzio", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 510, "value": 1.47, "pt": 19.1, "as": 3.7, "rt": 3.9}, {"giocatore": "M. Visintin", "team": "Virtus GVM Roma 1960", "gp": 19, "min": 353, "value": 1.42, "pt": 6.4, "as": 2.1, "rt": 2.9}, {"giocatore": "S. Giunta", "team": "Solbat Golfo Piombino", "gp": 18, "min": 530, "value": 1.39, "pt": 11.7, "as": 4.2, "rt": 5.4}, {"giocatore": "G. Sanguinetti", "team": "UP Andrea Costa Imola", "gp": 18, "min": 390, "value": 1.33, "pt": 10.5, "as": 2.7, "rt": 2.7}, {"giocatore": "L. Abega", "team": "Ristopro Fabriano", "gp": 6, "min": 166, "value": 1.33, "pt": 10.5, "as": 3.7, "rt": 5.2}, {"giocatore": "T. Molteni", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 539, "value": 1.32, "pt": 10.8, "as": 4.1, "rt": 4.5}, {"giocatore": "F. Paolin", "team": "OraS\u00ec Ravenna", "gp": 19, "min": 499, "value": 1.26, "pt": 12.2, "as": 2.8, "rt": 3.9}, {"giocatore": "K. \u0160ilke-\u017eunda", "team": "Ristopro Fabriano", "gp": 19, "min": 558, "value": 1.26, "pt": 13.1, "as": 2.9, "rt": 5.2}, {"giocatore": "R. Casella", "team": "Luiss Roma", "gp": 18, "min": 442, "value": 1.22, "pt": 6.5, "as": 2.6, "rt": 2.2}, {"giocatore": "P. Bandini", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 407, "value": 1.21, "pt": 5.4, "as": 3.8, "rt": 2.1}, {"giocatore": "K. Brigato", "team": "OraS\u00ec Ravenna", "gp": 19, "min": 530, "value": 1.16, "pt": 12.9, "as": 0.8, "rt": 3.5}, {"giocatore": "L. Maglietti", "team": "General Contractor Jesi", "gp": 19, "min": 557, "value": 1.16, "pt": 9.8, "as": 3.6, "rt": 3.5}], "pm": [{"giocatore": "A. Gallo", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 411, "value": 3.9, "pt": 22.7, "as": 5.6, "rt": 6.7}, {"giocatore": "M. Graziano", "team": "Luiss Roma", "gp": 17, "min": 121, "value": 3.3, "pt": 15.5, "as": 1.7, "rt": 3.6}, {"giocatore": "A. Beltrami", "team": "Ristopro Fabriano", "gp": 19, "min": 112, "value": 3.2, "pt": 10.7, "as": 1.4, "rt": 4.6}, {"giocatore": "G. Dron", "team": "OraS\u00ec Ravenna", "gp": 18, "min": 456, "value": 3.2, "pt": 19.6, "as": 5.2, "rt": 5.3}, {"giocatore": "M. Visintin", "team": "Virtus GVM Roma 1960", "gp": 19, "min": 353, "value": 3.1, "pt": 13.8, "as": 4.4, "rt": 6.2}, {"giocatore": "E. Sgarzini", "team": "Consultinvest Loreto Pesaro", "gp": 19, "min": 508, "value": 3.0, "pt": 12.4, "as": 4.1, "rt": 8.8}, {"giocatore": "V. Zedda", "team": "UP Andrea Costa Imola", "gp": 12, "min": 155, "value": 2.8, "pt": 13.4, "as": 2.8, "rt": 6.4}, {"giocatore": "A. Mobio", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 607, "value": 2.8, "pt": 17.4, "as": 2.2, "rt": 6.5}, {"giocatore": "A. Gattel", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 241, "value": 2.5, "pt": 12.6, "as": 1.0, "rt": 5.8}, {"giocatore": "A. Tiberti", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 484, "value": 2.5, "pt": 13.9, "as": 5.6, "rt": 10.9}, {"giocatore": "N. Moffa", "team": "UP Andrea Costa Imola", "gp": 19, "min": 471, "value": 2.5, "pt": 21.7, "as": 2.7, "rt": 6.1}, {"giocatore": "G. Sanguinetti", "team": "UP Andrea Costa Imola", "gp": 18, "min": 390, "value": 2.5, "pt": 19.4, "as": 4.9, "rt": 4.9}, {"giocatore": "K. Ly-lee", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 189, "value": 2.3, "pt": 16.5, "as": 0.8, "rt": 13.5}, {"giocatore": "P. Bandini", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 407, "value": 2.3, "pt": 10.0, "as": 7.1, "rt": 3.9}, {"giocatore": "A. Sylla", "team": "Luiss Roma", "gp": 18, "min": 339, "value": 2.2, "pt": 11.9, "as": 1.3, "rt": 11.7}, {"giocatore": "C. Vijber", "team": "PSA Basket Casoria", "gp": 6, "min": 162, "value": 2.2, "pt": 19.5, "as": 4.2, "rt": 5.4}, {"giocatore": "D. D'argenzio", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 510, "value": 2.2, "pt": 28.5, "as": 5.5, "rt": 5.8}, {"giocatore": "F. Mehmedoviq", "team": "PSA Basket Casoria", "gp": 18, "min": 261, "value": 2.1, "pt": 16.0, "as": 0.9, "rt": 8.1}, {"giocatore": "L. Mongelli", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 137, "value": 2.0, "pt": 7.9, "as": 4.1, "rt": 5.0}, {"giocatore": "R. Casella", "team": "Luiss Roma", "gp": 18, "min": 442, "value": 2.0, "pt": 10.6, "as": 4.2, "rt": 3.6}]}, "ST": {"abs": [{"giocatore": "M. Mbacke", "team": "Tema Sinergie Faenza", "gp": 18, "min": 446, "value": 25.0, "pt": 160.0, "as": 18.0, "rt": 150.0}, {"giocatore": "M. Ebeling", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 520, "value": 22.0, "pt": 125.0, "as": 26.0, "rt": 133.0}, {"giocatore": "L. Fabiani", "team": "Solbat Golfo Piombino", "gp": 18, "min": 307, "value": 17.0, "pt": 153.0, "as": 18.0, "rt": 63.0}, {"giocatore": "M. Bakovi?", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 358, "value": 15.0, "pt": 226.0, "as": 20.0, "rt": 94.0}, {"giocatore": "A. Mobio", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 607, "value": 14.0, "pt": 264.0, "as": 33.0, "rt": 98.0}, {"giocatore": "D. Gabrovsek", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 523, "value": 13.0, "pt": 259.0, "as": 20.0, "rt": 95.0}, {"giocatore": "M. Gherardini", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 538, "value": 13.0, "pt": 320.0, "as": 18.0, "rt": 138.0}, {"giocatore": "G. Leggio", "team": "Virtus GVM Roma 1960", "gp": 19, "min": 413, "value": 12.0, "pt": 186.0, "as": 15.0, "rt": 58.0}, {"giocatore": "D. Klyuchnyk", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 394, "value": 11.0, "pt": 165.0, "as": 8.0, "rt": 122.0}, {"giocatore": "P. Ruggiero", "team": "PSA Basket Casoria", "gp": 18, "min": 328, "value": 11.0, "pt": 82.0, "as": 18.0, "rt": 77.0}, {"giocatore": "R. Salvioni", "team": "Luiss Roma", "gp": 18, "min": 471, "value": 11.0, "pt": 227.0, "as": 23.0, "rt": 160.0}, {"giocatore": "A. Renzi", "team": "Adamant Ferrara", "gp": 19, "min": 400, "value": 10.0, "pt": 226.0, "as": 16.0, "rt": 77.0}, {"giocatore": "D. Vavoli", "team": "Ristopro Fabriano", "gp": 19, "min": 516, "value": 10.0, "pt": 191.0, "as": 46.0, "rt": 135.0}, {"giocatore": "I. Boev", "team": "Virtus Imola", "gp": 18, "min": 205, "value": 10.0, "pt": 54.0, "as": 6.0, "rt": 38.0}, {"giocatore": "L. Rasio", "team": "Umana San Giobbe Chiusi", "gp": 19, "min": 485, "value": 10.0, "pt": 231.0, "as": 51.0, "rt": 165.0}, {"giocatore": "A. Sylla", "team": "Luiss Roma", "gp": 18, "min": 339, "value": 9.0, "pt": 101.0, "as": 11.0, "rt": 99.0}, {"giocatore": "A. Tiberti", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 484, "value": 9.0, "pt": 168.0, "as": 68.0, "rt": 132.0}, {"giocatore": "C. Nwohuocha", "team": "Benacquista Assicurazioni Latina", "gp": 18, "min": 322, "value": 9.0, "pt": 76.0, "as": 10.0, "rt": 97.0}, {"giocatore": "G. Tambwe", "team": "Virtus Imola", "gp": 17, "min": 224, "value": 9.0, "pt": 47.0, "as": 5.0, "rt": 54.0}, {"giocatore": "M. Ammannato", "team": "Solbat Golfo Piombino", "gp": 18, "min": 453, "value": 9.0, "pt": 130.0, "as": 50.0, "rt": 100.0}], "pg": [{"giocatore": "M. Mbacke", "team": "Tema Sinergie Faenza", "gp": 18, "min": 446, "value": 1.39, "pt": 8.9, "as": 1.0, "rt": 8.3}, {"giocatore": "M. Ebeling", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 520, "value": 1.16, "pt": 6.6, "as": 1.4, "rt": 7.0}, {"giocatore": "L. Fabiani", "team": "Solbat Golfo Piombino", "gp": 18, "min": 307, "value": 0.94, "pt": 8.5, "as": 1.0, "rt": 3.5}, {"giocatore": "M. Bakovi?", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 358, "value": 0.88, "pt": 13.3, "as": 1.2, "rt": 5.5}, {"giocatore": "A. Mobio", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 607, "value": 0.74, "pt": 13.9, "as": 1.7, "rt": 5.2}, {"giocatore": "D. Gabrovsek", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 523, "value": 0.68, "pt": 13.6, "as": 1.1, "rt": 5.0}, {"giocatore": "M. Gherardini", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 538, "value": 0.68, "pt": 16.8, "as": 0.9, "rt": 7.3}, {"giocatore": "G. Leggio", "team": "Virtus GVM Roma 1960", "gp": 19, "min": 413, "value": 0.63, "pt": 9.8, "as": 0.8, "rt": 3.1}, {"giocatore": "P. Ruggiero", "team": "PSA Basket Casoria", "gp": 18, "min": 328, "value": 0.61, "pt": 4.6, "as": 1.0, "rt": 4.3}, {"giocatore": "R. Salvioni", "team": "Luiss Roma", "gp": 18, "min": 471, "value": 0.61, "pt": 12.6, "as": 1.3, "rt": 8.9}, {"giocatore": "D. Klyuchnyk", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 394, "value": 0.58, "pt": 8.7, "as": 0.4, "rt": 6.4}, {"giocatore": "I. Boev", "team": "Virtus Imola", "gp": 18, "min": 205, "value": 0.56, "pt": 3.0, "as": 0.3, "rt": 2.1}, {"giocatore": "F. Matrone", "team": "Power Basket Nocera", "gp": 11, "min": 177, "value": 0.55, "pt": 3.5, "as": 0.5, "rt": 4.3}, {"giocatore": "G. Tamani", "team": "UP Andrea Costa Imola", "gp": 13, "min": 164, "value": 0.54, "pt": 4.2, "as": 0.2, "rt": 2.1}, {"giocatore": "G. Tambwe", "team": "Virtus Imola", "gp": 17, "min": 224, "value": 0.53, "pt": 2.8, "as": 0.3, "rt": 3.2}, {"giocatore": "A. Renzi", "team": "Adamant Ferrara", "gp": 19, "min": 400, "value": 0.53, "pt": 11.9, "as": 0.8, "rt": 4.1}, {"giocatore": "D. Vavoli", "team": "Ristopro Fabriano", "gp": 19, "min": 516, "value": 0.53, "pt": 10.1, "as": 2.4, "rt": 7.1}, {"giocatore": "L. Rasio", "team": "Umana San Giobbe Chiusi", "gp": 19, "min": 485, "value": 0.53, "pt": 12.2, "as": 2.7, "rt": 8.7}, {"giocatore": "A. Sylla", "team": "Luiss Roma", "gp": 18, "min": 339, "value": 0.5, "pt": 5.6, "as": 0.6, "rt": 5.5}, {"giocatore": "C. Nwohuocha", "team": "Benacquista Assicurazioni Latina", "gp": 18, "min": 322, "value": 0.5, "pt": 4.2, "as": 0.6, "rt": 5.4}], "pm": [{"giocatore": "M. Mbacke", "team": "Tema Sinergie Faenza", "gp": 18, "min": 446, "value": 2.2, "pt": 14.3, "as": 1.6, "rt": 13.4}, {"giocatore": "L. Fabiani", "team": "Solbat Golfo Piombino", "gp": 18, "min": 307, "value": 2.2, "pt": 19.9, "as": 2.3, "rt": 8.2}, {"giocatore": "I. Boev", "team": "Virtus Imola", "gp": 18, "min": 205, "value": 1.9, "pt": 10.5, "as": 1.2, "rt": 7.4}, {"giocatore": "M. Ferrara", "team": "Luiss Roma", "gp": 13, "min": 134, "value": 1.8, "pt": 7.1, "as": 2.7, "rt": 7.7}, {"giocatore": "J. Fokou", "team": "Virtus GVM Roma 1960", "gp": 19, "min": 116, "value": 1.7, "pt": 8.6, "as": 1.7, "rt": 6.2}, {"giocatore": "G. Tamani", "team": "UP Andrea Costa Imola", "gp": 13, "min": 164, "value": 1.7, "pt": 13.1, "as": 0.7, "rt": 6.6}, {"giocatore": "M. Ebeling", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 520, "value": 1.7, "pt": 9.6, "as": 2.0, "rt": 10.2}, {"giocatore": "M. Bakovi?", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 358, "value": 1.7, "pt": 25.2, "as": 2.2, "rt": 10.5}, {"giocatore": "G. Tambwe", "team": "Virtus Imola", "gp": 17, "min": 224, "value": 1.6, "pt": 8.4, "as": 0.9, "rt": 9.6}, {"giocatore": "R. Ndour", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 221, "value": 1.4, "pt": 11.9, "as": 1.3, "rt": 13.2}, {"giocatore": "F. Matrone", "team": "Power Basket Nocera", "gp": 11, "min": 177, "value": 1.4, "pt": 8.8, "as": 1.4, "rt": 10.6}, {"giocatore": "P. Ruggiero", "team": "PSA Basket Casoria", "gp": 18, "min": 328, "value": 1.3, "pt": 10.0, "as": 2.2, "rt": 9.4}, {"giocatore": "K. Ly-lee", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 189, "value": 1.3, "pt": 16.5, "as": 0.8, "rt": 13.5}, {"giocatore": "G. Leggio", "team": "Virtus GVM Roma 1960", "gp": 19, "min": 413, "value": 1.2, "pt": 18.0, "as": 1.5, "rt": 5.6}, {"giocatore": "A. Novori", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "min": 285, "value": 1.1, "pt": 15.7, "as": 2.1, "rt": 6.9}, {"giocatore": "C. Nwohuocha", "team": "Benacquista Assicurazioni Latina", "gp": 18, "min": 322, "value": 1.1, "pt": 9.4, "as": 1.2, "rt": 12.0}, {"giocatore": "D. Klyuchnyk", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 394, "value": 1.1, "pt": 16.7, "as": 0.8, "rt": 12.4}, {"giocatore": "A. Sylla", "team": "Luiss Roma", "gp": 18, "min": 339, "value": 1.1, "pt": 11.9, "as": 1.3, "rt": 11.7}, {"giocatore": "N. Calabrese", "team": "Consorzio Leonardo Dany Quarrata", "gp": 12, "min": 189, "value": 1.1, "pt": 15.6, "as": 1.9, "rt": 5.7}, {"giocatore": "A. Renzi", "team": "Adamant Ferrara", "gp": 19, "min": 400, "value": 1.0, "pt": 22.6, "as": 1.6, "rt": 7.7}]}, "EFF": {"abs": [{"giocatore": "N. Raivio", "team": "Solbat Golfo Piombino", "gp": 18, "min": 581, "value": 400.0, "pt": 323.0, "as": 52.0, "rt": 128.0}, {"giocatore": "D. D'argenzio", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 510, "value": 396.0, "pt": 363.0, "as": 70.0, "rt": 74.0}, {"giocatore": "M. Gherardini", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 538, "value": 374.0, "pt": 320.0, "as": 18.0, "rt": 138.0}, {"giocatore": "M. Arrigoni", "team": "General Contractor Jesi", "gp": 19, "min": 580, "value": 371.0, "pt": 285.0, "as": 37.0, "rt": 152.0}, {"giocatore": "R. Salvioni", "team": "Luiss Roma", "gp": 18, "min": 471, "value": 355.0, "pt": 227.0, "as": 23.0, "rt": 160.0}, {"giocatore": "M. Radunic", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 518, "value": 337.0, "pt": 254.0, "as": 37.0, "rt": 126.0}, {"giocatore": "F. Bugatti", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 592, "value": 325.0, "pt": 319.0, "as": 45.0, "rt": 95.0}, {"giocatore": "W. Tio Tiagande", "team": "Adamant Ferrara", "gp": 19, "min": 462, "value": 325.0, "pt": 232.0, "as": 18.0, "rt": 181.0}, {"giocatore": "A. Fragonara", "team": "Tema Sinergie Faenza", "gp": 18, "min": 537, "value": 315.0, "pt": 262.0, "as": 104.0, "rt": 57.0}, {"giocatore": "R. Jakstas", "team": "OraS\u00ec Ravenna", "gp": 19, "min": 513, "value": 312.0, "pt": 223.0, "as": 49.0, "rt": 134.0}, {"giocatore": "D. Gabrovsek", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 523, "value": 303.0, "pt": 259.0, "as": 20.0, "rt": 95.0}, {"giocatore": "E. Leonzio", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 496, "value": 298.0, "pt": 269.0, "as": 58.0, "rt": 60.0}, {"giocatore": "D. Vavoli", "team": "Ristopro Fabriano", "gp": 19, "min": 516, "value": 296.0, "pt": 191.0, "as": 46.0, "rt": 135.0}, {"giocatore": "L. Rasio", "team": "Umana San Giobbe Chiusi", "gp": 19, "min": 485, "value": 293.0, "pt": 231.0, "as": 51.0, "rt": 165.0}, {"giocatore": "S. Giunta", "team": "Solbat Golfo Piombino", "gp": 18, "min": 530, "value": 293.0, "pt": 211.0, "as": 75.0, "rt": 97.0}, {"giocatore": "G. Dron", "team": "OraS\u00ec Ravenna", "gp": 18, "min": 456, "value": 287.0, "pt": 224.0, "as": 59.0, "rt": 60.0}, {"giocatore": "A. Gallo", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 411, "value": 286.0, "pt": 234.0, "as": 58.0, "rt": 69.0}, {"giocatore": "E. Vettori", "team": "Tema Sinergie Faenza", "gp": 18, "min": 553, "value": 285.0, "pt": 303.0, "as": 26.0, "rt": 80.0}, {"giocatore": "M. Bakovi?", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 358, "value": 275.0, "pt": 226.0, "as": 20.0, "rt": 94.0}, {"giocatore": "K. Palsson", "team": "General Contractor Jesi", "gp": 16, "min": 483, "value": 269.0, "pt": 236.0, "as": 37.0, "rt": 80.0}], "pg": [{"giocatore": "N. Raivio", "team": "Solbat Golfo Piombino", "gp": 18, "min": 581, "value": 22.22, "pt": 17.9, "as": 2.9, "rt": 7.1}, {"giocatore": "D. D'argenzio", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 510, "value": 20.84, "pt": 19.1, "as": 3.7, "rt": 3.9}, {"giocatore": "R. Salvioni", "team": "Luiss Roma", "gp": 18, "min": 471, "value": 19.72, "pt": 12.6, "as": 1.3, "rt": 8.9}, {"giocatore": "M. Gherardini", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 538, "value": 19.68, "pt": 16.8, "as": 0.9, "rt": 7.3}, {"giocatore": "M. Arrigoni", "team": "General Contractor Jesi", "gp": 19, "min": 580, "value": 19.53, "pt": 15.0, "as": 1.9, "rt": 8.0}, {"giocatore": "B. Sacchetti", "team": "Benacquista Assicurazioni Latina", "gp": 11, "min": 276, "value": 18.0, "pt": 13.5, "as": 2.5, "rt": 3.9}, {"giocatore": "M. Radunic", "team": "Paperdi Juvecaserta 2021", "gp": 19, "min": 518, "value": 17.74, "pt": 13.4, "as": 1.9, "rt": 6.6}, {"giocatore": "A. Fragonara", "team": "Tema Sinergie Faenza", "gp": 18, "min": 537, "value": 17.5, "pt": 14.6, "as": 5.8, "rt": 3.2}, {"giocatore": "F. Bugatti", "team": "Allianz Pazienza San Severo", "gp": 19, "min": 592, "value": 17.11, "pt": 16.8, "as": 2.4, "rt": 5.0}, {"giocatore": "W. Tio Tiagande", "team": "Adamant Ferrara", "gp": 19, "min": 462, "value": 17.11, "pt": 12.2, "as": 0.9, "rt": 9.5}, {"giocatore": "A. Gallo", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 411, "value": 16.82, "pt": 13.8, "as": 3.4, "rt": 4.1}, {"giocatore": "K. Palsson", "team": "General Contractor Jesi", "gp": 16, "min": 483, "value": 16.81, "pt": 14.8, "as": 2.3, "rt": 5.0}, {"giocatore": "R. Jakstas", "team": "OraS\u00ec Ravenna", "gp": 19, "min": 513, "value": 16.42, "pt": 11.7, "as": 2.6, "rt": 7.1}, {"giocatore": "S. Giunta", "team": "Solbat Golfo Piombino", "gp": 18, "min": 530, "value": 16.28, "pt": 11.7, "as": 4.2, "rt": 5.4}, {"giocatore": "M. Bakovi?", "team": "Benacquista Assicurazioni Latina", "gp": 17, "min": 358, "value": 16.18, "pt": 13.3, "as": 1.2, "rt": 5.5}, {"giocatore": "D. Gabrovsek", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 523, "value": 15.95, "pt": 13.6, "as": 1.1, "rt": 5.0}, {"giocatore": "G. Dron", "team": "OraS\u00ec Ravenna", "gp": 18, "min": 456, "value": 15.94, "pt": 12.4, "as": 3.3, "rt": 3.3}, {"giocatore": "E. Vettori", "team": "Tema Sinergie Faenza", "gp": 18, "min": 553, "value": 15.83, "pt": 16.8, "as": 1.4, "rt": 4.4}, {"giocatore": "E. Leonzio", "team": "Verodol CBD Pielle Livorno", "gp": 19, "min": 496, "value": 15.68, "pt": 14.2, "as": 3.1, "rt": 3.2}, {"giocatore": "D. Vavoli", "team": "Ristopro Fabriano", "gp": 19, "min": 516, "value": 15.58, "pt": 10.1, "as": 2.4, "rt": 7.1}]}, "2PT_pct": {"abs": [{"giocatore": "B. Sacchetti", "team": "Benacquista Assicurazioni Latina", "gp": 11, "value": 73.5, "pt": 13.5, "fg_made": 42, "fg_att": 65}, {"giocatore": "R. Salvioni", "team": "Luiss Roma", "gp": 18, "value": 69.9, "pt": 12.6, "fg_made": 83, "fg_att": 133}, {"giocatore": "W. Tio Tiagande", "team": "Adamant Ferrara", "gp": 19, "value": 69.8, "pt": 12.2, "fg_made": 98, "fg_att": 149}, {"giocatore": "A. Bazan", "team": "Virtus GVM Roma 1960", "gp": 19, "value": 68.8, "pt": 4.5, "fg_made": 33, "fg_att": 63}, {"giocatore": "D. Toscano", "team": "Virtus GVM Roma 1960", "gp": 19, "value": 68.3, "pt": 7.0, "fg_made": 50, "fg_att": 100}, {"giocatore": "G. Tambwe", "team": "Virtus Imola", "gp": 17, "value": 66.7, "pt": 2.8, "fg_made": 22, "fg_att": 33}, {"giocatore": "L. Fabiani", "team": "Solbat Golfo Piombino", "gp": 18, "value": 65.9, "pt": 8.5, "fg_made": 56, "fg_att": 85}, {"giocatore": "F. Gravaghi", "team": "Umana San Giobbe Chiusi", "gp": 19, "value": 65.2, "pt": 10.7, "fg_made": 65, "fg_att": 160}, {"giocatore": "M. Petrucci", "team": "Umana San Giobbe Chiusi", "gp": 19, "value": 64.5, "pt": 8.6, "fg_made": 63, "fg_att": 124}, {"giocatore": "I. Simonetti", "team": "Benacquista Assicurazioni Latina", "gp": 17, "value": 63.5, "pt": 5.9, "fg_made": 42, "fg_att": 83}, {"giocatore": "M. Bakovi?", "team": "Benacquista Assicurazioni Latina", "gp": 17, "value": 63.4, "pt": 13.3, "fg_made": 89, "fg_att": 149}, {"giocatore": "M. Gherardini", "team": "Allianz Pazienza San Severo", "gp": 19, "value": 63.4, "pt": 16.8, "fg_made": 128, "fg_att": 209}, {"giocatore": "A. Lo Biondo", "team": "Paperdi Juvecaserta 2021", "gp": 18, "value": 63.0, "pt": 7.1, "fg_made": 46, "fg_att": 77}, {"giocatore": "K. Ly-lee", "team": "Paperdi Juvecaserta 2021", "gp": 19, "value": 62.8, "pt": 4.1, "fg_made": 30, "fg_att": 49}, {"giocatore": "M. Radunic", "team": "Paperdi Juvecaserta 2021", "gp": 19, "value": 62.6, "pt": 13.4, "fg_made": 92, "fg_att": 168}, {"giocatore": "B. Misolic", "team": "Power Basket Nocera", "gp": 18, "value": 62.4, "pt": 7.9, "fg_made": 58, "fg_att": 100}, {"giocatore": "G. Lenti", "team": "Virtus GVM Roma 1960", "gp": 19, "value": 61.3, "pt": 9.1, "fg_made": 54, "fg_att": 104}, {"giocatore": "M. Seck", "team": "PSA Basket Casoria", "gp": 18, "value": 61.2, "pt": 5.2, "fg_made": 30, "fg_att": 49}, {"giocatore": "G. Leggio", "team": "Virtus GVM Roma 1960", "gp": 19, "value": 61.0, "pt": 9.8, "fg_made": 68, "fg_att": 131}, {"giocatore": "L. Lomtazde", "team": "Consultinvest Loreto Pesaro", "gp": 19, "value": 60.6, "pt": 2.4, "fg_made": 21, "fg_att": 39}]}, "3PT_pct": {"abs": [{"giocatore": "B. Sacchetti", "team": "Benacquista Assicurazioni Latina", "gp": 11, "value": 54.8, "pt": 13.5, "fg_made": 42, "fg_att": 65}, {"giocatore": "T. Van Ounsem", "team": "Tema Sinergie Faenza", "gp": 18, "value": 54.3, "pt": 13.3, "fg_made": 87, "fg_att": 185}, {"giocatore": "A. Lo Biondo", "team": "Paperdi Juvecaserta 2021", "gp": 18, "value": 52.2, "pt": 7.1, "fg_made": 46, "fg_att": 77}, {"giocatore": "R. Romano", "team": "Tema Sinergie Faenza", "gp": 13, "value": 45.2, "pt": 4.2, "fg_made": 16, "fg_att": 39}, {"giocatore": "S. Bruno", "team": "General Contractor Jesi", "gp": 19, "value": 45.2, "pt": 6.8, "fg_made": 43, "fg_att": 102}, {"giocatore": "A. Novori", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "value": 44.8, "pt": 5.9, "fg_made": 38, "fg_att": 76}, {"giocatore": "D. Gabrovsek", "team": "Verodol CBD Pielle Livorno", "gp": 19, "value": 44.6, "pt": 13.6, "fg_made": 91, "fg_att": 179}, {"giocatore": "G. Leggio", "team": "Virtus GVM Roma 1960", "gp": 19, "value": 44.4, "pt": 9.8, "fg_made": 68, "fg_att": 131}, {"giocatore": "A. Fragonara", "team": "Tema Sinergie Faenza", "gp": 18, "value": 43.8, "pt": 14.6, "fg_made": 85, "fg_att": 180}, {"giocatore": "R. Romondia", "team": "Ristopro Fabriano", "gp": 18, "value": 43.7, "pt": 8.9, "fg_made": 49, "fg_att": 107}, {"giocatore": "D. Paiano", "team": "OraS\u00ec Ravenna", "gp": 19, "value": 43.3, "pt": 3.6, "fg_made": 22, "fg_att": 59}, {"giocatore": "K. Palsson", "team": "General Contractor Jesi", "gp": 16, "value": 42.6, "pt": 14.8, "fg_made": 62, "fg_att": 165}, {"giocatore": "D. Marchini", "team": "Adamant Ferrara", "gp": 19, "value": 42.4, "pt": 10.5, "fg_made": 69, "fg_att": 142}, {"giocatore": "D. Raucci", "team": "UP Andrea Costa Imola", "gp": 19, "value": 42.2, "pt": 7.8, "fg_made": 46, "fg_att": 97}, {"giocatore": "T. Molteni", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "value": 42.2, "pt": 10.8, "fg_made": 78, "fg_att": 166}, {"giocatore": "M. Barattini", "team": "Virtus GVM Roma 1960", "gp": 19, "value": 42.1, "pt": 10.7, "fg_made": 50, "fg_att": 127}, {"giocatore": "M. Lagan\u00e0", "team": "Paperdi Juvecaserta 2021", "gp": 13, "value": 42.1, "pt": 5.9, "fg_made": 24, "fg_att": 52}, {"giocatore": "M. Pasqualin", "team": "Luiss Roma", "gp": 18, "value": 42.0, "pt": 10.4, "fg_made": 57, "fg_att": 129}, {"giocatore": "L. Toniato", "team": "General Contractor Jesi", "gp": 13, "value": 41.7, "pt": 4.5, "fg_made": 20, "fg_att": 58}, {"giocatore": "T. Bellini", "team": "Adamant Ferrara", "gp": 19, "value": 41.7, "pt": 4.1, "fg_made": 28, "fg_att": 64}]}, "TL_pct": {"abs": [{"giocatore": "E. Leonzio", "team": "Verodol CBD Pielle Livorno", "gp": 19, "value": 97.6, "pt": 14.2, "fg_made": 76, "fg_att": 179}, {"giocatore": "V. Nobile", "team": "Paperdi Juvecaserta 2021", "gp": 18, "value": 97.5, "pt": 8.1, "fg_made": 42, "fg_att": 128}, {"giocatore": "T. De Gregori", "team": "Consorzio Leonardo Dany Quarrata", "gp": 17, "value": 96.3, "pt": 8.3, "fg_made": 51, "fg_att": 135}, {"giocatore": "L. Abega", "team": "Ristopro Fabriano", "gp": 6, "value": 95.5, "pt": 10.5, "fg_made": 18, "fg_att": 64}, {"giocatore": "A. Renzi", "team": "Adamant Ferrara", "gp": 19, "value": 94.8, "pt": 11.9, "fg_made": 75, "fg_att": 188}, {"giocatore": "G. Dron", "team": "OraS\u00ec Ravenna", "gp": 18, "value": 93.9, "pt": 12.4, "fg_made": 67, "fg_att": 167}, {"giocatore": "G. Sanguinetti", "team": "UP Andrea Costa Imola", "gp": 18, "value": 93.3, "pt": 10.5, "fg_made": 63, "fg_att": 163}, {"giocatore": "M. Venucci", "team": "Verodol CBD Pielle Livorno", "gp": 19, "value": 93.2, "pt": 7.9, "fg_made": 36, "fg_att": 107}, {"giocatore": "D. Marchini", "team": "Adamant Ferrara", "gp": 19, "value": 91.9, "pt": 10.5, "fg_made": 69, "fg_att": 142}, {"giocatore": "J. Lucarelli", "team": "Verodol CBD Pielle Livorno", "gp": 17, "value": 91.3, "pt": 9.7, "fg_made": 60, "fg_att": 135}, {"giocatore": "Y. Rodriguez", "team": "Virtus GVM Roma 1960", "gp": 18, "value": 90.5, "pt": 11.6, "fg_made": 66, "fg_att": 171}, {"giocatore": "B. Sacchetti", "team": "Benacquista Assicurazioni Latina", "gp": 11, "value": 90.4, "pt": 13.5, "fg_made": 42, "fg_att": 65}, {"giocatore": "F. Dri", "team": "Ristopro Fabriano", "gp": 19, "value": 89.8, "pt": 10.6, "fg_made": 60, "fg_att": 155}, {"giocatore": "C. Cappelletti", "team": "Power Basket Nocera", "gp": 17, "value": 89.7, "pt": 11.7, "fg_made": 59, "fg_att": 152}, {"giocatore": "A. Pastore", "team": "Benacquista Assicurazioni Latina", "gp": 17, "value": 89.5, "pt": 10.0, "fg_made": 55, "fg_att": 130}, {"giocatore": "D. Lucas", "team": "Allianz Pazienza San Severo", "gp": 19, "value": 89.4, "pt": 12.4, "fg_made": 84, "fg_att": 207}, {"giocatore": "M. Pasqualin", "team": "Luiss Roma", "gp": 18, "value": 88.6, "pt": 10.4, "fg_made": 57, "fg_att": 129}, {"giocatore": "G. Berra", "team": "PSA Basket Casoria", "gp": 18, "value": 88.1, "pt": 11.8, "fg_made": 68, "fg_att": 162}, {"giocatore": "L. Raffaelli", "team": "Umana San Giobbe Chiusi", "gp": 19, "value": 87.9, "pt": 9.6, "fg_made": 66, "fg_att": 152}, {"giocatore": "F. Bugatti", "team": "Allianz Pazienza San Severo", "gp": 19, "value": 87.6, "pt": 16.8, "fg_made": 108, "fg_att": 222}]}, "eFG_pct": {"abs": [{"giocatore": "B. Sacchetti", "team": "Benacquista Assicurazioni Latina", "gp": 11, "value": 77.7, "pt": 13.5, "fg_made": 42, "fg_att": 65, "pct_2pt": 73.5, "pct_3pt": 54.8, "pct_tl": 90.4}, {"giocatore": "A. Lo Biondo", "team": "Paperdi Juvecaserta 2021", "gp": 18, "value": 67.5, "pt": 7.1, "fg_made": 46, "fg_att": 77, "pct_2pt": 63.0, "pct_3pt": 52.2, "pct_tl": 79.3}, {"giocatore": "R. Salvioni", "team": "Luiss Roma", "gp": 18, "value": 66.5, "pt": 12.6, "fg_made": 83, "fg_att": 133, "pct_2pt": 69.9, "pct_3pt": 36.7, "pct_tl": 64.9}, {"giocatore": "W. Tio Tiagande", "team": "Adamant Ferrara", "gp": 19, "value": 66.1, "pt": 12.2, "fg_made": 98, "fg_att": 149, "pct_2pt": 69.8, "pct_3pt": 10.0, "pct_tl": 70.0}, {"giocatore": "L. Fabiani", "team": "Solbat Golfo Piombino", "gp": 18, "value": 65.9, "pt": 8.5, "fg_made": 56, "fg_att": 85, "pct_2pt": 65.9, "pct_3pt": 0.0, "pct_tl": 73.2}, {"giocatore": "G. Leggio", "team": "Virtus GVM Roma 1960", "gp": 19, "value": 64.1, "pt": 9.8, "fg_made": 68, "fg_att": 131, "pct_2pt": 61.0, "pct_3pt": 44.4, "pct_tl": 78.3}, {"giocatore": "M. Gherardini", "team": "Allianz Pazienza San Severo", "gp": 19, "value": 62.4, "pt": 16.8, "fg_made": 128, "fg_att": 209, "pct_2pt": 63.4, "pct_3pt": 33.3, "pct_tl": 69.4}, {"giocatore": "M. Lagan\u00e0", "team": "Paperdi Juvecaserta 2021", "gp": 13, "value": 61.5, "pt": 5.9, "fg_made": 24, "fg_att": 52, "pct_2pt": 57.1, "pct_3pt": 42.1, "pct_tl": 92.9}, {"giocatore": "A. Bazan", "team": "Virtus GVM Roma 1960", "gp": 19, "value": 61.1, "pt": 4.5, "fg_made": 33, "fg_att": 63, "pct_2pt": 68.8, "pct_3pt": 35.5, "pct_tl": 72.7}, {"giocatore": "M. Bakovi?", "team": "Benacquista Assicurazioni Latina", "gp": 17, "value": 61.1, "pt": 13.3, "fg_made": 89, "fg_att": 149, "pct_2pt": 63.4, "pct_3pt": 26.7, "pct_tl": 69.8}, {"giocatore": "M. Mennella", "team": "Verodol CBD Pielle Livorno", "gp": 19, "value": 60.6, "pt": 6.6, "fg_made": 38, "fg_att": 80, "pct_2pt": 68.0, "pct_3pt": 38.2, "pct_tl": 82.9}, {"giocatore": "R. Romondia", "team": "Ristopro Fabriano", "gp": 18, "value": 60.3, "pt": 8.9, "fg_made": 49, "fg_att": 107, "pct_2pt": 50.0, "pct_3pt": 43.7, "pct_tl": 84.2}, {"giocatore": "A. Fragonara", "team": "Tema Sinergie Faenza", "gp": 18, "value": 60.0, "pt": 14.6, "fg_made": 85, "fg_att": 180, "pct_2pt": 52.0, "pct_3pt": 43.8, "pct_tl": 79.3}, {"giocatore": "O. Maiga", "team": "Benacquista Assicurazioni Latina", "gp": 18, "value": 59.4, "pt": 5.2, "fg_made": 30, "fg_att": 69, "pct_2pt": 50.0, "pct_3pt": 41.5, "pct_tl": 91.7}, {"giocatore": "M. Radunic", "team": "Paperdi Juvecaserta 2021", "gp": 19, "value": 59.2, "pt": 13.4, "fg_made": 92, "fg_att": 168, "pct_2pt": 62.6, "pct_3pt": 33.3, "pct_tl": 84.6}, {"giocatore": "D. Gabrovsek", "team": "Verodol CBD Pielle Livorno", "gp": 19, "value": 58.9, "pt": 13.6, "fg_made": 91, "fg_att": 179, "pct_2pt": 54.4, "pct_3pt": 44.6, "pct_tl": 82.8}, {"giocatore": "A. Novori", "team": "Consorzio Leonardo Dany Quarrata", "gp": 19, "value": 58.6, "pt": 5.9, "fg_made": 38, "fg_att": 76, "pct_2pt": 53.2, "pct_3pt": 44.8, "pct_tl": 69.7}, {"giocatore": "D. Marchini", "team": "Adamant Ferrara", "gp": 19, "value": 58.5, "pt": 10.5, "fg_made": 69, "fg_att": 142, "pct_2pt": 53.9, "pct_3pt": 42.4, "pct_tl": 91.9}, {"giocatore": "S. Bruno", "team": "General Contractor Jesi", "gp": 19, "value": 58.3, "pt": 6.8, "fg_made": 43, "fg_att": 102, "pct_2pt": 34.5, "pct_3pt": 45.2, "pct_tl": 64.7}, {"giocatore": "B. Misolic", "team": "Power Basket Nocera", "gp": 18, "value": 58.0, "pt": 7.9, "fg_made": 58, "fg_att": 100, "pct_2pt": 62.4, "pct_3pt": 0.0, "pct_tl": 67.5}]}, "TS_pct": {"abs": [{"giocatore": "B. Sacchetti", "team": "Benacquista Assicurazioni Latina", "gp": 11, "value": 84.2, "pt": 13.5, "fg_made": 42, "fg_att": 65, "pct_2pt": 73.5, "pct_3pt": 54.8, "pct_tl": 90.4}, {"giocatore": "A. Lo Biondo", "team": "Paperdi Juvecaserta 2021", "gp": 18, "value": 70.7, "pt": 7.1, "fg_made": 46, "fg_att": 77, "pct_2pt": 63.0, "pct_3pt": 52.2, "pct_tl": 79.3}, {"giocatore": "L. Fabiani", "team": "Solbat Golfo Piombino", "gp": 18, "value": 69.8, "pt": 8.5, "fg_made": 56, "fg_att": 85, "pct_2pt": 65.9, "pct_3pt": 0.0, "pct_tl": 73.2}, {"giocatore": "R. Salvioni", "team": "Luiss Roma", "gp": 18, "value": 68.0, "pt": 12.6, "fg_made": 83, "fg_att": 133, "pct_2pt": 69.9, "pct_3pt": 36.7, "pct_tl": 64.9}, {"giocatore": "W. Tio Tiagande", "team": "Adamant Ferrara", "gp": 19, "value": 67.8, "pt": 12.2, "fg_made": 98, "fg_att": 149, "pct_2pt": 69.8, "pct_3pt": 10.0, "pct_tl": 70.0}, {"giocatore": "M. Lagan\u00e0", "team": "Paperdi Juvecaserta 2021", "gp": 13, "value": 66.2, "pt": 5.9, "fg_made": 24, "fg_att": 52, "pct_2pt": 57.1, "pct_3pt": 42.1, "pct_tl": 92.9}, {"giocatore": "M. Mennella", "team": "Verodol CBD Pielle Livorno", "gp": 19, "value": 66.0, "pt": 6.6, "fg_made": 38, "fg_att": 80, "pct_2pt": 68.0, "pct_3pt": 38.2, "pct_tl": 82.9}, {"giocatore": "G. Leggio", "team": "Virtus GVM Roma 1960", "gp": 19, "value": 65.9, "pt": 9.8, "fg_made": 68, "fg_att": 131, "pct_2pt": 61.0, "pct_3pt": 44.4, "pct_tl": 78.3}, {"giocatore": "R. Romondia", "team": "Ristopro Fabriano", "gp": 18, "value": 65.1, "pt": 8.9, "fg_made": 49, "fg_att": 107, "pct_2pt": 50.0, "pct_3pt": 43.7, "pct_tl": 84.2}, {"giocatore": "M. Gherardini", "team": "Allianz Pazienza San Severo", "gp": 19, "value": 64.9, "pt": 16.8, "fg_made": 128, "fg_att": 209, "pct_2pt": 63.4, "pct_3pt": 33.3, "pct_tl": 69.4}, {"giocatore": "M. Radunic", "team": "Paperdi Juvecaserta 2021", "gp": 19, "value": 64.6, "pt": 13.4, "fg_made": 92, "fg_att": 168, "pct_2pt": 62.6, "pct_3pt": 33.3, "pct_tl": 84.6}, {"giocatore": "F. Mehmedoviq", "team": "PSA Basket Casoria", "gp": 18, "value": 64.5, "pt": 5.8, "fg_made": 28, "fg_att": 55, "pct_2pt": 50.9, "pct_3pt": 0.0, "pct_tl": 81.7}, {"giocatore": "M. Bakovi?", "team": "Benacquista Assicurazioni Latina", "gp": 17, "value": 63.9, "pt": 13.3, "fg_made": 89, "fg_att": 149, "pct_2pt": 63.4, "pct_3pt": 26.7, "pct_tl": 69.8}, {"giocatore": "A. Fragonara", "team": "Tema Sinergie Faenza", "gp": 18, "value": 63.7, "pt": 14.6, "fg_made": 85, "fg_att": 180, "pct_2pt": 52.0, "pct_3pt": 43.8, "pct_tl": 79.3}, {"giocatore": "D. Gabrovsek", "team": "Verodol CBD Pielle Livorno", "gp": 19, "value": 63.3, "pt": 13.6, "fg_made": 91, "fg_att": 179, "pct_2pt": 54.4, "pct_3pt": 44.6, "pct_tl": 82.8}, {"giocatore": "G. Lenti", "team": "Virtus GVM Roma 1960", "gp": 19, "value": 63.3, "pt": 9.1, "fg_made": 54, "fg_att": 104, "pct_2pt": 61.3, "pct_3pt": 20.8, "pct_tl": 81.1}, {"giocatore": "D. Marchini", "team": "Adamant Ferrara", "gp": 19, "value": 63.2, "pt": 10.5, "fg_made": 69, "fg_att": 142, "pct_2pt": 53.9, "pct_3pt": 42.4, "pct_tl": 91.9}, {"giocatore": "M. Pasqualin", "team": "Luiss Roma", "gp": 18, "value": 63.0, "pt": 10.4, "fg_made": 57, "fg_att": 129, "pct_2pt": 47.9, "pct_3pt": 42.0, "pct_tl": 88.6}, {"giocatore": "D. D'argenzio", "team": "Paperdi Juvecaserta 2021", "gp": 19, "value": 62.9, "pt": 19.1, "fg_made": 109, "fg_att": 238, "pct_2pt": 53.6, "pct_3pt": 40.4, "pct_tl": 76.5}, {"giocatore": "A. Bazan", "team": "Virtus GVM Roma 1960", "gp": 19, "value": 62.6, "pt": 4.5, "fg_made": 33, "fg_att": 63, "pct_2pt": 68.8, "pct_3pt": 35.5, "pct_tl": 72.7}]}};
+        const statsConfig = [{"id": "PT", "name": "Punti", "desc": "Punti segnati"}, {"id": "AS", "name": "Assist", "desc": "Passaggi decisivi per canestro"}, {"id": "RT", "name": "Rimbalzi", "desc": "Rimbalzi totali (offensivi + difensivi)", "has_components": true}, {"id": "PR", "name": "Recuperi", "desc": "Palle recuperate"}, {"id": "ST", "name": "Stoppate", "desc": "Tiri avversari stoppati"}, {"id": "EFF", "name": "VAL", "desc": "Valutazione ufficiale LNP: (PT + RT + AS + PR + ST + FS) - (PP + FF + tiri sbagliati)"}, {"id": "2PT_pct", "name": "2PT%", "is_pct": true, "desc": "Percentuale tiri da 2 punti (min. 30 tentativi)"}, {"id": "3PT_pct", "name": "3PT%", "is_pct": true, "desc": "Percentuale tiri da 3 punti (min. 20 tentativi)"}, {"id": "TL_pct", "name": "TL%", "is_pct": true, "desc": "Percentuale tiri liberi (min. 20 tentativi)"}, {"id": "eFG_pct", "name": "eFG%", "is_pct": true, "desc": "Effective FG%: (FGM + 0.5 \u00d7 3PM) / FGA - pesa di pi\u00f9 i tiri da 3 (min. 50 tentativi)"}, {"id": "TS_pct", "name": "TS%", "is_pct": true, "desc": "True Shooting%: PTS / (2 \u00d7 (FGA + 0.44 \u00d7 FTA)) - efficienza complessiva al tiro includendo TL (min. 50 tentativi)"}];
+        const mainColor = '#302B8F';
+        let currentMode = 'abs';
+        let currentStat = 'PT';
+
+        function initTabs() {
+            const tabsDiv = document.getElementById('stat-tabs');
+            tabsDiv.innerHTML = statsConfig.map(s => `
+                <button id="tab-${s.id}" onclick="setStat('${s.id}')"
+                    style="padding: 10px 20px; border: 2px solid ${mainColor}; border-radius: 8px;
+                           cursor: pointer; font-weight: 600; transition: all 0.2s;">
+                    ${s.name}
+                </button>
+            `).join('');
+            updateTabStyles();
+        }
+
+        function updateTabStyles() {
+            statsConfig.forEach(s => {
+                const btn = document.getElementById('tab-' + s.id);
+                if (s.id === currentStat) {
+                    btn.style.background = mainColor;
+                    btn.style.color = 'white';
+                } else {
+                    btn.style.background = 'white';
+                    btn.style.color = mainColor;
+                }
+            });
+        }
+
+        function setMode(mode) {
+            // Se per 36 min non disponibile per questa stat, fallback a pg
+            if (mode === 'pm' && !statsData[currentStat].pm) {
+                mode = 'pg';
+            }
+            currentMode = mode;
+            ['abs', 'pg', 'pm'].forEach(m => {
+                const btn = document.getElementById('btn-' + m);
+                btn.style.background = mode === m ? mainColor : 'transparent';
+                btn.style.color = mode === m ? 'white' : '#666';
+            });
+            const notes = {
+                'abs': '',
+                'pg': '(min. 5 partite)',
+                'pm': '(min. 100 minuti, proiettato su 40 min)'
+            };
+            document.getElementById('mode-note').textContent = notes[mode];
+            render();
+        }
+
+        function setStat(stat) {
+            currentStat = stat;
+            updateTabStyles();
+            updateDescription();
+            // Se la modalità pm non è disponibile per questa stat, passa a pg
+            if (currentMode === 'pm' && !statsData[stat].pm) {
+                setMode('pg');
+                return;
+            }
+            render();
+        }
+
+        function updateDescription() {
+            const config = statsConfig.find(s => s.id === currentStat);
+            const descDiv = document.getElementById('stat-description');
+            descDiv.innerHTML = `<strong>${config.name}:</strong> ${config.desc || ''}`;
+        }
+
+        function render() {
+            let data = statsData[currentStat][currentMode];
+            // Fallback se dati non disponibili
+            if (!data) {
+                data = statsData[currentStat].pg || statsData[currentStat].abs;
+            }
+            if (!data) {
+                document.getElementById('table-container').innerHTML = '<p>Dati non disponibili per questa modalità.</p>';
+                return;
+            }
+            const config = statsConfig.find(s => s.id === currentStat);
+            const suffixMap = { 'abs': '', 'pg': '/g', 'pm': '/40m' };
+            const suffix = suffixMap[currentMode] || '';
+            const statLabel = config.name + suffix;
+            const isPct = config.is_pct || false;
+            const isCombined = currentStat === 'eFG_pct' || currentStat === 'TS_pct';
+            const hasComponents = config.has_components || false;
+            const isRT = currentStat === 'RT';
+
+            // Tabella
+            const showMin = currentMode === 'pm';
+            let headerHtml = '';
+            if (isPct) {
+                if (isCombined) {
+                    // Per eFG% e TS%, mostra anche le percentuali componenti
+                    headerHtml = `
+                        <th style="padding: 10px; text-align: left;">#</th>
+                        <th style="padding: 10px; text-align: left;">Giocatore</th>
+                        <th style="padding: 10px; text-align: center;">GP</th>
+                        <th style="padding: 10px; text-align: center;">${statLabel}</th>
+                        <th style="padding: 10px; text-align: center;">2PT%</th>
+                        <th style="padding: 10px; text-align: center;">3PT%</th>
+                        <th style="padding: 10px; text-align: center;">TL%</th>
+                        <th style="padding: 10px; text-align: center;">FG</th>
+                    `;
+                } else {
+                    // Per 2PT%, 3PT%, TL%
+                    headerHtml = `
+                        <th style="padding: 10px; text-align: left;">#</th>
+                        <th style="padding: 10px; text-align: left;">Giocatore</th>
+                        <th style="padding: 10px; text-align: center;">GP</th>
+                        <th style="padding: 10px; text-align: center;">${statLabel}</th>
+                        <th style="padding: 10px; text-align: center;">FG</th>
+                        <th style="padding: 10px; text-align: center;">PT/g</th>
+                    `;
+                }
+            } else if (hasComponents && isRT) {
+                // Per Rimbalzi, mostra RO e RD
+                headerHtml = `
+                    <th style="padding: 10px; text-align: left;">#</th>
+                    <th style="padding: 10px; text-align: left;">Giocatore</th>
+                    <th style="padding: 10px; text-align: center;">GP</th>
+                    ${showMin ? '<th style="padding: 10px; text-align: center;">MIN</th>' : ''}
+                    <th style="padding: 10px; text-align: center;">${statLabel}</th>
+                    <th style="padding: 10px; text-align: center;">RO${suffix}</th>
+                    <th style="padding: 10px; text-align: center;">RD${suffix}</th>
+                    <th style="padding: 10px; text-align: center;">PT${suffix}</th>
+                `;
+            } else {
+                headerHtml = `
+                    <th style="padding: 10px; text-align: left;">#</th>
+                    <th style="padding: 10px; text-align: left;">Giocatore</th>
+                    <th style="padding: 10px; text-align: center;">GP</th>
+                    ${showMin ? '<th style="padding: 10px; text-align: center;">MIN</th>' : ''}
+                    <th style="padding: 10px; text-align: center;">${statLabel}</th>
+                    <th style="padding: 10px; text-align: center;">PT${suffix}</th>
+                    <th style="padding: 10px; text-align: center;">AS${suffix}</th>
+                    <th style="padding: 10px; text-align: center;">RT${suffix}</th>
+                `;
+            }
+
+            let tableHtml = `
+                <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                    <thead>
+                        <tr style="background: ${mainColor}; color: white;">
+                            ${headerHtml}
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            data.forEach((row, i) => {
+                const bg = i % 2 === 0 ? 'white' : '#f9f9f9';
+                let rowHtml = '';
+                if (isPct) {
+                    if (isCombined) {
+                        // Per eFG% e TS% mostra componenti
+                        rowHtml = `
+                            <td style="padding: 8px 10px; font-weight: bold;">${i + 1}</td>
+                            <td style="padding: 8px 10px;">
+                                <div style="font-weight: 600;">${row.giocatore}</div>
+                                <div style="font-size: 12px; color: #666;">${row.team}</div>
+                            </td>
+                            <td style="padding: 8px 10px; text-align: center;">${row.gp}</td>
+                            <td style="padding: 8px 10px; text-align: center; font-weight: bold; color: ${mainColor};">${row.value}%</td>
+                            <td style="padding: 8px 10px; text-align: center;">${row.pct_2pt || '-'}%</td>
+                            <td style="padding: 8px 10px; text-align: center;">${row.pct_3pt || '-'}%</td>
+                            <td style="padding: 8px 10px; text-align: center;">${row.pct_tl || '-'}%</td>
+                            <td style="padding: 8px 10px; text-align: center; font-size: 12px;">${row.fg_made}/${row.fg_att}</td>
+                        `;
+                    } else {
+                        // Per 2PT%, 3PT%, TL%
+                        rowHtml = `
+                            <td style="padding: 8px 10px; font-weight: bold;">${i + 1}</td>
+                            <td style="padding: 8px 10px;">
+                                <div style="font-weight: 600;">${row.giocatore}</div>
+                                <div style="font-size: 12px; color: #666;">${row.team}</div>
+                            </td>
+                            <td style="padding: 8px 10px; text-align: center;">${row.gp}</td>
+                            <td style="padding: 8px 10px; text-align: center; font-weight: bold; color: ${mainColor};">${row.value}%</td>
+                            <td style="padding: 8px 10px; text-align: center; font-size: 12px;">${row.fg_made}/${row.fg_att}</td>
+                            <td style="padding: 8px 10px; text-align: center;">${row.pt}</td>
+                        `;
+                    }
+                } else if (hasComponents && isRT) {
+                    // Per Rimbalzi, mostra RO e RD
+                    rowHtml = `
+                        <td style="padding: 8px 10px; font-weight: bold;">${i + 1}</td>
+                        <td style="padding: 8px 10px;">
+                            <div style="font-weight: 600;">${row.giocatore}</div>
+                            <div style="font-size: 12px; color: #666;">${row.team}</div>
+                        </td>
+                        <td style="padding: 8px 10px; text-align: center;">${row.gp}</td>
+                        ${showMin ? `<td style="padding: 8px 10px; text-align: center;">${row.min}</td>` : ''}
+                        <td style="padding: 8px 10px; text-align: center; font-weight: bold; color: ${mainColor};">${row.value}</td>
+                        <td style="padding: 8px 10px; text-align: center;">${row.ro !== undefined ? row.ro : '-'}</td>
+                        <td style="padding: 8px 10px; text-align: center;">${row.rd !== undefined ? row.rd : '-'}</td>
+                        <td style="padding: 8px 10px; text-align: center;">${row.pt}</td>
+                    `;
+                } else {
+                    rowHtml = `
+                        <td style="padding: 8px 10px; font-weight: bold;">${i + 1}</td>
+                        <td style="padding: 8px 10px;">
+                            <div style="font-weight: 600;">${row.giocatore}</div>
+                            <div style="font-size: 12px; color: #666;">${row.team}</div>
+                        </td>
+                        <td style="padding: 8px 10px; text-align: center;">${row.gp}</td>
+                        ${showMin ? `<td style="padding: 8px 10px; text-align: center;">${row.min}</td>` : ''}
+                        <td style="padding: 8px 10px; text-align: center; font-weight: bold; color: ${mainColor};">${row.value}</td>
+                        <td style="padding: 8px 10px; text-align: center;">${row.pt}</td>
+                        <td style="padding: 8px 10px; text-align: center;">${row.as}</td>
+                        <td style="padding: 8px 10px; text-align: center;">${row.rt}</td>
+                    `;
+                }
+                tableHtml += `<tr style="background: ${bg};">${rowHtml}</tr>`;
+            });
+
+            tableHtml += '</tbody></table>';
+            document.getElementById('table-container').innerHTML = tableHtml;
+
+            // Grafico (top 10)
+            const top10 = data.slice(0, 10).reverse();
+            const chartData = [{
+                type: 'bar',
+                orientation: 'h',
+                x: top10.map(r => r.value),
+                y: top10.map(r => r.giocatore),
+                marker: { color: mainColor },
+                text: top10.map(r => r.value),
+                textposition: 'outside',
+                hovertemplate: '%{y}: %{x}<extra></extra>'
+            }];
+
+            const layout = {
+                title: { text: 'Top 10 ' + statLabel, font: { size: 16 } },
+                height: 400,
+                margin: { l: 150, r: 50, t: 50, b: 40 },
+                xaxis: { title: statLabel },
+                yaxis: { automargin: true }
+            };
+
+            Plotly.newPlot('chart-container', chartData, layout, { responsive: true });
+        }
+
+        initTabs();
+        updateDescription();
+        render();
+    </script>
+    
+
+        <div class="site-footer">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <div>Ultimo aggiornamento: 13/01/2026 22:35</div>
+            <div>Generato con LNP Stats</div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Espandi sezione corrente
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('expanded');
+            });
+        });
+
+        // Espandi automaticamente la sezione attiva
+        const activeLink = document.querySelector('.sidebar-link.active');
+        if (activeLink) {
+            let parent = activeLink.closest('.sidebar-section');
+            if (parent) parent.classList.add('expanded');
+        }
+    </script>
+</body>
+</html>

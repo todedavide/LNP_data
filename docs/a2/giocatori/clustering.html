@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tipologie - Serie A2 - LNP Stats</title>
+    <link rel="icon" type="image/png" href="../../static/favicon180x180.png">
+    <link rel="stylesheet" href="../../static/twinplay_brand.css">
+    <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--tp-gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--tp-spacing-lg);
+            z-index: 1000;
+            box-shadow: var(--tp-shadow-md);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-md);
+        }
+
+        .header-logo img {
+            height: 36px;
+        }
+
+        .header-logo a {
+            color: white;
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .header-breadcrumb {
+            margin-left: var(--tp-spacing-xl);
+            opacity: 0.8;
+            font-size: 0.875rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: var(--tp-spacing-md);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--tp-light);
+        }
+
+        .sidebar-section-header {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            color: var(--tp-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-sm);
+            transition: background 0.2s;
+        }
+
+        .sidebar-section-header:hover {
+            background: var(--tp-light);
+        }
+
+        .sidebar-section-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            font-size: 0.75rem;
+        }
+
+        .sidebar-section.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-subsection {
+            display: none;
+            background: var(--tp-light);
+        }
+
+        .sidebar-section.expanded .sidebar-subsection {
+            display: block;
+        }
+
+        .sidebar-category {
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: var(--tp-spacing-lg);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--tp-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: var(--tp-spacing-sm);
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: calc(var(--tp-spacing-lg) + 10px);
+            color: var(--tp-dark);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: white;
+            border-left-color: var(--tp-primary);
+        }
+
+        .sidebar-link.active {
+            background: white;
+            border-left-color: var(--tp-primary);
+            color: var(--tp-secondary);
+            font-weight: 600;
+        }
+
+        .sidebar-home-btn {
+            display: block;
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--tp-light);
+            transition: all 0.2s;
+        }
+
+        .sidebar-home-btn:hover {
+            background: var(--tp-light);
+            color: var(--tp-secondary);
+        }
+
+        .sidebar-competition {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            background: var(--tp-gradient-primary);
+            color: white;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: var(--tp-spacing-sm);
+        }
+
+        .sidebar:empty + .main {
+            margin-left: 0;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: var(--tp-spacing-xl);
+            min-height: calc(100vh - var(--header-height));
+            background: var(--tp-light);
+        }
+
+        .page-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.75rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-xs);
+        }
+
+        .page-subtitle {
+            color: var(--tp-gray);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .content-section {
+            background: white;
+            border-radius: var(--tp-radius-lg);
+            padding: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-lg);
+            box-shadow: var(--tp-shadow-sm);
+        }
+
+        .section-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.25rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-lg);
+            padding-bottom: var(--tp-spacing-sm);
+            border-bottom: 2px solid var(--tp-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .stat-card {
+            background: var(--tp-gradient-primary);
+            color: white;
+            padding: var(--tp-spacing-lg);
+            border-radius: var(--tp-radius-lg);
+            text-align: center;
+        }
+
+        .stat-card.accent {
+            background: var(--tp-gradient-accent);
+            color: var(--tp-dark);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+        }
+
+        .stat-value {
+            font-family: var(--tp-font-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: var(--tp-spacing-xs);
+        }
+
+        /* Plotly responsive */
+        .js-plotly-plot {
+            width: 100% !important;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            font-size: 0.8rem;
+        }
+
+        .site-footer img {
+            height: 24px;
+            margin-bottom: var(--tp-spacing-sm);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="header-logo">
+            <img src="../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <a href="../../index.html">LNP Stats</a>
+        </div>
+        <div class="header-breadcrumb">Serie A2 / Analisi / Tipologie</div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        
+    <a href="../../index.html" class="sidebar-home-btn">
+        ← Cambia campionato
+    </a>
+    <div class="sidebar-competition">
+        Serie A2
+    </div>
+    <div class="sidebar-category">Squadre</div><a href="../../a2/squadre/classifiche.html" class="sidebar-link ">Classifiche & Stats</a><a href="../../a2/squadre/radar.html" class="sidebar-link ">Radar Squadre</a><a href="../../a2/squadre/vittorie-sconfitte.html" class="sidebar-link ">Vittorie vs Sconfitte</a><a href="../../a2/squadre/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../a2/squadre/quando-vince.html" class="sidebar-link ">Quando Vince</a><a href="../../a2/squadre/andamento.html" class="sidebar-link ">Andamento & Parziali</a><div class="sidebar-category">Giocatori</div><a href="../../a2/giocatori/statistiche.html" class="sidebar-link ">Statistiche & Percentili</a><a href="../../a2/giocatori/radar.html" class="sidebar-link ">Radar Confronto</a><a href="../../a2/giocatori/consistenza.html" class="sidebar-link ">Consistenza</a><a href="../../a2/giocatori/simili.html" class="sidebar-link ">Giocatori Simili</a><a href="../../a2/giocatori/forma.html" class="sidebar-link ">Forma Recente</a><a href="../../a2/giocatori/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../a2/giocatori/distribuzione-tiri.html" class="sidebar-link ">Distribuzione Tiri</a><a href="../../a2/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../a2/giocatori/clustering.html" class="sidebar-link active">Clustering & Tipologie</a><a href="../../a2/giocatori/dipendenza.html" class="sidebar-link ">Dipendenza Squadra</a><a href="../../a2/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
+    </nav>
+
+    <main class="main">
+        <h1 class="page-title">Tipologie Giocatori</h1>
+        <p class="page-subtitle">Serie A2</p>
+
+        
+    <div class="content-section">
+        <h2 class="section-title">Tipologie di Giocatori</h2>
+        <p style="color: #666; margin-bottom: 20px;">
+            Ogni giocatore viene assegnato all'archetipo più simile al suo profilo statistico.
+            La similarità è calcolata confrontando i percentili del giocatore con il profilo ideale di ogni archetipo.
+        </p>
+
+        <div id="archetype-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px;"></div>
+
+        <div id="players-section" style="display: none;">
+            <h3 id="archetype-title" style="margin-bottom: 15px;"></h3>
+            <div id="players-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;"></div>
+        </div>
+    </div>
+
+    <script>
+        const playersData = [{"name": "A. Amato", "team": "Wegreenit Urania Milano", "tipo": "Creatore", "match": 99, "color": "#00F95B", "profile": {"PT": 56, "AS": 92, "RT": 25, "PR": 67, "ST": 15}, "stats": {"PT": 8.4, "AS": 3.7, "RT": 2.1, "PR": 0.8, "ST": 0.0}}, {"name": "A. Amici", "team": "UEB Gesteco Cividale", "tipo": "Creatore", "match": 81, "color": "#00F95B", "profile": {"PT": 4, "AS": 24, "RT": 4, "PR": 1, "ST": 15}, "stats": {"PT": 2.0, "AS": 0.7, "RT": 0.9, "PR": 0.1, "ST": 0.0}}, {"name": "A. Bertini", "team": "Victoria Libertas Pesaro", "tipo": "Disruptor", "match": 97, "color": "#7c3aed", "profile": {"PT": 66, "AS": 52, "RT": 53, "PR": 98, "ST": 77}, "stats": {"PT": 9.7, "AS": 1.3, "RT": 3.3, "PR": 1.4, "ST": 0.2}}, {"name": "A. Chiera", "team": "Givova Scafati", "tipo": "Disruptor", "match": 92, "color": "#7c3aed", "profile": {"PT": 6, "AS": 6, "RT": 3, "PR": 11, "ST": 15}, "stats": {"PT": 2.4, "AS": 0.3, "RT": 0.8, "PR": 0.2, "ST": 0.0}}, {"name": "A. Cicchetti", "team": "Avellino Basket", "tipo": "Rimbalzista", "match": 97, "color": "#f97316", "profile": {"PT": 52, "AS": 43, "RT": 79, "PR": 24, "ST": 73}, "stats": {"PT": 8.0, "AS": 1.1, "RT": 4.6, "PR": 0.4, "ST": 0.2}}, {"name": "A. Cinciarini", "team": "Valtur Brindisi", "tipo": "Factotum", "match": 95, "color": "#06b6d4", "profile": {"PT": 45, "AS": 99, "RT": 82, "PR": 100, "ST": 37}, "stats": {"PT": 7.2, "AS": 6.2, "RT": 4.8, "PR": 1.5, "ST": 0.1}}, {"name": "A. Del Chiaro", "team": "Unieuro Forl\u00ec", "tipo": "Rimbalzista", "match": 95, "color": "#f97316", "profile": {"PT": 15, "AS": 19, "RT": 50, "PR": 13, "ST": 55}, "stats": {"PT": 3.6, "AS": 0.6, "RT": 3.2, "PR": 0.2, "ST": 0.1}}, {"name": "A. Donadoni", "team": "Liofilchem Roseto", "tipo": "Disruptor", "match": 96, "color": "#7c3aed", "profile": {"PT": 36, "AS": 54, "RT": 34, "PR": 70, "ST": 65}, "stats": {"PT": 5.8, "AS": 1.4, "RT": 2.6, "PR": 0.8, "ST": 0.1}}, {"name": "A. Fall", "team": "Sella Cento", "tipo": "Rimbalzista", "match": 94, "color": "#f97316", "profile": {"PT": 27, "AS": 11, "RT": 75, "PR": 13, "ST": 93}, "stats": {"PT": 5.0, "AS": 0.5, "RT": 4.5, "PR": 0.2, "ST": 0.5}}, {"name": "A. Filloy", "team": "Libertas Livorno", "tipo": "Creatore", "match": 94, "color": "#00F95B", "profile": {"PT": 33, "AS": 71, "RT": 18, "PR": 64, "ST": 37}, "stats": {"PT": 5.7, "AS": 2.0, "RT": 1.8, "PR": 0.8, "ST": 0.1}}, {"name": "A. Gentile", "team": "Wegreenit Urania Milano", "tipo": "Factotum", "match": 99, "color": "#06b6d4", "profile": {"PT": 92, "AS": 90, "RT": 95, "PR": 54, "ST": 77}, "stats": {"PT": 15.9, "AS": 3.5, "RT": 6.6, "PR": 0.6, "ST": 0.2}}, {"name": "A. Grande", "team": "Avellino Basket", "tipo": "Creatore", "match": 97, "color": "#00F95B", "profile": {"PT": 70, "AS": 78, "RT": 28, "PR": 75, "ST": 15}, "stats": {"PT": 10.2, "AS": 2.5, "RT": 2.3, "PR": 0.8, "ST": 0.0}}, {"name": "A. Iannuzzi", "team": "Givova Scafati", "tipo": "Rimbalzista", "match": 95, "color": "#f97316", "profile": {"PT": 34, "AS": 22, "RT": 88, "PR": 6, "ST": 86}, "stats": {"PT": 5.8, "AS": 0.6, "RT": 5.3, "PR": 0.2, "ST": 0.4}}, {"name": "A. La Torre", "team": "Ferraroni Juvi Cremona", "tipo": "Creatore", "match": 91, "color": "#00F95B", "profile": {"PT": 5, "AS": 40, "RT": 14, "PR": 24, "ST": 15}, "stats": {"PT": 2.1, "AS": 0.9, "RT": 1.7, "PR": 0.4, "ST": 0.0}}, {"name": "A. Landi", "team": "Liofilchem Roseto", "tipo": "Factotum", "match": 89, "color": "#06b6d4", "profile": {"PT": 17, "AS": 35, "RT": 22, "PR": 9, "ST": 37}, "stats": {"PT": 3.9, "AS": 0.8, "RT": 2.0, "PR": 0.2, "ST": 0.1}}, {"name": "A. Loro", "team": "Gruppo Mascio Bergamo", "tipo": "Rimbalzista", "match": 96, "color": "#f97316", "profile": {"PT": 79, "AS": 37, "RT": 91, "PR": 81, "ST": 93}, "stats": {"PT": 12.4, "AS": 0.9, "RT": 5.7, "PR": 0.9, "ST": 0.5}}, {"name": "A. Moody", "team": "Crifo Wines Ruvo di Puglia", "tipo": "Creatore", "match": 97, "color": "#00F95B", "profile": {"PT": 79, "AS": 78, "RT": 41, "PR": 68, "ST": 15}, "stats": {"PT": 12.4, "AS": 2.5, "RT": 2.9, "PR": 0.8, "ST": 0.0}}, {"name": "A. Morgillo", "team": "Wegreenit Urania Milano", "tipo": "Rimbalzista", "match": 91, "color": "#f97316", "profile": {"PT": 25, "AS": 8, "RT": 48, "PR": 25, "ST": 86}, "stats": {"PT": 4.8, "AS": 0.4, "RT": 3.2, "PR": 0.4, "ST": 0.4}}, {"name": "A. Mouaha", "team": "Valtur Brindisi", "tipo": "Factotum", "match": 89, "color": "#06b6d4", "profile": {"PT": 18, "AS": 57, "RT": 46, "PR": 70, "ST": 15}, "stats": {"PT": 3.9, "AS": 1.4, "RT": 3.1, "PR": 0.8, "ST": 0.0}}, {"name": "A. Nikolic", "team": "Crifo Wines Ruvo di Puglia", "tipo": "Rimbalzista", "match": 97, "color": "#f97316", "profile": {"PT": 27, "AS": 15, "RT": 47, "PR": 39, "ST": 37}, "stats": {"PT": 5.0, "AS": 0.6, "RT": 3.1, "PR": 0.5, "ST": 0.1}}, {"name": "A. Panni", "team": "Ferraroni Juvi Cremona", "tipo": "Creatore", "match": 98, "color": "#00F95B", "profile": {"PT": 64, "AS": 82, "RT": 11, "PR": 64, "ST": 15}, "stats": {"PT": 9.6, "AS": 2.8, "RT": 1.6, "PR": 0.8, "ST": 0.0}}, {"name": "A. Sabatino", "team": "Liofilchem Roseto", "tipo": "Creatore", "match": 93, "color": "#00F95B", "profile": {"PT": 36, "AS": 52, "RT": 8, "PR": 45, "ST": 37}, "stats": {"PT": 5.8, "AS": 1.3, "RT": 1.2, "PR": 0.6, "ST": 0.1}}, {"name": "A. Sankare", "team": "Dole Basket Rimini", "tipo": "Rimbalzista", "match": 94, "color": "#f97316", "profile": {"PT": 5, "AS": 3, "RT": 34, "PR": 18, "ST": 37}, "stats": {"PT": 2.1, "AS": 0.2, "RT": 2.6, "PR": 0.3, "ST": 0.1}}, {"name": "A. Sarto", "team": "Fortitudo Bologna", "tipo": "Realizzatore", "match": 92, "color": "#302B8F", "profile": {"PT": 83, "AS": 66, "RT": 61, "PR": 3, "ST": 55}, "stats": {"PT": 13.2, "AS": 1.8, "RT": 3.7, "PR": 0.1, "ST": 0.1}}, {"name": "A. Scarponi", "team": "Sella Cento", "tipo": "Disruptor", "match": 74, "color": "#7c3aed", "profile": {"PT": 1, "AS": 4, "RT": 3, "PR": 4, "ST": 15}, "stats": {"PT": 1.4, "AS": 0.2, "RT": 0.8, "PR": 0.1, "ST": 0.0}}, {"name": "A. Simioni", "team": "Dole Basket Rimini", "tipo": "Rimbalzista", "match": 97, "color": "#f97316", "profile": {"PT": 66, "AS": 35, "RT": 78, "PR": 56, "ST": 65}, "stats": {"PT": 9.8, "AS": 0.8, "RT": 4.5, "PR": 0.7, "ST": 0.1}}, {"name": "A. Smith", "team": "Tezenis Verona", "tipo": "Rimbalzista", "match": 95, "color": "#f97316", "profile": {"PT": 28, "AS": 1, "RT": 64, "PR": 31, "ST": 84}, "stats": {"PT": 5.0, "AS": 0.1, "RT": 3.9, "PR": 0.4, "ST": 0.3}}, {"name": "A. Sperduto", "team": "Liofilchem Roseto", "tipo": "Realizzatore", "match": 98, "color": "#302B8F", "profile": {"PT": 67, "AS": 37, "RT": 16, "PR": 39, "ST": 15}, "stats": {"PT": 9.9, "AS": 0.9, "RT": 1.8, "PR": 0.5, "ST": 0.0}}, {"name": "A. Woodson", "team": "Libertas Livorno", "tipo": "Realizzatore", "match": 97, "color": "#302B8F", "profile": {"PT": 97, "AS": 76, "RT": 55, "PR": 39, "ST": 60}, "stats": {"PT": 18.6, "AS": 2.3, "RT": 3.4, "PR": 0.5, "ST": 0.1}}, {"name": "A. Zerini", "team": "Avellino Basket", "tipo": "Rimbalzista", "match": 84, "color": "#f97316", "profile": {"PT": 16, "AS": 56, "RT": 49, "PR": 25, "ST": 100}, "stats": {"PT": 3.8, "AS": 1.4, "RT": 3.2, "PR": 0.4, "ST": 0.9}}, {"name": "B. Francis", "team": "Valtur Brindisi", "tipo": "Realizzatore", "match": 95, "color": "#302B8F", "profile": {"PT": 81, "AS": 55, "RT": 6, "PR": 34, "ST": 15}, "stats": {"PT": 12.6, "AS": 1.4, "RT": 1.0, "PR": 0.5, "ST": 0.0}}, {"name": "B. Garrett", "team": "Ferraroni Juvi Cremona", "tipo": "Realizzatore", "match": 97, "color": "#302B8F", "profile": {"PT": 85, "AS": 73, "RT": 34, "PR": 61, "ST": 37}, "stats": {"PT": 13.7, "AS": 2.1, "RT": 2.6, "PR": 0.7, "ST": 0.1}}, {"name": "B. Mascolo", "team": "Givova Scafati", "tipo": "Factotum", "match": 99, "color": "#06b6d4", "profile": {"PT": 88, "AS": 97, "RT": 87, "PR": 99, "ST": 46}, "stats": {"PT": 14.3, "AS": 4.4, "RT": 5.2, "PR": 1.5, "ST": 0.1}}, {"name": "B. Musso", "team": "Crifo Wines Ruvo di Puglia", "tipo": "Creatore", "match": 86, "color": "#00F95B", "profile": {"PT": 21, "AS": 65, "RT": 12, "PR": 87, "ST": 15}, "stats": {"PT": 4.3, "AS": 1.7, "RT": 1.6, "PR": 1.1, "ST": 0.0}}, {"name": "C. Bechi", "team": "Gemini Mestre", "tipo": "Creatore", "match": 99, "color": "#00F95B", "profile": {"PT": 41, "AS": 90, "RT": 27, "PR": 53, "ST": 15}, "stats": {"PT": 6.8, "AS": 3.4, "RT": 2.3, "PR": 0.6, "ST": 0.0}}, {"name": "C. Costi", "team": "Avellino Basket", "tipo": "Rimbalzista", "match": 87, "color": "#f97316", "profile": {"PT": 2, "AS": 7, "RT": 22, "PR": 9, "ST": 37}, "stats": {"PT": 1.6, "AS": 0.3, "RT": 2.0, "PR": 0.2, "ST": 0.1}}, {"name": "C. Walker", "team": "Givova Scafati", "tipo": "Factotum", "match": 99, "color": "#06b6d4", "profile": {"PT": 97, "AS": 71, "RT": 93, "PR": 77, "ST": 60}, "stats": {"PT": 18.2, "AS": 2.1, "RT": 5.8, "PR": 0.9, "ST": 0.1}}, {"name": "D. Bruttini", "team": "Reale Mutua Torino", "tipo": "Rimbalzista", "match": 97, "color": "#f97316", "profile": {"PT": 20, "AS": 19, "RT": 63, "PR": 39, "ST": 37}, "stats": {"PT": 4.0, "AS": 0.6, "RT": 3.9, "PR": 0.5, "ST": 0.1}}, {"name": "D. Cinciarini", "team": "Liofilchem Roseto", "tipo": "Realizzatore", "match": 99, "color": "#302B8F", "profile": {"PT": 68, "AS": 43, "RT": 18, "PR": 30, "ST": 15}, "stats": {"PT": 9.9, "AS": 1.1, "RT": 1.8, "PR": 0.4, "ST": 0.0}}, {"name": "D. Denegri", "team": "Dole Basket Rimini", "tipo": "Creatore", "match": 98, "color": "#00F95B", "profile": {"PT": 84, "AS": 96, "RT": 46, "PR": 84, "ST": 37}, "stats": {"PT": 13.6, "AS": 4.2, "RT": 3.1, "PR": 1.0, "ST": 0.1}}, {"name": "D. Freeman", "team": "UEB Gesteco Cividale", "tipo": "Rimbalzista", "match": 96, "color": "#f97316", "profile": {"PT": 85, "AS": 44, "RT": 96, "PR": 88, "ST": 99}, "stats": {"PT": 13.6, "AS": 1.1, "RT": 6.9, "PR": 1.1, "ST": 0.7}}, {"name": "D. Harper", "team": "Unieuro Forl\u00ec", "tipo": "Factotum", "match": 99, "color": "#06b6d4", "profile": {"PT": 89, "AS": 95, "RT": 87, "PR": 91, "ST": 80}, "stats": {"PT": 14.9, "AS": 4.2, "RT": 5.2, "PR": 1.2, "ST": 0.3}}, {"name": "D. Harrison", "team": "Gruppo Mascio Bergamo", "tipo": "Factotum", "match": 98, "color": "#06b6d4", "profile": {"PT": 99, "AS": 88, "RT": 73, "PR": 100, "ST": 50}, "stats": {"PT": 19.6, "AS": 3.3, "RT": 4.3, "PR": 1.5, "ST": 0.1}}, {"name": "D. Hogue", "team": "Gruppo Mascio Bergamo", "tipo": "Factotum", "match": 93, "color": "#06b6d4", "profile": {"PT": 80, "AS": 49, "RT": 97, "PR": 43, "ST": 15}, "stats": {"PT": 12.5, "AS": 1.3, "RT": 7.2, "PR": 0.5, "ST": 0.0}}, {"name": "D. Hogue", "team": "RSR Sebastiani Rieti", "tipo": "Factotum", "match": 92, "color": "#06b6d4", "profile": {"PT": 52, "AS": 85, "RT": 93, "PR": 27, "ST": 15}, "stats": {"PT": 8.0, "AS": 3.2, "RT": 5.8, "PR": 0.4, "ST": 0.0}}, {"name": "D. Magro", "team": "Estra Pistoia", "tipo": "Rimbalzista", "match": 97, "color": "#f97316", "profile": {"PT": 28, "AS": 11, "RT": 65, "PR": 32, "ST": 77}, "stats": {"PT": 5.0, "AS": 0.5, "RT": 3.9, "PR": 0.5, "ST": 0.2}}, {"name": "D. Monaldi", "team": "Tezenis Verona", "tipo": "Creatore", "match": 97, "color": "#00F95B", "profile": {"PT": 43, "AS": 67, "RT": 15, "PR": 58, "ST": 15}, "stats": {"PT": 6.9, "AS": 1.8, "RT": 1.7, "PR": 0.7, "ST": 0.0}}, {"name": "D. Pascolo", "team": "RSR Sebastiani Rieti", "tipo": "Disruptor", "match": 92, "color": "#7c3aed", "profile": {"PT": 19, "AS": 38, "RT": 46, "PR": 51, "ST": 88}, "stats": {"PT": 4.0, "AS": 0.9, "RT": 3.1, "PR": 0.6, "ST": 0.4}}, {"name": "D. Perry", "team": "RSR Sebastiani Rieti", "tipo": "Creatore", "match": 96, "color": "#00F95B", "profile": {"PT": 93, "AS": 93, "RT": 53, "PR": 96, "ST": 15}, "stats": {"PT": 16.2, "AS": 3.8, "RT": 3.3, "PR": 1.4, "ST": 0.0}}, {"name": "D. Petrovic", "team": "Liofilchem Roseto", "tipo": "Factotum", "match": 97, "color": "#06b6d4", "profile": {"PT": 65, "AS": 35, "RT": 46, "PR": 45, "ST": 55}, "stats": {"PT": 9.6, "AS": 0.8, "RT": 3.1, "PR": 0.6, "ST": 0.1}}, {"name": "E. Del Cadia", "team": "Ferraroni Juvi Cremona", "tipo": "Disruptor", "match": 97, "color": "#7c3aed", "profile": {"PT": 19, "AS": 47, "RT": 56, "PR": 81, "ST": 84}, "stats": {"PT": 4.0, "AS": 1.2, "RT": 3.4, "PR": 0.9, "ST": 0.3}}, {"name": "E. Esposito", "team": "Valtur Brindisi", "tipo": "Factotum", "match": 98, "color": "#06b6d4", "profile": {"PT": 74, "AS": 48, "RT": 67, "PR": 56, "ST": 65}, "stats": {"PT": 10.8, "AS": 1.2, "RT": 4.0, "PR": 0.7, "ST": 0.1}}, {"name": "E. Lombardi", "team": "Gruppo Mascio Bergamo", "tipo": "Factotum", "match": 97, "color": "#06b6d4", "profile": {"PT": 75, "AS": 64, "RT": 70, "PR": 84, "ST": 88}, "stats": {"PT": 10.9, "AS": 1.7, "RT": 4.1, "PR": 1.0, "ST": 0.4}}, {"name": "E. Rota", "team": "UEB Gesteco Cividale", "tipo": "Creatore", "match": 96, "color": "#00F95B", "profile": {"PT": 47, "AS": 94, "RT": 46, "PR": 86, "ST": 15}, "stats": {"PT": 7.5, "AS": 4.0, "RT": 3.1, "PR": 1.1, "ST": 0.0}}, {"name": "E. Tiberti", "team": "Sella Cento", "tipo": "Rimbalzista", "match": 95, "color": "#f97316", "profile": {"PT": 50, "AS": 12, "RT": 58, "PR": 59, "ST": 83}, "stats": {"PT": 7.8, "AS": 0.5, "RT": 3.6, "PR": 0.7, "ST": 0.3}}, {"name": "F. Baldi Rossi", "team": "Tezenis Verona", "tipo": "Factotum", "match": 99, "color": "#06b6d4", "profile": {"PT": 54, "AS": 45, "RT": 55, "PR": 48, "ST": 47}, "stats": {"PT": 8.2, "AS": 1.1, "RT": 3.4, "PR": 0.6, "ST": 0.1}}, {"name": "F. Bonacini", "team": "Gemini Mestre", "tipo": "Factotum", "match": 95, "color": "#06b6d4", "profile": {"PT": 57, "AS": 57, "RT": 31, "PR": 76, "ST": 49}, "stats": {"PT": 8.5, "AS": 1.5, "RT": 2.4, "PR": 0.9, "ST": 0.1}}, {"name": "F. Ferrari", "team": "UEB Gesteco Cividale", "tipo": "Rimbalzista", "match": 96, "color": "#f97316", "profile": {"PT": 43, "AS": 23, "RT": 68, "PR": 27, "ST": 90}, "stats": {"PT": 6.9, "AS": 0.7, "RT": 4.0, "PR": 0.4, "ST": 0.5}}, {"name": "F. Gallo", "team": "Estra Pistoia", "tipo": "Factotum", "match": 89, "color": "#06b6d4", "profile": {"PT": 48, "AS": 79, "RT": 42, "PR": 27, "ST": 96}, "stats": {"PT": 7.5, "AS": 2.5, "RT": 3.0, "PR": 0.4, "ST": 0.7}}, {"name": "F. Massone", "team": "Reale Mutua Torino", "tipo": "Creatore", "match": 95, "color": "#00F95B", "profile": {"PT": 78, "AS": 83, "RT": 43, "PR": 96, "ST": 15}, "stats": {"PT": 11.9, "AS": 3.0, "RT": 3.0, "PR": 1.4, "ST": 0.0}}, {"name": "F. Mian", "team": "RSR Sebastiani Rieti", "tipo": "Creatore", "match": 95, "color": "#00F95B", "profile": {"PT": 50, "AS": 41, "RT": 6, "PR": 34, "ST": 15}, "stats": {"PT": 7.9, "AS": 1.0, "RT": 1.0, "PR": 0.5, "ST": 0.0}}, {"name": "F. Mussini", "team": "Avellino Basket", "tipo": "Creatore", "match": 95, "color": "#00F95B", "profile": {"PT": 84, "AS": 81, "RT": 38, "PR": 89, "ST": 37}, "stats": {"PT": 13.4, "AS": 2.7, "RT": 2.8, "PR": 1.1, "ST": 0.1}}, {"name": "F. Poser", "team": "Tezenis Verona", "tipo": "Rimbalzista", "match": 99, "color": "#f97316", "profile": {"PT": 38, "AS": 32, "RT": 79, "PR": 31, "ST": 68}, "stats": {"PT": 6.2, "AS": 0.8, "RT": 4.6, "PR": 0.4, "ST": 0.2}}, {"name": "F. Reggiani", "team": "Gemini Mestre", "tipo": "Rimbalzista", "match": 84, "color": "#f97316", "profile": {"PT": 11, "AS": 4, "RT": 30, "PR": 4, "ST": 62}, "stats": {"PT": 3.1, "AS": 0.2, "RT": 2.4, "PR": 0.1, "ST": 0.1}}, {"name": "F. Stoch", "team": "Estra Pistoia", "tipo": "Creatore", "match": 70, "color": "#00F95B", "profile": {"PT": 2, "AS": 15, "RT": 1, "PR": 1, "ST": 15}, "stats": {"PT": 1.7, "AS": 0.6, "RT": 0.6, "PR": 0.0, "ST": 0.0}}, {"name": "F. Valentini", "team": "Libertas Livorno", "tipo": "Creatore", "match": 97, "color": "#00F95B", "profile": {"PT": 70, "AS": 84, "RT": 23, "PR": 70, "ST": 37}, "stats": {"PT": 10.2, "AS": 3.1, "RT": 2.0, "PR": 0.8, "ST": 0.1}}, {"name": "F. Zampini", "team": "Tezenis Verona", "tipo": "Factotum", "match": 97, "color": "#06b6d4", "profile": {"PT": 82, "AS": 98, "RT": 59, "PR": 91, "ST": 37}, "stats": {"PT": 13.1, "AS": 4.8, "RT": 3.6, "PR": 1.2, "ST": 0.1}}, {"name": "G. Allinei", "team": "Ferraroni Juvi Cremona", "tipo": "Realizzatore", "match": 99, "color": "#302B8F", "profile": {"PT": 60, "AS": 31, "RT": 13, "PR": 22, "ST": 15}, "stats": {"PT": 9.0, "AS": 0.8, "RT": 1.6, "PR": 0.3, "ST": 0.0}}, {"name": "G. Camara", "team": "Dole Basket Rimini", "tipo": "Rimbalzista", "match": 93, "color": "#f97316", "profile": {"PT": 53, "AS": 4, "RT": 59, "PR": 22, "ST": 94}, "stats": {"PT": 8.1, "AS": 0.2, "RT": 3.6, "PR": 0.3, "ST": 0.6}}, {"name": "G. Dell' Agnello", "team": "Avellino Basket", "tipo": "Factotum", "match": 98, "color": "#06b6d4", "profile": {"PT": 61, "AS": 74, "RT": 82, "PR": 39, "ST": 55}, "stats": {"PT": 9.1, "AS": 2.1, "RT": 4.8, "PR": 0.5, "ST": 0.1}}, {"name": "G. Della Rosa", "team": "Fortitudo Bologna", "tipo": "Creatore", "match": 98, "color": "#00F95B", "profile": {"PT": 57, "AS": 97, "RT": 21, "PR": 79, "ST": 15}, "stats": {"PT": 8.5, "AS": 4.7, "RT": 1.9, "PR": 0.9, "ST": 0.0}}, {"name": "G. Devoe", "team": "Sella Cento", "tipo": "Factotum", "match": 99, "color": "#06b6d4", "profile": {"PT": 91, "AS": 93, "RT": 85, "PR": 86, "ST": 82}, "stats": {"PT": 15.3, "AS": 3.9, "RT": 5.0, "PR": 1.1, "ST": 0.3}}, {"name": "G. Gazzotti", "team": "Unieuro Forl\u00ec", "tipo": "Rimbalzista", "match": 93, "color": "#f97316", "profile": {"PT": 5, "AS": 19, "RT": 59, "PR": 9, "ST": 37}, "stats": {"PT": 2.1, "AS": 0.6, "RT": 3.6, "PR": 0.2, "ST": 0.1}}, {"name": "G. Leardini", "team": "Dole Basket Rimini", "tipo": "Disruptor", "match": 95, "color": "#7c3aed", "profile": {"PT": 17, "AS": 28, "RT": 19, "PR": 32, "ST": 37}, "stats": {"PT": 3.9, "AS": 0.8, "RT": 1.9, "PR": 0.5, "ST": 0.1}}, {"name": "G. Miani", "team": "Valtur Brindisi", "tipo": "Disruptor", "match": 94, "color": "#7c3aed", "profile": {"PT": 72, "AS": 17, "RT": 81, "PR": 97, "ST": 49}, "stats": {"PT": 10.3, "AS": 0.6, "RT": 4.7, "PR": 1.4, "ST": 0.1}}, {"name": "G. Pini", "team": "Avellino Basket", "tipo": "Rimbalzista", "match": 73, "color": "#f97316", "profile": {"PT": 3, "AS": 23, "RT": 21, "PR": 15, "ST": 86}, "stats": {"PT": 1.8, "AS": 0.7, "RT": 1.9, "PR": 0.3, "ST": 0.4}}, {"name": "G. Piunti", "team": "RSR Sebastiani Rieti", "tipo": "Rimbalzista", "match": 91, "color": "#f97316", "profile": {"PT": 26, "AS": 12, "RT": 35, "PR": 22, "ST": 71}, "stats": {"PT": 4.9, "AS": 0.5, "RT": 2.6, "PR": 0.3, "ST": 0.2}}, {"name": "G. Robinson", "team": "Dole Basket Rimini", "tipo": "Factotum", "match": 96, "color": "#06b6d4", "profile": {"PT": 77, "AS": 95, "RT": 43, "PR": 93, "ST": 61}, "stats": {"PT": 11.8, "AS": 4.1, "RT": 3.0, "PR": 1.2, "ST": 0.1}}, {"name": "G. Sabatini", "team": "Wegreenit Urania Milano", "tipo": "Creatore", "match": 92, "color": "#00F95B", "profile": {"PT": 38, "AS": 83, "RT": 50, "PR": 96, "ST": 15}, "stats": {"PT": 6.2, "AS": 3.0, "RT": 3.2, "PR": 1.4, "ST": 0.0}}, {"name": "G. Severini", "team": "Reale Mutua Torino", "tipo": "Disruptor", "match": 95, "color": "#7c3aed", "profile": {"PT": 21, "AS": 15, "RT": 33, "PR": 39, "ST": 15}, "stats": {"PT": 4.3, "AS": 0.6, "RT": 2.5, "PR": 0.5, "ST": 0.0}}, {"name": "G. Stefanini", "team": "Gruppo Mascio Bergamo", "tipo": "Factotum", "match": 95, "color": "#06b6d4", "profile": {"PT": 90, "AS": 90, "RT": 69, "PR": 98, "ST": 15}, "stats": {"PT": 15.1, "AS": 3.4, "RT": 4.1, "PR": 1.4, "ST": 0.0}}, {"name": "G. Tomassini", "team": "Dole Basket Rimini", "tipo": "Creatore", "match": 96, "color": "#00F95B", "profile": {"PT": 71, "AS": 79, "RT": 11, "PR": 70, "ST": 37}, "stats": {"PT": 10.2, "AS": 2.5, "RT": 1.5, "PR": 0.8, "ST": 0.1}}, {"name": "G. Vildera", "team": "Valtur Brindisi", "tipo": "Rimbalzista", "match": 95, "color": "#f97316", "profile": {"PT": 78, "AS": 54, "RT": 95, "PR": 18, "ST": 71}, "stats": {"PT": 11.9, "AS": 1.4, "RT": 6.5, "PR": 0.3, "ST": 0.2}}, {"name": "I. Alipiev", "team": "Gemini Mestre", "tipo": "Rimbalzista", "match": 97, "color": "#f97316", "profile": {"PT": 86, "AS": 17, "RT": 92, "PR": 64, "ST": 93}, "stats": {"PT": 14.0, "AS": 0.6, "RT": 5.8, "PR": 0.8, "ST": 0.5}}, {"name": "I. Lupusor", "team": "Wegreenit Urania Milano", "tipo": "Factotum", "match": 96, "color": "#06b6d4", "profile": {"PT": 42, "AS": 33, "RT": 49, "PR": 20, "ST": 15}, "stats": {"PT": 6.8, "AS": 0.8, "RT": 3.2, "PR": 0.3, "ST": 0.0}}, {"name": "J. Borra", "team": "Crifo Wines Ruvo di Puglia", "tipo": "Rimbalzista", "match": 92, "color": "#f97316", "profile": {"PT": 49, "AS": 38, "RT": 88, "PR": 3, "ST": 37}, "stats": {"PT": 7.8, "AS": 0.9, "RT": 5.2, "PR": 0.1, "ST": 0.1}}, {"name": "J. Cannon", "team": "Liofilchem Roseto", "tipo": "Factotum", "match": 98, "color": "#06b6d4", "profile": {"PT": 89, "AS": 63, "RT": 90, "PR": 45, "ST": 55}, "stats": {"PT": 14.9, "AS": 1.7, "RT": 5.7, "PR": 0.6, "ST": 0.1}}, {"name": "J. Chandler", "team": "Avellino Basket", "tipo": "Creatore", "match": 95, "color": "#00F95B", "profile": {"PT": 73, "AS": 63, "RT": 39, "PR": 70, "ST": 15}, "stats": {"PT": 10.7, "AS": 1.7, "RT": 2.8, "PR": 0.8, "ST": 0.0}}, {"name": "J. Johnson", "team": "Estra Pistoia", "tipo": "Creatore", "match": 97, "color": "#00F95B", "profile": {"PT": 98, "AS": 92, "RT": 40, "PR": 77, "ST": 46}, "stats": {"PT": 18.8, "AS": 3.7, "RT": 2.8, "PR": 0.9, "ST": 0.1}}, {"name": "J. Johnson", "team": "Tezenis Verona", "tipo": "Factotum", "match": 93, "color": "#06b6d4", "profile": {"PT": 54, "AS": 50, "RT": 98, "PR": 75, "ST": 15}, "stats": {"PT": 8.1, "AS": 1.3, "RT": 8.1, "PR": 0.9, "ST": 0.0}}, {"name": "J. Lewis", "team": "Avellino Basket", "tipo": "Factotum", "match": 98, "color": "#06b6d4", "profile": {"PT": 91, "AS": 63, "RT": 94, "PR": 70, "ST": 77}, "stats": {"PT": 15.4, "AS": 1.7, "RT": 6.4, "PR": 0.8, "ST": 0.2}}, {"name": "J. Robinson", "team": "Liofilchem Roseto", "tipo": "Factotum", "match": 99, "color": "#06b6d4", "profile": {"PT": 90, "AS": 99, "RT": 72, "PR": 84, "ST": 55}, "stats": {"PT": 15.1, "AS": 6.7, "RT": 4.2, "PR": 1.0, "ST": 0.1}}, {"name": "J. Williams", "team": "RSR Sebastiani Rieti", "tipo": "Disruptor", "match": 96, "color": "#7c3aed", "profile": {"PT": 80, "AS": 47, "RT": 75, "PR": 95, "ST": 84}, "stats": {"PT": 12.6, "AS": 1.2, "RT": 4.5, "PR": 1.3, "ST": 0.3}}, {"name": "K. Allen", "team": "Unieuro Forl\u00ec", "tipo": "Factotum", "match": 95, "color": "#06b6d4", "profile": {"PT": 82, "AS": 72, "RT": 52, "PR": 70, "ST": 98}, "stats": {"PT": 13.1, "AS": 2.1, "RT": 3.3, "PR": 0.8, "ST": 0.7}}, {"name": "K. Curry", "team": "Gemini Mestre", "tipo": "Factotum", "match": 99, "color": "#06b6d4", "profile": {"PT": 95, "AS": 91, "RT": 62, "PR": 66, "ST": 47}, "stats": {"PT": 17.1, "AS": 3.7, "RT": 3.8, "PR": 0.8, "ST": 0.1}}, {"name": "K. Felder", "team": "Victoria Libertas Pesaro", "tipo": "Factotum", "match": 96, "color": "#06b6d4", "profile": {"PT": 57, "AS": 88, "RT": 43, "PR": 67, "ST": 73}, "stats": {"PT": 8.5, "AS": 3.3, "RT": 3.0, "PR": 0.8, "ST": 0.2}}, {"name": "K. Gamble", "team": "Wegreenit Urania Milano", "tipo": "Rimbalzista", "match": 94, "color": "#f97316", "profile": {"PT": 30, "AS": 25, "RT": 73, "PR": 16, "ST": 95}, "stats": {"PT": 5.1, "AS": 0.7, "RT": 4.3, "PR": 0.3, "ST": 0.6}}, {"name": "K. Taylor", "team": "Wegreenit Urania Milano", "tipo": "Factotum", "match": 98, "color": "#06b6d4", "profile": {"PT": 100, "AS": 89, "RT": 67, "PR": 51, "ST": 55}, "stats": {"PT": 20.1, "AS": 3.4, "RT": 4.0, "PR": 0.6, "ST": 0.1}}, {"name": "K. Tsetserukou", "team": "Liofilchem Roseto", "tipo": "Rimbalzista", "match": 71, "color": "#f97316", "profile": {"PT": 11, "AS": 3, "RT": 15, "PR": 5, "ST": 77}, "stats": {"PT": 3.0, "AS": 0.2, "RT": 1.8, "PR": 0.1, "ST": 0.2}}, {"name": "L. Ambrosin", "team": "Tezenis Verona", "tipo": "Disruptor", "match": 97, "color": "#7c3aed", "profile": {"PT": 66, "AS": 28, "RT": 55, "PR": 93, "ST": 65}, "stats": {"PT": 9.7, "AS": 0.8, "RT": 3.4, "PR": 1.2, "ST": 0.1}}, {"name": "L. Bosso", "team": "Gruppo Mascio Bergamo", "tipo": "Creatore", "match": 83, "color": "#00F95B", "profile": {"PT": 15, "AS": 75, "RT": 2, "PR": 2, "ST": 29}, "stats": {"PT": 3.7, "AS": 2.2, "RT": 0.7, "PR": 0.1, "ST": 0.0}}, {"name": "L. Bucarelli", "team": "Victoria Libertas Pesaro", "tipo": "Factotum", "match": 99, "color": "#06b6d4", "profile": {"PT": 69, "AS": 98, "RT": 77, "PR": 77, "ST": 46}, "stats": {"PT": 10.0, "AS": 4.9, "RT": 4.5, "PR": 0.9, "ST": 0.1}}, {"name": "L. Campogrande", "team": "Estra Pistoia", "tipo": "Disruptor", "match": 80, "color": "#7c3aed", "profile": {"PT": 10, "AS": 3, "RT": 10, "PR": 22, "ST": 55}, "stats": {"PT": 2.9, "AS": 0.2, "RT": 1.4, "PR": 0.3, "ST": 0.1}}, {"name": "L. Caroti", "team": "Givova Scafati", "tipo": "Creatore", "match": 96, "color": "#00F95B", "profile": {"PT": 58, "AS": 75, "RT": 17, "PR": 77, "ST": 15}, "stats": {"PT": 8.7, "AS": 2.2, "RT": 1.8, "PR": 0.9, "ST": 0.0}}, {"name": "L. Cesana", "team": "UEB Gesteco Cividale", "tipo": "Realizzatore", "match": 96, "color": "#302B8F", "profile": {"PT": 36, "AS": 24, "RT": 8, "PR": 27, "ST": 15}, "stats": {"PT": 5.8, "AS": 0.7, "RT": 1.2, "PR": 0.4, "ST": 0.0}}, {"name": "L. Conti", "team": "Sella Cento", "tipo": "Factotum", "match": 97, "color": "#06b6d4", "profile": {"PT": 59, "AS": 60, "RT": 67, "PR": 56, "ST": 77}, "stats": {"PT": 8.8, "AS": 1.6, "RT": 4.0, "PR": 0.7, "ST": 0.2}}, {"name": "L. Fresno", "team": "Givova Scafati", "tipo": "Factotum", "match": 87, "color": "#06b6d4", "profile": {"PT": 4, "AS": 10, "RT": 8, "PR": 6, "ST": 15}, "stats": {"PT": 1.9, "AS": 0.4, "RT": 1.2, "PR": 0.2, "ST": 0.0}}, {"name": "L. Galmarini", "team": "Gemini Mestre", "tipo": "Factotum", "match": 97, "color": "#06b6d4", "profile": {"PT": 51, "AS": 68, "RT": 90, "PR": 66, "ST": 81}, "stats": {"PT": 7.9, "AS": 1.8, "RT": 5.5, "PR": 0.8, "ST": 0.3}}, {"name": "L. Marangon", "team": "UEB Gesteco Cividale", "tipo": "Factotum", "match": 97, "color": "#06b6d4", "profile": {"PT": 61, "AS": 52, "RT": 61, "PR": 82, "ST": 71}, "stats": {"PT": 9.1, "AS": 1.3, "RT": 3.8, "PR": 0.9, "ST": 0.2}}, {"name": "L. Maspero", "team": "Valtur Brindisi", "tipo": "Disruptor", "match": 90, "color": "#7c3aed", "profile": {"PT": 1, "AS": 19, "RT": 5, "PR": 27, "ST": 15}, "stats": {"PT": 1.2, "AS": 0.6, "RT": 0.9, "PR": 0.4, "ST": 0.0}}, {"name": "L. Moore", "team": "Fortitudo Bologna", "tipo": "Factotum", "match": 98, "color": "#06b6d4", "profile": {"PT": 95, "AS": 86, "RT": 54, "PR": 90, "ST": 51}, "stats": {"PT": 17.2, "AS": 3.3, "RT": 3.4, "PR": 1.2, "ST": 0.1}}, {"name": "L. Piccin", "team": "RSR Sebastiani Rieti", "tipo": "Rimbalzista", "match": 96, "color": "#f97316", "profile": {"PT": 22, "AS": 19, "RT": 32, "PR": 27, "ST": 37}, "stats": {"PT": 4.5, "AS": 0.6, "RT": 2.5, "PR": 0.4, "ST": 0.1}}, {"name": "L. Pollone", "team": "Dole Basket Rimini", "tipo": "Disruptor", "match": 96, "color": "#7c3aed", "profile": {"PT": 19, "AS": 19, "RT": 28, "PR": 51, "ST": 65}, "stats": {"PT": 4.0, "AS": 0.6, "RT": 2.3, "PR": 0.6, "ST": 0.1}}, {"name": "L. Possamai", "team": "Libertas Livorno", "tipo": "Rimbalzista", "match": 94, "color": "#f97316", "profile": {"PT": 32, "AS": 9, "RT": 61, "PR": 39, "ST": 90}, "stats": {"PT": 5.4, "AS": 0.4, "RT": 3.7, "PR": 0.5, "ST": 0.5}}, {"name": "L. Redivo", "team": "UEB Gesteco Cividale", "tipo": "Creatore", "match": 98, "color": "#00F95B", "profile": {"PT": 77, "AS": 94, "RT": 28, "PR": 75, "ST": 15}, "stats": {"PT": 11.8, "AS": 4.0, "RT": 2.3, "PR": 0.8, "ST": 0.0}}, {"name": "L. Saccaggi", "team": "Estra Pistoia", "tipo": "Creatore", "match": 99, "color": "#00F95B", "profile": {"PT": 64, "AS": 86, "RT": 37, "PR": 56, "ST": 37}, "stats": {"PT": 9.6, "AS": 3.2, "RT": 2.7, "PR": 0.7, "ST": 0.1}}, {"name": "L. Tortu'", "team": "Reale Mutua Torino", "tipo": "Rimbalzista", "match": 99, "color": "#f97316", "profile": {"PT": 17, "AS": 11, "RT": 39, "PR": 22, "ST": 37}, "stats": {"PT": 3.8, "AS": 0.5, "RT": 2.8, "PR": 0.3, "ST": 0.1}}, {"name": "L. Tozzi", "team": "Libertas Livorno", "tipo": "Factotum", "match": 98, "color": "#06b6d4", "profile": {"PT": 55, "AS": 38, "RT": 56, "PR": 56, "ST": 55}, "stats": {"PT": 8.3, "AS": 0.9, "RT": 3.5, "PR": 0.7, "ST": 0.1}}, {"name": "L. Udom", "team": "RSR Sebastiani Rieti", "tipo": "Factotum", "match": 98, "color": "#06b6d4", "profile": {"PT": 73, "AS": 69, "RT": 67, "PR": 96, "ST": 65}, "stats": {"PT": 10.3, "AS": 1.9, "RT": 4.0, "PR": 1.4, "ST": 0.1}}, {"name": "M. Anumba", "team": "Crifo Wines Ruvo di Puglia", "tipo": "Disruptor", "match": 98, "color": "#7c3aed", "profile": {"PT": 24, "AS": 35, "RT": 37, "PR": 56, "ST": 37}, "stats": {"PT": 4.8, "AS": 0.8, "RT": 2.7, "PR": 0.7, "ST": 0.1}}, {"name": "M. Berti", "team": "UEB Gesteco Cividale", "tipo": "Rimbalzista", "match": 98, "color": "#f97316", "profile": {"PT": 44, "AS": 31, "RT": 85, "PR": 51, "ST": 96}, "stats": {"PT": 7.0, "AS": 0.8, "RT": 5.0, "PR": 0.6, "ST": 0.7}}, {"name": "M. Bogliardi", "team": "Gruppo Mascio Bergamo", "tipo": "Creatore", "match": 87, "color": "#00F95B", "profile": {"PT": 26, "AS": 87, "RT": 9, "PR": 73, "ST": 68}, "stats": {"PT": 4.8, "AS": 3.3, "RT": 1.3, "PR": 0.8, "ST": 0.2}}, {"name": "M. Cavallero", "team": "Wegreenit Urania Milano", "tipo": "Rimbalzista", "match": 97, "color": "#f97316", "profile": {"PT": 73, "AS": 24, "RT": 78, "PR": 32, "ST": 55}, "stats": {"PT": 10.3, "AS": 0.7, "RT": 4.6, "PR": 0.5, "ST": 0.1}}, {"name": "M. Cusin", "team": "Reale Mutua Torino", "tipo": "Rimbalzista", "match": 91, "color": "#f97316", "profile": {"PT": 13, "AS": 7, "RT": 71, "PR": 11, "ST": 89}, "stats": {"PT": 3.6, "AS": 0.4, "RT": 4.2, "PR": 0.2, "ST": 0.4}}, {"name": "M. Fantinelli", "team": "Fortitudo Bologna", "tipo": "Factotum", "match": 98, "color": "#06b6d4", "profile": {"PT": 58, "AS": 100, "RT": 80, "PR": 84, "ST": 74}, "stats": {"PT": 8.6, "AS": 7.0, "RT": 4.7, "PR": 1.0, "ST": 0.2}}, {"name": "M. Imbro'", "team": "Fortitudo Bologna", "tipo": "Creatore", "match": 97, "color": "#00F95B", "profile": {"PT": 28, "AS": 64, "RT": 20, "PR": 15, "ST": 15}, "stats": {"PT": 5.0, "AS": 1.7, "RT": 1.9, "PR": 0.3, "ST": 0.0}}, {"name": "M. Jerkovic", "team": "Crifo Wines Ruvo di Puglia", "tipo": "Disruptor", "match": 96, "color": "#7c3aed", "profile": {"PT": 64, "AS": 15, "RT": 84, "PR": 89, "ST": 77}, "stats": {"PT": 9.6, "AS": 0.6, "RT": 5.0, "PR": 1.1, "ST": 0.2}}, {"name": "M. Jurkatamm", "team": "Avellino Basket", "tipo": "Factotum", "match": 92, "color": "#06b6d4", "profile": {"PT": 45, "AS": 67, "RT": 22, "PR": 45, "ST": 65}, "stats": {"PT": 7.2, "AS": 1.8, "RT": 2.0, "PR": 0.6, "ST": 0.1}}, {"name": "M. Mastellari", "team": "UEB Gesteco Cividale", "tipo": "Realizzatore", "match": 97, "color": "#302B8F", "profile": {"PT": 70, "AS": 60, "RT": 25, "PR": 45, "ST": 37}, "stats": {"PT": 10.2, "AS": 1.6, "RT": 2.1, "PR": 0.6, "ST": 0.1}}, {"name": "M. Mollura", "team": "Givova Scafati", "tipo": "Rimbalzista", "match": 87, "color": "#f97316", "profile": {"PT": 37, "AS": 30, "RT": 26, "PR": 24, "ST": 67}, "stats": {"PT": 6.0, "AS": 0.8, "RT": 2.2, "PR": 0.4, "ST": 0.2}}, {"name": "M. Montano", "team": "Sella Cento", "tipo": "Disruptor", "match": 94, "color": "#7c3aed", "profile": {"PT": 40, "AS": 50, "RT": 20, "PR": 66, "ST": 47}, "stats": {"PT": 6.7, "AS": 1.3, "RT": 1.9, "PR": 0.8, "ST": 0.1}}, {"name": "M. Moretti", "team": "Sella Cento", "tipo": "Rimbalzista", "match": 65, "color": "#f97316", "profile": {"PT": 8, "AS": 6, "RT": 14, "PR": 2, "ST": 95}, "stats": {"PT": 2.6, "AS": 0.3, "RT": 1.7, "PR": 0.1, "ST": 0.6}}, {"name": "M. Ogden", "team": "Dole Basket Rimini", "tipo": "Factotum", "match": 98, "color": "#06b6d4", "profile": {"PT": 78, "AS": 69, "RT": 98, "PR": 88, "ST": 81}, "stats": {"PT": 12.3, "AS": 1.9, "RT": 8.1, "PR": 1.1, "ST": 0.3}}, {"name": "M. Palumbo", "team": "RSR Sebastiani Rieti", "tipo": "Factotum", "match": 92, "color": "#06b6d4", "profile": {"PT": 39, "AS": 77, "RT": 63, "PR": 45, "ST": 93}, "stats": {"PT": 6.5, "AS": 2.4, "RT": 3.9, "PR": 0.6, "ST": 0.5}}, {"name": "M. Parravicini", "team": "RSR Sebastiani Rieti", "tipo": "Creatore", "match": 94, "color": "#00F95B", "profile": {"PT": 40, "AS": 83, "RT": 17, "PR": 84, "ST": 15}, "stats": {"PT": 6.6, "AS": 3.1, "RT": 1.8, "PR": 1.0, "ST": 0.0}}, {"name": "M. Piccoli", "team": "Libertas Livorno", "tipo": "Disruptor", "match": 90, "color": "#7c3aed", "profile": {"PT": 22, "AS": 52, "RT": 81, "PR": 93, "ST": 15}, "stats": {"PT": 4.4, "AS": 1.3, "RT": 4.7, "PR": 1.2, "ST": 0.0}}, {"name": "M. Pollone", "team": "Gruppo Mascio Bergamo", "tipo": "Disruptor", "match": 90, "color": "#7c3aed", "profile": {"PT": 9, "AS": 48, "RT": 41, "PR": 73, "ST": 15}, "stats": {"PT": 2.8, "AS": 1.2, "RT": 2.9, "PR": 0.8, "ST": 0.0}}, {"name": "M. Schina", "team": "Reale Mutua Torino", "tipo": "Creatore", "match": 95, "color": "#00F95B", "profile": {"PT": 44, "AS": 84, "RT": 23, "PR": 86, "ST": 15}, "stats": {"PT": 7.0, "AS": 3.1, "RT": 2.0, "PR": 1.1, "ST": 0.0}}, {"name": "M. Serpilli", "team": "Tezenis Verona", "tipo": "Rimbalzista", "match": 98, "color": "#f97316", "profile": {"PT": 47, "AS": 12, "RT": 78, "PR": 45, "ST": 85}, "stats": {"PT": 7.3, "AS": 0.5, "RT": 4.5, "PR": 0.6, "ST": 0.3}}, {"name": "M. Spanghero", "team": "Tezenis Verona", "tipo": "Creatore", "match": 87, "color": "#00F95B", "profile": {"PT": 24, "AS": 44, "RT": 4, "PR": 13, "ST": 37}, "stats": {"PT": 4.8, "AS": 1.1, "RT": 0.9, "PR": 0.2, "ST": 0.1}}, {"name": "M. Tambone", "team": "Victoria Libertas Pesaro", "tipo": "Factotum", "match": 97, "color": "#06b6d4", "profile": {"PT": 92, "AS": 91, "RT": 51, "PR": 64, "ST": 37}, "stats": {"PT": 15.5, "AS": 3.5, "RT": 3.2, "PR": 0.8, "ST": 0.1}}, {"name": "M. Teague", "team": "Reale Mutua Torino", "tipo": "Factotum", "match": 98, "color": "#06b6d4", "profile": {"PT": 94, "AS": 77, "RT": 57, "PR": 79, "ST": 55}, "stats": {"PT": 16.8, "AS": 2.4, "RT": 3.6, "PR": 0.9, "ST": 0.1}}, {"name": "M. Tiby", "team": "Libertas Livorno", "tipo": "Factotum", "match": 99, "color": "#06b6d4", "profile": {"PT": 96, "AS": 81, "RT": 99, "PR": 51, "ST": 71}, "stats": {"PT": 17.4, "AS": 2.7, "RT": 8.4, "PR": 0.6, "ST": 0.2}}, {"name": "M. Timperi", "team": "Liofilchem Roseto", "tipo": "Disruptor", "match": 96, "color": "#7c3aed", "profile": {"PT": 29, "AS": 38, "RT": 63, "PR": 64, "ST": 37}, "stats": {"PT": 5.0, "AS": 0.9, "RT": 3.9, "PR": 0.8, "ST": 0.1}}, {"name": "M. Udom", "team": "Gruppo Mascio Bergamo", "tipo": "Factotum", "match": 97, "color": "#06b6d4", "profile": {"PT": 59, "AS": 49, "RT": 92, "PR": 74, "ST": 60}, "stats": {"PT": 8.8, "AS": 1.3, "RT": 5.7, "PR": 0.8, "ST": 0.1}}, {"name": "N. Alessandrini", "team": "Estra Pistoia", "tipo": "Rimbalzista", "match": 98, "color": "#f97316", "profile": {"PT": 39, "AS": 28, "RT": 71, "PR": 18, "ST": 71}, "stats": {"PT": 6.6, "AS": 0.8, "RT": 4.2, "PR": 0.3, "ST": 0.2}}, {"name": "N. Berdini", "team": "Sella Cento", "tipo": "Factotum", "match": 99, "color": "#06b6d4", "profile": {"PT": 64, "AS": 96, "RT": 72, "PR": 82, "ST": 55}, "stats": {"PT": 9.6, "AS": 4.3, "RT": 4.2, "PR": 0.9, "ST": 0.1}}, {"name": "N. Dellosto", "team": "Estra Pistoia", "tipo": "Rimbalzista", "match": 83, "color": "#f97316", "profile": {"PT": 14, "AS": 9, "RT": 19, "PR": 9, "ST": 55}, "stats": {"PT": 3.6, "AS": 0.4, "RT": 1.9, "PR": 0.2, "ST": 0.1}}, {"name": "N. Filoni", "team": "Libertas Livorno", "tipo": "Disruptor", "match": 98, "color": "#7c3aed", "profile": {"PT": 32, "AS": 19, "RT": 75, "PR": 94, "ST": 88}, "stats": {"PT": 5.5, "AS": 0.6, "RT": 4.5, "PR": 1.3, "ST": 0.4}}, {"name": "N. Giordano", "team": "Gemini Mestre", "tipo": "Creatore", "match": 96, "color": "#00F95B", "profile": {"PT": 55, "AS": 51, "RT": 12, "PR": 42, "ST": 15}, "stats": {"PT": 8.4, "AS": 1.3, "RT": 1.6, "PR": 0.5, "ST": 0.0}}, {"name": "N. Italiano", "team": "Givova Scafati", "tipo": "Factotum", "match": 96, "color": "#06b6d4", "profile": {"PT": 12, "AS": 13, "RT": 24, "PR": 20, "ST": 15}, "stats": {"PT": 3.5, "AS": 0.5, "RT": 2.1, "PR": 0.3, "ST": 0.0}}, {"name": "N. Nobili", "team": "Gruppo Mascio Bergamo", "tipo": "Disruptor", "match": 93, "color": "#7c3aed", "profile": {"PT": 9, "AS": 1, "RT": 10, "PR": 11, "ST": 15}, "stats": {"PT": 2.7, "AS": 0.2, "RT": 1.4, "PR": 0.2, "ST": 0.0}}, {"name": "N. Tanfoglio", "team": "Sella Cento", "tipo": "Creatore", "match": 92, "color": "#00F95B", "profile": {"PT": 14, "AS": 42, "RT": 7, "PR": 5, "ST": 15}, "stats": {"PT": 3.6, "AS": 1.1, "RT": 1.2, "PR": 0.1, "ST": 0.0}}, {"name": "N. Virginio", "team": "Victoria Libertas Pesaro", "tipo": "Disruptor", "match": 95, "color": "#7c3aed", "profile": {"PT": 33, "AS": 28, "RT": 51, "PR": 56, "ST": 77}, "stats": {"PT": 5.6, "AS": 0.8, "RT": 3.2, "PR": 0.7, "ST": 0.2}}, {"name": "O. Maretto", "team": "Victoria Libertas Pesaro", "tipo": "Factotum", "match": 98, "color": "#06b6d4", "profile": {"PT": 67, "AS": 63, "RT": 69, "PR": 82, "ST": 37}, "stats": {"PT": 9.9, "AS": 1.7, "RT": 4.0, "PR": 0.9, "ST": 0.1}}, {"name": "P. Aradori", "team": "Unieuro Forl\u00ec", "tipo": "Realizzatore", "match": 99, "color": "#302B8F", "profile": {"PT": 62, "AS": 35, "RT": 38, "PR": 32, "ST": 15}, "stats": {"PT": 9.2, "AS": 0.8, "RT": 2.8, "PR": 0.5, "ST": 0.0}}, {"name": "P. Brooks Ii", "team": "Crifo Wines Ruvo di Puglia", "tipo": "Realizzatore", "match": 97, "color": "#302B8F", "profile": {"PT": 86, "AS": 59, "RT": 43, "PR": 27, "ST": 55}, "stats": {"PT": 14.0, "AS": 1.6, "RT": 3.0, "PR": 0.4, "ST": 0.1}}, {"name": "P. Marini", "team": "Dole Basket Rimini", "tipo": "Factotum", "match": 100, "color": "#06b6d4", "profile": {"PT": 88, "AS": 88, "RT": 75, "PR": 61, "ST": 65}, "stats": {"PT": 14.4, "AS": 3.3, "RT": 4.5, "PR": 0.7, "ST": 0.1}}, {"name": "P. Sorokas", "team": "Fortitudo Bologna", "tipo": "Factotum", "match": 97, "color": "#06b6d4", "profile": {"PT": 94, "AS": 58, "RT": 99, "PR": 51, "ST": 82}, "stats": {"PT": 16.6, "AS": 1.5, "RT": 9.8, "PR": 0.6, "ST": 0.3}}, {"name": "Q. De Laurentiis", "team": "Victoria Libertas Pesaro", "tipo": "Rimbalzista", "match": 89, "color": "#f97316", "profile": {"PT": 34, "AS": 33, "RT": 43, "PR": 35, "ST": 98}, "stats": {"PT": 5.8, "AS": 0.8, "RT": 3.0, "PR": 0.5, "ST": 0.7}}, {"name": "R. Allen", "team": "Reale Mutua Torino", "tipo": "Factotum", "match": 99, "color": "#06b6d4", "profile": {"PT": 98, "AS": 73, "RT": 100, "PR": 91, "ST": 90}, "stats": {"PT": 19.4, "AS": 2.1, "RT": 10.1, "PR": 1.2, "ST": 0.5}}, {"name": "R. Bolpin", "team": "Tezenis Verona", "tipo": "Creatore", "match": 96, "color": "#00F95B", "profile": {"PT": 31, "AS": 68, "RT": 37, "PR": 56, "ST": 15}, "stats": {"PT": 5.3, "AS": 1.9, "RT": 2.7, "PR": 0.7, "ST": 0.0}}, {"name": "R. Gaspardo", "team": "Unieuro Forl\u00ec", "tipo": "Factotum", "match": 93, "color": "#06b6d4", "profile": {"PT": 81, "AS": 41, "RT": 57, "PR": 45, "ST": 90}, "stats": {"PT": 12.7, "AS": 1.0, "RT": 3.6, "PR": 0.6, "ST": 0.5}}, {"name": "R. Miniotas", "team": "Victoria Libertas Pesaro", "tipo": "Factotum", "match": 99, "color": "#06b6d4", "profile": {"PT": 87, "AS": 73, "RT": 97, "PR": 61, "ST": 65}, "stats": {"PT": 14.2, "AS": 2.1, "RT": 7.7, "PR": 0.7, "ST": 0.1}}, {"name": "R. Pullazi", "team": "Givova Scafati", "tipo": "Factotum", "match": 94, "color": "#06b6d4", "profile": {"PT": 52, "AS": 26, "RT": 65, "PR": 35, "ST": 15}, "stats": {"PT": 8.1, "AS": 0.7, "RT": 3.9, "PR": 0.5, "ST": 0.0}}, {"name": "R. Rogic", "team": "Wegreenit Urania Milano", "tipo": "Creatore", "match": 99, "color": "#00F95B", "profile": {"PT": 34, "AS": 56, "RT": 27, "PR": 31, "ST": 15}, "stats": {"PT": 5.8, "AS": 1.4, "RT": 2.2, "PR": 0.4, "ST": 0.0}}, {"name": "R. Tavernelli", "team": "Unieuro Forl\u00ec", "tipo": "Creatore", "match": 92, "color": "#00F95B", "profile": {"PT": 12, "AS": 70, "RT": 35, "PR": 51, "ST": 15}, "stats": {"PT": 3.1, "AS": 1.9, "RT": 2.6, "PR": 0.6, "ST": 0.0}}, {"name": "R. Zugno", "team": "Ferraroni Juvi Cremona", "tipo": "Disruptor", "match": 82, "color": "#7c3aed", "profile": {"PT": 2, "AS": 70, "RT": 6, "PR": 61, "ST": 55}, "stats": {"PT": 1.7, "AS": 2.0, "RT": 1.0, "PR": 0.7, "ST": 0.1}}, {"name": "S. Anumba", "team": "Fortitudo Bologna", "tipo": "Rimbalzista", "match": 99, "color": "#f97316", "profile": {"PT": 12, "AS": 5, "RT": 30, "PR": 9, "ST": 15}, "stats": {"PT": 3.5, "AS": 0.3, "RT": 2.3, "PR": 0.2, "ST": 0.0}}, {"name": "S. Aromando", "team": "Gemini Mestre", "tipo": "Rimbalzista", "match": 97, "color": "#f97316", "profile": {"PT": 71, "AS": 32, "RT": 86, "PR": 39, "ST": 47}, "stats": {"PT": 10.3, "AS": 0.8, "RT": 5.1, "PR": 0.5, "ST": 0.1}}, {"name": "S. Barbante", "team": "Ferraroni Juvi Cremona", "tipo": "Rimbalzista", "match": 95, "color": "#f97316", "profile": {"PT": 45, "AS": 52, "RT": 69, "PR": 45, "ST": 82}, "stats": {"PT": 7.2, "AS": 1.3, "RT": 4.0, "PR": 0.6, "ST": 0.3}}, {"name": "S. Davis Iv", "team": "Sella Cento", "tipo": "Factotum", "match": 99, "color": "#06b6d4", "profile": {"PT": 99, "AS": 67, "RT": 96, "PR": 79, "ST": 65}, "stats": {"PT": 19.8, "AS": 1.8, "RT": 6.7, "PR": 0.9, "ST": 0.1}}, {"name": "S. Kadjividi Boussounka", "team": "Gemini Mestre", "tipo": "Rimbalzista", "match": 90, "color": "#f97316", "profile": {"PT": 7, "AS": 2, "RT": 74, "PR": 7, "ST": 74}, "stats": {"PT": 2.4, "AS": 0.2, "RT": 4.3, "PR": 0.2, "ST": 0.2}}, {"name": "S. Knight", "team": "Estra Pistoia", "tipo": "Rimbalzista", "match": 97, "color": "#f97316", "profile": {"PT": 87, "AS": 40, "RT": 89, "PR": 39, "ST": 77}, "stats": {"PT": 14.2, "AS": 0.9, "RT": 5.5, "PR": 0.5, "ST": 0.2}}, {"name": "S. Masciadri", "team": "Unieuro Forl\u00ec", "tipo": "Rimbalzista", "match": 92, "color": "#f97316", "profile": {"PT": 23, "AS": 15, "RT": 39, "PR": 39, "ST": 71}, "stats": {"PT": 4.7, "AS": 0.6, "RT": 2.8, "PR": 0.5, "ST": 0.2}}, {"name": "S. Moretti", "team": "Fortitudo Bologna", "tipo": "Rimbalzista", "match": 95, "color": "#f97316", "profile": {"PT": 31, "AS": 44, "RT": 86, "PR": 18, "ST": 90}, "stats": {"PT": 5.3, "AS": 1.1, "RT": 5.1, "PR": 0.3, "ST": 0.5}}, {"name": "S. Pepe", "team": "Unieuro Forl\u00ec", "tipo": "Realizzatore", "match": 97, "color": "#302B8F", "profile": {"PT": 74, "AS": 66, "RT": 26, "PR": 27, "ST": 37}, "stats": {"PT": 10.8, "AS": 1.8, "RT": 2.2, "PR": 0.4, "ST": 0.1}}, {"name": "S. Trucchetti", "team": "Victoria Libertas Pesaro", "tipo": "Creatore", "match": 98, "color": "#00F95B", "profile": {"PT": 30, "AS": 61, "RT": 5, "PR": 35, "ST": 15}, "stats": {"PT": 5.3, "AS": 1.7, "RT": 0.9, "PR": 0.5, "ST": 0.0}}, {"name": "S. Ulaneo", "team": "Crifo Wines Ruvo di Puglia", "tipo": "Rimbalzista", "match": 99, "color": "#f97316", "profile": {"PT": 41, "AS": 30, "RT": 83, "PR": 42, "ST": 80}, "stats": {"PT": 6.7, "AS": 0.8, "RT": 4.9, "PR": 0.5, "ST": 0.3}}, {"name": "S. Valsecchi", "team": "Gemini Mestre", "tipo": "Realizzatore", "match": 93, "color": "#302B8F", "profile": {"PT": 69, "AS": 46, "RT": 15, "PR": 64, "ST": 15}, "stats": {"PT": 10.0, "AS": 1.1, "RT": 1.8, "PR": 0.8, "ST": 0.0}}, {"name": "S. Zanotti", "team": "Estra Pistoia", "tipo": "Rimbalzista", "match": 97, "color": "#f97316", "profile": {"PT": 60, "AS": 15, "RT": 94, "PR": 13, "ST": 96}, "stats": {"PT": 8.9, "AS": 0.6, "RT": 6.2, "PR": 0.2, "ST": 0.7}}, {"name": "T. Allen", "team": "Givova Scafati", "tipo": "Rimbalzista", "match": 97, "color": "#f97316", "profile": {"PT": 83, "AS": 41, "RT": 92, "PR": 59, "ST": 92}, "stats": {"PT": 13.2, "AS": 1.0, "RT": 5.7, "PR": 0.7, "ST": 0.5}}, {"name": "T. Fantoni", "team": "Libertas Livorno", "tipo": "Factotum", "match": 90, "color": "#06b6d4", "profile": {"PT": 7, "AS": 28, "RT": 28, "PR": 9, "ST": 15}, "stats": {"PT": 2.5, "AS": 0.8, "RT": 2.3, "PR": 0.2, "ST": 0.0}}, {"name": "T. Guariglia", "team": "RSR Sebastiani Rieti", "tipo": "Factotum", "match": 95, "color": "#06b6d4", "profile": {"PT": 75, "AS": 58, "RT": 83, "PR": 18, "ST": 55}, "stats": {"PT": 10.8, "AS": 1.5, "RT": 4.8, "PR": 0.3, "ST": 0.1}}, {"name": "T. Laquintana", "team": "Crifo Wines Ruvo di Puglia", "tipo": "Creatore", "match": 97, "color": "#00F95B", "profile": {"PT": 48, "AS": 74, "RT": 48, "PR": 53, "ST": 15}, "stats": {"PT": 7.5, "AS": 2.2, "RT": 3.2, "PR": 0.6, "ST": 0.0}}, {"name": "T. Laquintana", "team": "Liofilchem Roseto", "tipo": "Factotum", "match": 92, "color": "#06b6d4", "profile": {"PT": 25, "AS": 60, "RT": 57, "PR": 70, "ST": 15}, "stats": {"PT": 4.8, "AS": 1.6, "RT": 3.6, "PR": 0.8, "ST": 0.0}}, {"name": "T. Mcconico", "team": "Ferraroni Juvi Cremona", "tipo": "Factotum", "match": 99, "color": "#06b6d4", "profile": {"PT": 76, "AS": 76, "RT": 80, "PR": 93, "ST": 69}, "stats": {"PT": 11.0, "AS": 2.2, "RT": 4.7, "PR": 1.2, "ST": 0.2}}, {"name": "T. Mcgee", "team": "Tezenis Verona", "tipo": "Factotum", "match": 95, "color": "#06b6d4", "profile": {"PT": 93, "AS": 81, "RT": 32, "PR": 72, "ST": 69}, "stats": {"PT": 15.9, "AS": 2.7, "RT": 2.5, "PR": 0.8, "ST": 0.2}}, {"name": "T. Pinza", "team": "Unieuro Forl\u00ec", "tipo": "Creatore", "match": 91, "color": "#00F95B", "profile": {"PT": 10, "AS": 19, "RT": 2, "PR": 13, "ST": 15}, "stats": {"PT": 2.8, "AS": 0.6, "RT": 0.8, "PR": 0.2, "ST": 0.0}}, {"name": "T. Radonjic", "team": "Valtur Brindisi", "tipo": "Rimbalzista", "match": 97, "color": "#f97316", "profile": {"PT": 53, "AS": 28, "RT": 75, "PR": 45, "ST": 37}, "stats": {"PT": 8.1, "AS": 0.8, "RT": 4.5, "PR": 0.6, "ST": 0.1}}, {"name": "T. Reale", "team": "Crifo Wines Ruvo di Puglia", "tipo": "Creatore", "match": 90, "color": "#00F95B", "profile": {"PT": 24, "AS": 55, "RT": 1, "PR": 61, "ST": 15}, "stats": {"PT": 4.8, "AS": 1.4, "RT": 0.7, "PR": 0.7, "ST": 0.0}}, {"name": "T. Vecchiola", "team": "Ferraroni Juvi Cremona", "tipo": "Disruptor", "match": 92, "color": "#7c3aed", "profile": {"PT": 35, "AS": 85, "RT": 36, "PR": 94, "ST": 50}, "stats": {"PT": 5.8, "AS": 3.2, "RT": 2.7, "PR": 1.3, "ST": 0.1}}, {"name": "U. D\u2019almeida", "team": "Wegreenit Urania Milano", "tipo": "Rimbalzista", "match": 95, "color": "#f97316", "profile": {"PT": 45, "AS": 22, "RT": 89, "PR": 5, "ST": 99}, "stats": {"PT": 7.2, "AS": 0.7, "RT": 5.5, "PR": 0.1, "ST": 0.8}}, {"name": "U. Stazzonelli", "team": "Reale Mutua Torino", "tipo": "Disruptor", "match": 88, "color": "#7c3aed", "profile": {"PT": 7, "AS": 9, "RT": 13, "PR": 18, "ST": 37}, "stats": {"PT": 2.5, "AS": 0.4, "RT": 1.6, "PR": 0.3, "ST": 0.1}}, {"name": "V. Bartoli", "team": "Ferraroni Juvi Cremona", "tipo": "Rimbalzista", "match": 95, "color": "#f97316", "profile": {"PT": 49, "AS": 61, "RT": 84, "PR": 51, "ST": 97}, "stats": {"PT": 7.7, "AS": 1.7, "RT": 5.0, "PR": 0.6, "ST": 0.7}}, {"name": "V. Guaiana", "team": "Fortitudo Bologna", "tipo": "Factotum", "match": 94, "color": "#06b6d4", "profile": {"PT": 16, "AS": 46, "RT": 31, "PR": 39, "ST": 37}, "stats": {"PT": 3.8, "AS": 1.1, "RT": 2.4, "PR": 0.5, "ST": 0.1}}, {"name": "V. Mazzola", "team": "Fortitudo Bologna", "tipo": "Rimbalzista", "match": 98, "color": "#f97316", "profile": {"PT": 42, "AS": 25, "RT": 70, "PR": 16, "ST": 62}, "stats": {"PT": 6.9, "AS": 0.7, "RT": 4.1, "PR": 0.3, "ST": 0.1}}, {"name": "W. Stewart Jr", "team": "Gemini Mestre", "tipo": "Disruptor", "match": 97, "color": "#7c3aed", "profile": {"PT": 62, "AS": 31, "RT": 62, "PR": 84, "ST": 88}, "stats": {"PT": 9.4, "AS": 0.8, "RT": 3.8, "PR": 1.0, "ST": 0.4}}, {"name": "Z. Copeland", "team": "Valtur Brindisi", "tipo": "Factotum", "match": 97, "color": "#06b6d4", "profile": {"PT": 96, "AS": 80, "RT": 51, "PR": 79, "ST": 37}, "stats": {"PT": 17.2, "AS": 2.6, "RT": 3.2, "PR": 0.9, "ST": 0.1}}];
+        const archetypeSummary = [{"name": "Realizzatore", "color": "#302B8F", "desc": "Primo riferimento offensivo, mette punti", "ideal": [95, 50, 40, 40, 30], "count": 13, "avg_profile": {"PT": 72, "AS": 52, "RT": 28, "PR": 35, "ST": 30}}, {"name": "Creatore", "color": "#00F95B", "desc": "Crea occasioni per i compagni, alto volume di assist", "ideal": [60, 95, 30, 50, 20], "count": 42, "avg_profile": {"PT": 46, "AS": 70, "RT": 23, "PR": 57, "ST": 22}}, {"name": "Rimbalzista", "color": "#f97316", "desc": "Domina a rimbalzo e protegge il ferro", "ideal": [50, 20, 95, 40, 70], "count": 54, "avg_profile": {"PT": 37, "AS": 23, "RT": 63, "PR": 28, "ST": 73}}, {"name": "Disruptor", "color": "#7c3aed", "desc": "Rompe il gioco avversario, recuperi e pressione", "ideal": [30, 30, 50, 90, 60], "count": 27, "avg_profile": {"PT": 30, "AS": 32, "RT": 40, "PR": 60, "ST": 51}}, {"name": "Factotum", "color": "#06b6d4", "desc": "Contributo solido in tutte le aree di gioco", "ideal": [65, 65, 65, 55, 45], "count": 63, "avg_profile": {"PT": 68, "AS": 68, "RT": 67, "PR": 64, "ST": 55}}];
+        let selectedArchetype = null;
+
+        function profileBar(label, pct, idealPct) {
+            const color = pct >= 80 ? '#22c55e' : pct >= 50 ? '#302B8F' : '#94a3b8';
+            return `<div style="display: flex; align-items: center; gap: 8px; margin: 4px 0;">
+                <span style="width: 30px; font-size: 12px; color: #666;">${label}</span>
+                <div style="flex: 1; background: #e5e5e5; height: 8px; border-radius: 4px; position: relative;">
+                    <div style="width: ${pct}%; background: ${color}; height: 100%; border-radius: 4px;"></div>
+                    ${idealPct !== undefined ? `<div style="position: absolute; left: ${idealPct}%; top: -2px; width: 2px; height: 12px; background: #000;"></div>` : ''}
+                </div>
+                <span style="width: 30px; font-size: 12px; text-align: right;">${pct}</span>
+            </div>`;
+        }
+
+        function renderArchetypeCards() {
+            const container = document.getElementById('archetype-cards');
+            let html = '';
+
+            archetypeSummary.forEach(arch => {
+                const isSelected = selectedArchetype === arch.name;
+                const border = isSelected ? `3px solid ${arch.color}` : '1px solid #e5e7eb';
+                const shadow = isSelected ? 'box-shadow: 0 4px 12px rgba(0,0,0,0.15);' : '';
+
+                html += `<div onclick="selectArchetype('${arch.name}')"
+                    style="background: white; border: ${border}; border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.2s; ${shadow}">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <div style="width: 12px; height: 12px; border-radius: 50%; background: ${arch.color};"></div>
+                        <div style="font-weight: 600;">${arch.name}</div>
+                    </div>
+                    <div style="font-size: 28px; font-weight: 700; color: ${arch.color};">${arch.count}</div>
+                    <div style="font-size: 12px; color: #888; margin-top: 5px;">${arch.desc}</div>
+                </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function selectArchetype(name) {
+            selectedArchetype = name;
+            renderArchetypeCards();
+            showPlayers(name);
+        }
+
+        function showPlayers(archName) {
+            const section = document.getElementById('players-section');
+            const grid = document.getElementById('players-grid');
+            const title = document.getElementById('archetype-title');
+
+            const arch = archetypeSummary.find(a => a.name === archName);
+            const players = playersData.filter(p => p.tipo === archName).sort((a, b) => b.match - a.match);
+
+            title.innerHTML = `<span style="color: ${arch.color};">${arch.name}</span> - ${players.length} giocatori`;
+
+            let html = '';
+
+            // Mostra profilo ideale dell'archetipo
+            html += `<div style="background: #f9f9f9; border: 2px dashed ${arch.color}; border-radius: 8px; padding: 15px; grid-column: 1 / -1;">
+                <div style="font-weight: 600; margin-bottom: 10px;">Profilo ideale ${arch.name}</div>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                    <span>PT: ${arch.ideal[0]}</span>
+                    <span>AS: ${arch.ideal[1]}</span>
+                    <span>RT: ${arch.ideal[2]}</span>
+                    <span>PR: ${arch.ideal[3]}</span>
+                    <span>ST: ${arch.ideal[4]}</span>
+                </div>
+                <div style="font-size: 12px; color: #666; margin-top: 8px;">(la linea nera nelle barre indica il valore ideale)</div>
+            </div>`;
+
+            players.forEach(player => {
+                html += `<div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div>
+                            <div style="font-weight: 600;">${player.name}</div>
+                            <div style="font-size: 13px; color: #666;">${player.team}</div>
+                        </div>
+                        <div style="background: ${player.color}; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                            ${player.match}% match
+                        </div>
+                    </div>
+                    ${profileBar('PT', player.profile.PT, arch.ideal[0])}
+                    ${profileBar('AS', player.profile.AS, arch.ideal[1])}
+                    ${profileBar('RT', player.profile.RT, arch.ideal[2])}
+                    ${profileBar('PR', player.profile.PR, arch.ideal[3])}
+                    ${profileBar('ST', player.profile.ST, arch.ideal[4])}
+                    <div style="margin-top: 10px; font-size: 11px; color: #888; text-align: center;">
+                        ${player.stats.PT} pt | ${player.stats.AS} ast | ${player.stats.RT} reb /partita
+                    </div>
+                </div>`;
+            });
+
+            grid.innerHTML = html;
+            section.style.display = 'block';
+        }
+
+        renderArchetypeCards();
+        if (archetypeSummary.length > 0 && archetypeSummary[0].count > 0) {
+            // Seleziona il primo archetipo con giocatori
+            const firstWithPlayers = archetypeSummary.find(a => a.count > 0);
+            if (firstWithPlayers) selectArchetype(firstWithPlayers.name);
+        }
+    </script>
+    
+
+        <div class="site-footer">
+            <img src="../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <div>Ultimo aggiornamento: 13/01/2026 22:35</div>
+            <div>Generato con LNP Stats</div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Espandi sezione corrente
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('expanded');
+            });
+        });
+
+        // Espandi automaticamente la sezione attiva
+        const activeLink = document.querySelector('.sidebar-link.active');
+        if (activeLink) {
+            let parent = activeLink.closest('.sidebar-section');
+            if (parent) parent.classList.add('expanded');
+        }
+    </script>
+</body>
+</html>

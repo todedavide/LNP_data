@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quando Vince - Serie A2 - LNP Stats</title>
+    <link rel="icon" type="image/png" href="../../static/favicon180x180.png">
+    <link rel="stylesheet" href="../../static/twinplay_brand.css">
+    <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--tp-gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--tp-spacing-lg);
+            z-index: 1000;
+            box-shadow: var(--tp-shadow-md);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-md);
+        }
+
+        .header-logo img {
+            height: 36px;
+        }
+
+        .header-logo a {
+            color: white;
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .header-breadcrumb {
+            margin-left: var(--tp-spacing-xl);
+            opacity: 0.8;
+            font-size: 0.875rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: var(--tp-spacing-md);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--tp-light);
+        }
+
+        .sidebar-section-header {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            color: var(--tp-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-sm);
+            transition: background 0.2s;
+        }
+
+        .sidebar-section-header:hover {
+            background: var(--tp-light);
+        }
+
+        .sidebar-section-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            font-size: 0.75rem;
+        }
+
+        .sidebar-section.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-subsection {
+            display: none;
+            background: var(--tp-light);
+        }
+
+        .sidebar-section.expanded .sidebar-subsection {
+            display: block;
+        }
+
+        .sidebar-category {
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: var(--tp-spacing-lg);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--tp-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: var(--tp-spacing-sm);
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: calc(var(--tp-spacing-lg) + 10px);
+            color: var(--tp-dark);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: white;
+            border-left-color: var(--tp-primary);
+        }
+
+        .sidebar-link.active {
+            background: white;
+            border-left-color: var(--tp-primary);
+            color: var(--tp-secondary);
+            font-weight: 600;
+        }
+
+        .sidebar-home-btn {
+            display: block;
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--tp-light);
+            transition: all 0.2s;
+        }
+
+        .sidebar-home-btn:hover {
+            background: var(--tp-light);
+            color: var(--tp-secondary);
+        }
+
+        .sidebar-competition {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            background: var(--tp-gradient-primary);
+            color: white;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: var(--tp-spacing-sm);
+        }
+
+        .sidebar:empty + .main {
+            margin-left: 0;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: var(--tp-spacing-xl);
+            min-height: calc(100vh - var(--header-height));
+            background: var(--tp-light);
+        }
+
+        .page-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.75rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-xs);
+        }
+
+        .page-subtitle {
+            color: var(--tp-gray);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .content-section {
+            background: white;
+            border-radius: var(--tp-radius-lg);
+            padding: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-lg);
+            box-shadow: var(--tp-shadow-sm);
+        }
+
+        .section-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.25rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-lg);
+            padding-bottom: var(--tp-spacing-sm);
+            border-bottom: 2px solid var(--tp-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .stat-card {
+            background: var(--tp-gradient-primary);
+            color: white;
+            padding: var(--tp-spacing-lg);
+            border-radius: var(--tp-radius-lg);
+            text-align: center;
+        }
+
+        .stat-card.accent {
+            background: var(--tp-gradient-accent);
+            color: var(--tp-dark);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+        }
+
+        .stat-value {
+            font-family: var(--tp-font-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: var(--tp-spacing-xs);
+        }
+
+        /* Plotly responsive */
+        .js-plotly-plot {
+            width: 100% !important;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            font-size: 0.8rem;
+        }
+
+        .site-footer img {
+            height: 24px;
+            margin-bottom: var(--tp-spacing-sm);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="header-logo">
+            <img src="../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <a href="../../index.html">LNP Stats</a>
+        </div>
+        <div class="header-breadcrumb">Serie A2 / Analisi / Quando Vince</div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        
+    <a href="../../index.html" class="sidebar-home-btn">
+        ← Cambia campionato
+    </a>
+    <div class="sidebar-competition">
+        Serie A2
+    </div>
+    <div class="sidebar-category">Squadre</div><a href="../../a2/squadre/classifiche.html" class="sidebar-link ">Classifiche & Stats</a><a href="../../a2/squadre/radar.html" class="sidebar-link ">Radar Squadre</a><a href="../../a2/squadre/vittorie-sconfitte.html" class="sidebar-link ">Vittorie vs Sconfitte</a><a href="../../a2/squadre/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../a2/squadre/quando-vince.html" class="sidebar-link active">Quando Vince</a><a href="../../a2/squadre/andamento.html" class="sidebar-link ">Andamento & Parziali</a><div class="sidebar-category">Giocatori</div><a href="../../a2/giocatori/statistiche.html" class="sidebar-link ">Statistiche & Percentili</a><a href="../../a2/giocatori/radar.html" class="sidebar-link ">Radar Confronto</a><a href="../../a2/giocatori/consistenza.html" class="sidebar-link ">Consistenza</a><a href="../../a2/giocatori/simili.html" class="sidebar-link ">Giocatori Simili</a><a href="../../a2/giocatori/forma.html" class="sidebar-link ">Forma Recente</a><a href="../../a2/giocatori/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../a2/giocatori/distribuzione-tiri.html" class="sidebar-link ">Distribuzione Tiri</a><a href="../../a2/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../a2/giocatori/clustering.html" class="sidebar-link ">Clustering & Tipologie</a><a href="../../a2/giocatori/dipendenza.html" class="sidebar-link ">Dipendenza Squadra</a><a href="../../a2/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
+    </nav>
+
+    <main class="main">
+        <h1 class="page-title">Quando Vince</h1>
+        <p class="page-subtitle">Serie A2</p>
+
+        
+    <div class="content-section">
+        <h2 class="section-title">Quando Vince Ogni Squadra</h2>
+        <p style="color: #666; margin-bottom: 20px;">
+            Quali condizioni statistiche caratterizzano le vittorie di ogni squadra?
+            Confronto tra situazioni sopra/sotto soglia.
+        </p>
+
+        <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
+            <div>
+                <label style="font-weight: 600;">Squadra:</label>
+                <select id="rule-team" onchange="showRules()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
+                    <option value="Avellino Basket">Avellino Basket</option><option value="Crifo Wines Ruvo di Puglia">Crifo Wines Ruvo di Puglia</option><option value="Dole Basket Rimini">Dole Basket Rimini</option><option value="Estra Pistoia">Estra Pistoia</option><option value="Ferraroni Juvi Cremona">Ferraroni Juvi Cremona</option><option value="Fortitudo Bologna">Fortitudo Bologna</option><option value="Gemini Mestre">Gemini Mestre</option><option value="Givova Scafati">Givova Scafati</option><option value="Gruppo Mascio Bergamo">Gruppo Mascio Bergamo</option><option value="Libertas Livorno">Libertas Livorno</option><option value="Liofilchem Roseto">Liofilchem Roseto</option><option value="RSR Sebastiani Rieti">RSR Sebastiani Rieti</option><option value="Reale Mutua Torino">Reale Mutua Torino</option><option value="Sella Cento">Sella Cento</option><option value="Tezenis Verona">Tezenis Verona</option><option value="UEB Gesteco Cividale">UEB Gesteco Cividale</option><option value="Unieuro Forlì">Unieuro Forlì</option><option value="Valtur Brindisi">Valtur Brindisi</option><option value="Victoria Libertas Pesaro">Victoria Libertas Pesaro</option><option value="Wegreenit Urania Milano">Wegreenit Urania Milano</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-weight: 600;">Tipo analisi:</label>
+                <select id="rule-type" onchange="showRules()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
+                    <option value="team">Stats squadra (fatti/subiti)</option>
+                    <option value="player">Performance giocatori</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="rules-content"></div>
+    </div>
+
+    <script>
+        const rulesData = {"team": {"Avellino Basket": {"rules": [{"condition": "Assist (fatti)", "threshold": 15, "stat": "", "who": "fatti", "left_prob": 0.23076923076923078, "left_samples": "13", "right_prob": 1.0, "right_samples": "9", "diff": 0.7692307692307692}, {"condition": "Assist (fatti) \u226415 \u2192 Punti (fatti)", "threshold": 77, "stat": "", "who": "fatti", "left_prob": 0.0, "left_samples": "8", "right_prob": 0.6, "right_samples": "5", "diff": 0.6}], "n_games": 22, "win_rate": 0.5454545454545454}, "Crifo Wines Ruvo di Puglia": {"rules": [{"condition": "Triple (fatte)", "threshold": 9, "stat": "", "who": "fatte", "left_prob": 0.0625, "left_samples": "16", "right_prob": 1.0, "right_samples": "6", "diff": 0.9375}, {"condition": "Triple (fatte) \u22649 \u2192 Rimbalzi (subiti)", "threshold": 32, "stat": "", "who": "subiti", "left_prob": 0.3333333333333333, "left_samples": "3", "right_prob": 0.0, "right_samples": "13", "diff": 0.3333333333333333}], "n_games": 22, "win_rate": 0.3181818181818182}, "Dole Basket Rimini": {"rules": [{"condition": "Rimbalzi (fatti)", "threshold": 26, "stat": "", "who": "fatti", "left_prob": 0.0, "left_samples": "4", "right_prob": 0.8666666666666667, "right_samples": "15", "diff": 0.8666666666666667}, {"condition": "Rimbalzi (fatti) >26 \u2192 Punti (subiti)", "threshold": 81, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "12", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.6666666666666667}], "n_games": 19, "win_rate": 0.6842105263157895}, "Estra Pistoia": {"rules": [{"condition": "Punti (fatti)", "threshold": 80, "stat": "", "who": "fatti", "left_prob": 0.0, "left_samples": "14", "right_prob": 0.875, "right_samples": "8", "diff": 0.875}, {"condition": "Punti (fatti) >80 \u2192 Punti (subiti)", "threshold": 76, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "5", "right_prob": 0.6666666666666666, "right_samples": "3", "diff": 0.33333333333333337}], "n_games": 22, "win_rate": 0.3181818181818182}, "Ferraroni Juvi Cremona": {"rules": [{"condition": "Punti (subiti)", "threshold": 72, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "7", "right_prob": 0.13333333333333333, "right_samples": "15", "diff": 0.8666666666666667}, {"condition": "Punti (subiti) >72 \u2192 Punti (fatti)", "threshold": 82, "stat": "", "who": "fatti", "left_prob": 0.0, "left_samples": "12", "right_prob": 0.6666666666666666, "right_samples": "3", "diff": 0.6666666666666666}], "n_games": 22, "win_rate": 0.4090909090909091}, "Fortitudo Bologna": {"rules": [{"condition": "Punti (fatti) \u226475 \u2192 Assist (subiti)", "threshold": 15, "stat": "", "who": "subiti", "left_prob": 0.75, "left_samples": "4", "right_prob": 0.0, "right_samples": "6", "diff": 0.75}, {"condition": "Punti (fatti) >75 \u2192 Recuperi (fatti)", "threshold": 3, "stat": "", "who": "fatti", "left_prob": 0.3333333333333333, "left_samples": "3", "right_prob": 1.0, "right_samples": "9", "diff": 0.6666666666666667}, {"condition": "Punti (fatti)", "threshold": 75, "stat": "", "who": "fatti", "left_prob": 0.3, "left_samples": "10", "right_prob": 0.8333333333333334, "right_samples": "12", "diff": 0.5333333333333334}], "n_games": 22, "win_rate": 0.5909090909090909}, "Gemini Mestre": {"rules": [{"condition": "Punti (subiti)", "threshold": 76, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "8", "right_prob": 0.08333333333333333, "right_samples": "12", "diff": 0.9166666666666666}, {"condition": "Punti (subiti) >76 \u2192 Punti (subiti)", "threshold": 90, "stat": "", "who": "subiti", "left_prob": 0.0, "left_samples": "9", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.3333333333333333}], "n_games": 20, "win_rate": 0.45}, "Givova Scafati": {"rules": [{"condition": "Recuperi (fatti) >3 \u2192 Punti (fatti)", "threshold": 72, "stat": "", "who": "fatti", "left_prob": 0.0, "left_samples": "3", "right_prob": 0.8571428571428571, "right_samples": "14", "diff": 0.8571428571428571}, {"condition": "Recuperi (fatti)", "threshold": 3, "stat": "", "who": "fatti", "left_prob": 0.0, "left_samples": "4", "right_prob": 0.7058823529411765, "right_samples": "17", "diff": 0.7058823529411765}], "n_games": 21, "win_rate": 0.5714285714285714}, "Gruppo Mascio Bergamo": {"rules": [{"condition": "Assist (fatti)", "threshold": 20, "stat": "", "who": "fatti", "left_prob": 0.21428571428571427, "left_samples": "14", "right_prob": 1.0, "right_samples": "7", "diff": 0.7857142857142857}, {"condition": "Assist (fatti) \u226420 \u2192 Punti (subiti)", "threshold": 71, "stat": "", "who": "subiti", "left_prob": 0.6666666666666666, "left_samples": "3", "right_prob": 0.09090909090909091, "right_samples": "11", "diff": 0.5757575757575757}], "n_games": 21, "win_rate": 0.47619047619047616}, "Libertas Livorno": {"rules": [{"condition": "Rimbalzi (fatti) \u226436 \u2192 Punti (subiti)", "threshold": 70, "stat": "", "who": "subiti", "left_prob": 0.8333333333333334, "left_samples": "6", "right_prob": 0.1111111111111111, "right_samples": "9", "diff": 0.7222222222222223}, {"condition": "Rimbalzi (fatti)", "threshold": 36, "stat": "", "who": "fatti", "left_prob": 0.4, "left_samples": "15", "right_prob": 1.0, "right_samples": "7", "diff": 0.6}], "n_games": 22, "win_rate": 0.5909090909090909}, "Liofilchem Roseto": {"rules": [{"condition": "Assist (fatti)", "threshold": 21, "stat": "", "who": "fatti", "left_prob": 0.10526315789473684, "left_samples": "19", "right_prob": 1.0, "right_samples": "3", "diff": 0.8947368421052632}, {"condition": "Assist (fatti) \u226421 \u2192 Recuperi (fatti)", "threshold": 8, "stat": "", "who": "fatti", "left_prob": 0.0, "left_samples": "16", "right_prob": 0.6666666666666666, "right_samples": "3", "diff": 0.6666666666666666}], "n_games": 22, "win_rate": 0.22727272727272727}, "RSR Sebastiani Rieti": {"rules": [{"condition": "Punti (fatti) \u226483 \u2192 Recuperi (fatti)", "threshold": 10, "stat": "", "who": "fatti", "left_prob": 0.16666666666666666, "left_samples": "12", "right_prob": 1.0, "right_samples": "3", "diff": 0.8333333333333334}, {"condition": "Punti (fatti)", "threshold": 83, "stat": "", "who": "fatti", "left_prob": 0.3333333333333333, "left_samples": "15", "right_prob": 1.0, "right_samples": "7", "diff": 0.6666666666666667}], "n_games": 22, "win_rate": 0.5454545454545454}, "Reale Mutua Torino": {"rules": [{"condition": "Punti (fatti)", "threshold": 69, "stat": "", "who": "fatti", "left_prob": 0.0, "left_samples": "7", "right_prob": 0.8333333333333334, "right_samples": "12", "diff": 0.8333333333333334}, {"condition": "Punti (fatti) >69 \u2192 Rimbalzi (subiti)", "threshold": 36, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "9", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.6666666666666667}], "n_games": 19, "win_rate": 0.5263157894736842}, "Sella Cento": {"rules": [{"condition": "Punti (fatti)", "threshold": 79, "stat": "", "who": "fatti", "left_prob": 0.08333333333333333, "left_samples": "12", "right_prob": 0.9, "right_samples": "10", "diff": 0.8166666666666667}, {"condition": "Punti (fatti) >79 \u2192 Stoppate (subite)", "threshold": 1, "stat": "", "who": "subite", "left_prob": 1.0, "left_samples": "7", "right_prob": 0.6666666666666666, "right_samples": "3", "diff": 0.33333333333333337}, {"condition": "Punti (fatti) \u226479 \u2192 Punti (subiti)", "threshold": 75, "stat": "", "who": "subiti", "left_prob": 0.3333333333333333, "left_samples": "3", "right_prob": 0.0, "right_samples": "9", "diff": 0.3333333333333333}], "n_games": 22, "win_rate": 0.45454545454545453}, "Tezenis Verona": {"rules": [{"condition": "Punti (fatti)", "threshold": 72, "stat": "", "who": "fatti", "left_prob": 0.0, "left_samples": "8", "right_prob": 1.0, "right_samples": "14", "diff": 1.0}], "n_games": 22, "win_rate": 0.6363636363636364}, "UEB Gesteco Cividale": {"rules": [{"condition": "Punti (fatti) \u226475 \u2192 Punti (subiti)", "threshold": 71, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "3", "right_prob": 0.0, "right_samples": "7", "diff": 1.0}, {"condition": "Punti (fatti)", "threshold": 75, "stat": "", "who": "fatti", "left_prob": 0.3, "left_samples": "10", "right_prob": 1.0, "right_samples": "12", "diff": 0.7}], "n_games": 22, "win_rate": 0.6818181818181818}, "Unieuro Forl\u00ec": {"rules": [{"condition": "Assist (subiti)", "threshold": 14, "stat": "", "who": "subiti", "left_prob": 0.75, "left_samples": "8", "right_prob": 0.0, "right_samples": "14", "diff": 0.75}, {"condition": "Assist (subiti) \u226414 \u2192 Punti (subiti)", "threshold": 78, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "5", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.6666666666666667}], "n_games": 22, "win_rate": 0.2727272727272727}, "Valtur Brindisi": {"rules": [{"condition": "Assist (subiti)", "threshold": 15, "stat": "", "who": "subiti", "left_prob": 0.875, "left_samples": "16", "right_prob": 0.16666666666666666, "right_samples": "6", "diff": 0.7083333333333334}, {"condition": "Assist (subiti) \u226415 \u2192 Assist (fatti)", "threshold": 13, "stat": "", "who": "fatti", "left_prob": 0.5, "left_samples": "4", "right_prob": 1.0, "right_samples": "12", "diff": 0.5}, {"condition": "Assist (subiti) >15 \u2192 Recuperi (fatti)", "threshold": 5, "stat": "", "who": "fatti", "left_prob": 0.0, "left_samples": "3", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.3333333333333333}], "n_games": 22, "win_rate": 0.6818181818181818}, "Victoria Libertas Pesaro": {"rules": [{"condition": "Punti (fatti)", "threshold": 69, "stat": "", "who": "fatti", "left_prob": 0.0, "left_samples": "4", "right_prob": 0.8888888888888888, "right_samples": "18", "diff": 0.8888888888888888}, {"condition": "Punti (fatti) >69 \u2192 Punti (subiti)", "threshold": 86, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "15", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.6666666666666667}], "n_games": 22, "win_rate": 0.7272727272727273}, "Wegreenit Urania Milano": {"rules": [{"condition": "Rimbalzi (subiti)", "threshold": 28, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "7", "right_prob": 0.0, "right_samples": "15", "diff": 1.0}], "n_games": 22, "win_rate": 0.3181818181818182}}, "player": {"Gruppo Mascio Bergamo": {"rules": [{"condition": "M. Bogliardi >23 minuti \u2192 D. Hogue", "threshold": 30, "stat": "minuti", "player": "D. Hogue", "left_prob": 1.0, "left_samples": "6", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.6666666666666667}, {"condition": "M. Bogliardi", "threshold": 23, "stat": "minuti", "player": "M. Bogliardi", "left_prob": 0.2, "left_samples": "10", "right_prob": 0.7777777777777778, "right_samples": "9", "diff": 0.5777777777777777}, {"condition": "M. Bogliardi \u226423 minuti \u2192 M. Udom", "threshold": 21, "stat": "minuti", "player": "M. Udom", "left_prob": 0.5, "left_samples": "4", "right_prob": 0.0, "right_samples": "6", "diff": 0.5}], "n_games": 19, "win_rate": 0.47368421052631576, "top_players": ["A. Loro", "D. Harrison", "M. Udom", "M. Bogliardi", "D. Hogue"]}, "Victoria Libertas Pesaro": {"rules": [{"condition": "M. Tambone >16 punti \u2192 A. Bertini", "threshold": 23, "stat": "minuti", "player": "A. Bertini", "left_prob": 0.0, "left_samples": "3", "right_prob": 0.7142857142857143, "right_samples": "7", "diff": 0.7142857142857143}, {"condition": "M. Tambone", "threshold": 16, "stat": "punti", "player": "M. Tambone", "left_prob": 0.9, "left_samples": "10", "right_prob": 0.5, "right_samples": "10", "diff": 0.4}, {"condition": "M. Tambone \u226416 punti \u2192 O. Maretto", "threshold": 7, "stat": "punti", "player": "O. Maretto", "left_prob": 0.6666666666666666, "left_samples": "3", "right_prob": 1.0, "right_samples": "7", "diff": 0.33333333333333337}], "n_games": 20, "win_rate": 0.7, "top_players": ["M. Tambone", "R. Miniotas", "O. Maretto", "L. Bucarelli", "A. Bertini"]}, "Ferraroni Juvi Cremona": {"rules": [{"condition": "G. Allinei", "threshold": 27, "stat": "minuti", "player": "G. Allinei", "left_prob": 0.13333333333333333, "left_samples": "15", "right_prob": 1.0, "right_samples": "5", "diff": 0.8666666666666667}, {"condition": "G. Allinei \u226427 minuti \u2192 G. Allinei", "threshold": 13, "stat": "punti", "player": "G. Allinei", "left_prob": 0.0, "left_samples": "12", "right_prob": 0.6666666666666666, "right_samples": "3", "diff": 0.6666666666666666}], "n_games": 20, "win_rate": 0.35, "top_players": ["V. Bartoli", "B. Garrett", "G. Allinei", "A. Panni", "T. Mcconico"]}, "Unieuro Forl\u00ec": {"rules": [{"condition": "R. Gaspardo >14 punti \u2192 S. Pepe", "threshold": 21, "stat": "minuti", "player": "S. Pepe", "left_prob": 1.0, "left_samples": "3", "right_prob": 0.3333333333333333, "right_samples": "6", "diff": 0.6666666666666667}, {"condition": "R. Gaspardo", "threshold": 14, "stat": "punti", "player": "R. Gaspardo", "left_prob": 0.09090909090909091, "left_samples": "11", "right_prob": 0.5555555555555556, "right_samples": "9", "diff": 0.46464646464646464}, {"condition": "R. Gaspardo \u226414 punti \u2192 P. Aradori", "threshold": 21, "stat": "minuti", "player": "P. Aradori", "left_prob": 0.3333333333333333, "left_samples": "3", "right_prob": 0.0, "right_samples": "8", "diff": 0.3333333333333333}], "n_games": 20, "win_rate": 0.3, "top_players": ["R. Gaspardo", "D. Harper", "P. Aradori", "S. Pepe", "K. Allen"]}, "Libertas Livorno": {"rules": [{"condition": "M. Tiby", "threshold": 10, "stat": "punti", "player": "M. Tiby", "left_prob": 0.0, "left_samples": "3", "right_prob": 0.7058823529411765, "right_samples": "17", "diff": 0.7058823529411765}, {"condition": "M. Tiby >10 punti \u2192 M. Tiby", "threshold": 22, "stat": "punti", "player": "M. Tiby", "left_prob": 0.8461538461538461, "left_samples": "13", "right_prob": 0.25, "right_samples": "4", "diff": 0.5961538461538461}], "n_games": 20, "win_rate": 0.6, "top_players": ["M. Tiby", "A. Woodson", "F. Valentini", "M. Piccoli", "A. Filloy"]}, "Sella Cento": {"rules": [{"condition": "A. Fall", "threshold": 21, "stat": "minuti", "player": "A. Fall", "left_prob": 0.6923076923076923, "left_samples": "13", "right_prob": 0.0, "right_samples": "7", "diff": 0.6923076923076923}, {"condition": "A. Fall \u226421 minuti \u2192 L. Conti", "threshold": 27, "stat": "minuti", "player": "L. Conti", "left_prob": 1.0, "left_samples": "6", "right_prob": 0.42857142857142855, "right_samples": "7", "diff": 0.5714285714285714}], "n_games": 20, "win_rate": 0.45, "top_players": ["S. Davis Iv", "G. Devoe", "L. Conti", "N. Berdini", "A. Fall"]}, "Wegreenit Urania Milano": {"rules": [{"condition": "K. Taylor >18 punti \u2192 K. Taylor", "threshold": 34, "stat": "minuti", "player": "K. Taylor", "left_prob": 0.8571428571428571, "left_samples": "7", "right_prob": 0.16666666666666666, "right_samples": "6", "diff": 0.6904761904761905}, {"condition": "K. Taylor", "threshold": 18, "stat": "punti", "player": "K. Taylor", "left_prob": 0.0, "left_samples": "7", "right_prob": 0.5384615384615384, "right_samples": "13", "diff": 0.5384615384615384}], "n_games": 20, "win_rate": 0.35, "top_players": ["K. Taylor", "M. Cavallero", "G. Sabatini", "A. Gentile", "I. Lupusor"]}, "Dole Basket Rimini": {"rules": [{"condition": "M. Ogden >26 minuti \u2192 M. Ogden", "threshold": 33, "stat": "minuti", "player": "M. Ogden", "left_prob": 1.0, "left_samples": "11", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.6666666666666667}, {"condition": "M. Ogden", "threshold": 26, "stat": "minuti", "player": "M. Ogden", "left_prob": 0.2, "left_samples": "5", "right_prob": 0.8571428571428571, "right_samples": "14", "diff": 0.657142857142857}], "n_games": 19, "win_rate": 0.6842105263157895, "top_players": ["D. Denegri", "P. Marini", "M. Ogden", "A. Simioni", "G. Tomassini"]}, "RSR Sebastiani Rieti": {"rules": [{"condition": "L. Piccin", "threshold": 4, "stat": "punti", "player": "L. Piccin", "left_prob": 0.2, "left_samples": "10", "right_prob": 0.9, "right_samples": "10", "diff": 0.7}, {"condition": "L. Piccin \u22644 punti \u2192 L. Piccin", "threshold": 14, "stat": "minuti", "player": "L. Piccin", "left_prob": 0.5, "left_samples": "4", "right_prob": 0.0, "right_samples": "6", "diff": 0.5}, {"condition": "L. Piccin >4 punti \u2192 M. Parravicini", "threshold": 21, "stat": "minuti", "player": "M. Parravicini", "left_prob": 1.0, "left_samples": "7", "right_prob": 0.6666666666666666, "right_samples": "3", "diff": 0.33333333333333337}], "n_games": 20, "win_rate": 0.55, "top_players": ["D. Perry", "L. Udom", "T. Guariglia", "M. Parravicini", "L. Piccin"]}, "Avellino Basket": {"rules": [{"condition": "G. Dell' Agnello", "threshold": 24, "stat": "minuti", "player": "G. Dell' Agnello", "left_prob": 0.14285714285714285, "left_samples": "7", "right_prob": 0.7692307692307693, "right_samples": "13", "diff": 0.6263736263736264}, {"condition": "G. Dell' Agnello >24 minuti \u2192 F. Mussini", "threshold": 17, "stat": "punti", "player": "F. Mussini", "left_prob": 0.625, "left_samples": "8", "right_prob": 1.0, "right_samples": "5", "diff": 0.375}, {"condition": "G. Dell' Agnello \u226424 minuti \u2192 A. Grande", "threshold": 27, "stat": "minuti", "player": "A. Grande", "left_prob": 0.0, "left_samples": "4", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.3333333333333333}], "n_games": 20, "win_rate": 0.55, "top_players": ["J. Lewis", "F. Mussini", "G. Dell' Agnello", "A. Grande", "J. Chandler"]}, "Liofilchem Roseto": {"rules": [{"condition": "D. Petrovic", "threshold": 26, "stat": "minuti", "player": "D. Petrovic", "left_prob": 0.11764705882352941, "left_samples": "17", "right_prob": 0.6666666666666666, "right_samples": "3", "diff": 0.5490196078431372}, {"condition": "D. Petrovic \u226426 minuti \u2192 D. Petrovic", "threshold": 5, "stat": "punti", "player": "D. Petrovic", "left_prob": 0.5, "left_samples": "4", "right_prob": 0.0, "right_samples": "13", "diff": 0.5}], "n_games": 20, "win_rate": 0.2, "top_players": ["J. Robinson", "J. Cannon", "D. Petrovic", "A. Donadoni", "M. Timperi"]}, "Fortitudo Bologna": {"rules": [{"condition": "A. Sarto", "threshold": 9, "stat": "punti", "player": "A. Sarto", "left_prob": 0.0, "left_samples": "6", "right_prob": 0.8571428571428571, "right_samples": "14", "diff": 0.8571428571428571}, {"condition": "A. Sarto >9 punti \u2192 G. Della Rosa", "threshold": 31, "stat": "minuti", "player": "G. Della Rosa", "left_prob": 1.0, "left_samples": "11", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.6666666666666667}], "n_games": 20, "win_rate": 0.6, "top_players": ["P. Sorokas", "A. Sarto", "M. Fantinelli", "G. Della Rosa", "S. Moretti"]}, "Crifo Wines Ruvo di Puglia": {"rules": [{"condition": "A. Moody \u226422 minuti \u2192 A. Moody", "threshold": 2, "stat": "punti", "player": "A. Moody", "left_prob": 0.3333333333333333, "left_samples": "3", "right_prob": 1.0, "right_samples": "3", "diff": 0.6666666666666667}, {"condition": "A. Moody >22 minuti \u2192 A. Moody", "threshold": 19, "stat": "punti", "player": "A. Moody", "left_prob": 0.0, "left_samples": "11", "right_prob": 0.6666666666666666, "right_samples": "3", "diff": 0.6666666666666666}, {"condition": "A. Moody", "threshold": 22, "stat": "minuti", "player": "A. Moody", "left_prob": 0.6666666666666666, "left_samples": "6", "right_prob": 0.14285714285714285, "right_samples": "14", "diff": 0.5238095238095237}], "n_games": 20, "win_rate": 0.3, "top_players": ["P. Brooks Ii", "A. Moody", "M. Jerkovic", "M. Anumba", "T. Reale"]}, "Valtur Brindisi": {"rules": [{"condition": "E. Esposito >26 minuti \u2192 G. Vildera", "threshold": 12, "stat": "punti", "player": "G. Vildera", "left_prob": 0.14285714285714285, "left_samples": "7", "right_prob": 1.0, "right_samples": "4", "diff": 0.8571428571428572}, {"condition": "E. Esposito", "threshold": 26, "stat": "minuti", "player": "E. Esposito", "left_prob": 1.0, "left_samples": "9", "right_prob": 0.45454545454545453, "right_samples": "11", "diff": 0.5454545454545454}], "n_games": 20, "win_rate": 0.7, "top_players": ["A. Cinciarini", "Z. Copeland", "T. Radonjic", "E. Esposito", "G. Vildera"]}, "Reale Mutua Torino": {"rules": [{"condition": "F. Massone \u226426 minuti \u2192 G. Severini", "threshold": 2, "stat": "punti", "player": "G. Severini", "left_prob": 0.25, "left_samples": "4", "right_prob": 1.0, "right_samples": "7", "diff": 0.75}, {"condition": "F. Massone >26 minuti \u2192 M. Schina", "threshold": 24, "stat": "minuti", "player": "M. Schina", "left_prob": 0.5, "left_samples": "4", "right_prob": 0.0, "right_samples": "4", "diff": 0.5}, {"condition": "F. Massone", "threshold": 26, "stat": "minuti", "player": "F. Massone", "left_prob": 0.7272727272727273, "left_samples": "11", "right_prob": 0.25, "right_samples": "8", "diff": 0.4772727272727273}], "n_games": 19, "win_rate": 0.5263157894736842, "top_players": ["M. Teague", "R. Allen", "F. Massone", "G. Severini", "M. Schina"]}, "UEB Gesteco Cividale": {"rules": [{"condition": "L. Marangon", "threshold": 17, "stat": "minuti", "player": "L. Marangon", "left_prob": 0.0, "left_samples": "3", "right_prob": 0.7647058823529411, "right_samples": "17", "diff": 0.7647058823529411}, {"condition": "L. Marangon >17 minuti \u2192 F. Ferrari", "threshold": 41, "stat": "minuti", "player": "F. Ferrari", "left_prob": 0.8571428571428571, "left_samples": "14", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.5238095238095237}], "n_games": 20, "win_rate": 0.65, "top_players": ["F. Ferrari", "L. Redivo", "E. Rota", "L. Marangon", "M. Mastellari"]}, "Tezenis Verona": {"rules": [{"condition": "M. Serpilli", "threshold": 15, "stat": "minuti", "player": "M. Serpilli", "left_prob": 0.0, "left_samples": "3", "right_prob": 0.7647058823529411, "right_samples": "17", "diff": 0.7647058823529411}, {"condition": "M. Serpilli >15 minuti \u2192 R. Bolpin", "threshold": 1, "stat": "punti", "player": "R. Bolpin", "left_prob": 0.25, "left_samples": "4", "right_prob": 0.9230769230769231, "right_samples": "13", "diff": 0.6730769230769231}], "n_games": 20, "win_rate": 0.65, "top_players": ["F. Zampini", "R. Bolpin", "M. Serpilli", "L. Ambrosin", "T. Mcgee"]}, "Estra Pistoia": {"rules": [{"condition": "S. Knight", "threshold": 21, "stat": "punti", "player": "S. Knight", "left_prob": 0.1875, "left_samples": "16", "right_prob": 0.75, "right_samples": "4", "diff": 0.5625}, {"condition": "S. Knight \u226421 punti \u2192 J. Johnson", "threshold": 29, "stat": "minuti", "player": "J. Johnson", "left_prob": 0.5, "left_samples": "6", "right_prob": 0.0, "right_samples": "10", "diff": 0.5}], "n_games": 20, "win_rate": 0.3, "top_players": ["J. Johnson", "S. Knight", "L. Saccaggi", "N. Alessandrini", "F. Gallo"]}, "Givova Scafati": {"rules": [{"condition": "C. Walker", "threshold": 33, "stat": "minuti", "player": "C. Walker", "left_prob": 1.0, "left_samples": "9", "right_prob": 0.2, "right_samples": "10", "diff": 0.8}, {"condition": "C. Walker >33 minuti \u2192 L. Caroti", "threshold": 7, "stat": "punti", "player": "L. Caroti", "left_prob": 0.0, "left_samples": "6", "right_prob": 0.5, "right_samples": "4", "diff": 0.5}], "n_games": 19, "win_rate": 0.5789473684210527, "top_players": ["C. Walker", "B. Mascolo", "T. Allen", "M. Mollura", "L. Caroti"]}, "Gemini Mestre": {"rules": [{"condition": "I. Alipiev >1 punti \u2192 C. Bechi", "threshold": 26, "stat": "minuti", "player": "C. Bechi", "left_prob": 0.125, "left_samples": "8", "right_prob": 0.75, "right_samples": "4", "diff": 0.625}, {"condition": "I. Alipiev", "threshold": 1, "stat": "punti", "player": "I. Alipiev", "left_prob": 0.8333333333333334, "left_samples": "6", "right_prob": 0.3333333333333333, "right_samples": "12", "diff": 0.5}, {"condition": "I. Alipiev \u22641 punti \u2192 S. Aromando", "threshold": 23, "stat": "minuti", "player": "S. Aromando", "left_prob": 0.6666666666666666, "left_samples": "3", "right_prob": 1.0, "right_samples": "3", "diff": 0.33333333333333337}], "n_games": 18, "win_rate": 0.5, "top_players": ["K. Curry", "L. Galmarini", "C. Bechi", "S. Aromando", "I. Alipiev"]}}};
+
+        function showRules() {
+            const team = document.getElementById('rule-team').value;
+            const type = document.getElementById('rule-type').value;
+            const contentDiv = document.getElementById('rules-content');
+
+            const data = rulesData[type][team];
+            if (!data || !data.rules || data.rules.length === 0) {
+                contentDiv.innerHTML = '<p style="color: #666;">Dati insufficienti per questa squadra.</p>';
+                return;
+            }
+
+            const winRate = (data.win_rate * 100).toFixed(1);
+            const nGames = data.n_games;
+
+            let html = `<div style="margin-bottom: 20px; background: #f9f9f9; padding: 15px; border-radius: 8px;">`;
+            html += `<strong>Win Rate generale:</strong> ${winRate}% (${nGames} partite)`;
+            html += `</div>`;
+
+            html += '<div style="display: grid; gap: 20px;">';
+
+            data.rules.forEach((rule, i) => {
+                const condition = rule.condition || '';
+                const threshold = rule.threshold || 0;
+                const stat = rule.stat || '';  // "punti" o "minuti"
+                const leftProb = (rule.left_prob * 100).toFixed(0);
+                const rightProb = (rule.right_prob * 100).toFixed(0);
+                const leftSamples = rule.left_samples || 0;
+                const rightSamples = rule.right_samples || 0;
+
+                // Determina quale lato è migliore
+                const leftBetter = rule.left_prob > rule.right_prob;
+
+                // Titolo con stat type se disponibile
+                const titleText = stat ? `${condition} - ${threshold} ${stat}` : `${condition} - Soglia: ${threshold}`;
+
+                html += `<div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">`;
+                html += `<div style="background: #302B8F; color: white; padding: 12px 15px; font-weight: 600;">`;
+                html += titleText;
+                html += `</div>`;
+
+                html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">`;
+
+                // Lato sinistro (≤ threshold)
+                const leftBg = leftBetter ? '#dcfce7' : '#fee2e2';
+                const leftBorder = leftBetter ? '#22c55e' : '#ef4444';
+                const statSuffix = stat ? ` ${stat}` : '';
+                html += `<div style="padding: 15px; background: ${leftBg}; border-right: 1px solid #e5e7eb;">`;
+                html += `<div style="font-size: 14px; color: #666; margin-bottom: 5px;">≤ ${threshold}${statSuffix}</div>`;
+                html += `<div style="font-size: 28px; font-weight: 700; color: ${leftBorder};">${leftProb}%</div>`;
+                html += `<div style="font-size: 12px; color: #888;">vittorie (${leftSamples} partite)</div>`;
+                html += `</div>`;
+
+                // Lato destro (> threshold)
+                const rightBg = !leftBetter ? '#dcfce7' : '#fee2e2';
+                const rightBorder = !leftBetter ? '#22c55e' : '#ef4444';
+                html += `<div style="padding: 15px; background: ${rightBg};">`;
+                html += `<div style="font-size: 14px; color: #666; margin-bottom: 5px;">> ${threshold}${statSuffix}</div>`;
+                html += `<div style="font-size: 28px; font-weight: 700; color: ${rightBorder};">${rightProb}%</div>`;
+                html += `<div style="font-size: 12px; color: #888;">vittorie (${rightSamples} partite)</div>`;
+                html += `</div>`;
+
+                html += `</div></div>`;
+            });
+
+            html += '</div>';
+            contentDiv.innerHTML = html;
+        }
+
+        showRules();
+    </script>
+    
+
+        <div class="site-footer">
+            <img src="../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <div>Ultimo aggiornamento: 13/01/2026 22:35</div>
+            <div>Generato con LNP Stats</div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Espandi sezione corrente
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('expanded');
+            });
+        });
+
+        // Espandi automaticamente la sezione attiva
+        const activeLink = document.querySelector('.sidebar-link.active');
+        if (activeLink) {
+            let parent = activeLink.closest('.sidebar-section');
+            if (parent) parent.classList.add('expanded');
+        }
+    </script>
+</body>
+</html>

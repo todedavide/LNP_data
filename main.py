@@ -24,11 +24,16 @@ from functions.analysis import (
 )
 from functions.report import generate_html_report, save_report
 from functions.player_cards import compute_player_stats, generate_players_report
+from functions.advanced_analysis import save_advanced_report
+from functions.site_generator import generate_site
+from functions.site_pages import generate_all_pages, get_site_stats
+from functions.official_standings import refresh_all_standings, get_cache_info
 
 
 def cmd_scrape(args):
     """Esegue lo scraping delle partite."""
     incremental = not args.full
+    include_pbp = not args.no_pbp
 
     if args.campionato:
         # Filtra solo il campionato specificato
@@ -42,9 +47,10 @@ def cmd_scrape(args):
         campionati = CAMPIONATI
 
     mode = "incrementale" if incremental else "completo"
-    print(f"Modalità: {mode}")
+    pbp_mode = "con play-by-play" if include_pbp else "solo statistiche"
+    print(f"Modalità: {mode}, {pbp_mode}")
 
-    run_scraping(campionati, incremental=incremental)
+    run_scraping(campionati, incremental=incremental, include_pbp=include_pbp)
 
 
 def generate_single_report(campionato_filtro, open_browser=False):
@@ -71,7 +77,7 @@ def generate_single_report(campionato_filtro, open_browser=False):
     html_content = generate_html_report(plots_with_captions, team_plots, title=title)
 
     # Salva
-    report_name = f"stats_LNP{report_suffix}.html"
+    report_name = f"reports/stats_LNP{report_suffix}.html"
     save_report(html_content, report_name, open_browser=open_browser)
     return report_name
 
@@ -117,8 +123,8 @@ def cmd_report(args):
 
         title = "LNP Stats Report SERIE B COMBINATA"
         html_content = generate_html_report(plots_with_captions, team_plots, title=title)
-        save_report(html_content, "stats_LNP_b_combined.html", open_browser=False)
-        generated.append("stats_LNP_b_combined.html")
+        save_report(html_content, "reports/stats_LNP_b_combined.html", open_browser=False)
+        generated.append("reports/stats_LNP_b_combined.html")
 
     print(f"\n{'='*50}")
     print(f"Report generati: {len(generated)}")
@@ -151,7 +157,7 @@ def cmd_players(args):
         print(f"  Giocatori: {len(sum_df)}")
 
         player_stats = compute_player_stats(overall_df, sum_df, median_df)
-        filename = generate_players_report(player_stats, camp_name)
+        filename = generate_players_report(player_stats, camp_name, output_dir='reports')
         generated.append(filename)
 
     # Schede per Serie B combinata
@@ -172,13 +178,127 @@ def cmd_players(args):
         print(f"  Giocatori: {len(sum_df)}")
 
         player_stats = compute_player_stats(combined_df, sum_df, median_df)
-        filename = generate_players_report(player_stats, 'Serie B Combinata')
+        filename = generate_players_report(player_stats, 'Serie B Combinata', output_dir='reports')
         generated.append(filename)
 
     print(f"\n{'='*50}")
     print(f"Schede generate: {len(generated)}")
     for f in generated:
         print(f"  - {f}")
+
+
+def cmd_advanced(args):
+    """Genera report con analisi avanzate (clustering, radar, consistenza)."""
+    campionati = [
+        ('b_a', 'Serie B Girone A'),
+        ('b_b', 'Serie B Girone B'),
+        ('a2', 'Serie A2'),
+    ]
+
+    generated = []
+
+    for camp_filter, camp_name in campionati:
+        print(f"\n{'='*50}")
+        print(f"Generando analisi avanzate: {camp_name}")
+        print('='*50)
+
+        overall_df, _ = load_all_data(camp_filter)
+        if overall_df is None:
+            continue
+
+        overall_df = preprocess_data(overall_df, similar_teams=SIMILAR_TEAMS)
+        sum_df, median_df = compute_aggregated_stats(overall_df)
+
+        print(f"  Giocatori: {len(sum_df)}")
+
+        filename = save_advanced_report(overall_df, sum_df, camp_name, output_dir='reports')
+        generated.append(filename)
+
+    # Report combinato Serie B
+    print(f"\n{'='*50}")
+    print("Generando analisi avanzate: Serie B Combinata")
+    print('='*50)
+
+    df_a, _ = load_all_data('b_a')
+    df_b, _ = load_all_data('b_b')
+
+    if df_a is not None and df_b is not None:
+        combined_df = pd.concat([df_a, df_b])
+        combined_df['Campionato'] = 'b_combined'
+
+        combined_df = preprocess_data(combined_df, similar_teams=SIMILAR_TEAMS)
+        sum_df, median_df = compute_aggregated_stats(combined_df)
+
+        print(f"  Giocatori: {len(sum_df)}")
+
+        filename = save_advanced_report(combined_df, sum_df, 'Serie B Combinata', output_dir='reports')
+        generated.append(filename)
+
+    print(f"\n{'='*50}")
+    print(f"Report avanzati generati: {len(generated)}")
+    for f in generated:
+        print(f"  - {f}")
+
+
+def cmd_site(args):
+    """Genera il sito statico completo in docs/."""
+    print("=" * 50)
+    print("Generando sito statico...")
+    print("=" * 50)
+
+    # Calcola statistiche
+    print("\nCalcolo statistiche riassuntive...")
+    stats = get_site_stats()
+    print(f"  Partite: {stats['total_games']}")
+    print(f"  Giocatori: {stats['total_players']}")
+    print(f"  Squadre: {stats['total_teams']}")
+
+    # Genera pagine
+    print("\nGenerazione pagine...")
+    pages = generate_all_pages()
+
+    # Genera sito
+    print("\nScrittura file...")
+    generate_site(stats, pages)
+
+    print("\n" + "=" * 50)
+    print("Sito generato in: docs/")
+    print("Per testare: cd docs && python -m http.server 8000")
+    print("Poi apri: http://localhost:8000")
+    print("=" * 50)
+
+
+def cmd_standings(args):
+    """Gestisce classifiche ufficiali LNP."""
+    if args.refresh:
+        print("=" * 50)
+        print("Aggiornamento classifiche ufficiali LNP...")
+        print("=" * 50)
+        refresh_all_standings()
+    else:
+        # Mostra stato cache
+        print("=" * 50)
+        print("STATO CLASSIFICHE UFFICIALI")
+        print("=" * 50)
+        cache_info = get_cache_info()
+
+        for camp, info in cache_info.items():
+            camp_name = {'b_a': 'Serie B Girone A', 'b_b': 'Serie B Girone B', 'a2': 'Serie A2'}.get(camp, camp)
+            if info:
+                from datetime import datetime
+                try:
+                    dt = datetime.fromisoformat(info['updated_at'])
+                    updated_str = dt.strftime('%d/%m/%Y %H:%M')
+                except:
+                    updated_str = info['updated_at']
+                print(f"\n{camp_name}:")
+                print(f"  Squadre: {info['teams']}")
+                print(f"  Aggiornato: {updated_str}")
+            else:
+                print(f"\n{camp_name}: Non disponibile")
+
+        print("\n" + "-" * 50)
+        print("Per aggiornare: python main.py standings --refresh")
 
 
 def cmd_info(args):
@@ -229,11 +349,13 @@ Esempi:
     subparsers = parser.add_subparsers(dest='command', help='Comandi disponibili')
 
     # Comando scrape
-    scrape_parser = subparsers.add_parser('scrape', help='Scarica statistiche partite')
+    scrape_parser = subparsers.add_parser('scrape', help='Scarica statistiche, play-by-play e parziali')
     scrape_parser.add_argument('--full', action='store_true',
                                help='Scarica tutto da zero (ignora dati esistenti)')
     scrape_parser.add_argument('--campionato', '-c', type=str,
                                help='Scarica solo un campionato (es: b_a, b_b, a2)')
+    scrape_parser.add_argument('--no-pbp', action='store_true',
+                               help='Scarica solo statistiche (escludi play-by-play)')
 
     # Comando report
     subparsers.add_parser('report', help='Genera tutti i report HTML (b_a, b_b, a2, b_combined)')
@@ -241,8 +363,19 @@ Esempi:
     # Comando players
     subparsers.add_parser('players', help='Genera schede giocatori con percentili')
 
+    # Comando advanced
+    subparsers.add_parser('advanced', help='Genera report analisi avanzate (clustering, radar, consistenza)')
+
+    # Comando site
+    subparsers.add_parser('site', help='Genera sito statico completo in docs/')
+
     # Comando info
     subparsers.add_parser('info', help='Mostra info sui dati disponibili')
+
+    # Comando standings
+    standings_parser = subparsers.add_parser('standings', help='Gestisce classifiche ufficiali LNP')
+    standings_parser.add_argument('--refresh', action='store_true',
+                                   help='Scarica classifiche aggiornate dal sito LNP')
 
     args = parser.parse_args()
 
@@ -252,8 +385,14 @@ Esempi:
         cmd_report(args)
     elif args.command == 'players':
         cmd_players(args)
+    elif args.command == 'advanced':
+        cmd_advanced(args)
+    elif args.command == 'site':
+        cmd_site(args)
     elif args.command == 'info':
         cmd_info(args)
+    elif args.command == 'standings':
+        cmd_standings(args)
     else:
         parser.print_help()
 

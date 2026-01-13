@@ -139,13 +139,18 @@ def preprocess_data(overall_df, similar_teams=None, min_minutes=100):
     overall_df[['3PTM', '3PTA']] = overall_df['3PT'].str.split('/', expand=True).apply(pd.to_numeric)
     overall_df[['FTM', 'FTA']] = overall_df['TL'].str.split('/', expand=True).apply(pd.to_numeric)
 
-    # Normalizza nomi squadre
+    # Normalizza nomi squadre (usa sempre il secondo nome come standard)
     if similar_teams:
-        for a, b in similar_teams:
-            mask = (overall_df["Team"] == a) | (overall_df["Team"] == b)
+        for variant, standard in similar_teams:
+            # Normalizza Team
+            mask = overall_df["Team"] == variant
             if mask.any():
-                most_common_value = overall_df.loc[mask, "Team"].mode().values[0]
-                overall_df.loc[mask, "Team"] = most_common_value
+                overall_df.loc[mask, "Team"] = standard
+            # Normalizza anche Opponent
+            if "Opponent" in overall_df.columns:
+                mask_opp = overall_df["Opponent"] == variant
+                if mask_opp.any():
+                    overall_df.loc[mask_opp, "Opponent"] = standard
 
     # Correggi nomi giocatori simili
     player_team_pairs = overall_df[['Giocatore', 'Team']].drop_duplicates()

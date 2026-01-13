@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistiche Giocatori - Serie B - Girone A - LNP Stats</title>
+    <link rel="icon" type="image/png" href="../../../static/favicon180x180.png">
+    <link rel="stylesheet" href="../../../static/twinplay_brand.css">
+    <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--tp-gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--tp-spacing-lg);
+            z-index: 1000;
+            box-shadow: var(--tp-shadow-md);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-md);
+        }
+
+        .header-logo img {
+            height: 36px;
+        }
+
+        .header-logo a {
+            color: white;
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .header-breadcrumb {
+            margin-left: var(--tp-spacing-xl);
+            opacity: 0.8;
+            font-size: 0.875rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: var(--tp-spacing-md);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--tp-light);
+        }
+
+        .sidebar-section-header {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            color: var(--tp-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-sm);
+            transition: background 0.2s;
+        }
+
+        .sidebar-section-header:hover {
+            background: var(--tp-light);
+        }
+
+        .sidebar-section-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            font-size: 0.75rem;
+        }
+
+        .sidebar-section.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-subsection {
+            display: none;
+            background: var(--tp-light);
+        }
+
+        .sidebar-section.expanded .sidebar-subsection {
+            display: block;
+        }
+
+        .sidebar-category {
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: var(--tp-spacing-lg);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--tp-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: var(--tp-spacing-sm);
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: calc(var(--tp-spacing-lg) + 10px);
+            color: var(--tp-dark);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: white;
+            border-left-color: var(--tp-primary);
+        }
+
+        .sidebar-link.active {
+            background: white;
+            border-left-color: var(--tp-primary);
+            color: var(--tp-secondary);
+            font-weight: 600;
+        }
+
+        .sidebar-home-btn {
+            display: block;
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--tp-light);
+            transition: all 0.2s;
+        }
+
+        .sidebar-home-btn:hover {
+            background: var(--tp-light);
+            color: var(--tp-secondary);
+        }
+
+        .sidebar-competition {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            background: var(--tp-gradient-primary);
+            color: white;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: var(--tp-spacing-sm);
+        }
+
+        .sidebar:empty + .main {
+            margin-left: 0;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: var(--tp-spacing-xl);
+            min-height: calc(100vh - var(--header-height));
+            background: var(--tp-light);
+        }
+
+        .page-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.75rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-xs);
+        }
+
+        .page-subtitle {
+            color: var(--tp-gray);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .content-section {
+            background: white;
+            border-radius: var(--tp-radius-lg);
+            padding: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-lg);
+            box-shadow: var(--tp-shadow-sm);
+        }
+
+        .section-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.25rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-lg);
+            padding-bottom: var(--tp-spacing-sm);
+            border-bottom: 2px solid var(--tp-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .stat-card {
+            background: var(--tp-gradient-primary);
+            color: white;
+            padding: var(--tp-spacing-lg);
+            border-radius: var(--tp-radius-lg);
+            text-align: center;
+        }
+
+        .stat-card.accent {
+            background: var(--tp-gradient-accent);
+            color: var(--tp-dark);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+        }
+
+        .stat-value {
+            font-family: var(--tp-font-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: var(--tp-spacing-xs);
+        }
+
+        /* Plotly responsive */
+        .js-plotly-plot {
+            width: 100% !important;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            font-size: 0.8rem;
+        }
+
+        .site-footer img {
+            height: 24px;
+            margin-bottom: var(--tp-spacing-sm);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="header-logo">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <a href="../../../index.html">LNP Stats</a>
+        </div>
+        <div class="header-breadcrumb">Serie B - Girone A / Giocatori / Statistiche</div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        
+    <a href="../../../index.html" class="sidebar-home-btn">
+        ← Cambia campionato
+    </a>
+    <div class="sidebar-competition">
+        Serie B - Girone A
+    </div>
+    <div class="sidebar-category">Squadre</div><a href="../../../b/girone-a/squadre/classifiche.html" class="sidebar-link ">Classifiche & Stats</a><a href="../../../b/girone-a/squadre/radar.html" class="sidebar-link ">Radar Squadre</a><a href="../../../b/girone-a/squadre/vittorie-sconfitte.html" class="sidebar-link ">Vittorie vs Sconfitte</a><a href="../../../b/girone-a/squadre/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../../b/girone-a/squadre/quando-vince.html" class="sidebar-link ">Quando Vince</a><a href="../../../b/girone-a/squadre/andamento.html" class="sidebar-link ">Andamento & Parziali</a><div class="sidebar-category">Giocatori</div><a href="../../../b/girone-a/giocatori/statistiche.html" class="sidebar-link active">Statistiche & Percentili</a><a href="../../../b/girone-a/giocatori/radar.html" class="sidebar-link ">Radar Confronto</a><a href="../../../b/girone-a/giocatori/consistenza.html" class="sidebar-link ">Consistenza</a><a href="../../../b/girone-a/giocatori/simili.html" class="sidebar-link ">Giocatori Simili</a><a href="../../../b/girone-a/giocatori/forma.html" class="sidebar-link ">Forma Recente</a><a href="../../../b/girone-a/giocatori/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../../b/girone-a/giocatori/distribuzione-tiri.html" class="sidebar-link ">Distribuzione Tiri</a><a href="../../../b/girone-a/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../../b/girone-a/giocatori/clustering.html" class="sidebar-link ">Clustering & Tipologie</a><a href="../../../b/girone-a/giocatori/dipendenza.html" class="sidebar-link ">Dipendenza Squadra</a><a href="../../../b/girone-a/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
+    </nav>
+
+    <main class="main">
+        <h1 class="page-title">Statistiche & Percentili</h1>
+        <p class="page-subtitle">Serie B - Girone A</p>
+
+        
+    <div class="content-section">
+        <h2 class="section-title">Classifiche Giocatori</h2>
+
+        <!-- Toggle Assoluti / Per Partita / Per 36 Min -->
+        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px; flex-wrap: wrap;">
+            <div style="display: flex; background: #e5e5e5; border-radius: 8px; padding: 4px;">
+                <button id="btn-abs" onclick="setMode('abs')" style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; background: #302B8F; color: white;">
+                    Totali
+                </button>
+                <button id="btn-pg" onclick="setMode('pg')" style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; background: transparent; color: #666;">
+                    Per Partita
+                </button>
+                <button id="btn-pm" onclick="setMode('pm')" style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; background: transparent; color: #666;">
+                    Per 40 Min
+                </button>
+            </div>
+            <span id="mode-note" style="color: #666; font-size: 13px;"></span>
+        </div>
+
+        <!-- Tab per categoria -->
+        <div style="display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;" id="stat-tabs">
+        </div>
+
+        <!-- Descrizione metrica corrente -->
+        <div id="stat-description" style="background: #f0f4ff; border-left: 4px solid #302B8F; padding: 12px 16px; margin-bottom: 20px; border-radius: 0 8px 8px 0; font-size: 14px; color: #333;">
+        </div>
+
+        <!-- Contenuto dinamico -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">
+            <div id="table-container"></div>
+            <div id="chart-container"></div>
+        </div>
+    </div>
+
+    <script>
+        const statsData = {"PT": {"abs": [{"giocatore": "A. Misters", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 624, "value": 381.0, "pt": 381.0, "as": 71.0, "rt": 61.0}, {"giocatore": "J. Mantynen", "team": "Foppiani Fulgor Fidenza", "gp": 18, "min": 586, "value": 333.0, "pt": 333.0, "as": 37.0, "rt": 137.0}, {"giocatore": "R. Chinellato", "team": "Fabo Herons Montecatini", "gp": 19, "min": 561, "value": 323.0, "pt": 323.0, "as": 67.0, "rt": 163.0}, {"giocatore": "N. Martinoni", "team": "Novipi\u00f9 Monferrato Basket", "gp": 18, "min": 524, "value": 305.0, "pt": 305.0, "as": 21.0, "rt": 130.0}, {"giocatore": "V. Cizauskas", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 551, "value": 303.0, "pt": 303.0, "as": 85.0, "rt": 119.0}, {"giocatore": "M. Kancleris", "team": "Elachem Vigevano 1955", "gp": 19, "min": 472, "value": 298.0, "pt": 298.0, "as": 34.0, "rt": 180.0}, {"giocatore": "A. Dore", "team": "Bakery Basket Piacenza", "gp": 19, "min": 500, "value": 296.0, "pt": 296.0, "as": 48.0, "rt": 54.0}, {"giocatore": "D. Jackson", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 534, "value": 296.0, "pt": 296.0, "as": 49.0, "rt": 44.0}, {"giocatore": "G. Bertetti", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 492, "value": 287.0, "pt": 287.0, "as": 76.0, "rt": 42.0}, {"giocatore": "T. Oxilia", "team": "Logiman Orzinuovi", "gp": 19, "min": 490, "value": 287.0, "pt": 287.0, "as": 39.0, "rt": 158.0}, {"giocatore": "J. Balanzoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 501, "value": 286.0, "pt": 286.0, "as": 25.0, "rt": 142.0}, {"giocatore": "L. Aukstikalnis", "team": "Fabo Herons Montecatini", "gp": 19, "min": 556, "value": 284.0, "pt": 284.0, "as": 42.0, "rt": 66.0}, {"giocatore": "A. Tassinari", "team": "Rucker San Vendemiano", "gp": 19, "min": 554, "value": 282.0, "pt": 282.0, "as": 82.0, "rt": 42.0}, {"giocatore": "J. Preti", "team": "S4 Energia Vicenza", "gp": 19, "min": 525, "value": 272.0, "pt": 272.0, "as": 50.0, "rt": 74.0}, {"giocatore": "M. Rubbini", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 523, "value": 267.0, "pt": 267.0, "as": 87.0, "rt": 65.0}, {"giocatore": "S. Conte", "team": "Rimadesio Desio", "gp": 19, "min": 396, "value": 264.0, "pt": 264.0, "as": 33.0, "rt": 35.0}, {"giocatore": "L. Calbini", "team": "UCC Assigeco Piacenza", "gp": 19, "min": 541, "value": 262.0, "pt": 262.0, "as": 49.0, "rt": 77.0}, {"giocatore": "G. Pagani", "team": "Rucker San Vendemiano", "gp": 19, "min": 427, "value": 256.0, "pt": 256.0, "as": 16.0, "rt": 95.0}, {"giocatore": "G. Almansi", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 448, "value": 252.0, "pt": 252.0, "as": 20.0, "rt": 61.0}, {"giocatore": "D. Pepper", "team": "UCC Assigeco Piacenza", "gp": 19, "min": 530, "value": 247.0, "pt": 247.0, "as": 33.0, "rt": 105.0}], "pg": [{"giocatore": "A. Misters", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 624, "value": 20.05, "pt": 20.1, "as": 3.7, "rt": 3.2}, {"giocatore": "A. Conti", "team": "Moncada Energy Agrigento", "gp": 5, "min": 154, "value": 19.8, "pt": 19.8, "as": 2.8, "rt": 2.6}, {"giocatore": "J. Mantynen", "team": "Foppiani Fulgor Fidenza", "gp": 18, "min": 586, "value": 18.5, "pt": 18.5, "as": 2.1, "rt": 7.6}, {"giocatore": "R. Chinellato", "team": "Fabo Herons Montecatini", "gp": 19, "min": 561, "value": 17.0, "pt": 17.0, "as": 3.5, "rt": 8.6}, {"giocatore": "N. Martinoni", "team": "Novipi\u00f9 Monferrato Basket", "gp": 18, "min": 524, "value": 16.94, "pt": 16.9, "as": 1.2, "rt": 7.2}, {"giocatore": "B. Douvier", "team": "Moncada Energy Agrigento", "gp": 6, "min": 180, "value": 16.67, "pt": 16.7, "as": 2.0, "rt": 8.5}, {"giocatore": "V. Cizauskas", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 551, "value": 15.95, "pt": 15.9, "as": 4.5, "rt": 6.3}, {"giocatore": "M. Kancleris", "team": "Elachem Vigevano 1955", "gp": 19, "min": 472, "value": 15.68, "pt": 15.7, "as": 1.8, "rt": 9.5}, {"giocatore": "A. Dore", "team": "Bakery Basket Piacenza", "gp": 19, "min": 500, "value": 15.58, "pt": 15.6, "as": 2.5, "rt": 2.8}, {"giocatore": "D. Jackson", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 534, "value": 15.58, "pt": 15.6, "as": 2.6, "rt": 2.3}, {"giocatore": "G. Bertetti", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 492, "value": 15.11, "pt": 15.1, "as": 4.0, "rt": 2.2}, {"giocatore": "T. Oxilia", "team": "Logiman Orzinuovi", "gp": 19, "min": 490, "value": 15.11, "pt": 15.1, "as": 2.1, "rt": 8.3}, {"giocatore": "J. Balanzoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 501, "value": 15.05, "pt": 15.1, "as": 1.3, "rt": 7.5}, {"giocatore": "L. Aukstikalnis", "team": "Fabo Herons Montecatini", "gp": 19, "min": 556, "value": 14.95, "pt": 14.9, "as": 2.2, "rt": 3.5}, {"giocatore": "A. Tassinari", "team": "Rucker San Vendemiano", "gp": 19, "min": 554, "value": 14.84, "pt": 14.8, "as": 4.3, "rt": 2.2}, {"giocatore": "J. Preti", "team": "S4 Energia Vicenza", "gp": 19, "min": 525, "value": 14.32, "pt": 14.3, "as": 2.6, "rt": 3.9}, {"giocatore": "M. Rubbini", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 523, "value": 14.05, "pt": 14.1, "as": 4.6, "rt": 3.4}, {"giocatore": "S. Conte", "team": "Rimadesio Desio", "gp": 19, "min": 396, "value": 13.89, "pt": 13.9, "as": 1.7, "rt": 1.8}, {"giocatore": "L. Calbini", "team": "UCC Assigeco Piacenza", "gp": 19, "min": 541, "value": 13.79, "pt": 13.8, "as": 2.6, "rt": 4.1}, {"giocatore": "L. Chaves", "team": "Logiman Orzinuovi", "gp": 18, "min": 512, "value": 13.72, "pt": 13.7, "as": 4.1, "rt": 3.0}], "pm": [{"giocatore": "S. Conte", "team": "Rimadesio Desio", "gp": 19, "min": 396, "value": 26.6, "pt": 26.6, "as": 3.3, "rt": 3.5}, {"giocatore": "A. Hrstic", "team": "LuxArm Lumezzane", "gp": 18, "min": 364, "value": 25.8, "pt": 25.8, "as": 3.9, "rt": 4.2}, {"giocatore": "A. Conti", "team": "Moncada Energy Agrigento", "gp": 5, "min": 154, "value": 25.7, "pt": 25.7, "as": 3.6, "rt": 3.4}, {"giocatore": "G. Martini", "team": "Moncada Energy Agrigento", "gp": 17, "min": 295, "value": 25.5, "pt": 25.5, "as": 0.8, "rt": 7.9}, {"giocatore": "M. Kancleris", "team": "Elachem Vigevano 1955", "gp": 19, "min": 472, "value": 25.2, "pt": 25.2, "as": 2.9, "rt": 15.2}, {"giocatore": "A. Misters", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 624, "value": 24.4, "pt": 24.4, "as": 4.6, "rt": 3.9}, {"giocatore": "G. Pagani", "team": "Rucker San Vendemiano", "gp": 19, "min": 427, "value": 23.9, "pt": 23.9, "as": 1.5, "rt": 8.9}, {"giocatore": "F. Gaetano", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 197, "value": 23.7, "pt": 23.7, "as": 1.8, "rt": 12.2}, {"giocatore": "A. Dore", "team": "Bakery Basket Piacenza", "gp": 19, "min": 500, "value": 23.7, "pt": 23.7, "as": 3.8, "rt": 4.3}, {"giocatore": "T. Oxilia", "team": "Logiman Orzinuovi", "gp": 19, "min": 490, "value": 23.4, "pt": 23.4, "as": 3.2, "rt": 12.9}, {"giocatore": "G. Bertetti", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 492, "value": 23.3, "pt": 23.3, "as": 6.2, "rt": 3.4}, {"giocatore": "N. Martinoni", "team": "Novipi\u00f9 Monferrato Basket", "gp": 18, "min": 524, "value": 23.2, "pt": 23.2, "as": 1.6, "rt": 9.9}, {"giocatore": "R. Chinellato", "team": "Fabo Herons Montecatini", "gp": 19, "min": 561, "value": 23.0, "pt": 23.0, "as": 4.8, "rt": 11.6}, {"giocatore": "M. Corgnati", "team": "Elachem Vigevano 1955", "gp": 19, "min": 381, "value": 22.9, "pt": 22.9, "as": 6.2, "rt": 6.7}, {"giocatore": "J. Balanzoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 501, "value": 22.8, "pt": 22.8, "as": 2.0, "rt": 11.3}, {"giocatore": "J. Mantynen", "team": "Foppiani Fulgor Fidenza", "gp": 18, "min": 586, "value": 22.7, "pt": 22.7, "as": 2.5, "rt": 9.3}, {"giocatore": "G. Almansi", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 448, "value": 22.5, "pt": 22.5, "as": 1.8, "rt": 5.4}, {"giocatore": "G. Sgobba", "team": "Fabo Herons Montecatini", "gp": 16, "min": 299, "value": 22.2, "pt": 22.2, "as": 1.6, "rt": 6.1}, {"giocatore": "B. Douvier", "team": "Moncada Energy Agrigento", "gp": 6, "min": 180, "value": 22.1, "pt": 22.1, "as": 2.7, "rt": 11.3}, {"giocatore": "D. Jackson", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 534, "value": 22.1, "pt": 22.1, "as": 3.7, "rt": 3.3}]}, "AS": {"abs": [{"giocatore": "A. Boglio", "team": "Elachem Vigevano 1955", "gp": 19, "min": 436, "value": 89.0, "pt": 201.0, "as": 89.0, "rt": 64.0}, {"giocatore": "M. Rubbini", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 523, "value": 87.0, "pt": 267.0, "as": 87.0, "rt": 65.0}, {"giocatore": "V. Cizauskas", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 551, "value": 85.0, "pt": 303.0, "as": 85.0, "rt": 119.0}, {"giocatore": "A. Tassinari", "team": "Rucker San Vendemiano", "gp": 19, "min": 554, "value": 82.0, "pt": 282.0, "as": 82.0, "rt": 42.0}, {"giocatore": "M. Beretta", "team": "S4 Energia Vicenza", "gp": 19, "min": 479, "value": 79.0, "pt": 155.0, "as": 79.0, "rt": 66.0}, {"giocatore": "M. Munari", "team": "Rimadesio Desio", "gp": 19, "min": 492, "value": 79.0, "pt": 245.0, "as": 79.0, "rt": 55.0}, {"giocatore": "F. Rossi", "team": "Fabo Herons Montecatini", "gp": 21, "min": 411, "value": 77.0, "pt": 148.0, "as": 77.0, "rt": 64.0}, {"giocatore": "G. Bertetti", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 492, "value": 76.0, "pt": 287.0, "as": 76.0, "rt": 42.0}, {"giocatore": "M. Giacomini", "team": "Logiman Orzinuovi", "gp": 19, "min": 493, "value": 75.0, "pt": 206.0, "as": 75.0, "rt": 53.0}, {"giocatore": "E. Trapani", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 444, "value": 74.0, "pt": 177.0, "as": 74.0, "rt": 55.0}, {"giocatore": "E. Gallizzi", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 460, "value": 73.0, "pt": 112.0, "as": 73.0, "rt": 39.0}, {"giocatore": "F. Burini", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 443, "value": 73.0, "pt": 125.0, "as": 73.0, "rt": 48.0}, {"giocatore": "L. Chaves", "team": "Logiman Orzinuovi", "gp": 18, "min": 512, "value": 73.0, "pt": 247.0, "as": 73.0, "rt": 54.0}, {"giocatore": "A. Misters", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 624, "value": 71.0, "pt": 381.0, "as": 71.0, "rt": 61.0}, {"giocatore": "F. Guerra", "team": "Novipi\u00f9 Monferrato Basket", "gp": 17, "min": 469, "value": 71.0, "pt": 184.0, "as": 71.0, "rt": 61.0}, {"giocatore": "N. Morici", "team": "Rucker San Vendemiano", "gp": 19, "min": 445, "value": 71.0, "pt": 94.0, "as": 71.0, "rt": 100.0}, {"giocatore": "R. Chinellato", "team": "Fabo Herons Montecatini", "gp": 19, "min": 561, "value": 67.0, "pt": 323.0, "as": 67.0, "rt": 163.0}, {"giocatore": "D. Meluzzi", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 527, "value": 65.0, "pt": 181.0, "as": 65.0, "rt": 51.0}, {"giocatore": "G. Gasparin", "team": "S4 Energia Vicenza", "gp": 19, "min": 515, "value": 65.0, "pt": 245.0, "as": 65.0, "rt": 55.0}, {"giocatore": "G. Sodero", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 488, "value": 65.0, "pt": 190.0, "as": 65.0, "rt": 36.0}], "pg": [{"giocatore": "A. Boglio", "team": "Elachem Vigevano 1955", "gp": 19, "min": 436, "value": 4.68, "pt": 10.6, "as": 4.7, "rt": 3.4}, {"giocatore": "M. Rubbini", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 523, "value": 4.58, "pt": 14.1, "as": 4.6, "rt": 3.4}, {"giocatore": "V. Cizauskas", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 551, "value": 4.47, "pt": 15.9, "as": 4.5, "rt": 6.3}, {"giocatore": "A. Tassinari", "team": "Rucker San Vendemiano", "gp": 19, "min": 554, "value": 4.32, "pt": 14.8, "as": 4.3, "rt": 2.2}, {"giocatore": "F. Guerra", "team": "Novipi\u00f9 Monferrato Basket", "gp": 17, "min": 469, "value": 4.18, "pt": 10.8, "as": 4.2, "rt": 3.6}, {"giocatore": "M. Beretta", "team": "S4 Energia Vicenza", "gp": 19, "min": 479, "value": 4.16, "pt": 8.2, "as": 4.2, "rt": 3.5}, {"giocatore": "M. Munari", "team": "Rimadesio Desio", "gp": 19, "min": 492, "value": 4.16, "pt": 12.9, "as": 4.2, "rt": 2.9}, {"giocatore": "L. Chaves", "team": "Logiman Orzinuovi", "gp": 18, "min": 512, "value": 4.06, "pt": 13.7, "as": 4.1, "rt": 3.0}, {"giocatore": "G. Bertetti", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 492, "value": 4.0, "pt": 15.1, "as": 4.0, "rt": 2.2}, {"giocatore": "M. Giacomini", "team": "Logiman Orzinuovi", "gp": 19, "min": 493, "value": 3.95, "pt": 10.8, "as": 3.9, "rt": 2.8}, {"giocatore": "E. Trapani", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 444, "value": 3.89, "pt": 9.3, "as": 3.9, "rt": 2.9}, {"giocatore": "E. Gallizzi", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 460, "value": 3.84, "pt": 5.9, "as": 3.8, "rt": 2.1}, {"giocatore": "F. Burini", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 443, "value": 3.84, "pt": 6.6, "as": 3.8, "rt": 2.5}, {"giocatore": "A. Misters", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 624, "value": 3.74, "pt": 20.1, "as": 3.7, "rt": 3.2}, {"giocatore": "N. Morici", "team": "Rucker San Vendemiano", "gp": 19, "min": 445, "value": 3.74, "pt": 4.9, "as": 3.7, "rt": 5.3}, {"giocatore": "F. Rossi", "team": "Fabo Herons Montecatini", "gp": 21, "min": 411, "value": 3.67, "pt": 7.0, "as": 3.7, "rt": 3.0}, {"giocatore": "R. Chinellato", "team": "Fabo Herons Montecatini", "gp": 19, "min": 561, "value": 3.53, "pt": 17.0, "as": 3.5, "rt": 8.6}, {"giocatore": "A. Chiarastella", "team": "Moncada Energy Agrigento", "gp": 16, "min": 485, "value": 3.5, "pt": 4.5, "as": 3.5, "rt": 6.1}, {"giocatore": "D. Meluzzi", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 527, "value": 3.42, "pt": 9.5, "as": 3.4, "rt": 2.7}, {"giocatore": "G. Gasparin", "team": "S4 Energia Vicenza", "gp": 19, "min": 515, "value": 3.42, "pt": 12.9, "as": 3.4, "rt": 2.9}], "pm": [{"giocatore": "A. Boglio", "team": "Elachem Vigevano 1955", "gp": 19, "min": 436, "value": 8.2, "pt": 18.4, "as": 8.2, "rt": 5.9}, {"giocatore": "F. Rossi", "team": "Fabo Herons Montecatini", "gp": 21, "min": 411, "value": 7.5, "pt": 14.4, "as": 7.5, "rt": 6.2}, {"giocatore": "J. Benites Vicente", "team": "Fabo Herons Montecatini", "gp": 16, "min": 227, "value": 7.0, "pt": 9.0, "as": 7.0, "rt": 6.7}, {"giocatore": "E. Trapani", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 444, "value": 6.7, "pt": 15.9, "as": 6.7, "rt": 5.0}, {"giocatore": "M. Rubbini", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 523, "value": 6.7, "pt": 20.4, "as": 6.7, "rt": 5.0}, {"giocatore": "M. Beretta", "team": "S4 Energia Vicenza", "gp": 19, "min": 479, "value": 6.6, "pt": 12.9, "as": 6.6, "rt": 5.5}, {"giocatore": "F. Burini", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 443, "value": 6.6, "pt": 11.3, "as": 6.6, "rt": 4.3}, {"giocatore": "M. Munari", "team": "Rimadesio Desio", "gp": 19, "min": 492, "value": 6.4, "pt": 19.9, "as": 6.4, "rt": 4.5}, {"giocatore": "N. Morici", "team": "Rucker San Vendemiano", "gp": 19, "min": 445, "value": 6.4, "pt": 8.4, "as": 6.4, "rt": 9.0}, {"giocatore": "E. Gallizzi", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 460, "value": 6.3, "pt": 9.7, "as": 6.3, "rt": 3.4}, {"giocatore": "M. Corgnati", "team": "Elachem Vigevano 1955", "gp": 19, "min": 381, "value": 6.2, "pt": 22.9, "as": 6.2, "rt": 6.7}, {"giocatore": "G. Bertetti", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 492, "value": 6.2, "pt": 23.3, "as": 6.2, "rt": 3.4}, {"giocatore": "V. Cizauskas", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 551, "value": 6.2, "pt": 22.0, "as": 6.2, "rt": 8.6}, {"giocatore": "F. Gay", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 405, "value": 6.1, "pt": 18.7, "as": 6.1, "rt": 8.1}, {"giocatore": "M. Giacomini", "team": "Logiman Orzinuovi", "gp": 19, "min": 493, "value": 6.1, "pt": 16.7, "as": 6.1, "rt": 4.3}, {"giocatore": "F. Guerra", "team": "Novipi\u00f9 Monferrato Basket", "gp": 17, "min": 469, "value": 6.0, "pt": 15.7, "as": 6.0, "rt": 5.2}, {"giocatore": "A. Tassinari", "team": "Rucker San Vendemiano", "gp": 19, "min": 554, "value": 5.9, "pt": 20.3, "as": 5.9, "rt": 3.0}, {"giocatore": "L. Chaves", "team": "Logiman Orzinuovi", "gp": 18, "min": 512, "value": 5.7, "pt": 19.3, "as": 5.7, "rt": 4.2}, {"giocatore": "G. Sodero", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 488, "value": 5.3, "pt": 15.6, "as": 5.3, "rt": 2.9}, {"giocatore": "G. Gasparin", "team": "S4 Energia Vicenza", "gp": 19, "min": 515, "value": 5.0, "pt": 19.0, "as": 5.0, "rt": 4.3}]}, "RT": {"abs": [{"giocatore": "M. Kancleris", "team": "Elachem Vigevano 1955", "gp": 19, "min": 472, "value": 180.0, "pt": 298.0, "as": 34.0, "rt": 180.0, "ro": 52.0, "rd": 128.0}, {"giocatore": "R. Chinellato", "team": "Fabo Herons Montecatini", "gp": 19, "min": 561, "value": 163.0, "pt": 323.0, "as": 67.0, "rt": 163.0, "ro": 45.0, "rd": 118.0}, {"giocatore": "T. Oxilia", "team": "Logiman Orzinuovi", "gp": 19, "min": 490, "value": 158.0, "pt": 287.0, "as": 39.0, "rt": 158.0, "ro": 44.0, "rd": 114.0}, {"giocatore": "J. Balanzoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 501, "value": 142.0, "pt": 286.0, "as": 25.0, "rt": 142.0, "ro": 52.0, "rd": 90.0}, {"giocatore": "J. Mantynen", "team": "Foppiani Fulgor Fidenza", "gp": 18, "min": 586, "value": 137.0, "pt": 333.0, "as": 37.0, "rt": 137.0, "ro": 31.0, "rd": 106.0}, {"giocatore": "F. Casoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 452, "value": 132.0, "pt": 95.0, "as": 9.0, "rt": 132.0, "ro": 28.0, "rd": 104.0}, {"giocatore": "G. Poggi", "team": "UCC Assigeco Piacenza", "gp": 19, "min": 520, "value": 131.0, "pt": 200.0, "as": 36.0, "rt": 131.0, "ro": 36.0, "rd": 95.0}, {"giocatore": "N. Martinoni", "team": "Novipi\u00f9 Monferrato Basket", "gp": 18, "min": 524, "value": 130.0, "pt": 305.0, "as": 21.0, "rt": 130.0, "ro": 49.0, "rd": 81.0}, {"giocatore": "M. Acunzo", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 408, "value": 125.0, "pt": 195.0, "as": 28.0, "rt": 125.0, "ro": 27.0, "rd": 98.0}, {"giocatore": "V. Cizauskas", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 551, "value": 119.0, "pt": 303.0, "as": 85.0, "rt": 119.0, "ro": 23.0, "rd": 96.0}, {"giocatore": "Y. Giombini", "team": "Fabo Herons Montecatini", "gp": 19, "min": 367, "value": 118.0, "pt": 172.0, "as": 8.0, "rt": 118.0, "ro": 39.0, "rd": 79.0}, {"giocatore": "J. Cebasek", "team": "Rucker San Vendemiano", "gp": 19, "min": 515, "value": 117.0, "pt": 209.0, "as": 33.0, "rt": 117.0, "ro": 28.0, "rd": 89.0}, {"giocatore": "A. Marcius", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 364, "value": 115.0, "pt": 159.0, "as": 11.0, "rt": 115.0, "ro": 45.0, "rd": 70.0}, {"giocatore": "I. Biorac", "team": "Fiorenzuola Bees", "gp": 19, "min": 341, "value": 112.0, "pt": 123.0, "as": 15.0, "rt": 112.0, "ro": 27.0, "rd": 85.0}, {"giocatore": "F. Marcucci", "team": "Novipi\u00f9 Monferrato Basket", "gp": 19, "min": 554, "value": 110.0, "pt": 140.0, "as": 21.0, "rt": 110.0, "ro": 30.0, "rd": 80.0}, {"giocatore": "G. Siberna", "team": "LuxArm Lumezzane", "gp": 19, "min": 493, "value": 110.0, "pt": 208.0, "as": 19.0, "rt": 110.0, "ro": 24.0, "rd": 86.0}, {"giocatore": "J. Cepic", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 543, "value": 106.0, "pt": 232.0, "as": 41.0, "rt": 106.0, "ro": 31.0, "rd": 75.0}, {"giocatore": "D. Pepper", "team": "UCC Assigeco Piacenza", "gp": 19, "min": 530, "value": 105.0, "pt": 247.0, "as": 33.0, "rt": 105.0, "ro": 27.0, "rd": 78.0}, {"giocatore": "N. Markovic", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 539, "value": 105.0, "pt": 190.0, "as": 48.0, "rt": 105.0, "ro": 13.0, "rd": 92.0}, {"giocatore": "F. Grani", "team": "Moncada Energy Agrigento", "gp": 19, "min": 345, "value": 104.0, "pt": 138.0, "as": 8.0, "rt": 104.0, "ro": 32.0, "rd": 72.0}], "pg": [{"giocatore": "M. Kancleris", "team": "Elachem Vigevano 1955", "gp": 19, "min": 472, "value": 9.47, "pt": 15.7, "as": 1.8, "rt": 9.5, "ro": 2.7, "rd": 6.7}, {"giocatore": "R. Chinellato", "team": "Fabo Herons Montecatini", "gp": 19, "min": 561, "value": 8.58, "pt": 17.0, "as": 3.5, "rt": 8.6, "ro": 2.4, "rd": 6.2}, {"giocatore": "B. Douvier", "team": "Moncada Energy Agrigento", "gp": 6, "min": 180, "value": 8.5, "pt": 16.7, "as": 2.0, "rt": 8.5, "ro": 1.2, "rd": 7.3}, {"giocatore": "T. Oxilia", "team": "Logiman Orzinuovi", "gp": 19, "min": 490, "value": 8.32, "pt": 15.1, "as": 2.1, "rt": 8.3, "ro": 2.3, "rd": 6.0}, {"giocatore": "J. Mantynen", "team": "Foppiani Fulgor Fidenza", "gp": 18, "min": 586, "value": 7.61, "pt": 18.5, "as": 2.1, "rt": 7.6, "ro": 1.7, "rd": 5.9}, {"giocatore": "J. Balanzoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 501, "value": 7.47, "pt": 15.1, "as": 1.3, "rt": 7.5, "ro": 2.7, "rd": 4.7}, {"giocatore": "F. Pirani", "team": "UCC Assigeco Piacenza", "gp": 5, "min": 119, "value": 7.4, "pt": 9.8, "as": 1.4, "rt": 7.4, "ro": 2.4, "rd": 5.0}, {"giocatore": "N. Martinoni", "team": "Novipi\u00f9 Monferrato Basket", "gp": 18, "min": 524, "value": 7.22, "pt": 16.9, "as": 1.2, "rt": 7.2, "ro": 2.7, "rd": 4.5}, {"giocatore": "F. Casoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 452, "value": 6.95, "pt": 5.0, "as": 0.5, "rt": 6.9, "ro": 1.5, "rd": 5.5}, {"giocatore": "G. Poggi", "team": "UCC Assigeco Piacenza", "gp": 19, "min": 520, "value": 6.89, "pt": 10.5, "as": 1.9, "rt": 6.9, "ro": 1.9, "rd": 5.0}, {"giocatore": "L. Varaschin", "team": "LuxArm Lumezzane", "gp": 7, "min": 180, "value": 6.86, "pt": 10.0, "as": 0.6, "rt": 6.9, "ro": 1.3, "rd": 5.6}, {"giocatore": "M. Acunzo", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 408, "value": 6.58, "pt": 10.3, "as": 1.5, "rt": 6.6, "ro": 1.4, "rd": 5.2}, {"giocatore": "V. Cizauskas", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 551, "value": 6.26, "pt": 15.9, "as": 4.5, "rt": 6.3, "ro": 1.2, "rd": 5.1}, {"giocatore": "Y. Giombini", "team": "Fabo Herons Montecatini", "gp": 19, "min": 367, "value": 6.21, "pt": 9.1, "as": 0.4, "rt": 6.2, "ro": 2.1, "rd": 4.2}, {"giocatore": "J. Cebasek", "team": "Rucker San Vendemiano", "gp": 19, "min": 515, "value": 6.16, "pt": 11.0, "as": 1.7, "rt": 6.2, "ro": 1.5, "rd": 4.7}, {"giocatore": "A. Chiarastella", "team": "Moncada Energy Agrigento", "gp": 16, "min": 485, "value": 6.12, "pt": 4.5, "as": 3.5, "rt": 6.1, "ro": 0.6, "rd": 5.5}, {"giocatore": "A. Marcius", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 364, "value": 6.05, "pt": 8.4, "as": 0.6, "rt": 6.1, "ro": 2.4, "rd": 3.7}, {"giocatore": "S. Anaekwe", "team": "TAV Treviglio Brianza Basket", "gp": 12, "min": 208, "value": 5.92, "pt": 5.5, "as": 0.4, "rt": 5.9, "ro": 2.4, "rd": 3.5}, {"giocatore": "I. Biorac", "team": "Fiorenzuola Bees", "gp": 19, "min": 341, "value": 5.89, "pt": 6.5, "as": 0.8, "rt": 5.9, "ro": 1.4, "rd": 4.5}, {"giocatore": "F. Marcucci", "team": "Novipi\u00f9 Monferrato Basket", "gp": 19, "min": 554, "value": 5.79, "pt": 7.4, "as": 1.1, "rt": 5.8, "ro": 1.6, "rd": 4.2}], "pm": [{"giocatore": "M. Kancleris", "team": "Elachem Vigevano 1955", "gp": 19, "min": 472, "value": 15.2, "pt": 25.2, "as": 2.9, "rt": 15.2, "ro": 4.4, "rd": 10.8}, {"giocatore": "S. Anaekwe", "team": "TAV Treviglio Brianza Basket", "gp": 12, "min": 208, "value": 13.6, "pt": 12.6, "as": 1.0, "rt": 13.6, "ro": 5.6, "rd": 8.0}, {"giocatore": "I. Biorac", "team": "Fiorenzuola Bees", "gp": 19, "min": 341, "value": 13.1, "pt": 14.4, "as": 1.8, "rt": 13.1, "ro": 3.2, "rd": 10.0}, {"giocatore": "T. Oxilia", "team": "Logiman Orzinuovi", "gp": 19, "min": 490, "value": 12.9, "pt": 23.4, "as": 3.2, "rt": 12.9, "ro": 3.6, "rd": 9.3}, {"giocatore": "Y. Giombini", "team": "Fabo Herons Montecatini", "gp": 19, "min": 367, "value": 12.8, "pt": 18.7, "as": 0.9, "rt": 12.8, "ro": 4.2, "rd": 8.6}, {"giocatore": "A. Marcius", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 364, "value": 12.6, "pt": 17.4, "as": 1.2, "rt": 12.6, "ro": 4.9, "rd": 7.7}, {"giocatore": "F. Pirani", "team": "UCC Assigeco Piacenza", "gp": 5, "min": 119, "value": 12.4, "pt": 16.5, "as": 2.4, "rt": 12.4, "ro": 4.0, "rd": 8.4}, {"giocatore": "M. Mane", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 339, "value": 12.3, "pt": 13.0, "as": 0.5, "rt": 12.3, "ro": 4.8, "rd": 7.4}, {"giocatore": "F. Fratto", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 313, "value": 12.3, "pt": 14.1, "as": 3.3, "rt": 12.3, "ro": 2.4, "rd": 9.8}, {"giocatore": "M. Acunzo", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 408, "value": 12.2, "pt": 19.1, "as": 2.7, "rt": 12.2, "ro": 2.6, "rd": 9.6}, {"giocatore": "F. Gaetano", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 197, "value": 12.2, "pt": 23.7, "as": 1.8, "rt": 12.2, "ro": 3.2, "rd": 8.9}, {"giocatore": "R. Crespi", "team": "Fiorenzuola Bees", "gp": 18, "min": 315, "value": 12.2, "pt": 16.2, "as": 1.3, "rt": 12.2, "ro": 2.7, "rd": 9.5}, {"giocatore": "F. Grani", "team": "Moncada Energy Agrigento", "gp": 19, "min": 345, "value": 12.0, "pt": 16.0, "as": 0.9, "rt": 12.0, "ro": 3.7, "rd": 8.3}, {"giocatore": "F. Casoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 452, "value": 11.7, "pt": 8.4, "as": 0.8, "rt": 11.7, "ro": 2.5, "rd": 9.2}, {"giocatore": "L. Martini", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 305, "value": 11.7, "pt": 18.3, "as": 0.5, "rt": 11.7, "ro": 4.6, "rd": 7.1}, {"giocatore": "R. Chinellato", "team": "Fabo Herons Montecatini", "gp": 19, "min": 561, "value": 11.6, "pt": 23.0, "as": 4.8, "rt": 11.6, "ro": 3.2, "rd": 8.4}, {"giocatore": "N. Carr", "team": "S4 Energia Vicenza", "gp": 19, "min": 225, "value": 11.3, "pt": 14.5, "as": 1.8, "rt": 11.3, "ro": 3.5, "rd": 7.8}, {"giocatore": "J. Balanzoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 501, "value": 11.3, "pt": 22.8, "as": 2.0, "rt": 11.3, "ro": 4.1, "rd": 7.2}, {"giocatore": "B. Douvier", "team": "Moncada Energy Agrigento", "gp": 6, "min": 180, "value": 11.3, "pt": 22.1, "as": 2.7, "rt": 11.3, "ro": 1.5, "rd": 9.7}, {"giocatore": "E. Bartninkas", "team": "Rimadesio Desio", "gp": 19, "min": 369, "value": 11.1, "pt": 15.9, "as": 1.4, "rt": 11.1, "ro": 3.8, "rd": 7.4}]}, "PR": {"abs": [{"giocatore": "N. Gajic", "team": "Elachem Vigevano 1955", "gp": 19, "min": 596, "value": 42.0, "pt": 136.0, "as": 36.0, "rt": 73.0}, {"giocatore": "A. Boglio", "team": "Elachem Vigevano 1955", "gp": 19, "min": 436, "value": 35.0, "pt": 201.0, "as": 89.0, "rt": 64.0}, {"giocatore": "D. Pepper", "team": "UCC Assigeco Piacenza", "gp": 19, "min": 530, "value": 32.0, "pt": 247.0, "as": 33.0, "rt": 105.0}, {"giocatore": "L. Passoni", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 450, "value": 30.0, "pt": 137.0, "as": 21.0, "rt": 61.0}, {"giocatore": "N. Piccionne", "team": "LuxArm Lumezzane", "gp": 19, "min": 546, "value": 30.0, "pt": 158.0, "as": 51.0, "rt": 87.0}, {"giocatore": "E. Scattolin", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 425, "value": 29.0, "pt": 67.0, "as": 47.0, "rt": 75.0}, {"giocatore": "E. Trapani", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 444, "value": 28.0, "pt": 177.0, "as": 74.0, "rt": 55.0}, {"giocatore": "G. Bertetti", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 492, "value": 28.0, "pt": 287.0, "as": 76.0, "rt": 42.0}, {"giocatore": "M. Corgnati", "team": "Elachem Vigevano 1955", "gp": 19, "min": 381, "value": 26.0, "pt": 218.0, "as": 59.0, "rt": 64.0}, {"giocatore": "A. Ceparano", "team": "Fiorenzuola Bees", "gp": 19, "min": 529, "value": 25.0, "pt": 198.0, "as": 50.0, "rt": 103.0}, {"giocatore": "A. Mazzoleni", "team": "Rimadesio Desio", "gp": 19, "min": 483, "value": 25.0, "pt": 114.0, "as": 47.0, "rt": 87.0}, {"giocatore": "A. Tassinari", "team": "Rucker San Vendemiano", "gp": 19, "min": 554, "value": 25.0, "pt": 282.0, "as": 82.0, "rt": 42.0}, {"giocatore": "M. Da Campo", "team": "S4 Energia Vicenza", "gp": 19, "min": 545, "value": 25.0, "pt": 180.0, "as": 37.0, "rt": 104.0}, {"giocatore": "G. Giarelli", "team": "Rimadesio Desio", "gp": 19, "min": 473, "value": 23.0, "pt": 239.0, "as": 43.0, "rt": 98.0}, {"giocatore": "G. Siberna", "team": "LuxArm Lumezzane", "gp": 19, "min": 493, "value": 23.0, "pt": 208.0, "as": 19.0, "rt": 110.0}, {"giocatore": "M. Cagliani", "team": "Moncada Energy Agrigento", "gp": 17, "min": 472, "value": 23.0, "pt": 171.0, "as": 50.0, "rt": 76.0}, {"giocatore": "A. Chiarastella", "team": "Moncada Energy Agrigento", "gp": 16, "min": 485, "value": 22.0, "pt": 72.0, "as": 56.0, "rt": 98.0}, {"giocatore": "L. Giannone", "team": "Bakery Basket Piacenza", "gp": 19, "min": 521, "value": 22.0, "pt": 230.0, "as": 46.0, "rt": 90.0}, {"giocatore": "T. Oxilia", "team": "Logiman Orzinuovi", "gp": 19, "min": 490, "value": 22.0, "pt": 287.0, "as": 39.0, "rt": 158.0}, {"giocatore": "A. Cacace", "team": "Logiman Orzinuovi", "gp": 19, "min": 474, "value": 21.0, "pt": 170.0, "as": 25.0, "rt": 87.0}], "pg": [{"giocatore": "N. Gajic", "team": "Elachem Vigevano 1955", "gp": 19, "min": 596, "value": 2.21, "pt": 7.2, "as": 1.9, "rt": 3.8}, {"giocatore": "A. Conti", "team": "Moncada Energy Agrigento", "gp": 5, "min": 154, "value": 2.0, "pt": 19.8, "as": 2.8, "rt": 2.6}, {"giocatore": "A. Boglio", "team": "Elachem Vigevano 1955", "gp": 19, "min": 436, "value": 1.84, "pt": 10.6, "as": 4.7, "rt": 3.4}, {"giocatore": "D. Pepper", "team": "UCC Assigeco Piacenza", "gp": 19, "min": 530, "value": 1.68, "pt": 13.0, "as": 1.7, "rt": 5.5}, {"giocatore": "L. Passoni", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 450, "value": 1.58, "pt": 7.2, "as": 1.1, "rt": 3.2}, {"giocatore": "N. Piccionne", "team": "LuxArm Lumezzane", "gp": 19, "min": 546, "value": 1.58, "pt": 8.3, "as": 2.7, "rt": 4.6}, {"giocatore": "E. Scattolin", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 425, "value": 1.53, "pt": 3.5, "as": 2.5, "rt": 3.9}, {"giocatore": "E. Trapani", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 444, "value": 1.47, "pt": 9.3, "as": 3.9, "rt": 2.9}, {"giocatore": "G. Bertetti", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 492, "value": 1.47, "pt": 15.1, "as": 4.0, "rt": 2.2}, {"giocatore": "A. Chiarastella", "team": "Moncada Energy Agrigento", "gp": 16, "min": 485, "value": 1.38, "pt": 4.5, "as": 3.5, "rt": 6.1}, {"giocatore": "M. Corgnati", "team": "Elachem Vigevano 1955", "gp": 19, "min": 381, "value": 1.37, "pt": 11.5, "as": 3.1, "rt": 3.4}, {"giocatore": "M. Cagliani", "team": "Moncada Energy Agrigento", "gp": 17, "min": 472, "value": 1.35, "pt": 10.1, "as": 2.9, "rt": 4.5}, {"giocatore": "A. Ceparano", "team": "Fiorenzuola Bees", "gp": 19, "min": 529, "value": 1.32, "pt": 10.4, "as": 2.6, "rt": 5.4}, {"giocatore": "A. Mazzoleni", "team": "Rimadesio Desio", "gp": 19, "min": 483, "value": 1.32, "pt": 6.0, "as": 2.5, "rt": 4.6}, {"giocatore": "A. Tassinari", "team": "Rucker San Vendemiano", "gp": 19, "min": 554, "value": 1.32, "pt": 14.8, "as": 4.3, "rt": 2.2}, {"giocatore": "M. Da Campo", "team": "S4 Energia Vicenza", "gp": 19, "min": 545, "value": 1.32, "pt": 9.5, "as": 1.9, "rt": 5.5}, {"giocatore": "L. Varaschin", "team": "LuxArm Lumezzane", "gp": 7, "min": 180, "value": 1.29, "pt": 10.0, "as": 0.6, "rt": 6.9}, {"giocatore": "G. Giarelli", "team": "Rimadesio Desio", "gp": 19, "min": 473, "value": 1.21, "pt": 12.6, "as": 2.3, "rt": 5.2}, {"giocatore": "G. Siberna", "team": "LuxArm Lumezzane", "gp": 19, "min": 493, "value": 1.21, "pt": 10.9, "as": 1.0, "rt": 5.8}, {"giocatore": "F. Guerra", "team": "Novipi\u00f9 Monferrato Basket", "gp": 17, "min": 469, "value": 1.18, "pt": 10.8, "as": 4.2, "rt": 3.6}], "pm": [{"giocatore": "A. Boglio", "team": "Elachem Vigevano 1955", "gp": 19, "min": 436, "value": 3.2, "pt": 18.4, "as": 8.2, "rt": 5.9}, {"giocatore": "D. Dell'uomo", "team": "Fabo Herons Montecatini", "gp": 18, "min": 238, "value": 2.8, "pt": 14.2, "as": 3.0, "rt": 4.7}, {"giocatore": "N. Gajic", "team": "Elachem Vigevano 1955", "gp": 19, "min": 596, "value": 2.8, "pt": 9.1, "as": 2.4, "rt": 4.9}, {"giocatore": "M. Corgnati", "team": "Elachem Vigevano 1955", "gp": 19, "min": 381, "value": 2.7, "pt": 22.9, "as": 6.2, "rt": 6.7}, {"giocatore": "E. Scattolin", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 425, "value": 2.7, "pt": 6.3, "as": 4.4, "rt": 7.1}, {"giocatore": "L. Passoni", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 450, "value": 2.7, "pt": 12.2, "as": 1.9, "rt": 5.4}, {"giocatore": "A. Conti", "team": "Moncada Energy Agrigento", "gp": 5, "min": 154, "value": 2.6, "pt": 25.7, "as": 3.6, "rt": 3.4}, {"giocatore": "E. Trapani", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 444, "value": 2.5, "pt": 15.9, "as": 6.7, "rt": 5.0}, {"giocatore": "D. Pepper", "team": "UCC Assigeco Piacenza", "gp": 19, "min": 530, "value": 2.4, "pt": 18.6, "as": 2.5, "rt": 7.9}, {"giocatore": "V. Moltrasio", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 339, "value": 2.4, "pt": 11.0, "as": 3.8, "rt": 5.2}, {"giocatore": "G. Bertetti", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 492, "value": 2.3, "pt": 23.3, "as": 6.2, "rt": 3.4}, {"giocatore": "N. Piccionne", "team": "LuxArm Lumezzane", "gp": 19, "min": 546, "value": 2.2, "pt": 11.6, "as": 3.7, "rt": 6.4}, {"giocatore": "S. Caglio", "team": "Novipi\u00f9 Monferrato Basket", "gp": 19, "min": 395, "value": 2.1, "pt": 16.3, "as": 4.8, "rt": 7.2}, {"giocatore": "I. Onojaife", "team": "Rucker San Vendemiano", "gp": 19, "min": 363, "value": 2.1, "pt": 16.0, "as": 1.8, "rt": 11.0}, {"giocatore": "F. Gay", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 405, "value": 2.1, "pt": 18.7, "as": 6.1, "rt": 8.1}, {"giocatore": "A. Mazzoleni", "team": "Rimadesio Desio", "gp": 19, "min": 483, "value": 2.1, "pt": 9.4, "as": 3.9, "rt": 7.2}, {"giocatore": "R. Morina", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 419, "value": 2.0, "pt": 19.2, "as": 4.5, "rt": 7.1}, {"giocatore": "L. Varaschin", "team": "LuxArm Lumezzane", "gp": 7, "min": 180, "value": 2.0, "pt": 15.5, "as": 0.9, "rt": 10.6}, {"giocatore": "M. Cagliani", "team": "Moncada Energy Agrigento", "gp": 17, "min": 472, "value": 1.9, "pt": 14.5, "as": 4.2, "rt": 6.4}, {"giocatore": "G. Giarelli", "team": "Rimadesio Desio", "gp": 19, "min": 473, "value": 1.9, "pt": 20.2, "as": 3.6, "rt": 8.3}]}, "ST": {"abs": [{"giocatore": "M. Kancleris", "team": "Elachem Vigevano 1955", "gp": 19, "min": 472, "value": 26.0, "pt": 298.0, "as": 34.0, "rt": 180.0}, {"giocatore": "F. Grani", "team": "Moncada Energy Agrigento", "gp": 19, "min": 345, "value": 24.0, "pt": 138.0, "as": 8.0, "rt": 104.0}, {"giocatore": "M. Mane", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 339, "value": 23.0, "pt": 110.0, "as": 4.0, "rt": 104.0}, {"giocatore": "J. Balanzoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 501, "value": 18.0, "pt": 286.0, "as": 25.0, "rt": 142.0}, {"giocatore": "N. Martinoni", "team": "Novipi\u00f9 Monferrato Basket", "gp": 18, "min": 524, "value": 16.0, "pt": 305.0, "as": 21.0, "rt": 130.0}, {"giocatore": "L. Martini", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 305, "value": 14.0, "pt": 140.0, "as": 4.0, "rt": 89.0}, {"giocatore": "S. Anaekwe", "team": "TAV Treviglio Brianza Basket", "gp": 12, "min": 208, "value": 13.0, "pt": 66.0, "as": 5.0, "rt": 71.0}, {"giocatore": "U. Simon", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 338, "value": 12.0, "pt": 94.0, "as": 12.0, "rt": 68.0}, {"giocatore": "A. Quinti", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 324, "value": 11.0, "pt": 125.0, "as": 10.0, "rt": 80.0}, {"giocatore": "A. Stepanovic", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 497, "value": 11.0, "pt": 227.0, "as": 21.0, "rt": 86.0}, {"giocatore": "M. Dia", "team": "Novipi\u00f9 Monferrato Basket", "gp": 19, "min": 209, "value": 11.0, "pt": 38.0, "as": 5.0, "rt": 54.0}, {"giocatore": "A. Marcius", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 364, "value": 10.0, "pt": 159.0, "as": 11.0, "rt": 115.0}, {"giocatore": "J. Vedovato", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 364, "value": 10.0, "pt": 178.0, "as": 21.0, "rt": 100.0}, {"giocatore": "A. Abba", "team": "Bakery Basket Piacenza", "gp": 19, "min": 434, "value": 9.0, "pt": 132.0, "as": 9.0, "rt": 100.0}, {"giocatore": "A. Riva", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 198, "value": 9.0, "pt": 75.0, "as": 4.0, "rt": 39.0}, {"giocatore": "I. Biorac", "team": "Fiorenzuola Bees", "gp": 19, "min": 341, "value": 9.0, "pt": 123.0, "as": 15.0, "rt": 112.0}, {"giocatore": "A. Ceparano", "team": "Fiorenzuola Bees", "gp": 19, "min": 529, "value": 8.0, "pt": 198.0, "as": 50.0, "rt": 103.0}, {"giocatore": "A. Mazzoleni", "team": "Rimadesio Desio", "gp": 19, "min": 483, "value": 8.0, "pt": 114.0, "as": 47.0, "rt": 87.0}, {"giocatore": "B. Diouf", "team": "Elachem Vigevano 1955", "gp": 16, "min": 234, "value": 8.0, "pt": 52.0, "as": 12.0, "rt": 48.0}, {"giocatore": "D. Ohenhen", "team": "LuxArm Lumezzane", "gp": 14, "min": 311, "value": 8.0, "pt": 126.0, "as": 10.0, "rt": 73.0}], "pg": [{"giocatore": "M. Kancleris", "team": "Elachem Vigevano 1955", "gp": 19, "min": 472, "value": 1.37, "pt": 15.7, "as": 1.8, "rt": 9.5}, {"giocatore": "F. Grani", "team": "Moncada Energy Agrigento", "gp": 19, "min": 345, "value": 1.26, "pt": 7.3, "as": 0.4, "rt": 5.5}, {"giocatore": "M. Mane", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 339, "value": 1.21, "pt": 5.8, "as": 0.2, "rt": 5.5}, {"giocatore": "S. Anaekwe", "team": "TAV Treviglio Brianza Basket", "gp": 12, "min": 208, "value": 1.08, "pt": 5.5, "as": 0.4, "rt": 5.9}, {"giocatore": "S. Anaekwe", "team": "UCC Assigeco Piacenza", "gp": 7, "min": 142, "value": 1.0, "pt": 8.6, "as": 0.4, "rt": 4.6}, {"giocatore": "J. Balanzoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 501, "value": 0.95, "pt": 15.1, "as": 1.3, "rt": 7.5}, {"giocatore": "N. Martinoni", "team": "Novipi\u00f9 Monferrato Basket", "gp": 18, "min": 524, "value": 0.89, "pt": 16.9, "as": 1.2, "rt": 7.2}, {"giocatore": "L. Martini", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 305, "value": 0.74, "pt": 7.4, "as": 0.2, "rt": 4.7}, {"giocatore": "U. Simon", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 338, "value": 0.63, "pt": 4.9, "as": 0.6, "rt": 3.6}, {"giocatore": "A. Quinti", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 324, "value": 0.58, "pt": 6.6, "as": 0.5, "rt": 4.2}, {"giocatore": "A. Stepanovic", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 497, "value": 0.58, "pt": 11.9, "as": 1.1, "rt": 4.5}, {"giocatore": "M. Dia", "team": "Novipi\u00f9 Monferrato Basket", "gp": 19, "min": 209, "value": 0.58, "pt": 2.0, "as": 0.3, "rt": 2.8}, {"giocatore": "D. Ohenhen", "team": "LuxArm Lumezzane", "gp": 14, "min": 311, "value": 0.57, "pt": 9.0, "as": 0.7, "rt": 5.2}, {"giocatore": "A. Marcius", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 364, "value": 0.53, "pt": 8.4, "as": 0.6, "rt": 6.1}, {"giocatore": "J. Vedovato", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 364, "value": 0.53, "pt": 9.4, "as": 1.1, "rt": 5.3}, {"giocatore": "B. Diouf", "team": "Elachem Vigevano 1955", "gp": 16, "min": 234, "value": 0.5, "pt": 3.2, "as": 0.8, "rt": 3.0}, {"giocatore": "A. Abba", "team": "Bakery Basket Piacenza", "gp": 19, "min": 434, "value": 0.47, "pt": 6.9, "as": 0.5, "rt": 5.3}, {"giocatore": "A. Riva", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 198, "value": 0.47, "pt": 3.9, "as": 0.2, "rt": 2.1}, {"giocatore": "I. Biorac", "team": "Fiorenzuola Bees", "gp": 19, "min": 341, "value": 0.47, "pt": 6.5, "as": 0.8, "rt": 5.9}, {"giocatore": "A. Cecchi", "team": "Fiorenzuola Bees", "gp": 9, "min": 217, "value": 0.44, "pt": 10.1, "as": 1.1, "rt": 4.1}], "pm": [{"giocatore": "F. Grani", "team": "Moncada Energy Agrigento", "gp": 19, "min": 345, "value": 2.8, "pt": 16.0, "as": 0.9, "rt": 12.0}, {"giocatore": "M. Mane", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 339, "value": 2.7, "pt": 13.0, "as": 0.5, "rt": 12.3}, {"giocatore": "S. Anaekwe", "team": "TAV Treviglio Brianza Basket", "gp": 12, "min": 208, "value": 2.5, "pt": 12.6, "as": 1.0, "rt": 13.6}, {"giocatore": "M. Kancleris", "team": "Elachem Vigevano 1955", "gp": 19, "min": 472, "value": 2.2, "pt": 25.2, "as": 2.9, "rt": 15.2}, {"giocatore": "M. Dia", "team": "Novipi\u00f9 Monferrato Basket", "gp": 19, "min": 209, "value": 2.1, "pt": 7.3, "as": 1.0, "rt": 10.3}, {"giocatore": "S. Anaekwe", "team": "UCC Assigeco Piacenza", "gp": 7, "min": 142, "value": 2.0, "pt": 16.9, "as": 0.8, "rt": 9.0}, {"giocatore": "Y. Kamate", "team": "Fabo Herons Montecatini", "gp": 19, "min": 107, "value": 1.9, "pt": 14.5, "as": 0.0, "rt": 8.9}, {"giocatore": "L. Martini", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 305, "value": 1.8, "pt": 18.3, "as": 0.5, "rt": 11.7}, {"giocatore": "A. Riva", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 198, "value": 1.8, "pt": 15.1, "as": 0.8, "rt": 7.9}, {"giocatore": "J. Balanzoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 501, "value": 1.4, "pt": 22.8, "as": 2.0, "rt": 11.3}, {"giocatore": "U. Simon", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 338, "value": 1.4, "pt": 11.1, "as": 1.4, "rt": 8.0}, {"giocatore": "B. Diouf", "team": "Elachem Vigevano 1955", "gp": 16, "min": 234, "value": 1.4, "pt": 8.9, "as": 2.0, "rt": 8.2}, {"giocatore": "A. Quinti", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 324, "value": 1.4, "pt": 15.4, "as": 1.2, "rt": 9.9}, {"giocatore": "M. Sacchettini", "team": "Paffoni Fulgor Basket Omegna", "gp": 18, "min": 161, "value": 1.2, "pt": 14.8, "as": 1.2, "rt": 4.7}, {"giocatore": "N. Martinoni", "team": "Novipi\u00f9 Monferrato Basket", "gp": 18, "min": 524, "value": 1.2, "pt": 23.2, "as": 1.6, "rt": 9.9}, {"giocatore": "K. Osatwna", "team": "Novipi\u00f9 Monferrato Basket", "gp": 7, "min": 103, "value": 1.2, "pt": 11.6, "as": 0.8, "rt": 8.2}, {"giocatore": "J. Vedovato", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 364, "value": 1.1, "pt": 19.5, "as": 2.3, "rt": 11.0}, {"giocatore": "A. Marcius", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 364, "value": 1.1, "pt": 17.4, "as": 1.2, "rt": 12.6}, {"giocatore": "N. Carr", "team": "S4 Energia Vicenza", "gp": 19, "min": 225, "value": 1.1, "pt": 14.5, "as": 1.8, "rt": 11.3}, {"giocatore": "I. Biorac", "team": "Fiorenzuola Bees", "gp": 19, "min": 341, "value": 1.1, "pt": 14.4, "as": 1.8, "rt": 13.1}]}, "EFF": {"abs": [{"giocatore": "R. Chinellato", "team": "Fabo Herons Montecatini", "gp": 19, "min": 561, "value": 427.0, "pt": 323.0, "as": 67.0, "rt": 163.0}, {"giocatore": "M. Kancleris", "team": "Elachem Vigevano 1955", "gp": 19, "min": 472, "value": 397.0, "pt": 298.0, "as": 34.0, "rt": 180.0}, {"giocatore": "J. Balanzoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 501, "value": 395.0, "pt": 286.0, "as": 25.0, "rt": 142.0}, {"giocatore": "N. Martinoni", "team": "Novipi\u00f9 Monferrato Basket", "gp": 18, "min": 524, "value": 388.0, "pt": 305.0, "as": 21.0, "rt": 130.0}, {"giocatore": "T. Oxilia", "team": "Logiman Orzinuovi", "gp": 19, "min": 490, "value": 369.0, "pt": 287.0, "as": 39.0, "rt": 158.0}, {"giocatore": "V. Cizauskas", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 551, "value": 369.0, "pt": 303.0, "as": 85.0, "rt": 119.0}, {"giocatore": "A. Misters", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 624, "value": 364.0, "pt": 381.0, "as": 71.0, "rt": 61.0}, {"giocatore": "M. Rubbini", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 523, "value": 356.0, "pt": 267.0, "as": 87.0, "rt": 65.0}, {"giocatore": "J. Mantynen", "team": "Foppiani Fulgor Fidenza", "gp": 18, "min": 586, "value": 316.0, "pt": 333.0, "as": 37.0, "rt": 137.0}, {"giocatore": "J. Preti", "team": "S4 Energia Vicenza", "gp": 19, "min": 525, "value": 307.0, "pt": 272.0, "as": 50.0, "rt": 74.0}, {"giocatore": "A. Boglio", "team": "Elachem Vigevano 1955", "gp": 19, "min": 436, "value": 295.0, "pt": 201.0, "as": 89.0, "rt": 64.0}, {"giocatore": "D. Jackson", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 534, "value": 294.0, "pt": 296.0, "as": 49.0, "rt": 44.0}, {"giocatore": "M. Munari", "team": "Rimadesio Desio", "gp": 19, "min": 492, "value": 291.0, "pt": 245.0, "as": 79.0, "rt": 55.0}, {"giocatore": "J. Cepic", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 543, "value": 286.0, "pt": 232.0, "as": 41.0, "rt": 106.0}, {"giocatore": "G. Bertetti", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 492, "value": 282.0, "pt": 287.0, "as": 76.0, "rt": 42.0}, {"giocatore": "M. Acunzo", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 408, "value": 281.0, "pt": 195.0, "as": 28.0, "rt": 125.0}, {"giocatore": "G. Gasparin", "team": "S4 Energia Vicenza", "gp": 19, "min": 515, "value": 279.0, "pt": 245.0, "as": 65.0, "rt": 55.0}, {"giocatore": "G. Pagani", "team": "Rucker San Vendemiano", "gp": 19, "min": 427, "value": 275.0, "pt": 256.0, "as": 16.0, "rt": 95.0}, {"giocatore": "L. Giannone", "team": "Bakery Basket Piacenza", "gp": 19, "min": 521, "value": 259.0, "pt": 230.0, "as": 46.0, "rt": 90.0}, {"giocatore": "G. Giarelli", "team": "Rimadesio Desio", "gp": 19, "min": 473, "value": 255.0, "pt": 239.0, "as": 43.0, "rt": 98.0}], "pg": [{"giocatore": "R. Chinellato", "team": "Fabo Herons Montecatini", "gp": 19, "min": 561, "value": 22.47, "pt": 17.0, "as": 3.5, "rt": 8.6}, {"giocatore": "A. Conti", "team": "Moncada Energy Agrigento", "gp": 5, "min": 154, "value": 21.6, "pt": 19.8, "as": 2.8, "rt": 2.6}, {"giocatore": "N. Martinoni", "team": "Novipi\u00f9 Monferrato Basket", "gp": 18, "min": 524, "value": 21.56, "pt": 16.9, "as": 1.2, "rt": 7.2}, {"giocatore": "M. Kancleris", "team": "Elachem Vigevano 1955", "gp": 19, "min": 472, "value": 20.89, "pt": 15.7, "as": 1.8, "rt": 9.5}, {"giocatore": "J. Balanzoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 501, "value": 20.79, "pt": 15.1, "as": 1.3, "rt": 7.5}, {"giocatore": "T. Oxilia", "team": "Logiman Orzinuovi", "gp": 19, "min": 490, "value": 19.42, "pt": 15.1, "as": 2.1, "rt": 8.3}, {"giocatore": "V. Cizauskas", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 551, "value": 19.42, "pt": 15.9, "as": 4.5, "rt": 6.3}, {"giocatore": "A. Misters", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 624, "value": 19.16, "pt": 20.1, "as": 3.7, "rt": 3.2}, {"giocatore": "M. Rubbini", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 523, "value": 18.74, "pt": 14.1, "as": 4.6, "rt": 3.4}, {"giocatore": "J. Mantynen", "team": "Foppiani Fulgor Fidenza", "gp": 18, "min": 586, "value": 17.56, "pt": 18.5, "as": 2.1, "rt": 7.6}, {"giocatore": "J. Preti", "team": "S4 Energia Vicenza", "gp": 19, "min": 525, "value": 16.16, "pt": 14.3, "as": 2.6, "rt": 3.9}, {"giocatore": "A. Boglio", "team": "Elachem Vigevano 1955", "gp": 19, "min": 436, "value": 15.53, "pt": 10.6, "as": 4.7, "rt": 3.4}, {"giocatore": "D. Jackson", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 534, "value": 15.47, "pt": 15.6, "as": 2.6, "rt": 2.3}, {"giocatore": "M. Munari", "team": "Rimadesio Desio", "gp": 19, "min": 492, "value": 15.32, "pt": 12.9, "as": 4.2, "rt": 2.9}, {"giocatore": "J. Cepic", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 543, "value": 15.05, "pt": 12.2, "as": 2.2, "rt": 5.6}, {"giocatore": "G. Bertetti", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 492, "value": 14.84, "pt": 15.1, "as": 4.0, "rt": 2.2}, {"giocatore": "M. Acunzo", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 408, "value": 14.79, "pt": 10.3, "as": 1.5, "rt": 6.6}, {"giocatore": "G. Gasparin", "team": "S4 Energia Vicenza", "gp": 19, "min": 515, "value": 14.68, "pt": 12.9, "as": 3.4, "rt": 2.9}, {"giocatore": "G. Pagani", "team": "Rucker San Vendemiano", "gp": 19, "min": 427, "value": 14.47, "pt": 13.5, "as": 0.8, "rt": 5.0}, {"giocatore": "L. Varaschin", "team": "LuxArm Lumezzane", "gp": 7, "min": 180, "value": 14.29, "pt": 10.0, "as": 0.6, "rt": 6.9}]}, "2PT_pct": {"abs": [{"giocatore": "G. Pagani", "team": "Rucker San Vendemiano", "gp": 19, "value": 75.7, "pt": 13.5, "fg_made": 103, "fg_att": 136}, {"giocatore": "A. Voltolini", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "value": 74.3, "pt": 5.4, "fg_made": 35, "fg_att": 63}, {"giocatore": "F. Gaetano", "team": "Infodrive Capo d'Orlando", "gp": 19, "value": 72.2, "pt": 6.2, "fg_made": 41, "fg_att": 57}, {"giocatore": "A. Marcius", "team": "TAV Treviglio Brianza Basket", "gp": 19, "value": 67.9, "pt": 8.4, "fg_made": 55, "fg_att": 82}, {"giocatore": "I. Onojaife", "team": "Rucker San Vendemiano", "gp": 19, "value": 67.1, "pt": 7.6, "fg_made": 57, "fg_att": 86}, {"giocatore": "A. Quinti", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "value": 66.2, "pt": 6.6, "fg_made": 52, "fg_att": 80}, {"giocatore": "L. Passoni", "team": "La T Tecnica Gema Montecatini", "gp": 19, "value": 65.9, "pt": 7.2, "fg_made": 47, "fg_att": 90}, {"giocatore": "J. Balanzoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "value": 65.4, "pt": 15.1, "fg_made": 117, "fg_att": 179}, {"giocatore": "J. Vedovato", "team": "La T Tecnica Gema Montecatini", "gp": 19, "value": 64.0, "pt": 9.4, "fg_made": 73, "fg_att": 114}, {"giocatore": "G. Martini", "team": "Moncada Energy Agrigento", "gp": 17, "value": 63.0, "pt": 11.1, "fg_made": 81, "fg_att": 132}, {"giocatore": "G. Sgobba", "team": "Fabo Herons Montecatini", "gp": 16, "value": 62.9, "pt": 10.4, "fg_made": 56, "fg_att": 118}, {"giocatore": "L. Vanin", "team": "S4 Energia Vicenza", "gp": 18, "value": 62.7, "pt": 6.2, "fg_made": 43, "fg_att": 68}, {"giocatore": "S. Caglio", "team": "Novipi\u00f9 Monferrato Basket", "gp": 19, "value": 62.5, "pt": 8.5, "fg_made": 55, "fg_att": 134}, {"giocatore": "I. Biorac", "team": "Fiorenzuola Bees", "gp": 19, "value": 61.5, "pt": 6.5, "fg_made": 56, "fg_att": 91}, {"giocatore": "N. Carr", "team": "S4 Energia Vicenza", "gp": 19, "value": 61.0, "pt": 4.3, "fg_made": 31, "fg_att": 61}, {"giocatore": "L. D'alessandro", "team": "La T Tecnica Gema Montecatini", "gp": 19, "value": 60.5, "pt": 7.3, "fg_made": 48, "fg_att": 99}, {"giocatore": "S. Anaekwe", "team": "UCC Assigeco Piacenza", "gp": 7, "value": 60.5, "pt": 8.6, "fg_made": 23, "fg_att": 38}, {"giocatore": "Y. Angarica", "team": "LuxArm Lumezzane", "gp": 19, "value": 60.5, "pt": 4.1, "fg_made": 28, "fg_att": 52}, {"giocatore": "F. Grani", "team": "Moncada Energy Agrigento", "gp": 19, "value": 59.8, "pt": 7.3, "fg_made": 59, "fg_att": 102}, {"giocatore": "M. Mane", "team": "Foppiani Fulgor Fidenza", "gp": 19, "value": 59.7, "pt": 5.8, "fg_made": 41, "fg_att": 70}]}, "3PT_pct": {"abs": [{"giocatore": "G. Giarelli", "team": "Rimadesio Desio", "gp": 19, "value": 61.5, "pt": 12.6, "fg_made": 89, "fg_att": 172}, {"giocatore": "E. Ivanovskis", "team": "LuxArm Lumezzane", "gp": 18, "value": 54.2, "pt": 3.2, "fg_made": 17, "fg_att": 39}, {"giocatore": "G. Gasparin", "team": "S4 Energia Vicenza", "gp": 19, "value": 52.1, "pt": 12.9, "fg_made": 79, "fg_att": 158}, {"giocatore": "D. Dell'uomo", "team": "Fabo Herons Montecatini", "gp": 18, "value": 51.5, "pt": 4.7, "fg_made": 29, "fg_att": 52}, {"giocatore": "S. Mazzantini", "team": "Elachem Vigevano 1955", "gp": 19, "value": 50.9, "pt": 9.2, "fg_made": 56, "fg_att": 112}, {"giocatore": "A. Colussa", "team": "Siaz Basket Piazza Armerina", "gp": 19, "value": 48.9, "pt": 6.4, "fg_made": 42, "fg_att": 79}, {"giocatore": "M. Da Campo", "team": "S4 Energia Vicenza", "gp": 19, "value": 48.9, "pt": 9.5, "fg_made": 67, "fg_att": 130}, {"giocatore": "N. Natali", "team": "Fabo Herons Montecatini", "gp": 19, "value": 48.5, "pt": 4.5, "fg_made": 30, "fg_att": 54}, {"giocatore": "N. Fantoma", "team": "Elachem Vigevano 1955", "gp": 19, "value": 48.0, "pt": 3.5, "fg_made": 24, "fg_att": 48}, {"giocatore": "F. De Capitani", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "value": 47.5, "pt": 4.4, "fg_made": 29, "fg_att": 66}, {"giocatore": "J. Preti", "team": "S4 Energia Vicenza", "gp": 19, "value": 45.9, "pt": 14.3, "fg_made": 82, "fg_att": 178}, {"giocatore": "N. Mastrangelo", "team": "Fabo Herons Montecatini", "gp": 19, "value": 45.5, "pt": 7.5, "fg_made": 50, "fg_att": 109}, {"giocatore": "M. Rubbini", "team": "TAV Treviglio Brianza Basket", "gp": 19, "value": 45.3, "pt": 14.1, "fg_made": 75, "fg_att": 147}, {"giocatore": "D. Reati", "team": "TAV Treviglio Brianza Basket", "gp": 19, "value": 45.2, "pt": 3.8, "fg_made": 23, "fg_att": 48}, {"giocatore": "S. Jasaitis", "team": "Infodrive Capo d'Orlando", "gp": 19, "value": 44.1, "pt": 10.3, "fg_made": 72, "fg_att": 155}, {"giocatore": "D. Zilli", "team": "Logiman Orzinuovi", "gp": 19, "value": 43.5, "pt": 6.2, "fg_made": 43, "fg_att": 79}, {"giocatore": "D. Jackson", "team": "La T Tecnica Gema Montecatini", "gp": 19, "value": 42.7, "pt": 15.6, "fg_made": 92, "fg_att": 209}, {"giocatore": "M. Acunzo", "team": "La T Tecnica Gema Montecatini", "gp": 19, "value": 42.6, "pt": 10.3, "fg_made": 65, "fg_att": 130}, {"giocatore": "A. Conti", "team": "Moncada Energy Agrigento", "gp": 5, "value": 42.4, "pt": 19.8, "fg_made": 28, "fg_att": 63}, {"giocatore": "N. Venturoli", "team": "Logiman Orzinuovi", "gp": 19, "value": 41.8, "pt": 7.4, "fg_made": 41, "fg_att": 108}]}, "TL_pct": {"abs": [{"giocatore": "D. Jackson", "team": "La T Tecnica Gema Montecatini", "gp": 19, "value": 95.4, "pt": 15.6, "fg_made": 92, "fg_att": 209}, {"giocatore": "M. Picarelli", "team": "Rucker San Vendemiano", "gp": 19, "value": 93.6, "pt": 10.5, "fg_made": 59, "fg_att": 180}, {"giocatore": "K. Korsunov", "team": "Fiorenzuola Bees", "gp": 19, "value": 93.2, "pt": 5.9, "fg_made": 30, "fg_att": 82}, {"giocatore": "A. Tassinari", "team": "Rucker San Vendemiano", "gp": 19, "value": 90.5, "pt": 14.8, "fg_made": 89, "fg_att": 218}, {"giocatore": "M. Beretta", "team": "S4 Energia Vicenza", "gp": 19, "value": 90.5, "pt": 8.2, "fg_made": 46, "fg_att": 114}, {"giocatore": "F. Gay", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "value": 90.0, "pt": 9.9, "fg_made": 53, "fg_att": 166}, {"giocatore": "F. Gaetano", "team": "Infodrive Capo d'Orlando", "gp": 19, "value": 89.2, "pt": 6.2, "fg_made": 41, "fg_att": 57}, {"giocatore": "G. Bertetti", "team": "Infodrive Capo d'Orlando", "gp": 19, "value": 89.1, "pt": 15.1, "fg_made": 76, "fg_att": 187}, {"giocatore": "V. Moltrasio", "team": "Infodrive Capo d'Orlando", "gp": 19, "value": 88.9, "pt": 4.9, "fg_made": 28, "fg_att": 73}, {"giocatore": "A. Conti", "team": "Moncada Energy Agrigento", "gp": 5, "value": 87.9, "pt": 19.8, "fg_made": 28, "fg_att": 63}, {"giocatore": "A. Verazzo", "team": "Elachem Vigevano 1955", "gp": 19, "value": 87.7, "pt": 12.7, "fg_made": 78, "fg_att": 181}, {"giocatore": "G. Cecchinato", "team": "Fiorenzuola Bees", "gp": 13, "value": 87.5, "pt": 12.0, "fg_made": 46, "fg_att": 117}, {"giocatore": "A. Mazzucchelli", "team": "UCC Assigeco Piacenza", "gp": 19, "value": 86.8, "pt": 11.6, "fg_made": 68, "fg_att": 163}, {"giocatore": "L. Valesin", "team": "UCC Assigeco Piacenza", "gp": 19, "value": 86.8, "pt": 10.7, "fg_made": 57, "fg_att": 135}, {"giocatore": "J. Rapetti", "team": "Infodrive Capo d'Orlando", "gp": 19, "value": 86.7, "pt": 7.2, "fg_made": 52, "fg_att": 99}, {"giocatore": "M. Rubbini", "team": "TAV Treviglio Brianza Basket", "gp": 19, "value": 86.7, "pt": 14.1, "fg_made": 75, "fg_att": 147}, {"giocatore": "S. Jasaitis", "team": "Infodrive Capo d'Orlando", "gp": 19, "value": 86.7, "pt": 10.3, "fg_made": 72, "fg_att": 155}, {"giocatore": "A. Bargnesi", "team": "La T Tecnica Gema Montecatini", "gp": 19, "value": 86.4, "pt": 11.2, "fg_made": 71, "fg_att": 162}, {"giocatore": "M. Galassi", "team": "TAV Treviglio Brianza Basket", "gp": 7, "value": 86.4, "pt": 9.7, "fg_made": 19, "fg_att": 60}, {"giocatore": "S. Conte", "team": "Rimadesio Desio", "gp": 19, "value": 86.4, "pt": 13.9, "fg_made": 87, "fg_att": 218}]}, "eFG_pct": {"abs": [{"giocatore": "G. Pagani", "team": "Rucker San Vendemiano", "gp": 19, "value": 75.7, "pt": 13.5, "fg_made": 103, "fg_att": 136, "pct_2pt": 75.7, "pct_3pt": 0.0, "pct_tl": 70.4}, {"giocatore": "F. Gaetano", "team": "Infodrive Capo d'Orlando", "gp": 19, "value": 73.7, "pt": 6.2, "fg_made": 41, "fg_att": 57, "pct_2pt": 72.2, "pct_3pt": 66.7, "pct_tl": 89.2}, {"giocatore": "D. Dell'uomo", "team": "Fabo Herons Montecatini", "gp": 18, "value": 72.1, "pt": 4.7, "fg_made": 29, "fg_att": 52, "pct_2pt": 63.2, "pct_3pt": 51.5, "pct_tl": 71.4}, {"giocatore": "N. Natali", "team": "Fabo Herons Montecatini", "gp": 19, "value": 70.4, "pt": 4.5, "fg_made": 30, "fg_att": 54, "pct_2pt": 66.7, "pct_3pt": 48.5, "pct_tl": 75.0}, {"giocatore": "A. Colussa", "team": "Siaz Basket Piazza Armerina", "gp": 19, "value": 67.7, "pt": 6.4, "fg_made": 42, "fg_att": 79, "pct_2pt": 59.4, "pct_3pt": 48.9, "pct_tl": 83.3}, {"giocatore": "A. Marcius", "team": "TAV Treviglio Brianza Basket", "gp": 19, "value": 67.1, "pt": 8.4, "fg_made": 55, "fg_att": 82, "pct_2pt": 67.9, "pct_3pt": 0.0, "pct_tl": 66.2}, {"giocatore": "I. Onojaife", "team": "Rucker San Vendemiano", "gp": 19, "value": 66.3, "pt": 7.6, "fg_made": 57, "fg_att": 86, "pct_2pt": 67.1, "pct_3pt": 0.0, "pct_tl": 60.8}, {"giocatore": "A. Quinti", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "value": 65.6, "pt": 6.6, "fg_made": 52, "fg_att": 80, "pct_2pt": 66.2, "pct_3pt": 33.3, "pct_tl": 54.1}, {"giocatore": "J. Balanzoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "value": 65.4, "pt": 15.1, "fg_made": 117, "fg_att": 179, "pct_2pt": 65.4, "pct_3pt": 0.0, "pct_tl": 60.5}, {"giocatore": "M. Rubbini", "team": "TAV Treviglio Brianza Basket", "gp": 19, "value": 64.3, "pt": 14.1, "fg_made": 75, "fg_att": 147, "pct_2pt": 59.0, "pct_3pt": 45.3, "pct_tl": 86.7}, {"giocatore": "J. Vedovato", "team": "La T Tecnica Gema Montecatini", "gp": 19, "value": 64.0, "pt": 9.4, "fg_made": 73, "fg_att": 114, "pct_2pt": 64.0, "pct_3pt": 0.0, "pct_tl": 54.2}, {"giocatore": "L. Vanin", "team": "S4 Energia Vicenza", "gp": 18, "value": 64.0, "pt": 6.2, "fg_made": 43, "fg_att": 68, "pct_2pt": 62.7, "pct_3pt": 100.0, "pct_tl": 56.8}, {"giocatore": "L. Passoni", "team": "La T Tecnica Gema Montecatini", "gp": 19, "value": 63.3, "pt": 7.2, "fg_made": 47, "fg_att": 90, "pct_2pt": 65.9, "pct_3pt": 40.8, "pct_tl": 79.3}, {"giocatore": "A. Voltolini", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "value": 62.7, "pt": 5.4, "fg_made": 35, "fg_att": 63, "pct_2pt": 74.3, "pct_3pt": 32.1, "pct_tl": 82.1}, {"giocatore": "S. Mazzantini", "team": "Elachem Vigevano 1955", "gp": 19, "value": 62.5, "pt": 9.2, "fg_made": 56, "fg_att": 112, "pct_2pt": 49.1, "pct_3pt": 50.9, "pct_tl": 79.5}, {"giocatore": "G. Gasparin", "team": "S4 Energia Vicenza", "gp": 19, "value": 62.0, "pt": 12.9, "fg_made": 79, "fg_att": 158, "pct_2pt": 48.2, "pct_3pt": 52.1, "pct_tl": 81.7}, {"giocatore": "G. Martini", "team": "Moncada Energy Agrigento", "gp": 17, "value": 61.7, "pt": 11.1, "fg_made": 81, "fg_att": 132, "pct_2pt": 63.0, "pct_3pt": 20.0, "pct_tl": 56.8}, {"giocatore": "I. Biorac", "team": "Fiorenzuola Bees", "gp": 19, "value": 61.5, "pt": 6.5, "fg_made": 56, "fg_att": 91, "pct_2pt": 61.5, "pct_3pt": 0.0, "pct_tl": 57.9}, {"giocatore": "D. Zilli", "team": "Logiman Orzinuovi", "gp": 19, "value": 60.8, "pt": 6.2, "fg_made": 43, "fg_att": 79, "pct_2pt": 58.9, "pct_3pt": 43.5, "pct_tl": 80.8}, {"giocatore": "M. Da Campo", "team": "S4 Energia Vicenza", "gp": 19, "value": 60.4, "pt": 9.5, "fg_made": 67, "fg_att": 130, "pct_2pt": 53.0, "pct_3pt": 48.9, "pct_tl": 52.3}]}, "TS_pct": {"abs": [{"giocatore": "F. Gaetano", "team": "Infodrive Capo d'Orlando", "gp": 19, "value": 79.8, "pt": 6.2, "fg_made": 41, "fg_att": 57, "pct_2pt": 72.2, "pct_3pt": 66.7, "pct_tl": 89.2}, {"giocatore": "G. Pagani", "team": "Rucker San Vendemiano", "gp": 19, "value": 76.5, "pt": 13.5, "fg_made": 103, "fg_att": 136, "pct_2pt": 75.7, "pct_3pt": 0.0, "pct_tl": 70.4}, {"giocatore": "D. Dell'uomo", "team": "Fabo Herons Montecatini", "gp": 18, "value": 73.1, "pt": 4.7, "fg_made": 29, "fg_att": 52, "pct_2pt": 63.2, "pct_3pt": 51.5, "pct_tl": 71.4}, {"giocatore": "N. Natali", "team": "Fabo Herons Montecatini", "gp": 19, "value": 71.7, "pt": 4.5, "fg_made": 30, "fg_att": 54, "pct_2pt": 66.7, "pct_3pt": 48.5, "pct_tl": 75.0}, {"giocatore": "M. Rubbini", "team": "TAV Treviglio Brianza Basket", "gp": 19, "value": 71.5, "pt": 14.1, "fg_made": 75, "fg_att": 147, "pct_2pt": 59.0, "pct_3pt": 45.3, "pct_tl": 86.7}, {"giocatore": "A. Colussa", "team": "Siaz Basket Piazza Armerina", "gp": 19, "value": 70.2, "pt": 6.4, "fg_made": 42, "fg_att": 79, "pct_2pt": 59.4, "pct_3pt": 48.9, "pct_tl": 83.3}, {"giocatore": "A. Marcius", "team": "TAV Treviglio Brianza Basket", "gp": 19, "value": 69.4, "pt": 8.4, "fg_made": 55, "fg_att": 82, "pct_2pt": 67.9, "pct_3pt": 0.0, "pct_tl": 66.2}, {"giocatore": "A. Voltolini", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "value": 67.7, "pt": 5.4, "fg_made": 35, "fg_att": 63, "pct_2pt": 74.3, "pct_3pt": 32.1, "pct_tl": 82.1}, {"giocatore": "I. Onojaife", "team": "Rucker San Vendemiano", "gp": 19, "value": 66.9, "pt": 7.6, "fg_made": 57, "fg_att": 86, "pct_2pt": 67.1, "pct_3pt": 0.0, "pct_tl": 60.8}, {"giocatore": "L. Passoni", "team": "La T Tecnica Gema Montecatini", "gp": 19, "value": 66.7, "pt": 7.2, "fg_made": 47, "fg_att": 90, "pct_2pt": 65.9, "pct_3pt": 40.8, "pct_tl": 79.3}, {"giocatore": "S. Mazzantini", "team": "Elachem Vigevano 1955", "gp": 19, "value": 66.6, "pt": 9.2, "fg_made": 56, "fg_att": 112, "pct_2pt": 49.1, "pct_3pt": 50.9, "pct_tl": 79.5}, {"giocatore": "G. Gasparin", "team": "S4 Energia Vicenza", "gp": 19, "value": 66.4, "pt": 12.9, "fg_made": 79, "fg_att": 158, "pct_2pt": 48.2, "pct_3pt": 52.1, "pct_tl": 81.7}, {"giocatore": "J. Balanzoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "value": 65.9, "pt": 15.1, "fg_made": 117, "fg_att": 179, "pct_2pt": 65.4, "pct_3pt": 0.0, "pct_tl": 60.5}, {"giocatore": "A. Quinti", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "value": 64.9, "pt": 6.6, "fg_made": 52, "fg_att": 80, "pct_2pt": 66.2, "pct_3pt": 33.3, "pct_tl": 54.1}, {"giocatore": "D. Zilli", "team": "Logiman Orzinuovi", "gp": 19, "value": 64.7, "pt": 6.2, "fg_made": 43, "fg_att": 79, "pct_2pt": 58.9, "pct_3pt": 43.5, "pct_tl": 80.8}, {"giocatore": "L. Vanin", "team": "S4 Energia Vicenza", "gp": 18, "value": 64.1, "pt": 6.2, "fg_made": 43, "fg_att": 68, "pct_2pt": 62.7, "pct_3pt": 100.0, "pct_tl": 56.8}, {"giocatore": "N. Martinoni", "team": "Novipi\u00f9 Monferrato Basket", "gp": 18, "value": 64.1, "pt": 16.9, "fg_made": 103, "fg_att": 192, "pct_2pt": 59.2, "pct_3pt": 32.5, "pct_tl": 82.7}, {"giocatore": "A. Conti", "team": "Moncada Energy Agrigento", "gp": 5, "value": 63.9, "pt": 19.8, "fg_made": 28, "fg_att": 63, "pct_2pt": 46.7, "pct_3pt": 42.4, "pct_tl": 87.9}, {"giocatore": "J. Preti", "team": "S4 Energia Vicenza", "gp": 19, "value": 63.7, "pt": 14.3, "fg_made": 82, "fg_att": 178, "pct_2pt": 46.2, "pct_3pt": 45.9, "pct_tl": 85.2}, {"giocatore": "J. Vedovato", "team": "La T Tecnica Gema Montecatini", "gp": 19, "value": 63.6, "pt": 9.4, "fg_made": 73, "fg_att": 114, "pct_2pt": 64.0, "pct_3pt": 0.0, "pct_tl": 54.2}]}};
+        const statsConfig = [{"id": "PT", "name": "Punti", "desc": "Punti segnati"}, {"id": "AS", "name": "Assist", "desc": "Passaggi decisivi per canestro"}, {"id": "RT", "name": "Rimbalzi", "desc": "Rimbalzi totali (offensivi + difensivi)", "has_components": true}, {"id": "PR", "name": "Recuperi", "desc": "Palle recuperate"}, {"id": "ST", "name": "Stoppate", "desc": "Tiri avversari stoppati"}, {"id": "EFF", "name": "VAL", "desc": "Valutazione ufficiale LNP: (PT + RT + AS + PR + ST + FS) - (PP + FF + tiri sbagliati)"}, {"id": "2PT_pct", "name": "2PT%", "is_pct": true, "desc": "Percentuale tiri da 2 punti (min. 30 tentativi)"}, {"id": "3PT_pct", "name": "3PT%", "is_pct": true, "desc": "Percentuale tiri da 3 punti (min. 20 tentativi)"}, {"id": "TL_pct", "name": "TL%", "is_pct": true, "desc": "Percentuale tiri liberi (min. 20 tentativi)"}, {"id": "eFG_pct", "name": "eFG%", "is_pct": true, "desc": "Effective FG%: (FGM + 0.5 \u00d7 3PM) / FGA - pesa di pi\u00f9 i tiri da 3 (min. 50 tentativi)"}, {"id": "TS_pct", "name": "TS%", "is_pct": true, "desc": "True Shooting%: PTS / (2 \u00d7 (FGA + 0.44 \u00d7 FTA)) - efficienza complessiva al tiro includendo TL (min. 50 tentativi)"}];
+        const mainColor = '#302B8F';
+        let currentMode = 'abs';
+        let currentStat = 'PT';
+
+        function initTabs() {
+            const tabsDiv = document.getElementById('stat-tabs');
+            tabsDiv.innerHTML = statsConfig.map(s => `
+                <button id="tab-${s.id}" onclick="setStat('${s.id}')"
+                    style="padding: 10px 20px; border: 2px solid ${mainColor}; border-radius: 8px;
+                           cursor: pointer; font-weight: 600; transition: all 0.2s;">
+                    ${s.name}
+                </button>
+            `).join('');
+            updateTabStyles();
+        }
+
+        function updateTabStyles() {
+            statsConfig.forEach(s => {
+                const btn = document.getElementById('tab-' + s.id);
+                if (s.id === currentStat) {
+                    btn.style.background = mainColor;
+                    btn.style.color = 'white';
+                } else {
+                    btn.style.background = 'white';
+                    btn.style.color = mainColor;
+                }
+            });
+        }
+
+        function setMode(mode) {
+            // Se per 36 min non disponibile per questa stat, fallback a pg
+            if (mode === 'pm' && !statsData[currentStat].pm) {
+                mode = 'pg';
+            }
+            currentMode = mode;
+            ['abs', 'pg', 'pm'].forEach(m => {
+                const btn = document.getElementById('btn-' + m);
+                btn.style.background = mode === m ? mainColor : 'transparent';
+                btn.style.color = mode === m ? 'white' : '#666';
+            });
+            const notes = {
+                'abs': '',
+                'pg': '(min. 5 partite)',
+                'pm': '(min. 100 minuti, proiettato su 40 min)'
+            };
+            document.getElementById('mode-note').textContent = notes[mode];
+            render();
+        }
+
+        function setStat(stat) {
+            currentStat = stat;
+            updateTabStyles();
+            updateDescription();
+            // Se la modalità pm non è disponibile per questa stat, passa a pg
+            if (currentMode === 'pm' && !statsData[stat].pm) {
+                setMode('pg');
+                return;
+            }
+            render();
+        }
+
+        function updateDescription() {
+            const config = statsConfig.find(s => s.id === currentStat);
+            const descDiv = document.getElementById('stat-description');
+            descDiv.innerHTML = `<strong>${config.name}:</strong> ${config.desc || ''}`;
+        }
+
+        function render() {
+            let data = statsData[currentStat][currentMode];
+            // Fallback se dati non disponibili
+            if (!data) {
+                data = statsData[currentStat].pg || statsData[currentStat].abs;
+            }
+            if (!data) {
+                document.getElementById('table-container').innerHTML = '<p>Dati non disponibili per questa modalità.</p>';
+                return;
+            }
+            const config = statsConfig.find(s => s.id === currentStat);
+            const suffixMap = { 'abs': '', 'pg': '/g', 'pm': '/40m' };
+            const suffix = suffixMap[currentMode] || '';
+            const statLabel = config.name + suffix;
+            const isPct = config.is_pct || false;
+            const isCombined = currentStat === 'eFG_pct' || currentStat === 'TS_pct';
+            const hasComponents = config.has_components || false;
+            const isRT = currentStat === 'RT';
+
+            // Tabella
+            const showMin = currentMode === 'pm';
+            let headerHtml = '';
+            if (isPct) {
+                if (isCombined) {
+                    // Per eFG% e TS%, mostra anche le percentuali componenti
+                    headerHtml = `
+                        <th style="padding: 10px; text-align: left;">#</th>
+                        <th style="padding: 10px; text-align: left;">Giocatore</th>
+                        <th style="padding: 10px; text-align: center;">GP</th>
+                        <th style="padding: 10px; text-align: center;">${statLabel}</th>
+                        <th style="padding: 10px; text-align: center;">2PT%</th>
+                        <th style="padding: 10px; text-align: center;">3PT%</th>
+                        <th style="padding: 10px; text-align: center;">TL%</th>
+                        <th style="padding: 10px; text-align: center;">FG</th>
+                    `;
+                } else {
+                    // Per 2PT%, 3PT%, TL%
+                    headerHtml = `
+                        <th style="padding: 10px; text-align: left;">#</th>
+                        <th style="padding: 10px; text-align: left;">Giocatore</th>
+                        <th style="padding: 10px; text-align: center;">GP</th>
+                        <th style="padding: 10px; text-align: center;">${statLabel}</th>
+                        <th style="padding: 10px; text-align: center;">FG</th>
+                        <th style="padding: 10px; text-align: center;">PT/g</th>
+                    `;
+                }
+            } else if (hasComponents && isRT) {
+                // Per Rimbalzi, mostra RO e RD
+                headerHtml = `
+                    <th style="padding: 10px; text-align: left;">#</th>
+                    <th style="padding: 10px; text-align: left;">Giocatore</th>
+                    <th style="padding: 10px; text-align: center;">GP</th>
+                    ${showMin ? '<th style="padding: 10px; text-align: center;">MIN</th>' : ''}
+                    <th style="padding: 10px; text-align: center;">${statLabel}</th>
+                    <th style="padding: 10px; text-align: center;">RO${suffix}</th>
+                    <th style="padding: 10px; text-align: center;">RD${suffix}</th>
+                    <th style="padding: 10px; text-align: center;">PT${suffix}</th>
+                `;
+            } else {
+                headerHtml = `
+                    <th style="padding: 10px; text-align: left;">#</th>
+                    <th style="padding: 10px; text-align: left;">Giocatore</th>
+                    <th style="padding: 10px; text-align: center;">GP</th>
+                    ${showMin ? '<th style="padding: 10px; text-align: center;">MIN</th>' : ''}
+                    <th style="padding: 10px; text-align: center;">${statLabel}</th>
+                    <th style="padding: 10px; text-align: center;">PT${suffix}</th>
+                    <th style="padding: 10px; text-align: center;">AS${suffix}</th>
+                    <th style="padding: 10px; text-align: center;">RT${suffix}</th>
+                `;
+            }
+
+            let tableHtml = `
+                <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                    <thead>
+                        <tr style="background: ${mainColor}; color: white;">
+                            ${headerHtml}
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            data.forEach((row, i) => {
+                const bg = i % 2 === 0 ? 'white' : '#f9f9f9';
+                let rowHtml = '';
+                if (isPct) {
+                    if (isCombined) {
+                        // Per eFG% e TS% mostra componenti
+                        rowHtml = `
+                            <td style="padding: 8px 10px; font-weight: bold;">${i + 1}</td>
+                            <td style="padding: 8px 10px;">
+                                <div style="font-weight: 600;">${row.giocatore}</div>
+                                <div style="font-size: 12px; color: #666;">${row.team}</div>
+                            </td>
+                            <td style="padding: 8px 10px; text-align: center;">${row.gp}</td>
+                            <td style="padding: 8px 10px; text-align: center; font-weight: bold; color: ${mainColor};">${row.value}%</td>
+                            <td style="padding: 8px 10px; text-align: center;">${row.pct_2pt || '-'}%</td>
+                            <td style="padding: 8px 10px; text-align: center;">${row.pct_3pt || '-'}%</td>
+                            <td style="padding: 8px 10px; text-align: center;">${row.pct_tl || '-'}%</td>
+                            <td style="padding: 8px 10px; text-align: center; font-size: 12px;">${row.fg_made}/${row.fg_att}</td>
+                        `;
+                    } else {
+                        // Per 2PT%, 3PT%, TL%
+                        rowHtml = `
+                            <td style="padding: 8px 10px; font-weight: bold;">${i + 1}</td>
+                            <td style="padding: 8px 10px;">
+                                <div style="font-weight: 600;">${row.giocatore}</div>
+                                <div style="font-size: 12px; color: #666;">${row.team}</div>
+                            </td>
+                            <td style="padding: 8px 10px; text-align: center;">${row.gp}</td>
+                            <td style="padding: 8px 10px; text-align: center; font-weight: bold; color: ${mainColor};">${row.value}%</td>
+                            <td style="padding: 8px 10px; text-align: center; font-size: 12px;">${row.fg_made}/${row.fg_att}</td>
+                            <td style="padding: 8px 10px; text-align: center;">${row.pt}</td>
+                        `;
+                    }
+                } else if (hasComponents && isRT) {
+                    // Per Rimbalzi, mostra RO e RD
+                    rowHtml = `
+                        <td style="padding: 8px 10px; font-weight: bold;">${i + 1}</td>
+                        <td style="padding: 8px 10px;">
+                            <div style="font-weight: 600;">${row.giocatore}</div>
+                            <div style="font-size: 12px; color: #666;">${row.team}</div>
+                        </td>
+                        <td style="padding: 8px 10px; text-align: center;">${row.gp}</td>
+                        ${showMin ? `<td style="padding: 8px 10px; text-align: center;">${row.min}</td>` : ''}
+                        <td style="padding: 8px 10px; text-align: center; font-weight: bold; color: ${mainColor};">${row.value}</td>
+                        <td style="padding: 8px 10px; text-align: center;">${row.ro !== undefined ? row.ro : '-'}</td>
+                        <td style="padding: 8px 10px; text-align: center;">${row.rd !== undefined ? row.rd : '-'}</td>
+                        <td style="padding: 8px 10px; text-align: center;">${row.pt}</td>
+                    `;
+                } else {
+                    rowHtml = `
+                        <td style="padding: 8px 10px; font-weight: bold;">${i + 1}</td>
+                        <td style="padding: 8px 10px;">
+                            <div style="font-weight: 600;">${row.giocatore}</div>
+                            <div style="font-size: 12px; color: #666;">${row.team}</div>
+                        </td>
+                        <td style="padding: 8px 10px; text-align: center;">${row.gp}</td>
+                        ${showMin ? `<td style="padding: 8px 10px; text-align: center;">${row.min}</td>` : ''}
+                        <td style="padding: 8px 10px; text-align: center; font-weight: bold; color: ${mainColor};">${row.value}</td>
+                        <td style="padding: 8px 10px; text-align: center;">${row.pt}</td>
+                        <td style="padding: 8px 10px; text-align: center;">${row.as}</td>
+                        <td style="padding: 8px 10px; text-align: center;">${row.rt}</td>
+                    `;
+                }
+                tableHtml += `<tr style="background: ${bg};">${rowHtml}</tr>`;
+            });
+
+            tableHtml += '</tbody></table>';
+            document.getElementById('table-container').innerHTML = tableHtml;
+
+            // Grafico (top 10)
+            const top10 = data.slice(0, 10).reverse();
+            const chartData = [{
+                type: 'bar',
+                orientation: 'h',
+                x: top10.map(r => r.value),
+                y: top10.map(r => r.giocatore),
+                marker: { color: mainColor },
+                text: top10.map(r => r.value),
+                textposition: 'outside',
+                hovertemplate: '%{y}: %{x}<extra></extra>'
+            }];
+
+            const layout = {
+                title: { text: 'Top 10 ' + statLabel, font: { size: 16 } },
+                height: 400,
+                margin: { l: 150, r: 50, t: 50, b: 40 },
+                xaxis: { title: statLabel },
+                yaxis: { automargin: true }
+            };
+
+            Plotly.newPlot('chart-container', chartData, layout, { responsive: true });
+        }
+
+        initTabs();
+        updateDescription();
+        render();
+    </script>
+    
+
+        <div class="site-footer">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <div>Ultimo aggiornamento: 13/01/2026 22:35</div>
+            <div>Generato con LNP Stats</div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Espandi sezione corrente
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('expanded');
+            });
+        });
+
+        // Espandi automaticamente la sezione attiva
+        const activeLink = document.querySelector('.sidebar-link.active');
+        if (activeLink) {
+            let parent = activeLink.closest('.sidebar-section');
+            if (parent) parent.classList.add('expanded');
+        }
+    </script>
+</body>
+</html>

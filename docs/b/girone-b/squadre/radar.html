@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radar Squadre - Serie B - Girone B - LNP Stats</title>
+    <link rel="icon" type="image/png" href="../../../static/favicon180x180.png">
+    <link rel="stylesheet" href="../../../static/twinplay_brand.css">
+    <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--tp-gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--tp-spacing-lg);
+            z-index: 1000;
+            box-shadow: var(--tp-shadow-md);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-md);
+        }
+
+        .header-logo img {
+            height: 36px;
+        }
+
+        .header-logo a {
+            color: white;
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .header-breadcrumb {
+            margin-left: var(--tp-spacing-xl);
+            opacity: 0.8;
+            font-size: 0.875rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: var(--tp-spacing-md);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--tp-light);
+        }
+
+        .sidebar-section-header {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            color: var(--tp-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-sm);
+            transition: background 0.2s;
+        }
+
+        .sidebar-section-header:hover {
+            background: var(--tp-light);
+        }
+
+        .sidebar-section-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            font-size: 0.75rem;
+        }
+
+        .sidebar-section.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-subsection {
+            display: none;
+            background: var(--tp-light);
+        }
+
+        .sidebar-section.expanded .sidebar-subsection {
+            display: block;
+        }
+
+        .sidebar-category {
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: var(--tp-spacing-lg);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--tp-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: var(--tp-spacing-sm);
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: calc(var(--tp-spacing-lg) + 10px);
+            color: var(--tp-dark);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: white;
+            border-left-color: var(--tp-primary);
+        }
+
+        .sidebar-link.active {
+            background: white;
+            border-left-color: var(--tp-primary);
+            color: var(--tp-secondary);
+            font-weight: 600;
+        }
+
+        .sidebar-home-btn {
+            display: block;
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--tp-light);
+            transition: all 0.2s;
+        }
+
+        .sidebar-home-btn:hover {
+            background: var(--tp-light);
+            color: var(--tp-secondary);
+        }
+
+        .sidebar-competition {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            background: var(--tp-gradient-primary);
+            color: white;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: var(--tp-spacing-sm);
+        }
+
+        .sidebar:empty + .main {
+            margin-left: 0;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: var(--tp-spacing-xl);
+            min-height: calc(100vh - var(--header-height));
+            background: var(--tp-light);
+        }
+
+        .page-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.75rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-xs);
+        }
+
+        .page-subtitle {
+            color: var(--tp-gray);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .content-section {
+            background: white;
+            border-radius: var(--tp-radius-lg);
+            padding: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-lg);
+            box-shadow: var(--tp-shadow-sm);
+        }
+
+        .section-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.25rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-lg);
+            padding-bottom: var(--tp-spacing-sm);
+            border-bottom: 2px solid var(--tp-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .stat-card {
+            background: var(--tp-gradient-primary);
+            color: white;
+            padding: var(--tp-spacing-lg);
+            border-radius: var(--tp-radius-lg);
+            text-align: center;
+        }
+
+        .stat-card.accent {
+            background: var(--tp-gradient-accent);
+            color: var(--tp-dark);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+        }
+
+        .stat-value {
+            font-family: var(--tp-font-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: var(--tp-spacing-xs);
+        }
+
+        /* Plotly responsive */
+        .js-plotly-plot {
+            width: 100% !important;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            font-size: 0.8rem;
+        }
+
+        .site-footer img {
+            height: 24px;
+            margin-bottom: var(--tp-spacing-sm);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="header-logo">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <a href="../../../index.html">LNP Stats</a>
+        </div>
+        <div class="header-breadcrumb">Serie B - Girone B / Squadre / Radar</div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        
+    <a href="../../../index.html" class="sidebar-home-btn">
+        ← Cambia campionato
+    </a>
+    <div class="sidebar-competition">
+        Serie B - Girone B
+    </div>
+    <div class="sidebar-category">Squadre</div><a href="../../../b/girone-b/squadre/classifiche.html" class="sidebar-link ">Classifiche & Stats</a><a href="../../../b/girone-b/squadre/radar.html" class="sidebar-link active">Radar Squadre</a><a href="../../../b/girone-b/squadre/vittorie-sconfitte.html" class="sidebar-link ">Vittorie vs Sconfitte</a><a href="../../../b/girone-b/squadre/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../../b/girone-b/squadre/quando-vince.html" class="sidebar-link ">Quando Vince</a><a href="../../../b/girone-b/squadre/andamento.html" class="sidebar-link ">Andamento & Parziali</a><div class="sidebar-category">Giocatori</div><a href="../../../b/girone-b/giocatori/statistiche.html" class="sidebar-link ">Statistiche & Percentili</a><a href="../../../b/girone-b/giocatori/radar.html" class="sidebar-link ">Radar Confronto</a><a href="../../../b/girone-b/giocatori/consistenza.html" class="sidebar-link ">Consistenza</a><a href="../../../b/girone-b/giocatori/simili.html" class="sidebar-link ">Giocatori Simili</a><a href="../../../b/girone-b/giocatori/forma.html" class="sidebar-link ">Forma Recente</a><a href="../../../b/girone-b/giocatori/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../../b/girone-b/giocatori/distribuzione-tiri.html" class="sidebar-link ">Distribuzione Tiri</a><a href="../../../b/girone-b/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../../b/girone-b/giocatori/clustering.html" class="sidebar-link ">Clustering & Tipologie</a><a href="../../../b/girone-b/giocatori/dipendenza.html" class="sidebar-link ">Dipendenza Squadra</a><a href="../../../b/girone-b/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
+    </nav>
+
+    <main class="main">
+        <h1 class="page-title">Radar Squadre</h1>
+        <p class="page-subtitle">Serie B - Girone B</p>
+
+        
+    <div class="content-section">
+        <h2 class="section-title">Confronto Radar Squadre</h2>
+        <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
+            <div>
+                <label style="font-weight: 600;">Squadra 1:</label>
+                <select id="team1" onchange="updateRadar()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
+                    <option value="Adamant Ferrara">Adamant Ferrara</option><option value="Allianz Pazienza San Severo">Allianz Pazienza San Severo</option><option value="Benacquista Assicurazioni Latina">Benacquista Assicurazioni Latina</option><option value="Consorzio Leonardo Dany Quarrata">Consorzio Leonardo Dany Quarrata</option><option value="Consultinvest Loreto Pesaro">Consultinvest Loreto Pesaro</option><option value="General Contractor Jesi">General Contractor Jesi</option><option value="Luiss Roma">Luiss Roma</option><option value="OraSì Ravenna">OraSì Ravenna</option><option value="PSA Basket Casoria">PSA Basket Casoria</option><option value="Paperdi Juvecaserta 2021">Paperdi Juvecaserta 2021</option><option value="Power Basket Nocera">Power Basket Nocera</option><option value="Ristopro Fabriano">Ristopro Fabriano</option><option value="Solbat Golfo Piombino">Solbat Golfo Piombino</option><option value="Tema Sinergie Faenza">Tema Sinergie Faenza</option><option value="UP Andrea Costa Imola">UP Andrea Costa Imola</option><option value="Umana San Giobbe Chiusi">Umana San Giobbe Chiusi</option><option value="Verodol CBD Pielle Livorno">Verodol CBD Pielle Livorno</option><option value="Virtus GVM Roma 1960">Virtus GVM Roma 1960</option><option value="Virtus Imola">Virtus Imola</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-weight: 600;">Squadra 2:</label>
+                <select id="team2" onchange="updateRadar()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
+                    <option value="">-- Nessuna --</option>
+                    <option value="Adamant Ferrara">Adamant Ferrara</option><option value="Allianz Pazienza San Severo">Allianz Pazienza San Severo</option><option value="Benacquista Assicurazioni Latina">Benacquista Assicurazioni Latina</option><option value="Consorzio Leonardo Dany Quarrata">Consorzio Leonardo Dany Quarrata</option><option value="Consultinvest Loreto Pesaro">Consultinvest Loreto Pesaro</option><option value="General Contractor Jesi">General Contractor Jesi</option><option value="Luiss Roma">Luiss Roma</option><option value="OraSì Ravenna">OraSì Ravenna</option><option value="PSA Basket Casoria">PSA Basket Casoria</option><option value="Paperdi Juvecaserta 2021">Paperdi Juvecaserta 2021</option><option value="Power Basket Nocera">Power Basket Nocera</option><option value="Ristopro Fabriano">Ristopro Fabriano</option><option value="Solbat Golfo Piombino">Solbat Golfo Piombino</option><option value="Tema Sinergie Faenza">Tema Sinergie Faenza</option><option value="UP Andrea Costa Imola">UP Andrea Costa Imola</option><option value="Umana San Giobbe Chiusi">Umana San Giobbe Chiusi</option><option value="Verodol CBD Pielle Livorno">Verodol CBD Pielle Livorno</option><option value="Virtus GVM Roma 1960">Virtus GVM Roma 1960</option><option value="Virtus Imola">Virtus Imola</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 350px; gap: 20px; align-items: start;">
+            <div id="radar-chart"></div>
+            <div id="comparison-table" style="background: #f9f9f9; border-radius: 8px; padding: 15px;"></div>
+        </div>
+    </div>
+
+    <script>
+        const teamData = {"Adamant Ferrara": [90.4, 80.9, 92.8, 57.5, 56.6, 92.4, 83.9], "Allianz Pazienza San Severo": [93.9, 72.6, 80.5, 100.0, 84.9, 93.6, 84.1], "Benacquista Assicurazioni Latina": [94.8, 97.5, 81.7, 94.3, 65.7, 98.9, 88.5], "Consorzio Leonardo Dany Quarrata": [84.7, 84.3, 90.0, 82.5, 71.7, 85.5, 85.6], "Consultinvest Loreto Pesaro": [82.9, 68.9, 84.8, 88.1, 37.7, 82.7, 81.0], "General Contractor Jesi": [90.8, 82.5, 82.3, 73.1, 43.4, 87.1, 100.0], "Luiss Roma": [88.9, 75.8, 86.3, 86.4, 73.7, 89.9, 94.8], "OraS\u00ec Ravenna": [90.7, 73.9, 80.5, 88.1, 26.4, 87.8, 86.0], "PSA Basket Casoria": [78.6, 57.5, 84.8, 77.2, 49.8, 83.2, 78.0], "Paperdi Juvecaserta 2021": [100.0, 100.0, 100.0, 70.6, 53.8, 95.5, 92.7], "Power Basket Nocera": [83.3, 69.0, 87.6, 54.1, 31.9, 89.6, 84.1], "Ristopro Fabriano": [87.6, 76.6, 84.9, 66.2, 43.4, 88.4, 89.6], "Solbat Golfo Piombino": [91.3, 96.0, 85.3, 86.6, 80.1, 91.7, 81.7], "Tema Sinergie Faenza": [92.6, 81.4, 92.5, 60.0, 97.6, 81.7, 99.8], "UP Andrea Costa Imola": [84.2, 65.1, 83.1, 87.5, 45.3, 88.0, 93.7], "Umana San Giobbe Chiusi": [88.0, 77.9, 90.8, 65.6, 56.6, 90.3, 79.3], "Verodol CBD Pielle Livorno": [90.4, 71.0, 90.6, 63.8, 100.0, 86.9, 92.7], "Virtus GVM Roma 1960": [93.4, 72.1, 86.5, 72.5, 79.2, 100.0, 86.8], "Virtus Imola": [83.8, 65.6, 77.1, 59.4, 61.7, 81.9, 89.2]};
+        const teamRaw = {"Adamant Ferrara": {"Punti": 77.11, "Assist": 15.95, "Rimbalzi": 35.74, "Recuperi": 4.84, "Stoppate": 1.58, "Tiro 2PT": 52.03, "Tiro 3PT": 31.44}, "Allianz Pazienza San Severo": {"Punti": 80.11, "Assist": 14.32, "Rimbalzi": 31.0, "Recuperi": 8.42, "Stoppate": 2.37, "Tiro 2PT": 52.66, "Tiro 3PT": 31.48}, "Benacquista Assicurazioni Latina": {"Punti": 80.83, "Assist": 19.22, "Rimbalzi": 31.44, "Recuperi": 7.94, "Stoppate": 1.83, "Tiro 2PT": 55.66, "Tiro 3PT": 33.13}, "Consorzio Leonardo Dany Quarrata": {"Punti": 72.21, "Assist": 16.63, "Rimbalzi": 34.63, "Recuperi": 6.95, "Stoppate": 2.0, "Tiro 2PT": 48.11, "Tiro 3PT": 32.07}, "Consultinvest Loreto Pesaro": {"Punti": 70.68, "Assist": 13.58, "Rimbalzi": 32.63, "Recuperi": 7.42, "Stoppate": 1.05, "Tiro 2PT": 46.53, "Tiro 3PT": 30.35}, "General Contractor Jesi": {"Punti": 77.47, "Assist": 16.26, "Rimbalzi": 31.68, "Recuperi": 6.16, "Stoppate": 1.21, "Tiro 2PT": 49.02, "Tiro 3PT": 37.45}, "Luiss Roma": {"Punti": 75.83, "Assist": 14.94, "Rimbalzi": 33.22, "Recuperi": 7.28, "Stoppate": 2.06, "Tiro 2PT": 50.58, "Tiro 3PT": 35.5}, "OraS\u00ec Ravenna": {"Punti": 77.32, "Assist": 14.58, "Rimbalzi": 31.0, "Recuperi": 7.42, "Stoppate": 0.74, "Tiro 2PT": 49.41, "Tiro 3PT": 32.21}, "PSA Basket Casoria": {"Punti": 67.0, "Assist": 11.33, "Rimbalzi": 32.67, "Recuperi": 6.5, "Stoppate": 1.39, "Tiro 2PT": 46.82, "Tiro 3PT": 29.21}, "Paperdi Juvecaserta 2021": {"Punti": 85.28, "Assist": 19.72, "Rimbalzi": 38.5, "Recuperi": 5.94, "Stoppate": 1.5, "Tiro 2PT": 53.77, "Tiro 3PT": 34.7}, "Power Basket Nocera": {"Punti": 71.06, "Assist": 13.61, "Rimbalzi": 33.72, "Recuperi": 4.56, "Stoppate": 0.89, "Tiro 2PT": 50.41, "Tiro 3PT": 31.5}, "Ristopro Fabriano": {"Punti": 74.68, "Assist": 15.11, "Rimbalzi": 32.68, "Recuperi": 5.58, "Stoppate": 1.21, "Tiro 2PT": 49.78, "Tiro 3PT": 33.54}, "Solbat Golfo Piombino": {"Punti": 77.88, "Assist": 18.94, "Rimbalzi": 32.82, "Recuperi": 7.29, "Stoppate": 2.24, "Tiro 2PT": 51.62, "Tiro 3PT": 30.61}, "Tema Sinergie Faenza": {"Punti": 79.0, "Assist": 16.06, "Rimbalzi": 35.61, "Recuperi": 5.06, "Stoppate": 2.72, "Tiro 2PT": 46.0, "Tiro 3PT": 37.38}, "UP Andrea Costa Imola": {"Punti": 71.79, "Assist": 12.84, "Rimbalzi": 32.0, "Recuperi": 7.37, "Stoppate": 1.26, "Tiro 2PT": 49.53, "Tiro 3PT": 35.09}, "Umana San Giobbe Chiusi": {"Punti": 75.05, "Assist": 15.37, "Rimbalzi": 34.95, "Recuperi": 5.53, "Stoppate": 1.58, "Tiro 2PT": 50.81, "Tiro 3PT": 29.71}, "Verodol CBD Pielle Livorno": {"Punti": 77.05, "Assist": 14.0, "Rimbalzi": 34.89, "Recuperi": 5.37, "Stoppate": 2.79, "Tiro 2PT": 48.89, "Tiro 3PT": 34.71}, "Virtus GVM Roma 1960": {"Punti": 79.63, "Assist": 14.21, "Rimbalzi": 33.32, "Recuperi": 6.11, "Stoppate": 2.21, "Tiro 2PT": 56.29, "Tiro 3PT": 32.52}, "Virtus Imola": {"Punti": 71.44, "Assist": 12.94, "Rimbalzi": 29.67, "Recuperi": 5.0, "Stoppate": 1.72, "Tiro 2PT": 46.11, "Tiro 3PT": 33.42}};
+        const categories = ["Punti", "Assist", "Rimbalzi", "Recuperi", "Stoppate", "Tiro 2PT", "Tiro 3PT"];
+
+        function updateRadar() {
+            const t1 = document.getElementById('team1').value;
+            const t2 = document.getElementById('team2').value;
+
+            const data = [];
+            const colors = ['#302B8F', '#00F95B'];
+
+            [t1, t2].forEach((team, i) => {
+                if (team && teamData[team]) {
+                    const vals = [...teamData[team]];
+                    const cats = [...categories];
+                    vals.push(vals[0]);
+                    cats.push(cats[0]);
+
+                    data.push({
+                        type: 'scatterpolar',
+                        r: vals,
+                        theta: cats,
+                        fill: 'toself',
+                        fillcolor: colors[i] + '33',
+                        line: { color: colors[i], width: 2 },
+                        name: team
+                    });
+                }
+            });
+
+            const layout = {
+                polar: {
+                    radialaxis: { visible: true, range: [0, 100] }
+                },
+                showlegend: true,
+                height: 450,
+                margin: { t: 30, b: 30 }
+            };
+
+            Plotly.newPlot('radar-chart', data, layout);
+
+            // Update comparison table
+            updateComparisonTable(t1, t2);
+        }
+
+        function updateComparisonTable(t1, t2) {
+            const tableDiv = document.getElementById('comparison-table');
+
+            if (!t2 || !teamRaw[t1] || !teamRaw[t2]) {
+                // Single team view
+                if (teamRaw[t1]) {
+                    let html = '<h4 style="margin: 0 0 12px 0; color: #302B8F;">Valori Medi</h4>';
+                    html += '<table style="width: 100%; font-size: 14px;">';
+                    categories.forEach(cat => {
+                        const val = teamRaw[t1][cat];
+                        html += `<tr><td style="padding: 6px 0;">${cat}</td><td style="text-align: right; font-weight: 600;">${val}</td></tr>`;
+                    });
+                    html += '</table>';
+                    tableDiv.innerHTML = html;
+                }
+                return;
+            }
+
+            // Two team comparison
+            let html = '<h4 style="margin: 0 0 12px 0; color: #302B8F;">Confronto Valori</h4>';
+            html += '<table style="width: 100%; font-size: 13px; border-collapse: collapse;">';
+            html += '<thead><tr style="border-bottom: 2px solid #ddd;">';
+            html += '<th style="text-align: left; padding: 6px 4px;">Stat</th>';
+            html += '<th style="text-align: center; padding: 6px 4px; color: #302B8F;">🔵</th>';
+            html += '<th style="text-align: center; padding: 6px 4px; color: #00F95B;">🟢</th>';
+            html += '</tr></thead><tbody>';
+
+            categories.forEach(cat => {
+                const v1 = teamRaw[t1][cat];
+                const v2 = teamRaw[t2][cat];
+                const better1 = v1 > v2;
+                const better2 = v2 > v1;
+                const c1 = better1 ? '#22c55e' : (better2 ? '#ef4444' : '#666');
+                const c2 = better2 ? '#22c55e' : (better1 ? '#ef4444' : '#666');
+                const w1 = better1 ? 'bold' : 'normal';
+                const w2 = better2 ? 'bold' : 'normal';
+
+                html += `<tr style="border-bottom: 1px solid #eee;">`;
+                html += `<td style="padding: 6px 4px;">${cat}</td>`;
+                html += `<td style="text-align: center; padding: 6px 4px; color: ${c1}; font-weight: ${w1};">${v1}</td>`;
+                html += `<td style="text-align: center; padding: 6px 4px; color: ${c2}; font-weight: ${w2};">${v2}</td>`;
+                html += `</tr>`;
+            });
+
+            html += '</tbody></table>';
+            tableDiv.innerHTML = html;
+        }
+
+        updateRadar();
+    </script>
+    
+
+        <div class="site-footer">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <div>Ultimo aggiornamento: 13/01/2026 22:35</div>
+            <div>Generato con LNP Stats</div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Espandi sezione corrente
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('expanded');
+            });
+        });
+
+        // Espandi automaticamente la sezione attiva
+        const activeLink = document.querySelector('.sidebar-link.active');
+        if (activeLink) {
+            let parent = activeLink.closest('.sidebar-section');
+            if (parent) parent.classList.add('expanded');
+        }
+    </script>
+</body>
+</html>

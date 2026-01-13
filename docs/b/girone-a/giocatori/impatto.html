@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impatto Giocatori - Serie B - Girone A - LNP Stats</title>
+    <link rel="icon" type="image/png" href="../../../static/favicon180x180.png">
+    <link rel="stylesheet" href="../../../static/twinplay_brand.css">
+    <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--tp-gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--tp-spacing-lg);
+            z-index: 1000;
+            box-shadow: var(--tp-shadow-md);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-md);
+        }
+
+        .header-logo img {
+            height: 36px;
+        }
+
+        .header-logo a {
+            color: white;
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .header-breadcrumb {
+            margin-left: var(--tp-spacing-xl);
+            opacity: 0.8;
+            font-size: 0.875rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: var(--tp-spacing-md);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--tp-light);
+        }
+
+        .sidebar-section-header {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            color: var(--tp-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-sm);
+            transition: background 0.2s;
+        }
+
+        .sidebar-section-header:hover {
+            background: var(--tp-light);
+        }
+
+        .sidebar-section-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            font-size: 0.75rem;
+        }
+
+        .sidebar-section.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-subsection {
+            display: none;
+            background: var(--tp-light);
+        }
+
+        .sidebar-section.expanded .sidebar-subsection {
+            display: block;
+        }
+
+        .sidebar-category {
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: var(--tp-spacing-lg);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--tp-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: var(--tp-spacing-sm);
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: calc(var(--tp-spacing-lg) + 10px);
+            color: var(--tp-dark);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: white;
+            border-left-color: var(--tp-primary);
+        }
+
+        .sidebar-link.active {
+            background: white;
+            border-left-color: var(--tp-primary);
+            color: var(--tp-secondary);
+            font-weight: 600;
+        }
+
+        .sidebar-home-btn {
+            display: block;
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--tp-light);
+            transition: all 0.2s;
+        }
+
+        .sidebar-home-btn:hover {
+            background: var(--tp-light);
+            color: var(--tp-secondary);
+        }
+
+        .sidebar-competition {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            background: var(--tp-gradient-primary);
+            color: white;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: var(--tp-spacing-sm);
+        }
+
+        .sidebar:empty + .main {
+            margin-left: 0;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: var(--tp-spacing-xl);
+            min-height: calc(100vh - var(--header-height));
+            background: var(--tp-light);
+        }
+
+        .page-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.75rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-xs);
+        }
+
+        .page-subtitle {
+            color: var(--tp-gray);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .content-section {
+            background: white;
+            border-radius: var(--tp-radius-lg);
+            padding: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-lg);
+            box-shadow: var(--tp-shadow-sm);
+        }
+
+        .section-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.25rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-lg);
+            padding-bottom: var(--tp-spacing-sm);
+            border-bottom: 2px solid var(--tp-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .stat-card {
+            background: var(--tp-gradient-primary);
+            color: white;
+            padding: var(--tp-spacing-lg);
+            border-radius: var(--tp-radius-lg);
+            text-align: center;
+        }
+
+        .stat-card.accent {
+            background: var(--tp-gradient-accent);
+            color: var(--tp-dark);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+        }
+
+        .stat-value {
+            font-family: var(--tp-font-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: var(--tp-spacing-xs);
+        }
+
+        /* Plotly responsive */
+        .js-plotly-plot {
+            width: 100% !important;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            font-size: 0.8rem;
+        }
+
+        .site-footer img {
+            height: 24px;
+            margin-bottom: var(--tp-spacing-sm);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="header-logo">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <a href="../../../index.html">LNP Stats</a>
+        </div>
+        <div class="header-breadcrumb">Serie B - Girone A / Giocatori / Impatto</div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        
+    <a href="../../../index.html" class="sidebar-home-btn">
+        ← Cambia campionato
+    </a>
+    <div class="sidebar-competition">
+        Serie B - Girone A
+    </div>
+    <div class="sidebar-category">Squadre</div><a href="../../../b/girone-a/squadre/classifiche.html" class="sidebar-link ">Classifiche & Stats</a><a href="../../../b/girone-a/squadre/radar.html" class="sidebar-link ">Radar Squadre</a><a href="../../../b/girone-a/squadre/vittorie-sconfitte.html" class="sidebar-link ">Vittorie vs Sconfitte</a><a href="../../../b/girone-a/squadre/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../../b/girone-a/squadre/quando-vince.html" class="sidebar-link ">Quando Vince</a><a href="../../../b/girone-a/squadre/andamento.html" class="sidebar-link ">Andamento & Parziali</a><div class="sidebar-category">Giocatori</div><a href="../../../b/girone-a/giocatori/statistiche.html" class="sidebar-link ">Statistiche & Percentili</a><a href="../../../b/girone-a/giocatori/radar.html" class="sidebar-link ">Radar Confronto</a><a href="../../../b/girone-a/giocatori/consistenza.html" class="sidebar-link ">Consistenza</a><a href="../../../b/girone-a/giocatori/simili.html" class="sidebar-link ">Giocatori Simili</a><a href="../../../b/girone-a/giocatori/forma.html" class="sidebar-link ">Forma Recente</a><a href="../../../b/girone-a/giocatori/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../../b/girone-a/giocatori/distribuzione-tiri.html" class="sidebar-link ">Distribuzione Tiri</a><a href="../../../b/girone-a/giocatori/impatto.html" class="sidebar-link active">Impatto</a><a href="../../../b/girone-a/giocatori/clustering.html" class="sidebar-link ">Clustering & Tipologie</a><a href="../../../b/girone-a/giocatori/dipendenza.html" class="sidebar-link ">Dipendenza Squadra</a><a href="../../../b/girone-a/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
+    </nav>
+
+    <main class="main">
+        <h1 class="page-title">Impatto</h1>
+        <p class="page-subtitle">Serie B - Girone A</p>
+
+        
+    <div class="content-section">
+        <h2 class="section-title">Impatto Giocatori</h2>
+        <p style="color: #666; margin-bottom: 20px;">
+            Metriche avanzate per valutare l'impatto dei giocatori sulla squadra.
+        </p>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
+            <button id="btn-pmraw" onclick="showSection('pmraw')" class="tab-active" style="padding: 10px 20px; border: 2px solid #302B8F; border-radius: 8px; cursor: pointer; font-weight: 600; background: #302B8F; color: white;">+/- per Minuto</button>
+            <button id="btn-pm" onclick="showSection('pm')" style="padding: 10px 20px; border: 2px solid #302B8F; border-radius: 8px; cursor: pointer; font-weight: 600; background: white; color: #302B8F;">+/- Adjusted</button>
+            <button id="btn-asto" onclick="showSection('asto')" style="padding: 10px 20px; border: 2px solid #302B8F; border-radius: 8px; cursor: pointer; font-weight: 600; background: white; color: #302B8F;">AS/TO Ratio</button>
+            <button id="btn-reb" onclick="showSection('reb')" style="padding: 10px 20px; border: 2px solid #302B8F; border-radius: 8px; cursor: pointer; font-weight: 600; background: white; color: #302B8F;">RO vs RD</button>
+        </div>
+
+        <div id="content-container"></div>
+    </div>
+
+    <script>
+        const impactData = {"pm": [{"name": "A. Abba", "team": "Bakery Basket Piacenza", "gp": 19, "min": 434, "pm": -139, "pm_pg": -7.32, "pm_pm": -0.32, "pm_adj": -0.034}, {"name": "A. Ambrosetti", "team": "Fiorenzuola Bees", "gp": 18, "min": 357, "pm": -43, "pm_pg": -2.39, "pm_pm": -0.12, "pm_adj": 0.048}, {"name": "A. Bargnesi", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 416, "pm": 130, "pm_pg": 6.84, "pm_pm": 0.312, "pm_adj": -0.026}, {"name": "A. Boglio", "team": "Elachem Vigevano 1955", "gp": 19, "min": 436, "pm": 113, "pm_pg": 5.95, "pm_pm": 0.259, "pm_adj": 0.002}, {"name": "A. Cacace", "team": "Logiman Orzinuovi", "gp": 19, "min": 474, "pm": 140, "pm_pg": 7.37, "pm_pm": 0.295, "pm_adj": 0.067}, {"name": "A. Cecchi", "team": "Fiorenzuola Bees", "gp": 9, "min": 217, "pm": -1, "pm_pg": -0.11, "pm_pm": -0.005, "pm_adj": 0.142}, {"name": "A. Ceparano", "team": "Fiorenzuola Bees", "gp": 19, "min": 529, "pm": -97, "pm_pg": -5.11, "pm_pm": -0.183, "pm_adj": 0.029}, {"name": "A. Chiarastella", "team": "Moncada Energy Agrigento", "gp": 16, "min": 485, "pm": -70, "pm_pg": -4.38, "pm_pm": -0.144, "pm_adj": -0.04}, {"name": "A. Colussa", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 344, "pm": 52, "pm_pg": 2.74, "pm_pm": 0.151, "pm_adj": 0.154}, {"name": "A. Conti", "team": "Moncada Energy Agrigento", "gp": 5, "min": 154, "pm": 12, "pm_pg": 2.4, "pm_pm": 0.078, "pm_adj": -0.004}, {"name": "A. Dore", "team": "Bakery Basket Piacenza", "gp": 19, "min": 500, "pm": -114, "pm_pg": -6.0, "pm_pm": -0.228, "pm_adj": -0.015}, {"name": "A. Hrstic", "team": "LuxArm Lumezzane", "gp": 18, "min": 364, "pm": -19, "pm_pg": -1.06, "pm_pm": -0.052, "pm_adj": 0.081}, {"name": "A. Korlatovic", "team": "Bakery Basket Piacenza", "gp": 19, "min": 290, "pm": -84, "pm_pg": -4.42, "pm_pm": -0.289, "pm_adj": 0.04}, {"name": "A. Marcius", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 364, "pm": 57, "pm_pg": 3.0, "pm_pm": 0.156, "pm_adj": 0.038}, {"name": "A. Mazzoleni", "team": "Rimadesio Desio", "gp": 19, "min": 483, "pm": 14, "pm_pg": 0.74, "pm_pm": 0.029, "pm_adj": 0.008}, {"name": "A. Mazzucchelli", "team": "UCC Assigeco Piacenza", "gp": 19, "min": 499, "pm": -93, "pm_pg": -4.89, "pm_pm": -0.186, "pm_adj": -0.054}, {"name": "A. Misters", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 624, "pm": 30, "pm_pg": 1.58, "pm_pm": 0.048, "pm_adj": 0.035}, {"name": "A. Quinti", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 324, "pm": 54, "pm_pg": 2.84, "pm_pm": 0.167, "pm_adj": 0.052}, {"name": "A. Ricci", "team": "Fabo Herons Montecatini", "gp": 18, "min": 311, "pm": 16, "pm_pg": 0.89, "pm_pm": 0.051, "pm_adj": -0.005}, {"name": "A. Riva", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 198, "pm": -46, "pm_pg": -2.42, "pm_pm": -0.232, "pm_adj": -0.568}, {"name": "A. Scardoni", "team": "Foppiani Fulgor Fidenza", "gp": 18, "min": 211, "pm": -59, "pm_pg": -3.28, "pm_pm": -0.279, "pm_adj": 0.019}, {"name": "A. Sipala", "team": "LuxArm Lumezzane", "gp": 16, "min": 255, "pm": -83, "pm_pg": -5.19, "pm_pm": -0.325, "pm_adj": -0.255}, {"name": "A. Stefani", "team": "Logiman Orzinuovi", "gp": 19, "min": 250, "pm": -27, "pm_pg": -1.42, "pm_pm": -0.108, "pm_adj": -0.175}, {"name": "A. Stepanovic", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 497, "pm": 92, "pm_pg": 4.84, "pm_pm": 0.185, "pm_adj": 0.001}, {"name": "A. Tassinari", "team": "Rucker San Vendemiano", "gp": 19, "min": 554, "pm": 137, "pm_pg": 7.21, "pm_pm": 0.247, "pm_adj": 0.037}, {"name": "A. Verazzo", "team": "Elachem Vigevano 1955", "gp": 19, "min": 474, "pm": 85, "pm_pg": 4.47, "pm_pm": 0.179, "pm_adj": 0.007}, {"name": "A. Voltolini", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 333, "pm": 13, "pm_pg": 0.68, "pm_pm": 0.039, "pm_adj": -0.018}, {"name": "A. Zampogna", "team": "Moncada Energy Agrigento", "gp": 16, "min": 446, "pm": 11, "pm_pg": 0.69, "pm_pm": 0.025, "pm_adj": 0.064}, {"name": "B. Diouf", "team": "Elachem Vigevano 1955", "gp": 16, "min": 234, "pm": 21, "pm_pg": 1.31, "pm_pm": 0.089, "pm_adj": -0.084}, {"name": "B. Douvier", "team": "Moncada Energy Agrigento", "gp": 6, "min": 180, "pm": -18, "pm_pg": -3.0, "pm_pm": -0.1, "pm_adj": 0.056}, {"name": "C. Caporaso", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 350, "pm": -130, "pm_pg": -6.84, "pm_pm": -0.371, "pm_adj": -0.038}, {"name": "C. Placinschi", "team": "Foppiani Fulgor Fidenza", "gp": 18, "min": 435, "pm": -181, "pm_pg": -10.06, "pm_pm": -0.416, "pm_adj": -0.048}, {"name": "C. Taflaj", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 438, "pm": 21, "pm_pg": 1.11, "pm_pm": 0.048, "pm_adj": 0.059}, {"name": "D. Dell'uomo", "team": "Fabo Herons Montecatini", "gp": 18, "min": 238, "pm": -6, "pm_pg": -0.33, "pm_pm": -0.025, "pm_adj": -0.04}, {"name": "D. Jackson", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 534, "pm": 184, "pm_pg": 9.68, "pm_pm": 0.344, "pm_adj": 0.158}, {"name": "D. Meluzzi", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 527, "pm": -4, "pm_pg": -0.21, "pm_pm": -0.008, "pm_adj": 0.053}, {"name": "D. Ohenhen", "team": "LuxArm Lumezzane", "gp": 14, "min": 311, "pm": 27, "pm_pg": 1.93, "pm_pm": 0.087, "pm_adj": 0.193}, {"name": "D. Osagie", "team": "Novipi\u00f9 Monferrato Basket", "gp": 19, "min": 171, "pm": -61, "pm_pg": -3.21, "pm_pm": -0.356, "pm_adj": 0.039}, {"name": "D. Pepper", "team": "UCC Assigeco Piacenza", "gp": 19, "min": 530, "pm": -87, "pm_pg": -4.58, "pm_pm": -0.164, "pm_adj": -0.142}, {"name": "D. Reati", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 179, "pm": 21, "pm_pg": 1.11, "pm_pm": 0.117, "pm_adj": -0.042}, {"name": "D. Zilli", "team": "Logiman Orzinuovi", "gp": 19, "min": 291, "pm": -19, "pm_pg": -1.0, "pm_pm": -0.065, "pm_adj": -0.287}, {"name": "E. Bartninkas", "team": "Rimadesio Desio", "gp": 19, "min": 369, "pm": 53, "pm_pg": 2.79, "pm_pm": 0.143, "pm_adj": 0.164}, {"name": "E. Caversazio", "team": "Logiman Orzinuovi", "gp": 19, "min": 455, "pm": 87, "pm_pg": 4.58, "pm_pm": 0.191, "pm_adj": 0.102}, {"name": "E. Gallizzi", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 460, "pm": -31, "pm_pg": -1.63, "pm_pm": -0.067, "pm_adj": -0.075}, {"name": "E. Ivanovskis", "team": "LuxArm Lumezzane", "gp": 18, "min": 212, "pm": 10, "pm_pg": 0.56, "pm_pm": 0.047, "pm_adj": -0.044}, {"name": "E. Morvillo", "team": "Bakery Basket Piacenza", "gp": 18, "min": 367, "pm": -159, "pm_pg": -8.83, "pm_pm": -0.433, "pm_adj": -0.127}, {"name": "E. Scattolin", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 425, "pm": -129, "pm_pg": -6.79, "pm_pm": -0.303, "pm_adj": 0.025}, {"name": "E. Trapani", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 444, "pm": 71, "pm_pg": 3.74, "pm_pm": 0.16, "pm_adj": 0.092}, {"name": "F. Banella", "team": "Bakery Basket Piacenza", "gp": 19, "min": 156, "pm": -65, "pm_pg": -3.42, "pm_pm": -0.416, "pm_adj": -0.146}, {"name": "F. Bedetti", "team": "Rucker San Vendemiano", "gp": 19, "min": 446, "pm": 31, "pm_pg": 1.63, "pm_pm": 0.069, "pm_adj": -0.155}, {"name": "F. Burini", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 443, "pm": 92, "pm_pg": 4.84, "pm_pm": 0.207, "pm_adj": 0.076}, {"name": "F. Carnevale", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 234, "pm": -86, "pm_pg": -4.53, "pm_pm": -0.367, "pm_adj": -0.217}, {"name": "F. Casoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 452, "pm": 74, "pm_pg": 3.89, "pm_pm": 0.164, "pm_adj": 0.039}, {"name": "F. De Capitani", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 267, "pm": 54, "pm_pg": 2.84, "pm_pm": 0.202, "pm_adj": 0.119}, {"name": "F. Deminicis", "team": "LuxArm Lumezzane", "gp": 19, "min": 361, "pm": 2, "pm_pg": 0.11, "pm_pm": 0.006, "pm_adj": 0.051}, {"name": "F. Fratto", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 313, "pm": -12, "pm_pg": -0.63, "pm_pm": -0.038, "pm_adj": -0.194}, {"name": "F. Gaetano", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 197, "pm": 7, "pm_pg": 0.37, "pm_pm": 0.035, "pm_adj": 0.115}, {"name": "F. Gay", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 405, "pm": 29, "pm_pg": 1.53, "pm_pm": 0.072, "pm_adj": 0.049}, {"name": "F. Gnecchi", "team": "Logiman Orzinuovi", "gp": 19, "min": 407, "pm": 49, "pm_pg": 2.58, "pm_pm": 0.12, "pm_adj": 0.046}, {"name": "F. Grani", "team": "Moncada Energy Agrigento", "gp": 19, "min": 345, "pm": -8, "pm_pg": -0.42, "pm_pm": -0.023, "pm_adj": -0.002}, {"name": "F. Guerra", "team": "Novipi\u00f9 Monferrato Basket", "gp": 17, "min": 469, "pm": -129, "pm_pg": -7.59, "pm_pm": -0.275, "pm_adj": -0.031}, {"name": "F. Marcucci", "team": "Novipi\u00f9 Monferrato Basket", "gp": 19, "min": 554, "pm": -107, "pm_pg": -5.63, "pm_pm": -0.193, "pm_adj": -0.004}, {"name": "F. Oboe", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 500, "pm": 44, "pm_pg": 2.32, "pm_pm": 0.088, "pm_adj": -0.068}, {"name": "F. Pirani", "team": "UCC Assigeco Piacenza", "gp": 5, "min": 119, "pm": -2, "pm_pg": -0.4, "pm_pm": -0.017, "pm_adj": -0.028}, {"name": "F. Ricci", "team": "Bakery Basket Piacenza", "gp": 19, "min": 604, "pm": -143, "pm_pg": -7.53, "pm_pm": -0.236, "pm_adj": 0.053}, {"name": "F. Rossi", "team": "Fabo Herons Montecatini", "gp": 21, "min": 411, "pm": 42, "pm_pg": 2.0, "pm_pm": 0.102, "pm_adj": 0.026}, {"name": "F. Spinelli", "team": "Rimadesio Desio", "gp": 19, "min": 265, "pm": -8, "pm_pg": -0.42, "pm_pm": -0.03, "pm_adj": -0.052}, {"name": "F. Ucles Belmonte", "team": "S4 Energia Vicenza", "gp": 14, "min": 269, "pm": -27, "pm_pg": -1.93, "pm_pm": -0.1, "pm_adj": -0.022}, {"name": "G. Almansi", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 448, "pm": -3, "pm_pg": -0.16, "pm_pm": -0.007, "pm_adj": 0.009}, {"name": "G. Baldini", "team": "Paffoni Fulgor Basket Omegna", "gp": 18, "min": 500, "pm": 71, "pm_pg": 3.94, "pm_pm": 0.142, "pm_adj": 0.03}, {"name": "G. Bertetti", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 492, "pm": 41, "pm_pg": 2.16, "pm_pm": 0.083, "pm_adj": 0.039}, {"name": "G. Cecchinato", "team": "Fiorenzuola Bees", "gp": 13, "min": 306, "pm": -45, "pm_pg": -3.46, "pm_pm": -0.147, "pm_adj": -0.077}, {"name": "G. Fiusco", "team": "Elachem Vigevano 1955", "gp": 19, "min": 149, "pm": -63, "pm_pg": -3.32, "pm_pm": -0.421, "pm_adj": -0.735}, {"name": "G. Gasparin", "team": "S4 Energia Vicenza", "gp": 19, "min": 515, "pm": -13, "pm_pg": -0.68, "pm_pm": -0.025, "pm_adj": 0.018}, {"name": "G. Ghidini", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 429, "pm": -122, "pm_pg": -6.42, "pm_pm": -0.284, "pm_adj": 0.05}, {"name": "G. Giannozzi", "team": "Logiman Orzinuovi", "gp": 19, "min": 132, "pm": 20, "pm_pg": 1.05, "pm_pm": 0.151, "pm_adj": -0.416}, {"name": "G. Giarelli", "team": "Rimadesio Desio", "gp": 19, "min": 473, "pm": 21, "pm_pg": 1.11, "pm_pm": 0.044, "pm_adj": 0.026}, {"name": "G. Martini", "team": "Moncada Energy Agrigento", "gp": 17, "min": 295, "pm": -46, "pm_pg": -2.71, "pm_pm": -0.156, "pm_adj": 0.098}, {"name": "G. Pagani", "team": "Rucker San Vendemiano", "gp": 19, "min": 427, "pm": 80, "pm_pg": 4.21, "pm_pm": 0.187, "pm_adj": -0.008}, {"name": "G. Poggi", "team": "UCC Assigeco Piacenza", "gp": 19, "min": 520, "pm": -21, "pm_pg": -1.11, "pm_pm": -0.04, "pm_adj": -0.075}, {"name": "G. Scali", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 490, "pm": 69, "pm_pg": 3.63, "pm_pm": 0.141, "pm_adj": 0.018}, {"name": "G. Sgobba", "team": "Fabo Herons Montecatini", "gp": 16, "min": 299, "pm": 48, "pm_pg": 3.0, "pm_pm": 0.16, "pm_adj": -0.014}, {"name": "G. Siberna", "team": "LuxArm Lumezzane", "gp": 19, "min": 493, "pm": -33, "pm_pg": -1.74, "pm_pm": -0.067, "pm_adj": -0.081}, {"name": "G. Sodero", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 488, "pm": 64, "pm_pg": 3.37, "pm_pm": 0.131, "pm_adj": -0.05}, {"name": "G. Tarallo", "team": "Rimadesio Desio", "gp": 19, "min": 515, "pm": -35, "pm_pg": -1.84, "pm_pm": -0.068, "pm_adj": -0.026}, {"name": "I. Biorac", "team": "Fiorenzuola Bees", "gp": 19, "min": 341, "pm": 20, "pm_pg": 1.05, "pm_pm": 0.059, "pm_adj": 0.247}, {"name": "I. Onojaife", "team": "Rucker San Vendemiano", "gp": 19, "min": 363, "pm": 56, "pm_pg": 2.95, "pm_pm": 0.154, "pm_adj": -0.055}, {"name": "J. Balanzoni", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 501, "pm": 55, "pm_pg": 2.89, "pm_pm": 0.11, "pm_adj": 0.067}, {"name": "J. Benites Vicente", "team": "Fabo Herons Montecatini", "gp": 16, "min": 227, "pm": -1, "pm_pg": -0.06, "pm_pm": -0.004, "pm_adj": -0.173}, {"name": "J. Cebasek", "team": "Rucker San Vendemiano", "gp": 19, "min": 515, "pm": 186, "pm_pg": 9.79, "pm_pm": 0.361, "pm_adj": 0.248}, {"name": "J. Cepic", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 543, "pm": -70, "pm_pg": -3.68, "pm_pm": -0.129, "pm_adj": 0.062}, {"name": "J. Mantynen", "team": "Foppiani Fulgor Fidenza", "gp": 18, "min": 586, "pm": -135, "pm_pg": -7.5, "pm_pm": -0.23, "pm_adj": 0.039}, {"name": "J. Paulinus", "team": "Siaz Basket Piazza Armerina", "gp": 9, "min": 125, "pm": -2, "pm_pg": -0.22, "pm_pm": -0.016, "pm_adj": -0.08}, {"name": "J. Preti", "team": "S4 Energia Vicenza", "gp": 19, "min": 525, "pm": 31, "pm_pg": 1.63, "pm_pm": 0.059, "pm_adj": 0.096}, {"name": "J. Rapetti", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 252, "pm": -21, "pm_pg": -1.11, "pm_pm": -0.083, "pm_adj": -0.117}, {"name": "J. Vedovato", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 364, "pm": 46, "pm_pg": 2.42, "pm_pm": 0.126, "pm_adj": -0.071}, {"name": "K. Korsunov", "team": "Fiorenzuola Bees", "gp": 19, "min": 374, "pm": 5, "pm_pg": 0.26, "pm_pm": 0.013, "pm_adj": 0.171}, {"name": "K. Osatwna", "team": "Novipi\u00f9 Monferrato Basket", "gp": 7, "min": 103, "pm": -38, "pm_pg": -5.43, "pm_pm": -0.369, "pm_adj": 0.093}, {"name": "K. Strautmanis", "team": "La T Tecnica Gema Montecatini", "gp": 18, "min": 310, "pm": 88, "pm_pg": 4.89, "pm_pm": 0.283, "pm_adj": -0.05}, {"name": "K. Viglianisi", "team": "Moncada Energy Agrigento", "gp": 16, "min": 154, "pm": -29, "pm_pg": -1.81, "pm_pm": -0.188, "pm_adj": -0.175}, {"name": "L. Antonietti", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 391, "pm": 35, "pm_pg": 1.84, "pm_pm": 0.089, "pm_adj": -0.015}, {"name": "L. Aukstikalnis", "team": "Fabo Herons Montecatini", "gp": 19, "min": 556, "pm": 109, "pm_pg": 5.74, "pm_pm": 0.196, "pm_adj": 0.056}, {"name": "L. Calbini", "team": "UCC Assigeco Piacenza", "gp": 19, "min": 541, "pm": -4, "pm_pg": -0.21, "pm_pm": -0.007, "pm_adj": 0.02}, {"name": "L. Chaves", "team": "Logiman Orzinuovi", "gp": 18, "min": 512, "pm": 70, "pm_pg": 3.89, "pm_pm": 0.137, "pm_adj": 0.005}, {"name": "L. D'alessandro", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 511, "pm": 73, "pm_pg": 3.84, "pm_pm": 0.143, "pm_adj": 0.075}, {"name": "L. De Zardo", "team": "Fiorenzuola Bees", "gp": 19, "min": 540, "pm": -145, "pm_pg": -7.63, "pm_pm": -0.268, "pm_adj": -0.117}, {"name": "L. Galassi", "team": "LuxArm Lumezzane", "gp": 19, "min": 492, "pm": -53, "pm_pg": -2.79, "pm_pm": -0.108, "pm_adj": -0.056}, {"name": "L. Giannone", "team": "Bakery Basket Piacenza", "gp": 19, "min": 521, "pm": -152, "pm_pg": -8.0, "pm_pm": -0.292, "pm_adj": 0.017}, {"name": "L. Kekovic", "team": "LuxArm Lumezzane", "gp": 17, "min": 381, "pm": -40, "pm_pg": -2.35, "pm_pm": -0.105, "pm_adj": -0.045}, {"name": "L. Leoni", "team": "Rimadesio Desio", "gp": 19, "min": 182, "pm": -36, "pm_pg": -1.89, "pm_pm": -0.197, "pm_adj": -0.309}, {"name": "L. Martini", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 305, "pm": -68, "pm_pg": -3.58, "pm_pm": -0.223, "pm_adj": 0.15}, {"name": "L. Passoni", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 450, "pm": 91, "pm_pg": 4.79, "pm_pm": 0.202, "pm_adj": -0.143}, {"name": "L. Querci", "team": "Moncada Energy Agrigento", "gp": 18, "min": 499, "pm": -81, "pm_pg": -4.5, "pm_pm": -0.162, "pm_adj": -0.054}, {"name": "L. Valesin", "team": "UCC Assigeco Piacenza", "gp": 19, "min": 470, "pm": 40, "pm_pg": 2.11, "pm_pm": 0.085, "pm_adj": 0.093}, {"name": "L. Vanin", "team": "S4 Energia Vicenza", "gp": 18, "min": 338, "pm": -23, "pm_pg": -1.28, "pm_pm": -0.068, "pm_adj": -0.096}, {"name": "L. Varaschin", "team": "LuxArm Lumezzane", "gp": 7, "min": 180, "pm": 22, "pm_pg": 3.14, "pm_pm": 0.122, "pm_adj": 0.133}, {"name": "L. Zangheri", "team": "Novipi\u00f9 Monferrato Basket", "gp": 15, "min": 277, "pm": -42, "pm_pg": -2.8, "pm_pm": -0.151, "pm_adj": 0.001}, {"name": "M. Acunzo", "team": "La T Tecnica Gema Montecatini", "gp": 19, "min": 408, "pm": 118, "pm_pg": 6.21, "pm_pm": 0.289, "pm_adj": 0.09}, {"name": "M. Beretta", "team": "S4 Energia Vicenza", "gp": 19, "min": 479, "pm": -14, "pm_pg": -0.74, "pm_pm": -0.029, "pm_adj": -0.061}, {"name": "M. Cagliani", "team": "Moncada Energy Agrigento", "gp": 17, "min": 472, "pm": -63, "pm_pg": -3.71, "pm_pm": -0.133, "pm_adj": 0.036}, {"name": "M. Contento", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 455, "pm": 25, "pm_pg": 1.32, "pm_pm": 0.055, "pm_adj": 0.046}, {"name": "M. Corgnati", "team": "Elachem Vigevano 1955", "gp": 19, "min": 381, "pm": 70, "pm_pg": 3.68, "pm_pm": 0.184, "pm_adj": 0.038}, {"name": "M. Criconia", "team": "UCC Assigeco Piacenza", "gp": 19, "min": 332, "pm": 22, "pm_pg": 1.16, "pm_pm": 0.066, "pm_adj": 0.116}, {"name": "M. Da Campo", "team": "S4 Energia Vicenza", "gp": 19, "min": 545, "pm": 27, "pm_pg": 1.42, "pm_pm": 0.05, "pm_adj": -0.041}, {"name": "M. Dia", "team": "Novipi\u00f9 Monferrato Basket", "gp": 19, "min": 209, "pm": -55, "pm_pg": -2.89, "pm_pm": -0.263, "pm_adj": -0.062}, {"name": "M. Dimeco", "team": "Paffoni Fulgor Basket Omegna", "gp": 19, "min": 401, "pm": 20, "pm_pg": 1.05, "pm_pm": 0.05, "pm_adj": -0.122}, {"name": "M. Ferraro", "team": "UCC Assigeco Piacenza", "gp": 18, "min": 466, "pm": -53, "pm_pg": -2.94, "pm_pm": -0.114, "pm_adj": -0.103}, {"name": "M. Galassi", "team": "TAV Treviglio Brianza Basket", "gp": 7, "min": 162, "pm": 16, "pm_pg": 2.29, "pm_pm": 0.099, "pm_adj": 0.042}, {"name": "M. Giacomini", "team": "Logiman Orzinuovi", "gp": 19, "min": 493, "pm": 82, "pm_pg": 4.32, "pm_pm": 0.166, "pm_adj": -0.012}, {"name": "M. Kancleris", "team": "Elachem Vigevano 1955", "gp": 19, "min": 472, "pm": 120, "pm_pg": 6.32, "pm_pm": 0.254, "pm_adj": 0.092}, {"name": "M. Mane", "team": "Foppiani Fulgor Fidenza", "gp": 19, "min": 339, "pm": -121, "pm_pg": -6.37, "pm_pm": -0.357, "pm_adj": 0.024}, {"name": "M. Mastroianni", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 458, "pm": 127, "pm_pg": 6.68, "pm_pm": 0.277, "pm_adj": 0.16}, {"name": "M. Munari", "team": "Rimadesio Desio", "gp": 19, "min": 492, "pm": 18, "pm_pg": 0.95, "pm_pm": 0.037, "pm_adj": 0.065}, {"name": "M. Obljubech", "team": "Fiorenzuola Bees", "gp": 19, "min": 382, "pm": -41, "pm_pg": -2.16, "pm_pm": -0.107, "pm_adj": 0.014}, {"name": "M. Palermo", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 402, "pm": 19, "pm_pg": 1.0, "pm_pm": 0.047, "pm_adj": -0.074}, {"name": "M. Pezzani", "team": "Foppiani Fulgor Fidenza", "gp": 16, "min": 246, "pm": -126, "pm_pg": -7.88, "pm_pm": -0.512, "pm_adj": -0.152}, {"name": "M. Picarelli", "team": "Rucker San Vendemiano", "gp": 19, "min": 448, "pm": 117, "pm_pg": 6.16, "pm_pm": 0.261, "pm_adj": 0.143}, {"name": "M. Restelli", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 471, "pm": 61, "pm_pg": 3.21, "pm_pm": 0.129, "pm_adj": 0.016}, {"name": "M. Rubbini", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 523, "pm": 100, "pm_pg": 5.26, "pm_pm": 0.191, "pm_adj": 0.128}, {"name": "M. Rupil", "team": "Novipi\u00f9 Monferrato Basket", "gp": 19, "min": 515, "pm": -132, "pm_pg": -6.95, "pm_pm": -0.256, "pm_adj": 0.009}, {"name": "M. Sacchettini", "team": "Paffoni Fulgor Basket Omegna", "gp": 18, "min": 161, "pm": -4, "pm_pg": -0.22, "pm_pm": -0.025, "pm_adj": -0.289}, {"name": "M. Tornari", "team": "Rimadesio Desio", "gp": 19, "min": 222, "pm": -50, "pm_pg": -2.63, "pm_pm": -0.225, "pm_adj": -0.325}, {"name": "M. Zacchigna", "team": "Elachem Vigevano 1955", "gp": 19, "min": 278, "pm": 61, "pm_pg": 3.21, "pm_pm": 0.219, "pm_adj": -0.086}, {"name": "N. Carr", "team": "S4 Energia Vicenza", "gp": 19, "min": 225, "pm": 68, "pm_pg": 3.58, "pm_pm": 0.301, "pm_adj": 0.186}, {"name": "N. Fantoma", "team": "Elachem Vigevano 1955", "gp": 19, "min": 144, "pm": 66, "pm_pg": 3.47, "pm_pm": 0.456, "pm_adj": 0.233}, {"name": "N. Gajic", "team": "Elachem Vigevano 1955", "gp": 19, "min": 596, "pm": 166, "pm_pg": 8.74, "pm_pm": 0.278, "pm_adj": 0.094}, {"name": "N. Markovic", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 539, "pm": -42, "pm_pg": -2.21, "pm_pm": -0.078, "pm_adj": -0.043}, {"name": "N. Martinoni", "team": "Novipi\u00f9 Monferrato Basket", "gp": 18, "min": 524, "pm": -116, "pm_pg": -6.44, "pm_pm": -0.221, "pm_adj": -0.021}, {"name": "N. Mastrangelo", "team": "Fabo Herons Montecatini", "gp": 19, "min": 336, "pm": 13, "pm_pg": 0.68, "pm_pm": 0.039, "pm_adj": -0.03}, {"name": "N. Morici", "team": "Rucker San Vendemiano", "gp": 19, "min": 445, "pm": 110, "pm_pg": 5.79, "pm_pm": 0.247, "pm_adj": 0.089}, {"name": "N. Natali", "team": "Fabo Herons Montecatini", "gp": 19, "min": 336, "pm": 99, "pm_pg": 5.21, "pm_pm": 0.294, "pm_adj": 0.093}, {"name": "N. Piccionne", "team": "LuxArm Lumezzane", "gp": 19, "min": 546, "pm": -1, "pm_pg": -0.05, "pm_pm": -0.002, "pm_adj": 0.044}, {"name": "N. Venturoli", "team": "Logiman Orzinuovi", "gp": 19, "min": 302, "pm": -19, "pm_pg": -1.0, "pm_pm": -0.063, "pm_adj": -0.2}, {"name": "P. Agostini", "team": "TAV Treviglio Brianza Basket", "gp": 18, "min": 342, "pm": 29, "pm_pg": 1.61, "pm_pm": 0.085, "pm_adj": -0.166}, {"name": "P. Basta", "team": "Novipi\u00f9 Monferrato Basket", "gp": 14, "min": 104, "pm": -15, "pm_pg": -1.07, "pm_pm": -0.144, "pm_adj": -0.157}, {"name": "P. Bocconcelli", "team": "Bakery Basket Piacenza", "gp": 19, "min": 556, "pm": -148, "pm_pg": -7.79, "pm_pm": -0.266, "pm_adj": 0.06}, {"name": "P. Gatti", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 515, "pm": 12, "pm_pg": 0.63, "pm_pm": 0.023, "pm_adj": -0.034}, {"name": "R. Bottioni", "team": "Fiorenzuola Bees", "gp": 19, "min": 353, "pm": -81, "pm_pg": -4.26, "pm_pm": -0.229, "pm_adj": 0.037}, {"name": "R. Carta", "team": "Moncada Energy Agrigento", "gp": 13, "min": 145, "pm": -23, "pm_pg": -1.77, "pm_pm": -0.158, "pm_adj": 0.083}, {"name": "R. Chinellato", "team": "Fabo Herons Montecatini", "gp": 19, "min": 561, "pm": 95, "pm_pg": 5.0, "pm_pm": 0.169, "pm_adj": 0.06}, {"name": "R. Crespi", "team": "Fiorenzuola Bees", "gp": 18, "min": 315, "pm": -113, "pm_pg": -6.28, "pm_pm": -0.358, "pm_adj": -0.143}, {"name": "R. Disibio", "team": "Moncada Energy Agrigento", "gp": 11, "min": 258, "pm": -93, "pm_pg": -8.45, "pm_pm": -0.36, "pm_adj": -0.358}, {"name": "R. Morina", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 419, "pm": 17, "pm_pg": 0.89, "pm_pm": 0.04, "pm_adj": -0.057}, {"name": "R. Murri", "team": "Rucker San Vendemiano", "gp": 19, "min": 466, "pm": 45, "pm_pg": 2.37, "pm_pm": 0.096, "pm_adj": -0.134}, {"name": "R. Orrego", "team": "Moncada Energy Agrigento", "gp": 18, "min": 205, "pm": -51, "pm_pg": -2.83, "pm_pm": -0.249, "pm_adj": 0.001}, {"name": "R. Pisano", "team": "S4 Energia Vicenza", "gp": 18, "min": 421, "pm": 46, "pm_pg": 2.56, "pm_pm": 0.109, "pm_adj": 0.094}, {"name": "S. Anaekwe", "team": "TAV Treviglio Brianza Basket", "gp": 12, "min": 208, "pm": 2, "pm_pg": 0.17, "pm_pm": 0.01, "pm_adj": 0.08}, {"name": "S. Anaekwe", "team": "UCC Assigeco Piacenza", "gp": 7, "min": 142, "pm": -5, "pm_pg": -0.71, "pm_pm": -0.035, "pm_adj": -0.11}, {"name": "S. Borriello", "team": "Bakery Basket Piacenza", "gp": 19, "min": 344, "pm": -124, "pm_pg": -6.53, "pm_pm": -0.36, "pm_adj": 0.051}, {"name": "S. Caglio", "team": "Novipi\u00f9 Monferrato Basket", "gp": 19, "min": 395, "pm": -55, "pm_pg": -2.89, "pm_pm": -0.139, "pm_adj": 0.097}, {"name": "S. Conte", "team": "Rimadesio Desio", "gp": 19, "min": 396, "pm": 4, "pm_pg": 0.21, "pm_pm": 0.01, "pm_adj": -0.01}, {"name": "S. Elli", "team": "Rimadesio Desio", "gp": 19, "min": 488, "pm": 20, "pm_pg": 1.05, "pm_pm": 0.041, "pm_adj": 0.074}, {"name": "S. Jasaitis", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 464, "pm": 27, "pm_pg": 1.42, "pm_pm": 0.058, "pm_adj": 0.071}, {"name": "S. Lepichev", "team": "Siaz Basket Piazza Armerina", "gp": 19, "min": 462, "pm": -44, "pm_pg": -2.32, "pm_pm": -0.095, "pm_adj": -0.099}, {"name": "S. Mazzantini", "team": "Elachem Vigevano 1955", "gp": 19, "min": 508, "pm": 144, "pm_pg": 7.58, "pm_pm": 0.283, "pm_adj": 0.078}, {"name": "T. Anchisi", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 227, "pm": -8, "pm_pg": -0.42, "pm_pm": -0.035, "pm_adj": -0.387}, {"name": "T. Marangoni", "team": "S4 Energia Vicenza", "gp": 19, "min": 388, "pm": -7, "pm_pg": -0.37, "pm_pm": -0.018, "pm_adj": 0.001}, {"name": "T. Oxilia", "team": "Logiman Orzinuovi", "gp": 19, "min": 490, "pm": 131, "pm_pg": 6.89, "pm_pm": 0.267, "pm_adj": 0.154}, {"name": "T. Rossi", "team": "TAV Treviglio Brianza Basket", "gp": 19, "min": 553, "pm": 76, "pm_pg": 4.0, "pm_pm": 0.137, "pm_adj": 0.083}, {"name": "T. Zanzottera", "team": "Novipi\u00f9 Monferrato Basket", "gp": 13, "min": 358, "pm": -75, "pm_pg": -5.77, "pm_pm": -0.209, "pm_adj": 0.025}, {"name": "U. Simon", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 338, "pm": 53, "pm_pg": 2.79, "pm_pm": 0.157, "pm_adj": 0.086}, {"name": "V. Cizauskas", "team": "SAE Scientifica-Soevis Legnano", "gp": 19, "min": 551, "pm": 54, "pm_pg": 2.84, "pm_pm": 0.098, "pm_adj": -0.006}, {"name": "V. Cucchiaro", "team": "Elachem Vigevano 1955", "gp": 19, "min": 120, "pm": -15, "pm_pg": -0.79, "pm_pm": -0.124, "pm_adj": -0.254}, {"name": "V. Moltrasio", "team": "Infodrive Capo d'Orlando", "gp": 19, "min": 339, "pm": 14, "pm_pg": 0.74, "pm_pm": 0.041, "pm_adj": -0.141}, {"name": "Y. Angarica", "team": "LuxArm Lumezzane", "gp": 19, "min": 196, "pm": -27, "pm_pg": -1.42, "pm_pm": -0.137, "pm_adj": 0.095}, {"name": "Y. Giombini", "team": "Fabo Herons Montecatini", "gp": 19, "min": 367, "pm": 66, "pm_pg": 3.47, "pm_pm": 0.179, "pm_adj": -0.005}, {"name": "Y. Kamate", "team": "Fabo Herons Montecatini", "gp": 19, "min": 107, "pm": -3, "pm_pg": -0.16, "pm_pm": -0.028, "pm_adj": -0.359}], "asto": [{"name": "N. Mastrangelo", "team": "Fabo Herons Montecatini", "as": 25, "pp": 5, "as_to": 5.0, "as_pm": 0.074}, {"name": "P. Bocconcelli", "team": "Bakery Basket Piacenza", "as": 36, "pp": 12, "as_to": 3.0, "as_pm": 0.065}, {"name": "N. Morici", "team": "Rucker San Vendemiano", "as": 71, "pp": 24, "as_to": 2.96, "as_pm": 0.159}, {"name": "E. Gallizzi", "team": "Siaz Basket Piazza Armerina", "as": 73, "pp": 27, "as_to": 2.7, "as_pm": 0.158}, {"name": "F. Burini", "team": "La T Tecnica Gema Montecatini", "as": 73, "pp": 28, "as_to": 2.61, "as_pm": 0.164}, {"name": "G. Baldini", "team": "Paffoni Fulgor Basket Omegna", "as": 44, "pp": 17, "as_to": 2.59, "as_pm": 0.088}, {"name": "E. Trapani", "team": "Paffoni Fulgor Basket Omegna", "as": 74, "pp": 29, "as_to": 2.55, "as_pm": 0.167}, {"name": "M. Tornari", "team": "Rimadesio Desio", "as": 22, "pp": 9, "as_to": 2.44, "as_pm": 0.099}, {"name": "T. Zanzottera", "team": "Novipi\u00f9 Monferrato Basket", "as": 40, "pp": 17, "as_to": 2.35, "as_pm": 0.112}, {"name": "A. Boglio", "team": "Elachem Vigevano 1955", "as": 89, "pp": 38, "as_to": 2.34, "as_pm": 0.204}, {"name": "F. Carnevale", "team": "Foppiani Fulgor Fidenza", "as": 21, "pp": 9, "as_to": 2.33, "as_pm": 0.09}, {"name": "F. Rossi", "team": "Fabo Herons Montecatini", "as": 77, "pp": 33, "as_to": 2.33, "as_pm": 0.187}, {"name": "D. Meluzzi", "team": "Siaz Basket Piazza Armerina", "as": 65, "pp": 28, "as_to": 2.32, "as_pm": 0.123}, {"name": "M. Beretta", "team": "S4 Energia Vicenza", "as": 79, "pp": 35, "as_to": 2.26, "as_pm": 0.165}, {"name": "G. Sodero", "team": "SAE Scientifica-Soevis Legnano", "as": 65, "pp": 29, "as_to": 2.24, "as_pm": 0.133}, {"name": "M. Rubbini", "team": "TAV Treviglio Brianza Basket", "as": 87, "pp": 39, "as_to": 2.23, "as_pm": 0.166}, {"name": "A. Chiarastella", "team": "Moncada Energy Agrigento", "as": 56, "pp": 26, "as_to": 2.15, "as_pm": 0.115}, {"name": "E. Caversazio", "team": "Logiman Orzinuovi", "as": 38, "pp": 18, "as_to": 2.11, "as_pm": 0.083}, {"name": "M. Corgnati", "team": "Elachem Vigevano 1955", "as": 59, "pp": 28, "as_to": 2.11, "as_pm": 0.155}, {"name": "M. Munari", "team": "Rimadesio Desio", "as": 79, "pp": 38, "as_to": 2.08, "as_pm": 0.16}, {"name": "L. Galassi", "team": "LuxArm Lumezzane", "as": 58, "pp": 28, "as_to": 2.07, "as_pm": 0.118}, {"name": "G. Gasparin", "team": "S4 Energia Vicenza", "as": 65, "pp": 32, "as_to": 2.03, "as_pm": 0.126}, {"name": "B. Diouf", "team": "Elachem Vigevano 1955", "as": 12, "pp": 6, "as_to": 2.0, "as_pm": 0.051}, {"name": "M. Restelli", "team": "TAV Treviglio Brianza Basket", "as": 30, "pp": 15, "as_to": 2.0, "as_pm": 0.064}, {"name": "V. Moltrasio", "team": "Infodrive Capo d'Orlando", "as": 32, "pp": 16, "as_to": 2.0, "as_pm": 0.094}, {"name": "A. Misters", "team": "Paffoni Fulgor Basket Omegna", "as": 71, "pp": 36, "as_to": 1.97, "as_pm": 0.114}, {"name": "A. Zampogna", "team": "Moncada Energy Agrigento", "as": 47, "pp": 24, "as_to": 1.96, "as_pm": 0.105}, {"name": "A. Mazzoleni", "team": "Rimadesio Desio", "as": 47, "pp": 25, "as_to": 1.88, "as_pm": 0.097}, {"name": "F. Gay", "team": "Paffoni Fulgor Basket Omegna", "as": 62, "pp": 33, "as_to": 1.88, "as_pm": 0.153}, {"name": "M. Contento", "team": "Infodrive Capo d'Orlando", "as": 52, "pp": 28, "as_to": 1.86, "as_pm": 0.114}], "reb": [{"name": "A. Abba", "team": "Bakery Basket Piacenza", "ro": 29, "rd": 71, "rt": 100, "ro_pct": 29.0, "min": 434}, {"name": "A. Boglio", "team": "Elachem Vigevano 1955", "ro": 12, "rd": 52, "rt": 64, "ro_pct": 18.8, "min": 436}, {"name": "A. Cacace", "team": "Logiman Orzinuovi", "ro": 19, "rd": 68, "rt": 87, "ro_pct": 21.8, "min": 474}, {"name": "A. Ceparano", "team": "Fiorenzuola Bees", "ro": 15, "rd": 88, "rt": 103, "ro_pct": 14.6, "min": 529}, {"name": "A. Chiarastella", "team": "Moncada Energy Agrigento", "ro": 10, "rd": 88, "rt": 98, "ro_pct": 10.2, "min": 485}, {"name": "A. Colussa", "team": "Siaz Basket Piazza Armerina", "ro": 9, "rd": 49, "rt": 58, "ro_pct": 15.5, "min": 344}, {"name": "A. Korlatovic", "team": "Bakery Basket Piacenza", "ro": 27, "rd": 48, "rt": 75, "ro_pct": 36.0, "min": 290}, {"name": "A. Marcius", "team": "TAV Treviglio Brianza Basket", "ro": 45, "rd": 70, "rt": 115, "ro_pct": 39.1, "min": 364}, {"name": "A. Mazzoleni", "team": "Rimadesio Desio", "ro": 18, "rd": 69, "rt": 87, "ro_pct": 20.7, "min": 483}, {"name": "A. Misters", "team": "Paffoni Fulgor Basket Omegna", "ro": 4, "rd": 57, "rt": 61, "ro_pct": 6.6, "min": 624}, {"name": "A. Quinti", "team": "SAE Scientifica-Soevis Legnano", "ro": 34, "rd": 46, "rt": 80, "ro_pct": 42.5, "min": 324}, {"name": "A. Stefani", "team": "Logiman Orzinuovi", "ro": 36, "rd": 33, "rt": 69, "ro_pct": 52.2, "min": 250}, {"name": "A. Stepanovic", "team": "SAE Scientifica-Soevis Legnano", "ro": 21, "rd": 65, "rt": 86, "ro_pct": 24.4, "min": 497}, {"name": "C. Placinschi", "team": "Foppiani Fulgor Fidenza", "ro": 38, "rd": 35, "rt": 73, "ro_pct": 52.1, "min": 435}, {"name": "C. Taflaj", "team": "TAV Treviglio Brianza Basket", "ro": 15, "rd": 70, "rt": 85, "ro_pct": 17.6, "min": 438}, {"name": "D. Ohenhen", "team": "LuxArm Lumezzane", "ro": 32, "rd": 41, "rt": 73, "ro_pct": 43.8, "min": 311}, {"name": "D. Pepper", "team": "UCC Assigeco Piacenza", "ro": 27, "rd": 78, "rt": 105, "ro_pct": 25.7, "min": 530}, {"name": "D. Zilli", "team": "Logiman Orzinuovi", "ro": 25, "rd": 54, "rt": 79, "ro_pct": 31.6, "min": 291}, {"name": "E. Bartninkas", "team": "Rimadesio Desio", "ro": 35, "rd": 68, "rt": 103, "ro_pct": 34.0, "min": 369}, {"name": "E. Caversazio", "team": "Logiman Orzinuovi", "ro": 25, "rd": 35, "rt": 60, "ro_pct": 41.7, "min": 455}, {"name": "E. Morvillo", "team": "Bakery Basket Piacenza", "ro": 10, "rd": 66, "rt": 76, "ro_pct": 13.2, "min": 367}, {"name": "E. Scattolin", "team": "Foppiani Fulgor Fidenza", "ro": 29, "rd": 46, "rt": 75, "ro_pct": 38.7, "min": 425}, {"name": "F. Bedetti", "team": "Rucker San Vendemiano", "ro": 21, "rd": 56, "rt": 77, "ro_pct": 27.3, "min": 446}, {"name": "F. Casoni", "team": "Paffoni Fulgor Basket Omegna", "ro": 28, "rd": 104, "rt": 132, "ro_pct": 21.2, "min": 452}, {"name": "F. Fratto", "team": "La T Tecnica Gema Montecatini", "ro": 19, "rd": 77, "rt": 96, "ro_pct": 19.8, "min": 313}, {"name": "F. Gaetano", "team": "Infodrive Capo d'Orlando", "ro": 16, "rd": 44, "rt": 60, "ro_pct": 26.7, "min": 197}, {"name": "F. Gay", "team": "Paffoni Fulgor Basket Omegna", "ro": 9, "rd": 73, "rt": 82, "ro_pct": 11.0, "min": 405}, {"name": "F. Gnecchi", "team": "Logiman Orzinuovi", "ro": 23, "rd": 51, "rt": 74, "ro_pct": 31.1, "min": 407}, {"name": "F. Grani", "team": "Moncada Energy Agrigento", "ro": 32, "rd": 72, "rt": 104, "ro_pct": 30.8, "min": 345}, {"name": "F. Guerra", "team": "Novipi\u00f9 Monferrato Basket", "ro": 9, "rd": 52, "rt": 61, "ro_pct": 14.8, "min": 469}, {"name": "F. Marcucci", "team": "Novipi\u00f9 Monferrato Basket", "ro": 30, "rd": 80, "rt": 110, "ro_pct": 27.3, "min": 554}, {"name": "F. Oboe", "team": "SAE Scientifica-Soevis Legnano", "ro": 17, "rd": 66, "rt": 83, "ro_pct": 20.5, "min": 500}, {"name": "F. Ricci", "team": "Bakery Basket Piacenza", "ro": 11, "rd": 76, "rt": 87, "ro_pct": 12.6, "min": 604}, {"name": "F. Rossi", "team": "Fabo Herons Montecatini", "ro": 16, "rd": 48, "rt": 64, "ro_pct": 25.0, "min": 411}, {"name": "F. Ucles Belmonte", "team": "S4 Energia Vicenza", "ro": 17, "rd": 55, "rt": 72, "ro_pct": 23.6, "min": 269}, {"name": "G. Almansi", "team": "Siaz Basket Piazza Armerina", "ro": 12, "rd": 49, "rt": 61, "ro_pct": 19.7, "min": 448}, {"name": "G. Giarelli", "team": "Rimadesio Desio", "ro": 27, "rd": 71, "rt": 98, "ro_pct": 27.6, "min": 473}, {"name": "G. Martini", "team": "Moncada Energy Agrigento", "ro": 22, "rd": 36, "rt": 58, "ro_pct": 37.9, "min": 295}, {"name": "G. Pagani", "team": "Rucker San Vendemiano", "ro": 40, "rd": 55, "rt": 95, "ro_pct": 42.1, "min": 427}, {"name": "G. Poggi", "team": "UCC Assigeco Piacenza", "ro": 36, "rd": 95, "rt": 131, "ro_pct": 27.5, "min": 520}, {"name": "G. Scali", "team": "SAE Scientifica-Soevis Legnano", "ro": 19, "rd": 77, "rt": 96, "ro_pct": 19.8, "min": 490}, {"name": "G. Siberna", "team": "LuxArm Lumezzane", "ro": 24, "rd": 86, "rt": 110, "ro_pct": 21.8, "min": 493}, {"name": "G. Tarallo", "team": "Rimadesio Desio", "ro": 40, "rd": 61, "rt": 101, "ro_pct": 39.6, "min": 515}, {"name": "I. Biorac", "team": "Fiorenzuola Bees", "ro": 27, "rd": 85, "rt": 112, "ro_pct": 24.1, "min": 341}, {"name": "I. Onojaife", "team": "Rucker San Vendemiano", "ro": 38, "rd": 62, "rt": 100, "ro_pct": 38.0, "min": 363}, {"name": "J. Balanzoni", "team": "Paffoni Fulgor Basket Omegna", "ro": 52, "rd": 90, "rt": 142, "ro_pct": 36.6, "min": 501}, {"name": "J. Cebasek", "team": "Rucker San Vendemiano", "ro": 28, "rd": 89, "rt": 117, "ro_pct": 23.9, "min": 515}, {"name": "J. Cepic", "team": "Siaz Basket Piazza Armerina", "ro": 31, "rd": 75, "rt": 106, "ro_pct": 29.2, "min": 543}, {"name": "J. Mantynen", "team": "Foppiani Fulgor Fidenza", "ro": 31, "rd": 106, "rt": 137, "ro_pct": 22.6, "min": 586}, {"name": "J. Preti", "team": "S4 Energia Vicenza", "ro": 4, "rd": 70, "rt": 74, "ro_pct": 5.4, "min": 525}, {"name": "J. Vedovato", "team": "La T Tecnica Gema Montecatini", "ro": 42, "rd": 58, "rt": 100, "ro_pct": 42.0, "min": 364}, {"name": "K. Korsunov", "team": "Fiorenzuola Bees", "ro": 17, "rd": 44, "rt": 61, "ro_pct": 27.9, "min": 374}, {"name": "K. Strautmanis", "team": "La T Tecnica Gema Montecatini", "ro": 26, "rd": 32, "rt": 58, "ro_pct": 44.8, "min": 310}, {"name": "L. Antonietti", "team": "Infodrive Capo d'Orlando", "ro": 32, "rd": 54, "rt": 86, "ro_pct": 37.2, "min": 391}, {"name": "L. Aukstikalnis", "team": "Fabo Herons Montecatini", "ro": 10, "rd": 56, "rt": 66, "ro_pct": 15.2, "min": 556}, {"name": "L. Calbini", "team": "UCC Assigeco Piacenza", "ro": 15, "rd": 62, "rt": 77, "ro_pct": 19.5, "min": 541}, {"name": "L. D'alessandro", "team": "La T Tecnica Gema Montecatini", "ro": 13, "rd": 68, "rt": 81, "ro_pct": 16.0, "min": 511}, {"name": "L. De Zardo", "team": "Fiorenzuola Bees", "ro": 20, "rd": 66, "rt": 86, "ro_pct": 23.3, "min": 540}, {"name": "L. Giannone", "team": "Bakery Basket Piacenza", "ro": 16, "rd": 74, "rt": 90, "ro_pct": 17.8, "min": 521}, {"name": "L. Kekovic", "team": "LuxArm Lumezzane", "ro": 16, "rd": 52, "rt": 68, "ro_pct": 23.5, "min": 381}, {"name": "L. Martini", "team": "Foppiani Fulgor Fidenza", "ro": 35, "rd": 54, "rt": 89, "ro_pct": 39.3, "min": 305}, {"name": "L. Passoni", "team": "La T Tecnica Gema Montecatini", "ro": 10, "rd": 51, "rt": 61, "ro_pct": 16.4, "min": 450}, {"name": "M. Acunzo", "team": "La T Tecnica Gema Montecatini", "ro": 27, "rd": 98, "rt": 125, "ro_pct": 21.6, "min": 408}, {"name": "M. Beretta", "team": "S4 Energia Vicenza", "ro": 7, "rd": 59, "rt": 66, "ro_pct": 10.6, "min": 479}, {"name": "M. Cagliani", "team": "Moncada Energy Agrigento", "ro": 23, "rd": 53, "rt": 76, "ro_pct": 30.3, "min": 472}, {"name": "M. Corgnati", "team": "Elachem Vigevano 1955", "ro": 21, "rd": 43, "rt": 64, "ro_pct": 32.8, "min": 381}, {"name": "M. Da Campo", "team": "S4 Energia Vicenza", "ro": 26, "rd": 78, "rt": 104, "ro_pct": 25.0, "min": 545}, {"name": "M. Dimeco", "team": "Paffoni Fulgor Basket Omegna", "ro": 11, "rd": 56, "rt": 67, "ro_pct": 16.4, "min": 401}, {"name": "M. Ferraro", "team": "UCC Assigeco Piacenza", "ro": 12, "rd": 60, "rt": 72, "ro_pct": 16.7, "min": 466}, {"name": "M. Kancleris", "team": "Elachem Vigevano 1955", "ro": 52, "rd": 128, "rt": 180, "ro_pct": 28.9, "min": 472}, {"name": "M. Mane", "team": "Foppiani Fulgor Fidenza", "ro": 41, "rd": 63, "rt": 104, "ro_pct": 39.4, "min": 339}, {"name": "M. Mastroianni", "team": "SAE Scientifica-Soevis Legnano", "ro": 6, "rd": 54, "rt": 60, "ro_pct": 10.0, "min": 458}, {"name": "M. Rubbini", "team": "TAV Treviglio Brianza Basket", "ro": 9, "rd": 56, "rt": 65, "ro_pct": 13.8, "min": 523}, {"name": "N. Carr", "team": "S4 Energia Vicenza", "ro": 20, "rd": 44, "rt": 64, "ro_pct": 31.2, "min": 225}, {"name": "N. Gajic", "team": "Elachem Vigevano 1955", "ro": 13, "rd": 60, "rt": 73, "ro_pct": 17.8, "min": 596}, {"name": "N. Markovic", "team": "Siaz Basket Piazza Armerina", "ro": 13, "rd": 92, "rt": 105, "ro_pct": 12.4, "min": 539}, {"name": "N. Martinoni", "team": "Novipi\u00f9 Monferrato Basket", "ro": 49, "rd": 81, "rt": 130, "ro_pct": 37.7, "min": 524}, {"name": "N. Morici", "team": "Rucker San Vendemiano", "ro": 19, "rd": 81, "rt": 100, "ro_pct": 19.0, "min": 445}, {"name": "N. Piccionne", "team": "LuxArm Lumezzane", "ro": 13, "rd": 74, "rt": 87, "ro_pct": 14.9, "min": 546}, {"name": "P. Agostini", "team": "TAV Treviglio Brianza Basket", "ro": 15, "rd": 76, "rt": 91, "ro_pct": 16.5, "min": 342}, {"name": "R. Chinellato", "team": "Fabo Herons Montecatini", "ro": 45, "rd": 118, "rt": 163, "ro_pct": 27.6, "min": 561}, {"name": "R. Crespi", "team": "Fiorenzuola Bees", "ro": 21, "rd": 75, "rt": 96, "ro_pct": 21.9, "min": 315}, {"name": "R. Morina", "team": "TAV Treviglio Brianza Basket", "ro": 26, "rd": 49, "rt": 75, "ro_pct": 34.7, "min": 419}, {"name": "R. Murri", "team": "Rucker San Vendemiano", "ro": 14, "rd": 73, "rt": 87, "ro_pct": 16.1, "min": 466}, {"name": "S. Anaekwe", "team": "TAV Treviglio Brianza Basket", "ro": 29, "rd": 42, "rt": 71, "ro_pct": 40.8, "min": 208}, {"name": "S. Caglio", "team": "Novipi\u00f9 Monferrato Basket", "ro": 14, "rd": 57, "rt": 71, "ro_pct": 19.7, "min": 395}, {"name": "S. Jasaitis", "team": "Infodrive Capo d'Orlando", "ro": 16, "rd": 86, "rt": 102, "ro_pct": 15.7, "min": 464}, {"name": "S. Lepichev", "team": "Siaz Basket Piazza Armerina", "ro": 23, "rd": 65, "rt": 88, "ro_pct": 26.1, "min": 462}, {"name": "S. Mazzantini", "team": "Elachem Vigevano 1955", "ro": 17, "rd": 41, "rt": 58, "ro_pct": 29.3, "min": 508}, {"name": "T. Oxilia", "team": "Logiman Orzinuovi", "ro": 44, "rd": 114, "rt": 158, "ro_pct": 27.8, "min": 490}, {"name": "T. Rossi", "team": "TAV Treviglio Brianza Basket", "ro": 31, "rd": 58, "rt": 89, "ro_pct": 34.8, "min": 553}, {"name": "U. Simon", "team": "Infodrive Capo d'Orlando", "ro": 13, "rd": 55, "rt": 68, "ro_pct": 19.1, "min": 338}, {"name": "V. Cizauskas", "team": "SAE Scientifica-Soevis Legnano", "ro": 23, "rd": 96, "rt": 119, "ro_pct": 19.3, "min": 551}, {"name": "Y. Giombini", "team": "Fabo Herons Montecatini", "ro": 39, "rd": 79, "rt": 118, "ro_pct": 33.1, "min": 367}], "teams": ["Bakery Basket Piacenza", "Elachem Vigevano 1955", "Fabo Herons Montecatini", "Fiorenzuola Bees", "Foppiani Fulgor Fidenza", "Infodrive Capo d'Orlando", "La T Tecnica Gema Montecatini", "Logiman Orzinuovi", "LuxArm Lumezzane", "Moncada Energy Agrigento", "Novipi\u00f9 Monferrato Basket", "Paffoni Fulgor Basket Omegna", "Rimadesio Desio", "Rucker San Vendemiano", "S4 Energia Vicenza", "SAE Scientifica-Soevis Legnano", "Siaz Basket Piazza Armerina", "TAV Treviglio Brianza Basket", "UCC Assigeco Piacenza"]};
+        let currentSection = 'pmraw';
+        let selectedTeam = 'all';
+
+        function showSection(section) {
+            currentSection = section;
+            ['pmraw', 'pm', 'asto', 'reb'].forEach(s => {
+                const btn = document.getElementById('btn-' + s);
+                if (s === section) {
+                    btn.style.background = '#302B8F';
+                    btn.style.color = 'white';
+                } else {
+                    btn.style.background = 'white';
+                    btn.style.color = '#302B8F';
+                }
+            });
+            renderSection();
+        }
+
+        function renderSection() {
+            const container = document.getElementById('content-container');
+
+            if (currentSection === 'pmraw') {
+                renderPMRaw(container);
+            } else if (currentSection === 'pm') {
+                renderPM(container);
+            } else if (currentSection === 'asto') {
+                renderASTO(container);
+            } else if (currentSection === 'reb') {
+                renderReb(container);
+            }
+        }
+
+        function renderPMRaw(container) {
+            let data = impactData.pm;
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p>Dati non disponibili.</p>';
+                return;
+            }
+
+            // Ordina per pm_pm (raw) decrescente
+            data = [...data].sort((a, b) => b.pm_pm - a.pm_pm);
+
+            // Filtra per squadra se selezionata
+            const filteredData = selectedTeam === 'all' ? data : data.filter(p => p.team === selectedTeam);
+
+            // Dividi in positivi e negativi
+            const positive = filteredData.filter(p => p.pm_pm > 0).slice(0, 15);
+            const negative = [...filteredData].sort((a, b) => a.pm_pm - b.pm_pm).filter(p => p.pm_pm < 0).slice(0, 15);
+
+            let html = `
+                <!-- Spiegazione -->
+                <div style="background: linear-gradient(135deg, #f0fff4 0%, #e8fff0 100%); border-radius: 12px; padding: 20px; margin-bottom: 25px; border-left: 4px solid #22c55e;">
+                    <h3 style="margin: 0 0 12px 0; color: #166534; font-size: 16px;">📊 +/- per Minuto (Raw)</h3>
+                    <div style="color: #444; font-size: 14px; line-height: 1.6;">
+                        <p style="margin: 0 0 10px 0;">
+                            Il <strong>+/- (Plus/Minus)</strong> misura la differenza punti quando un giocatore è in campo.
+                            Se la squadra segna 50 punti e ne subisce 45 mentre lui gioca → <strong>+/- = +5</strong>.
+                        </p>
+                        <p style="margin: 0 0 10px 0;">
+                            Dividendo per i minuti giocati otteniamo un valore comparabile tra giocatori con minutaggi diversi.
+                        </p>
+                        <div style="background: white; border-radius: 8px; padding: 12px; margin-top: 12px;">
+                            <strong style="color: #166534;">Formula:</strong><br>
+                            <code style="font-size: 13px; color: #666;">+/- per min = Plus/Minus totale / Minuti giocati</code><br>
+                            <span style="font-size: 12px; color: #888;">Valori tipici: da -0.5 a +0.5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro squadra -->
+                <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+                    <label style="font-weight: 600; color: #333;">Filtra per squadra:</label>
+                    <select id="team-filter-pmraw" onchange="filterByTeam(this.value)" style="padding: 8px 16px; border: 2px solid #e5e5e5; border-radius: 8px; font-size: 14px; min-width: 200px;">
+                        <option value="all">Tutte le squadre</option>
+                        ${impactData.teams.map(t => `<option value="${t}" ${selectedTeam === t ? 'selected' : ''}>${t}</option>`).join('')}
+                    </select>
+                </div>
+
+                <!-- Top e Flop -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+                    <div>
+                        <h3 style="color: #22c55e; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 24px;">🔥</span> Top +/- per Minuto
+                        </h3>
+                        ${positive.length === 0 ? '<p style="color: #666;">Nessun giocatore con +/- positivo.</p>' : positive.map((p, i) => `
+                            <div style="display: flex; align-items: center; gap: 10px; padding: 12px; background: ${i % 2 === 0 ? 'white' : '#f9fdf9'}; border-radius: 8px; margin-bottom: 6px; border-left: 4px solid #22c55e;">
+                                <span style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: #22c55e; color: white; border-radius: 50%; font-weight: bold; font-size: 12px;">${i + 1}</span>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600;">${p.name}</div>
+                                    <div style="font-size: 12px; color: #666;">${p.team} · ${p.gp} partite · ${p.min} min</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 20px; font-weight: bold; color: #22c55e;">+${p.pm_pm.toFixed(2)}</div>
+                                    <div style="font-size: 11px; color: #666;">+/- totale: ${p.pm > 0 ? '+' : ''}${p.pm}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div>
+                        <h3 style="color: #ef4444; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 24px;">❄️</span> Peggiori +/- per Minuto
+                        </h3>
+                        ${negative.length === 0 ? '<p style="color: #666;">Nessun giocatore con +/- negativo.</p>' : negative.map((p, i) => `
+                            <div style="display: flex; align-items: center; gap: 10px; padding: 12px; background: ${i % 2 === 0 ? 'white' : '#fdf9f9'}; border-radius: 8px; margin-bottom: 6px; border-left: 4px solid #ef4444;">
+                                <span style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: #ef4444; color: white; border-radius: 50%; font-weight: bold; font-size: 12px;">${i + 1}</span>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600;">${p.name}</div>
+                                    <div style="font-size: 12px; color: #666;">${p.team} · ${p.gp} partite · ${p.min} min</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 20px; font-weight: bold; color: #ef4444;">${p.pm_pm.toFixed(2)}</div>
+                                    <div style="font-size: 11px; color: #666;">+/- totale: ${p.pm > 0 ? '+' : ''}${p.pm}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        function renderPM(container) {
+            let data = impactData.pm;
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p>Dati non disponibili.</p>';
+                return;
+            }
+
+            // Ordina per pm_adj decrescente
+            data = [...data].sort((a, b) => b.pm_adj - a.pm_adj);
+
+            // Filtra per squadra se selezionata
+            const filteredData = selectedTeam === 'all' ? data : data.filter(p => p.team === selectedTeam);
+
+            // Dividi in positivi e negativi
+            const positive = filteredData.filter(p => p.pm_adj > 0).slice(0, 15);
+            const negative = [...filteredData].sort((a, b) => a.pm_adj - b.pm_adj).filter(p => p.pm_adj < 0).slice(0, 15);
+
+            let html = `
+                <!-- Spiegazione dettagliata -->
+                <div style="background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%); border-radius: 12px; padding: 20px; margin-bottom: 25px; border-left: 4px solid #302B8F;">
+                    <h3 style="margin: 0 0 12px 0; color: #302B8F; font-size: 16px;">📊 Come si calcola il +/- Adjusted?</h3>
+                    <div style="color: #444; font-size: 14px; line-height: 1.6;">
+                        <p style="margin: 0 0 10px 0;">
+                            Il <strong>+/- Adjusted</strong> corregge il +/- per minuto tenendo conto del <em>risultato della partita</em>.
+                        </p>
+                        <p style="margin: 0 0 10px 0;">
+                            <strong>Problema del +/- normale:</strong> se la squadra vince di 20, tutti i giocatori avranno +/- positivo.
+                            Ma chi ha contribuito <em>più</em> della media della squadra e chi <em>meno</em>?
+                        </p>
+                        <div style="background: white; border-radius: 8px; padding: 12px; margin-top: 12px;">
+                            <strong style="color: #302B8F;">Formula:</strong><br>
+                            <code style="font-size: 13px; color: #666;">+/- Adj = (+/- per minuto) - (Gap squadra per minuto)</code><br>
+                            <span style="font-size: 12px; color: #888;">Valori tipici: da -0.3 (peggio della squadra) a +0.3 (meglio della squadra)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro squadra -->
+                <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+                    <label style="font-weight: 600; color: #333;">Filtra per squadra:</label>
+                    <select id="team-filter-pm" onchange="filterByTeam(this.value)" style="padding: 8px 16px; border: 2px solid #e5e5e5; border-radius: 8px; font-size: 14px; min-width: 200px;">
+                        <option value="all">Tutte le squadre</option>
+                        ${impactData.teams.map(t => `<option value="${t}" ${selectedTeam === t ? 'selected' : ''}>${t}</option>`).join('')}
+                    </select>
+                </div>
+
+                <!-- Top e Flop -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+                    <div>
+                        <h3 style="color: #22c55e; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 24px;">🔥</span> Top Impatto Positivo
+                        </h3>
+                        ${positive.length === 0 ? '<p style="color: #666;">Nessun giocatore con impatto positivo per questa selezione.</p>' : positive.map((p, i) => `
+                            <div style="display: flex; align-items: center; gap: 10px; padding: 12px; background: ${i % 2 === 0 ? 'white' : '#f9fdf9'}; border-radius: 8px; margin-bottom: 6px; border-left: 4px solid #22c55e;">
+                                <span style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: #22c55e; color: white; border-radius: 50%; font-weight: bold; font-size: 12px;">${i + 1}</span>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600;">${p.name}</div>
+                                    <div style="font-size: 12px; color: #666;">${p.team} · ${p.gp} partite · ${p.min} min</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 20px; font-weight: bold; color: #22c55e;">+${p.pm_adj.toFixed(2)}</div>
+                                    <div style="font-size: 11px; color: #666;">+/- totale: ${p.pm > 0 ? '+' : ''}${p.pm}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div>
+                        <h3 style="color: #ef4444; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 24px;">❄️</span> Top Impatto Negativo
+                        </h3>
+                        ${negative.length === 0 ? '<p style="color: #666;">Nessun giocatore con impatto negativo per questa selezione.</p>' : negative.map((p, i) => `
+                            <div style="display: flex; align-items: center; gap: 10px; padding: 12px; background: ${i % 2 === 0 ? 'white' : '#fdf9f9'}; border-radius: 8px; margin-bottom: 6px; border-left: 4px solid #ef4444;">
+                                <span style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: #ef4444; color: white; border-radius: 50%; font-weight: bold; font-size: 12px;">${i + 1}</span>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600;">${p.name}</div>
+                                    <div style="font-size: 12px; color: #666;">${p.team} · ${p.gp} partite · ${p.min} min</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 20px; font-weight: bold; color: #ef4444;">${p.pm_adj.toFixed(2)}</div>
+                                    <div style="font-size: 11px; color: #666;">+/- totale: ${p.pm > 0 ? '+' : ''}${p.pm}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- Scatterplot -->
+                <div style="background: white; border-radius: 12px; padding: 20px; border: 1px solid #e5e5e5;">
+                    <h3 style="margin: 0 0 8px 0; color: #333;">Mappa Impatto: Minuti vs +/- Adjusted</h3>
+                    <p style="margin: 0 0 15px 0; color: #666; font-size: 13px;">
+                        🟢 Verde = impatto positivo | 🟡 Giallo = neutro | 🔴 Rosso = impatto negativo<br>
+                        <strong>In alto a destra</strong> = tanti minuti + grande impatto positivo (giocatori chiave)
+                    </p>
+                    <div id="pm-scatter" style="height: 500px;"></div>
+                </div>
+            `;
+            container.innerHTML = html;
+
+            // Crea lo scatterplot
+            renderPMScatter(filteredData);
+        }
+
+        function filterByTeam(team) {
+            selectedTeam = team;
+            renderSection();
+        }
+
+        function renderPMScatter(data) {
+            if (!data || data.length === 0) return;
+
+            // Calcola min/max per colorscale simmetrica
+            const pmValues = data.map(p => p.pm_adj);
+            const maxAbs = Math.max(Math.abs(Math.min(...pmValues)), Math.abs(Math.max(...pmValues)));
+
+            const trace = {
+                type: 'scatter',
+                mode: 'markers',
+                x: data.map(p => p.min),
+                y: data.map(p => p.pm_adj),
+                text: data.map(p => p.name),
+                marker: {
+                    size: 12,
+                    color: data.map(p => p.pm_adj),
+                    colorscale: [
+                        [0, '#ef4444'],      // Rosso (negativo)
+                        [0.35, '#fbbf24'],   // Giallo-arancio
+                        [0.5, '#fde047'],    // Giallo (neutro)
+                        [0.65, '#a3e635'],   // Verde chiaro
+                        [1, '#22c55e']       // Verde (positivo)
+                    ],
+                    cmin: -maxAbs,
+                    cmax: maxAbs,
+                    showscale: true,
+                    colorbar: {
+                        title: { text: '+/- Adj', font: { size: 12 } },
+                        tickformat: '.3f'
+                    },
+                    line: { width: 1, color: 'white' }
+                },
+                customdata: data.map(p => [p.team, p.gp, p.pm]),
+                hovertemplate: '<b>%{text}</b><br>%{customdata[0]}<br>Minuti: %{x}<br>+/- Adj: %{y:.4f}<br>+/- Tot: %{customdata[2]}<br>Partite: %{customdata[1]}<extra></extra>'
+            };
+
+            const layout = {
+                height: 500,
+                xaxis: {
+                    title: { text: 'Minuti Totali Giocati', font: { size: 14 } },
+                    gridcolor: '#e5e5e5',
+                    zeroline: false
+                },
+                yaxis: {
+                    title: { text: '+/- Adjusted (per minuto)', font: { size: 14 } },
+                    gridcolor: '#e5e5e5',
+                    zeroline: true,
+                    zerolinecolor: '#999',
+                    zerolinewidth: 2
+                },
+                shapes: [
+                    {
+                        type: 'line',
+                        x0: 0,
+                        x1: Math.max(...data.map(p => p.min)) * 1.05,
+                        y0: 0,
+                        y1: 0,
+                        line: { dash: 'dash', color: '#666', width: 2 }
+                    }
+                ],
+                margin: { t: 20, b: 60, l: 70, r: 20 },
+                plot_bgcolor: '#fafafa',
+                paper_bgcolor: 'white'
+            };
+
+            Plotly.newPlot('pm-scatter', [trace], layout, { responsive: true });
+        }
+
+        function renderASTO(container) {
+            const data = impactData.asto;
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p>Dati non disponibili.</p>';
+                return;
+            }
+
+            let html = `
+                <div style="background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%); border-radius: 12px; padding: 20px; margin-bottom: 25px; border-left: 4px solid #302B8F;">
+                    <h3 style="margin: 0 0 12px 0; color: #302B8F; font-size: 16px;">📊 Assist to Turnover Ratio (AS/TO)</h3>
+                    <p style="margin: 0; color: #444; font-size: 14px; line-height: 1.6;">
+                        Rapporto tra assist effettuati e palle perse. Un valore alto indica un giocatore
+                        efficiente nella gestione del pallone, che crea più occasioni di quante ne sprechi.
+                        <br><strong>Valori tipici:</strong> &lt;1 = negativo, 1-2 = buono, &gt;2 = eccellente
+                    </p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px;">
+                    ${data.map((p, i) => `
+                        <div style="display: flex; align-items: center; gap: 12px; padding: 14px; background: white; border: 1px solid #e5e5e5; border-radius: 10px;">
+                            <span style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #302B8F; color: white; border-radius: 50%; font-weight: bold; font-size: 13px;">${i + 1}</span>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600;">${p.name}</div>
+                                <div style="font-size: 12px; color: #666;">${p.team}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 22px; font-weight: bold; color: ${p.as_to >= 2 ? '#22c55e' : p.as_to >= 1 ? '#302B8F' : '#ef4444'};">${p.as_to.toFixed(2)}</div>
+                                <div style="font-size: 11px; color: #666;">${p.as} AS / ${p.pp} PP</div>
+                                <div style="font-size: 10px; color: #999;">${p.as_pm.toFixed(3)} as/min</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        function renderReb(container) {
+            const data = impactData.reb;
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p>Dati non disponibili.</p>';
+                return;
+            }
+
+            // Ordina per RO_pct (rimbalzisti offensivi)
+            const sorted = [...data].sort((a, b) => b.ro_pct - a.ro_pct).slice(0, 30);
+
+            let html = `
+                <div style="background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%); border-radius: 12px; padding: 20px; margin-bottom: 25px; border-left: 4px solid #302B8F;">
+                    <h3 style="margin: 0 0 12px 0; color: #302B8F; font-size: 16px;">📊 Rimbalzi Offensivi vs Difensivi</h3>
+                    <p style="margin: 0; color: #444; font-size: 14px; line-height: 1.6;">
+                        Distribuzione tra rimbalzi offensivi (RO) e difensivi (RD).
+                        Una % alta di RO indica un rimbalzista aggressivo che genera seconde opportunità.
+                        <br><strong>% RO tipica:</strong> 20-30% per lunghi, 10-20% per esterni
+                    </p>
+                </div>
+                <div id="reb-chart" style="height: 450px; margin-bottom: 20px;"></div>
+                <h4 style="margin: 20px 0 12px 0;">Top Rimbalzisti Offensivi (% RO)</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px;">
+                    ${sorted.slice(0, 20).map((p, i) => `
+                        <div style="display: flex; align-items: center; gap: 8px; padding: 10px; background: ${i % 2 === 0 ? 'white' : '#f9f9f9'}; border-radius: 8px; border-left: 3px solid #f97316;">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 13px;">${p.name}</div>
+                                <div style="font-size: 11px; color: #666;">${p.team}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 16px; font-weight: bold;">${p.ro}/${p.rd}</div>
+                                <div style="font-size: 12px; color: #f97316; font-weight: 600;">${p.ro_pct}% off</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            container.innerHTML = html;
+
+            // Crea scatter RO vs RD
+            const trace = {
+                type: 'scatter',
+                mode: 'markers+text',
+                x: data.map(p => p.rd),
+                y: data.map(p => p.ro),
+                text: data.map(p => p.name.split(' ').pop()),
+                textposition: 'top center',
+                textfont: { size: 9 },
+                marker: {
+                    size: data.map(p => 8 + p.rt / 10),
+                    color: data.map(p => p.ro_pct),
+                    colorscale: 'YlOrRd',
+                    showscale: true,
+                    colorbar: { title: 'RO%' }
+                },
+                customdata: data.map(p => [p.name, p.team, p.rt]),
+                hovertemplate: '<b>%{customdata[0]}</b><br>%{customdata[1]}<br>RD: %{x}, RO: %{y}<br>Tot: %{customdata[2]}<extra></extra>'
+            };
+
+            const layout = {
+                height: 450,
+                xaxis: { title: { text: 'Rimbalzi Difensivi', font: { size: 14 } }, gridcolor: '#e5e5e5' },
+                yaxis: { title: { text: 'Rimbalzi Offensivi', font: { size: 14 } }, gridcolor: '#e5e5e5' },
+                margin: { t: 20, b: 60, l: 60, r: 40 },
+                plot_bgcolor: '#fafafa'
+            };
+
+            Plotly.newPlot('reb-chart', [trace], layout, { responsive: true });
+        }
+
+        showSection('pm');
+    </script>
+    
+
+        <div class="site-footer">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <div>Ultimo aggiornamento: 13/01/2026 22:35</div>
+            <div>Generato con LNP Stats</div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Espandi sezione corrente
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('expanded');
+            });
+        });
+
+        // Espandi automaticamente la sezione attiva
+        const activeLink = document.querySelector('.sidebar-link.active');
+        if (activeLink) {
+            let parent = activeLink.closest('.sidebar-section');
+            if (parent) parent.classList.add('expanded');
+        }
+    </script>
+</body>
+</html>

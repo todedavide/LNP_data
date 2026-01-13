@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forma Recente - Serie B - Girone A - LNP Stats</title>
+    <link rel="icon" type="image/png" href="../../../static/favicon180x180.png">
+    <link rel="stylesheet" href="../../../static/twinplay_brand.css">
+    <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--tp-gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--tp-spacing-lg);
+            z-index: 1000;
+            box-shadow: var(--tp-shadow-md);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-md);
+        }
+
+        .header-logo img {
+            height: 36px;
+        }
+
+        .header-logo a {
+            color: white;
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .header-breadcrumb {
+            margin-left: var(--tp-spacing-xl);
+            opacity: 0.8;
+            font-size: 0.875rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: var(--tp-spacing-md);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--tp-light);
+        }
+
+        .sidebar-section-header {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            color: var(--tp-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-sm);
+            transition: background 0.2s;
+        }
+
+        .sidebar-section-header:hover {
+            background: var(--tp-light);
+        }
+
+        .sidebar-section-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            font-size: 0.75rem;
+        }
+
+        .sidebar-section.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-subsection {
+            display: none;
+            background: var(--tp-light);
+        }
+
+        .sidebar-section.expanded .sidebar-subsection {
+            display: block;
+        }
+
+        .sidebar-category {
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: var(--tp-spacing-lg);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--tp-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: var(--tp-spacing-sm);
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: calc(var(--tp-spacing-lg) + 10px);
+            color: var(--tp-dark);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: white;
+            border-left-color: var(--tp-primary);
+        }
+
+        .sidebar-link.active {
+            background: white;
+            border-left-color: var(--tp-primary);
+            color: var(--tp-secondary);
+            font-weight: 600;
+        }
+
+        .sidebar-home-btn {
+            display: block;
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--tp-light);
+            transition: all 0.2s;
+        }
+
+        .sidebar-home-btn:hover {
+            background: var(--tp-light);
+            color: var(--tp-secondary);
+        }
+
+        .sidebar-competition {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            background: var(--tp-gradient-primary);
+            color: white;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: var(--tp-spacing-sm);
+        }
+
+        .sidebar:empty + .main {
+            margin-left: 0;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: var(--tp-spacing-xl);
+            min-height: calc(100vh - var(--header-height));
+            background: var(--tp-light);
+        }
+
+        .page-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.75rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-xs);
+        }
+
+        .page-subtitle {
+            color: var(--tp-gray);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .content-section {
+            background: white;
+            border-radius: var(--tp-radius-lg);
+            padding: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-lg);
+            box-shadow: var(--tp-shadow-sm);
+        }
+
+        .section-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.25rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-lg);
+            padding-bottom: var(--tp-spacing-sm);
+            border-bottom: 2px solid var(--tp-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .stat-card {
+            background: var(--tp-gradient-primary);
+            color: white;
+            padding: var(--tp-spacing-lg);
+            border-radius: var(--tp-radius-lg);
+            text-align: center;
+        }
+
+        .stat-card.accent {
+            background: var(--tp-gradient-accent);
+            color: var(--tp-dark);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+        }
+
+        .stat-value {
+            font-family: var(--tp-font-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: var(--tp-spacing-xs);
+        }
+
+        /* Plotly responsive */
+        .js-plotly-plot {
+            width: 100% !important;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            font-size: 0.8rem;
+        }
+
+        .site-footer img {
+            height: 24px;
+            margin-bottom: var(--tp-spacing-sm);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="header-logo">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <a href="../../../index.html">LNP Stats</a>
+        </div>
+        <div class="header-breadcrumb">Serie B - Girone A / Giocatori / Forma</div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        
+    <a href="../../../index.html" class="sidebar-home-btn">
+        ← Cambia campionato
+    </a>
+    <div class="sidebar-competition">
+        Serie B - Girone A
+    </div>
+    <div class="sidebar-category">Squadre</div><a href="../../../b/girone-a/squadre/classifiche.html" class="sidebar-link ">Classifiche & Stats</a><a href="../../../b/girone-a/squadre/radar.html" class="sidebar-link ">Radar Squadre</a><a href="../../../b/girone-a/squadre/vittorie-sconfitte.html" class="sidebar-link ">Vittorie vs Sconfitte</a><a href="../../../b/girone-a/squadre/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../../b/girone-a/squadre/quando-vince.html" class="sidebar-link ">Quando Vince</a><a href="../../../b/girone-a/squadre/andamento.html" class="sidebar-link ">Andamento & Parziali</a><div class="sidebar-category">Giocatori</div><a href="../../../b/girone-a/giocatori/statistiche.html" class="sidebar-link ">Statistiche & Percentili</a><a href="../../../b/girone-a/giocatori/radar.html" class="sidebar-link ">Radar Confronto</a><a href="../../../b/girone-a/giocatori/consistenza.html" class="sidebar-link ">Consistenza</a><a href="../../../b/girone-a/giocatori/simili.html" class="sidebar-link ">Giocatori Simili</a><a href="../../../b/girone-a/giocatori/forma.html" class="sidebar-link active">Forma Recente</a><a href="../../../b/girone-a/giocatori/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../../b/girone-a/giocatori/distribuzione-tiri.html" class="sidebar-link ">Distribuzione Tiri</a><a href="../../../b/girone-a/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../../b/girone-a/giocatori/clustering.html" class="sidebar-link ">Clustering & Tipologie</a><a href="../../../b/girone-a/giocatori/dipendenza.html" class="sidebar-link ">Dipendenza Squadra</a><a href="../../../b/girone-a/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
+    </nav>
+
+    <main class="main">
+        <h1 class="page-title">Forma Recente</h1>
+        <p class="page-subtitle">Serie B - Girone A</p>
+
+        
+    <div class="content-section">
+        <h2 class="section-title">Forma Recente - Chi è Hot/Cold</h2>
+        <p style="color: #666; margin-bottom: 20px;">
+            Confronto tra le ultime 5 partite e la media stagionale.
+            <span style="color: #22c55e; font-weight: bold;">Valori positivi</span> = giocatore in crescita.
+            <span style="color: #ef4444; font-weight: bold;">Valori negativi</span> = giocatore in calo.
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <!-- HOT Players -->
+            <div>
+                <h3 style="color: #22c55e; display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+                    <span style="font-size: 1.5em;">🔥</span> Giocatori HOT
+                </h3>
+                <div id="hot-container"></div>
+            </div>
+
+            <!-- COLD Players -->
+            <div>
+                <h3 style="color: #3b82f6; display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+                    <span style="font-size: 1.5em;">❄️</span> Giocatori COLD
+                </h3>
+                <div id="cold-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const hotPlayers = [{"name": "D. Reati", "team": "TAV Treviglio Brianza Basket", "gp": 19, "season_pt": 3.8, "last5_pt": 12.2, "pt_diff": 221.9, "season_as": 0.5, "last5_as": 1.4, "as_diff": 195.6, "season_rt": 0.8, "last5_rt": 2.0, "rt_diff": 137.5, "form_score": 197.1}, {"name": "M. Sacchettini", "team": "Paffoni Fulgor Basket Omegna", "gp": 18, "season_pt": 3.3, "last5_pt": 4.4, "pt_diff": 32.0, "season_as": 0.3, "last5_as": 1.0, "as_diff": 260.0, "season_rt": 1.1, "last5_rt": 2.2, "rt_diff": 108.4, "form_score": 115.7}, {"name": "M. Pezzani", "team": "Foppiani Fulgor Fidenza", "gp": 16, "season_pt": 3.9, "last5_pt": 7.2, "pt_diff": 85.8, "season_as": 0.4, "last5_as": 0.6, "as_diff": 37.1, "season_rt": 2.2, "last5_rt": 4.4, "rt_diff": 95.6, "form_score": 73.2}, {"name": "J. Rapetti", "team": "Infodrive Capo d'Orlando", "gp": 19, "season_pt": 7.2, "last5_pt": 12.6, "pt_diff": 76.0, "season_as": 0.4, "last5_as": 0.8, "as_diff": 117.1, "season_rt": 2.8, "last5_rt": 2.6, "rt_diff": -6.8, "form_score": 71.8}, {"name": "L. Martini", "team": "Foppiani Fulgor Fidenza", "gp": 19, "season_pt": 7.4, "last5_pt": 9.2, "pt_diff": 24.9, "season_as": 0.2, "last5_as": 0.6, "as_diff": 185.0, "season_rt": 4.7, "last5_rt": 4.6, "rt_diff": -1.8, "form_score": 67.6}, {"name": "N. Fantoma", "team": "Elachem Vigevano 1955", "gp": 19, "season_pt": 3.5, "last5_pt": 4.6, "pt_diff": 32.4, "season_as": 0.2, "last5_as": 0.4, "as_diff": 90.0, "season_rt": 0.6, "last5_rt": 1.4, "rt_diff": 121.7, "form_score": 67.5}, {"name": "L. Vanin", "team": "S4 Energia Vicenza", "gp": 18, "season_pt": 6.2, "last5_pt": 9.4, "pt_diff": 51.1, "season_as": 0.3, "last5_as": 0.6, "as_diff": 116.0, "season_rt": 3.0, "last5_rt": 4.0, "rt_diff": 33.3, "form_score": 67.0}, {"name": "M. Zacchigna", "team": "Elachem Vigevano 1955", "gp": 19, "season_pt": 7.5, "last5_pt": 13.2, "pt_diff": 76.6, "season_as": 0.7, "last5_as": 0.8, "as_diff": 16.9, "season_rt": 2.1, "last5_rt": 4.0, "rt_diff": 94.9, "form_score": 62.4}, {"name": "M. Criconia", "team": "UCC Assigeco Piacenza", "gp": 19, "season_pt": 5.1, "last5_pt": 6.6, "pt_diff": 30.6, "season_as": 0.7, "last5_as": 1.4, "as_diff": 104.6, "season_rt": 2.5, "last5_rt": 4.4, "rt_diff": 77.9, "form_score": 62.3}, {"name": "I. Onojaife", "team": "Rucker San Vendemiano", "gp": 19, "season_pt": 7.6, "last5_pt": 11.8, "pt_diff": 54.6, "season_as": 0.8, "last5_as": 1.6, "as_diff": 90.0, "season_rt": 5.3, "last5_rt": 6.0, "rt_diff": 14.0, "form_score": 57.1}, {"name": "G. Sgobba", "team": "Fabo Herons Montecatini", "gp": 16, "season_pt": 10.4, "last5_pt": 14.0, "pt_diff": 34.9, "season_as": 0.8, "last5_as": 1.4, "as_diff": 86.7, "season_rt": 2.9, "last5_rt": 4.6, "rt_diff": 60.0, "form_score": 55.5}, {"name": "R. Bottioni", "team": "Fiorenzuola Bees", "gp": 19, "season_pt": 4.9, "last5_pt": 8.8, "pt_diff": 79.8, "season_as": 2.1, "last5_as": 2.4, "as_diff": 14.0, "season_rt": 2.2, "last5_rt": 3.2, "rt_diff": 48.3, "form_score": 53.8}, {"name": "R. Crespi", "team": "Fiorenzuola Bees", "gp": 18, "season_pt": 7.1, "last5_pt": 9.6, "pt_diff": 35.0, "season_as": 0.6, "last5_as": 1.0, "as_diff": 80.0, "season_rt": 5.3, "last5_rt": 6.4, "rt_diff": 20.0, "form_score": 45.5}, {"name": "A. Ambrosetti", "team": "Fiorenzuola Bees", "gp": 18, "season_pt": 8.4, "last5_pt": 11.6, "pt_diff": 38.3, "season_as": 1.9, "last5_as": 2.6, "as_diff": 33.7, "season_rt": 1.9, "last5_rt": 3.4, "rt_diff": 74.9, "form_score": 44.2}, {"name": "R. Murri", "team": "Rucker San Vendemiano", "gp": 19, "season_pt": 10.4, "last5_pt": 14.4, "pt_diff": 38.2, "season_as": 1.4, "last5_as": 2.2, "as_diff": 54.8, "season_rt": 4.6, "last5_rt": 6.4, "rt_diff": 39.8, "form_score": 43.5}];
+        const coldPlayers = [{"name": "F. Gaetano", "team": "Infodrive Capo d'Orlando", "gp": 19, "season_pt": 6.2, "last5_pt": 0.0, "pt_diff": -100.0, "season_as": 0.5, "last5_as": 0.0, "as_diff": -100.0, "season_rt": 3.2, "last5_rt": 0.0, "rt_diff": -100.0, "form_score": -100.0}, {"name": "K. Viglianisi", "team": "Moncada Energy Agrigento", "gp": 16, "season_pt": 1.2, "last5_pt": 0.0, "pt_diff": -100.0, "season_as": 0.6, "last5_as": 0.0, "as_diff": -100.0, "season_rt": 0.9, "last5_rt": 0.0, "rt_diff": -100.0, "form_score": -100.0}, {"name": "P. Basta", "team": "Novipi\u00f9 Monferrato Basket", "gp": 14, "season_pt": 2.4, "last5_pt": 0.0, "pt_diff": -100.0, "season_as": 0.4, "last5_as": 0.0, "as_diff": -100.0, "season_rt": 0.9, "last5_rt": 0.0, "rt_diff": -100.0, "form_score": -100.0}, {"name": "G. Fiusco", "team": "Elachem Vigevano 1955", "gp": 19, "season_pt": 2.2, "last5_pt": 0.4, "pt_diff": -81.5, "season_as": 0.5, "last5_as": 0.0, "as_diff": -100.0, "season_rt": 1.2, "last5_rt": 0.0, "rt_diff": -100.0, "form_score": -90.7}, {"name": "D. Dell'uomo", "team": "Fabo Herons Montecatini", "gp": 18, "season_pt": 4.7, "last5_pt": 1.8, "pt_diff": -61.9, "season_as": 1.0, "last5_as": 0.2, "as_diff": -80.0, "season_rt": 1.6, "last5_rt": 0.4, "rt_diff": -74.3, "form_score": -69.8}, {"name": "T. Anchisi", "team": "TAV Treviglio Brianza Basket", "gp": 19, "season_pt": 2.8, "last5_pt": 0.8, "pt_diff": -71.9, "season_as": 1.0, "last5_as": 0.4, "as_diff": -60.0, "season_rt": 0.6, "last5_rt": 0.2, "rt_diff": -65.5, "form_score": -67.0}, {"name": "R. Carta", "team": "Moncada Energy Agrigento", "gp": 13, "season_pt": 2.5, "last5_pt": 1.6, "pt_diff": -37.0, "season_as": 0.2, "last5_as": 0.0, "as_diff": -100.0, "season_rt": 1.7, "last5_rt": 0.6, "rt_diff": -64.5, "form_score": -61.4}, {"name": "F. Ucles Belmonte", "team": "S4 Energia Vicenza", "gp": 14, "season_pt": 8.3, "last5_pt": 1.6, "pt_diff": -80.7, "season_as": 0.9, "last5_as": 0.6, "as_diff": -30.0, "season_rt": 5.1, "last5_rt": 2.4, "rt_diff": -53.3, "form_score": -60.0}, {"name": "F. Deminicis", "team": "LuxArm Lumezzane", "gp": 19, "season_pt": 3.1, "last5_pt": 1.4, "pt_diff": -54.9, "season_as": 0.8, "last5_as": 0.4, "as_diff": -52.5, "season_rt": 2.2, "last5_rt": 0.8, "rt_diff": -63.8, "form_score": -56.0}, {"name": "L. Zangheri", "team": "Novipi\u00f9 Monferrato Basket", "gp": 15, "season_pt": 5.8, "last5_pt": 1.0, "pt_diff": -82.8, "season_as": 1.8, "last5_as": 1.4, "as_diff": -22.2, "season_rt": 2.3, "last5_rt": 1.4, "rt_diff": -38.2, "form_score": -55.7}, {"name": "F. Banella", "team": "Bakery Basket Piacenza", "gp": 19, "season_pt": 0.8, "last5_pt": 0.4, "pt_diff": -49.3, "season_as": 0.2, "last5_as": 0.0, "as_diff": -100.0, "season_rt": 1.1, "last5_rt": 1.2, "rt_diff": 8.6, "form_score": -53.0}, {"name": "E. Ivanovskis", "team": "LuxArm Lumezzane", "gp": 18, "season_pt": 3.2, "last5_pt": 1.6, "pt_diff": -49.5, "season_as": 0.8, "last5_as": 0.0, "as_diff": -100.0, "season_rt": 0.7, "last5_rt": 0.8, "rt_diff": 10.8, "form_score": -52.6}, {"name": "F. Carnevale", "team": "Foppiani Fulgor Fidenza", "gp": 19, "season_pt": 3.3, "last5_pt": 1.8, "pt_diff": -45.7, "season_as": 1.1, "last5_as": 0.6, "as_diff": -45.7, "season_rt": 1.0, "last5_rt": 0.4, "rt_diff": -60.0, "form_score": -48.6}, {"name": "K. Korsunov", "team": "Fiorenzuola Bees", "gp": 19, "season_pt": 5.9, "last5_pt": 3.0, "pt_diff": -49.6, "season_as": 0.9, "last5_as": 0.4, "as_diff": -57.8, "season_rt": 3.2, "last5_rt": 2.4, "rt_diff": -25.2, "form_score": -47.2}, {"name": "A. Ricci", "team": "Fabo Herons Montecatini", "gp": 18, "season_pt": 6.0, "last5_pt": 3.4, "pt_diff": -43.3, "season_as": 1.5, "last5_as": 0.8, "as_diff": -46.7, "season_rt": 1.5, "last5_rt": 0.8, "rt_diff": -46.7, "form_score": -45.0}];
+
+        function renderPlayerCard(player, isHot) {
+            const color = isHot ? '#22c55e' : '#3b82f6';
+            const arrow = isHot ? '↑' : '↓';
+
+            function diffBadge(val) {
+                const c = val > 0 ? '#22c55e' : val < 0 ? '#ef4444' : '#666';
+                const prefix = val > 0 ? '+' : '';
+                return `<span style="color: ${c}; font-weight: 600;">${prefix}${val}%</span>`;
+            }
+
+            return `
+                <div style="background: white; border-radius: 8px; padding: 15px; margin-bottom: 10px; border-left: 4px solid ${color};">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div>
+                            <div style="font-weight: 600;">${player.name}</div>
+                            <div style="font-size: 12px; color: #666;">${player.team} | ${player.gp} partite</div>
+                        </div>
+                        <div style="background: ${color}; color: white; padding: 4px 12px; border-radius: 20px; font-weight: bold;">
+                            ${player.form_score > 0 ? '+' : ''}${player.form_score}%
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 13px;">
+                        <div style="text-align: center; background: #f9f9f9; padding: 8px; border-radius: 6px;">
+                            <div style="color: #666; font-size: 11px;">Punti</div>
+                            <div><b>${player.last5_pt}</b> vs ${player.season_pt}</div>
+                            ${diffBadge(player.pt_diff)}
+                        </div>
+                        <div style="text-align: center; background: #f9f9f9; padding: 8px; border-radius: 6px;">
+                            <div style="color: #666; font-size: 11px;">Assist</div>
+                            <div><b>${player.last5_as}</b> vs ${player.season_as}</div>
+                            ${diffBadge(player.as_diff)}
+                        </div>
+                        <div style="text-align: center; background: #f9f9f9; padding: 8px; border-radius: 6px;">
+                            <div style="color: #666; font-size: 11px;">Rimbalzi</div>
+                            <div><b>${player.last5_rt}</b> vs ${player.season_rt}</div>
+                            ${diffBadge(player.rt_diff)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        document.getElementById('hot-container').innerHTML = hotPlayers.map(p => renderPlayerCard(p, true)).join('');
+        document.getElementById('cold-container').innerHTML = coldPlayers.map(p => renderPlayerCard(p, false)).join('');
+    </script>
+    
+
+        <div class="site-footer">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <div>Ultimo aggiornamento: 13/01/2026 22:35</div>
+            <div>Generato con LNP Stats</div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Espandi sezione corrente
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('expanded');
+            });
+        });
+
+        // Espandi automaticamente la sezione attiva
+        const activeLink = document.querySelector('.sidebar-link.active');
+        if (activeLink) {
+            let parent = activeLink.closest('.sidebar-section');
+            if (parent) parent.classList.add('expanded');
+        }
+    </script>
+</body>
+</html>

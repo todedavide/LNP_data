@@ -16,8 +16,8 @@ __pycache__/
 # Data files (pickle)
 data/*.pkl
 
-# Generated reports
-*.html
+# Generated reports (but not docs/ for GitHub Pages)
+reports/*.html
 
 # IDE
 .idea/

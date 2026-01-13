@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radar Giocatori - Serie A2 - LNP Stats</title>
+    <link rel="icon" type="image/png" href="../../static/favicon180x180.png">
+    <link rel="stylesheet" href="../../static/twinplay_brand.css">
+    <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--tp-gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--tp-spacing-lg);
+            z-index: 1000;
+            box-shadow: var(--tp-shadow-md);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-md);
+        }
+
+        .header-logo img {
+            height: 36px;
+        }
+
+        .header-logo a {
+            color: white;
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .header-breadcrumb {
+            margin-left: var(--tp-spacing-xl);
+            opacity: 0.8;
+            font-size: 0.875rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: var(--tp-spacing-md);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--tp-light);
+        }
+
+        .sidebar-section-header {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            color: var(--tp-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-sm);
+            transition: background 0.2s;
+        }
+
+        .sidebar-section-header:hover {
+            background: var(--tp-light);
+        }
+
+        .sidebar-section-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            font-size: 0.75rem;
+        }
+
+        .sidebar-section.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-subsection {
+            display: none;
+            background: var(--tp-light);
+        }
+
+        .sidebar-section.expanded .sidebar-subsection {
+            display: block;
+        }
+
+        .sidebar-category {
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: var(--tp-spacing-lg);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--tp-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: var(--tp-spacing-sm);
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: calc(var(--tp-spacing-lg) + 10px);
+            color: var(--tp-dark);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: white;
+            border-left-color: var(--tp-primary);
+        }
+
+        .sidebar-link.active {
+            background: white;
+            border-left-color: var(--tp-primary);
+            color: var(--tp-secondary);
+            font-weight: 600;
+        }
+
+        .sidebar-home-btn {
+            display: block;
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--tp-light);
+            transition: all 0.2s;
+        }
+
+        .sidebar-home-btn:hover {
+            background: var(--tp-light);
+            color: var(--tp-secondary);
+        }
+
+        .sidebar-competition {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            background: var(--tp-gradient-primary);
+            color: white;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: var(--tp-spacing-sm);
+        }
+
+        .sidebar:empty + .main {
+            margin-left: 0;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: var(--tp-spacing-xl);
+            min-height: calc(100vh - var(--header-height));
+            background: var(--tp-light);
+        }
+
+        .page-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.75rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-xs);
+        }
+
+        .page-subtitle {
+            color: var(--tp-gray);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .content-section {
+            background: white;
+            border-radius: var(--tp-radius-lg);
+            padding: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-lg);
+            box-shadow: var(--tp-shadow-sm);
+        }
+
+        .section-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.25rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-lg);
+            padding-bottom: var(--tp-spacing-sm);
+            border-bottom: 2px solid var(--tp-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .stat-card {
+            background: var(--tp-gradient-primary);
+            color: white;
+            padding: var(--tp-spacing-lg);
+            border-radius: var(--tp-radius-lg);
+            text-align: center;
+        }
+
+        .stat-card.accent {
+            background: var(--tp-gradient-accent);
+            color: var(--tp-dark);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+        }
+
+        .stat-value {
+            font-family: var(--tp-font-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: var(--tp-spacing-xs);
+        }
+
+        /* Plotly responsive */
+        .js-plotly-plot {
+            width: 100% !important;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            font-size: 0.8rem;
+        }
+
+        .site-footer img {
+            height: 24px;
+            margin-bottom: var(--tp-spacing-sm);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="header-logo">
+            <img src="../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <a href="../../index.html">LNP Stats</a>
+        </div>
+        <div class="header-breadcrumb">Serie A2 / Giocatori / Radar</div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        
+    <a href="../../index.html" class="sidebar-home-btn">
+        ← Cambia campionato
+    </a>
+    <div class="sidebar-competition">
+        Serie A2
+    </div>
+    <div class="sidebar-category">Squadre</div><a href="../../a2/squadre/classifiche.html" class="sidebar-link ">Classifiche & Stats</a><a href="../../a2/squadre/radar.html" class="sidebar-link ">Radar Squadre</a><a href="../../a2/squadre/vittorie-sconfitte.html" class="sidebar-link ">Vittorie vs Sconfitte</a><a href="../../a2/squadre/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../a2/squadre/quando-vince.html" class="sidebar-link ">Quando Vince</a><a href="../../a2/squadre/andamento.html" class="sidebar-link ">Andamento & Parziali</a><div class="sidebar-category">Giocatori</div><a href="../../a2/giocatori/statistiche.html" class="sidebar-link ">Statistiche & Percentili</a><a href="../../a2/giocatori/radar.html" class="sidebar-link active">Radar Confronto</a><a href="../../a2/giocatori/consistenza.html" class="sidebar-link ">Consistenza</a><a href="../../a2/giocatori/simili.html" class="sidebar-link ">Giocatori Simili</a><a href="../../a2/giocatori/forma.html" class="sidebar-link ">Forma Recente</a><a href="../../a2/giocatori/casa-trasferta.html" class="sidebar-link ">Casa vs Trasferta</a><a href="../../a2/giocatori/distribuzione-tiri.html" class="sidebar-link ">Distribuzione Tiri</a><a href="../../a2/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../a2/giocatori/clustering.html" class="sidebar-link ">Clustering & Tipologie</a><a href="../../a2/giocatori/dipendenza.html" class="sidebar-link ">Dipendenza Squadra</a><a href="../../a2/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
+    </nav>
+
+    <main class="main">
+        <h1 class="page-title">Radar Confronto</h1>
+        <p class="page-subtitle">Serie A2</p>
+
+        
+    <div class="content-section">
+        <h2 class="section-title">Confronto Radar Giocatori</h2>
+        <p style="color: #666; margin-bottom: 20px;">
+            Confronta il profilo statistico di due giocatori. Valori normalizzati (0-100) dove 100 = miglior giocatore del campionato.
+        </p>
+        <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
+            <div>
+                <label style="font-weight: 600;">Giocatore 1:</label>
+                <select id="player1" onchange="updatePlayerRadar()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 250px;">
+                    <option value="A. Amato (Wegreenit Urania Milano)">A. Amato (Wegreenit Urania Milano)</option><option value="A. Amici (UEB Gesteco Cividale)">A. Amici (UEB Gesteco Cividale)</option><option value="A. Bertini (Victoria Libertas Pesaro)">A. Bertini (Victoria Libertas Pesaro)</option><option value="A. Chiera (Givova Scafati)">A. Chiera (Givova Scafati)</option><option value="A. Cicchetti (Avellino Basket)">A. Cicchetti (Avellino Basket)</option><option value="A. Cinciarini (Valtur Brindisi)">A. Cinciarini (Valtur Brindisi)</option><option value="A. Del Chiaro (Unieuro Forlì)">A. Del Chiaro (Unieuro Forlì)</option><option value="A. Donadoni (Liofilchem Roseto)">A. Donadoni (Liofilchem Roseto)</option><option value="A. Fall (Sella Cento)">A. Fall (Sella Cento)</option><option value="A. Filloy (Libertas Livorno)">A. Filloy (Libertas Livorno)</option><option value="A. Gentile (Wegreenit Urania Milano)">A. Gentile (Wegreenit Urania Milano)</option><option value="A. Grande (Avellino Basket)">A. Grande (Avellino Basket)</option><option value="A. Iannuzzi (Givova Scafati)">A. Iannuzzi (Givova Scafati)</option><option value="A. La Torre (Ferraroni Juvi Cremona)">A. La Torre (Ferraroni Juvi Cremona)</option><option value="A. Landi (Liofilchem Roseto)">A. Landi (Liofilchem Roseto)</option><option value="A. Loro (Gruppo Mascio Bergamo)">A. Loro (Gruppo Mascio Bergamo)</option><option value="A. Moody (Crifo Wines Ruvo di Puglia)">A. Moody (Crifo Wines Ruvo di Puglia)</option><option value="A. Morgillo (Wegreenit Urania Milano)">A. Morgillo (Wegreenit Urania Milano)</option><option value="A. Mouaha (Valtur Brindisi)">A. Mouaha (Valtur Brindisi)</option><option value="A. Nikolic (Crifo Wines Ruvo di Puglia)">A. Nikolic (Crifo Wines Ruvo di Puglia)</option><option value="A. Panni (Ferraroni Juvi Cremona)">A. Panni (Ferraroni Juvi Cremona)</option><option value="A. Sabatino (Liofilchem Roseto)">A. Sabatino (Liofilchem Roseto)</option><option value="A. Sankare (Dole Basket Rimini)">A. Sankare (Dole Basket Rimini)</option><option value="A. Sarto (Fortitudo Bologna)">A. Sarto (Fortitudo Bologna)</option><option value="A. Scarponi (Sella Cento)">A. Scarponi (Sella Cento)</option><option value="A. Simioni (Dole Basket Rimini)">A. Simioni (Dole Basket Rimini)</option><option value="A. Smith (Tezenis Verona)">A. Smith (Tezenis Verona)</option><option value="A. Sperduto (Liofilchem Roseto)">A. Sperduto (Liofilchem Roseto)</option><option value="A. Woodson (Libertas Livorno)">A. Woodson (Libertas Livorno)</option><option value="A. Zerini (Avellino Basket)">A. Zerini (Avellino Basket)</option><option value="B. Francis (Valtur Brindisi)">B. Francis (Valtur Brindisi)</option><option value="B. Garrett (Ferraroni Juvi Cremona)">B. Garrett (Ferraroni Juvi Cremona)</option><option value="B. Mascolo (Givova Scafati)">B. Mascolo (Givova Scafati)</option><option value="B. Musso (Crifo Wines Ruvo di Puglia)">B. Musso (Crifo Wines Ruvo di Puglia)</option><option value="C. Bechi (Gemini Mestre)">C. Bechi (Gemini Mestre)</option><option value="C. Costi (Avellino Basket)">C. Costi (Avellino Basket)</option><option value="C. Walker (Givova Scafati)">C. Walker (Givova Scafati)</option><option value="D. Bruttini (Reale Mutua Torino)">D. Bruttini (Reale Mutua Torino)</option><option value="D. Cinciarini (Liofilchem Roseto)">D. Cinciarini (Liofilchem Roseto)</option><option value="D. Denegri (Dole Basket Rimini)">D. Denegri (Dole Basket Rimini)</option><option value="D. Freeman (UEB Gesteco Cividale)">D. Freeman (UEB Gesteco Cividale)</option><option value="D. Harper (Unieuro Forlì)">D. Harper (Unieuro Forlì)</option><option value="D. Harrison (Gruppo Mascio Bergamo)">D. Harrison (Gruppo Mascio Bergamo)</option><option value="D. Hogue (Gruppo Mascio Bergamo)">D. Hogue (Gruppo Mascio Bergamo)</option><option value="D. Hogue (RSR Sebastiani Rieti)">D. Hogue (RSR Sebastiani Rieti)</option><option value="D. Magro (Estra Pistoia)">D. Magro (Estra Pistoia)</option><option value="D. Monaldi (Tezenis Verona)">D. Monaldi (Tezenis Verona)</option><option value="D. Pascolo (RSR Sebastiani Rieti)">D. Pascolo (RSR Sebastiani Rieti)</option><option value="D. Perry (RSR Sebastiani Rieti)">D. Perry (RSR Sebastiani Rieti)</option><option value="D. Petrovic (Liofilchem Roseto)">D. Petrovic (Liofilchem Roseto)</option><option value="E. Del Cadia (Ferraroni Juvi Cremona)">E. Del Cadia (Ferraroni Juvi Cremona)</option><option value="E. Esposito (Valtur Brindisi)">E. Esposito (Valtur Brindisi)</option><option value="E. Lombardi (Gruppo Mascio Bergamo)">E. Lombardi (Gruppo Mascio Bergamo)</option><option value="E. Rota (UEB Gesteco Cividale)">E. Rota (UEB Gesteco Cividale)</option><option value="E. Tiberti (Sella Cento)">E. Tiberti (Sella Cento)</option><option value="F. Baldi Rossi (Tezenis Verona)">F. Baldi Rossi (Tezenis Verona)</option><option value="F. Bonacini (Gemini Mestre)">F. Bonacini (Gemini Mestre)</option><option value="F. Ferrari (UEB Gesteco Cividale)">F. Ferrari (UEB Gesteco Cividale)</option><option value="F. Gallo (Estra Pistoia)">F. Gallo (Estra Pistoia)</option><option value="F. Massone (Reale Mutua Torino)">F. Massone (Reale Mutua Torino)</option><option value="F. Mian (RSR Sebastiani Rieti)">F. Mian (RSR Sebastiani Rieti)</option><option value="F. Mussini (Avellino Basket)">F. Mussini (Avellino Basket)</option><option value="F. Poser (Tezenis Verona)">F. Poser (Tezenis Verona)</option><option value="F. Reggiani (Gemini Mestre)">F. Reggiani (Gemini Mestre)</option><option value="F. Stoch (Estra Pistoia)">F. Stoch (Estra Pistoia)</option><option value="F. Valentini (Libertas Livorno)">F. Valentini (Libertas Livorno)</option><option value="F. Zampini (Tezenis Verona)">F. Zampini (Tezenis Verona)</option><option value="G. Allinei (Ferraroni Juvi Cremona)">G. Allinei (Ferraroni Juvi Cremona)</option><option value="G. Camara (Dole Basket Rimini)">G. Camara (Dole Basket Rimini)</option><option value="G. Dell' Agnello (Avellino Basket)">G. Dell' Agnello (Avellino Basket)</option><option value="G. Della Rosa (Fortitudo Bologna)">G. Della Rosa (Fortitudo Bologna)</option><option value="G. Devoe (Sella Cento)">G. Devoe (Sella Cento)</option><option value="G. Gazzotti (Unieuro Forlì)">G. Gazzotti (Unieuro Forlì)</option><option value="G. Leardini (Dole Basket Rimini)">G. Leardini (Dole Basket Rimini)</option><option value="G. Miani (Valtur Brindisi)">G. Miani (Valtur Brindisi)</option><option value="G. Pini (Avellino Basket)">G. Pini (Avellino Basket)</option><option value="G. Piunti (RSR Sebastiani Rieti)">G. Piunti (RSR Sebastiani Rieti)</option><option value="G. Robinson (Dole Basket Rimini)">G. Robinson (Dole Basket Rimini)</option><option value="G. Sabatini (Wegreenit Urania Milano)">G. Sabatini (Wegreenit Urania Milano)</option><option value="G. Severini (Reale Mutua Torino)">G. Severini (Reale Mutua Torino)</option><option value="G. Stefanini (Gruppo Mascio Bergamo)">G. Stefanini (Gruppo Mascio Bergamo)</option><option value="G. Tomassini (Dole Basket Rimini)">G. Tomassini (Dole Basket Rimini)</option><option value="G. Vildera (Valtur Brindisi)">G. Vildera (Valtur Brindisi)</option><option value="I. Alipiev (Gemini Mestre)">I. Alipiev (Gemini Mestre)</option><option value="I. Lupusor (Wegreenit Urania Milano)">I. Lupusor (Wegreenit Urania Milano)</option><option value="J. Borra (Crifo Wines Ruvo di Puglia)">J. Borra (Crifo Wines Ruvo di Puglia)</option><option value="J. Cannon (Liofilchem Roseto)">J. Cannon (Liofilchem Roseto)</option><option value="J. Chandler (Avellino Basket)">J. Chandler (Avellino Basket)</option><option value="J. Johnson (Estra Pistoia)">J. Johnson (Estra Pistoia)</option><option value="J. Johnson (Tezenis Verona)">J. Johnson (Tezenis Verona)</option><option value="J. Lewis (Avellino Basket)">J. Lewis (Avellino Basket)</option><option value="J. Robinson (Liofilchem Roseto)">J. Robinson (Liofilchem Roseto)</option><option value="J. Williams (RSR Sebastiani Rieti)">J. Williams (RSR Sebastiani Rieti)</option><option value="K. Allen (Unieuro Forlì)">K. Allen (Unieuro Forlì)</option><option value="K. Curry (Gemini Mestre)">K. Curry (Gemini Mestre)</option><option value="K. Felder (Victoria Libertas Pesaro)">K. Felder (Victoria Libertas Pesaro)</option><option value="K. Gamble (Wegreenit Urania Milano)">K. Gamble (Wegreenit Urania Milano)</option><option value="K. Taylor (Wegreenit Urania Milano)">K. Taylor (Wegreenit Urania Milano)</option><option value="K. Tsetserukou (Liofilchem Roseto)">K. Tsetserukou (Liofilchem Roseto)</option><option value="L. Ambrosin (Tezenis Verona)">L. Ambrosin (Tezenis Verona)</option><option value="L. Bosso (Gruppo Mascio Bergamo)">L. Bosso (Gruppo Mascio Bergamo)</option><option value="L. Bucarelli (Victoria Libertas Pesaro)">L. Bucarelli (Victoria Libertas Pesaro)</option><option value="L. Campogrande (Estra Pistoia)">L. Campogrande (Estra Pistoia)</option><option value="L. Caroti (Givova Scafati)">L. Caroti (Givova Scafati)</option><option value="L. Cesana (UEB Gesteco Cividale)">L. Cesana (UEB Gesteco Cividale)</option><option value="L. Conti (Sella Cento)">L. Conti (Sella Cento)</option><option value="L. Fresno (Givova Scafati)">L. Fresno (Givova Scafati)</option><option value="L. Galmarini (Gemini Mestre)">L. Galmarini (Gemini Mestre)</option><option value="L. Marangon (UEB Gesteco Cividale)">L. Marangon (UEB Gesteco Cividale)</option><option value="L. Maspero (Valtur Brindisi)">L. Maspero (Valtur Brindisi)</option><option value="L. Moore (Fortitudo Bologna)">L. Moore (Fortitudo Bologna)</option><option value="L. Piccin (RSR Sebastiani Rieti)">L. Piccin (RSR Sebastiani Rieti)</option><option value="L. Pollone (Dole Basket Rimini)">L. Pollone (Dole Basket Rimini)</option><option value="L. Possamai (Libertas Livorno)">L. Possamai (Libertas Livorno)</option><option value="L. Redivo (UEB Gesteco Cividale)">L. Redivo (UEB Gesteco Cividale)</option><option value="L. Saccaggi (Estra Pistoia)">L. Saccaggi (Estra Pistoia)</option><option value="L. Tortu' (Reale Mutua Torino)">L. Tortu' (Reale Mutua Torino)</option><option value="L. Tozzi (Libertas Livorno)">L. Tozzi (Libertas Livorno)</option><option value="L. Udom (RSR Sebastiani Rieti)">L. Udom (RSR Sebastiani Rieti)</option><option value="M. Anumba (Crifo Wines Ruvo di Puglia)">M. Anumba (Crifo Wines Ruvo di Puglia)</option><option value="M. Berti (UEB Gesteco Cividale)">M. Berti (UEB Gesteco Cividale)</option><option value="M. Bogliardi (Gruppo Mascio Bergamo)">M. Bogliardi (Gruppo Mascio Bergamo)</option><option value="M. Cavallero (Wegreenit Urania Milano)">M. Cavallero (Wegreenit Urania Milano)</option><option value="M. Cusin (Reale Mutua Torino)">M. Cusin (Reale Mutua Torino)</option><option value="M. Fantinelli (Fortitudo Bologna)">M. Fantinelli (Fortitudo Bologna)</option><option value="M. Imbro' (Fortitudo Bologna)">M. Imbro' (Fortitudo Bologna)</option><option value="M. Jerkovic (Crifo Wines Ruvo di Puglia)">M. Jerkovic (Crifo Wines Ruvo di Puglia)</option><option value="M. Jurkatamm (Avellino Basket)">M. Jurkatamm (Avellino Basket)</option><option value="M. Mastellari (UEB Gesteco Cividale)">M. Mastellari (UEB Gesteco Cividale)</option><option value="M. Mollura (Givova Scafati)">M. Mollura (Givova Scafati)</option><option value="M. Montano (Sella Cento)">M. Montano (Sella Cento)</option><option value="M. Moretti (Sella Cento)">M. Moretti (Sella Cento)</option><option value="M. Ogden (Dole Basket Rimini)">M. Ogden (Dole Basket Rimini)</option><option value="M. Palumbo (RSR Sebastiani Rieti)">M. Palumbo (RSR Sebastiani Rieti)</option><option value="M. Parravicini (RSR Sebastiani Rieti)">M. Parravicini (RSR Sebastiani Rieti)</option><option value="M. Piccoli (Libertas Livorno)">M. Piccoli (Libertas Livorno)</option><option value="M. Pollone (Gruppo Mascio Bergamo)">M. Pollone (Gruppo Mascio Bergamo)</option><option value="M. Schina (Reale Mutua Torino)">M. Schina (Reale Mutua Torino)</option><option value="M. Serpilli (Tezenis Verona)">M. Serpilli (Tezenis Verona)</option><option value="M. Spanghero (Tezenis Verona)">M. Spanghero (Tezenis Verona)</option><option value="M. Tambone (Victoria Libertas Pesaro)">M. Tambone (Victoria Libertas Pesaro)</option><option value="M. Teague (Reale Mutua Torino)">M. Teague (Reale Mutua Torino)</option><option value="M. Tiby (Libertas Livorno)">M. Tiby (Libertas Livorno)</option><option value="M. Timperi (Liofilchem Roseto)">M. Timperi (Liofilchem Roseto)</option><option value="M. Udom (Gruppo Mascio Bergamo)">M. Udom (Gruppo Mascio Bergamo)</option><option value="N. Alessandrini (Estra Pistoia)">N. Alessandrini (Estra Pistoia)</option><option value="N. Berdini (Sella Cento)">N. Berdini (Sella Cento)</option><option value="N. Dellosto (Estra Pistoia)">N. Dellosto (Estra Pistoia)</option><option value="N. Filoni (Libertas Livorno)">N. Filoni (Libertas Livorno)</option><option value="N. Giordano (Gemini Mestre)">N. Giordano (Gemini Mestre)</option><option value="N. Italiano (Givova Scafati)">N. Italiano (Givova Scafati)</option><option value="N. Nobili (Gruppo Mascio Bergamo)">N. Nobili (Gruppo Mascio Bergamo)</option><option value="N. Tanfoglio (Sella Cento)">N. Tanfoglio (Sella Cento)</option><option value="N. Virginio (Victoria Libertas Pesaro)">N. Virginio (Victoria Libertas Pesaro)</option><option value="O. Maretto (Victoria Libertas Pesaro)">O. Maretto (Victoria Libertas Pesaro)</option><option value="P. Aradori (Unieuro Forlì)">P. Aradori (Unieuro Forlì)</option><option value="P. Brooks Ii (Crifo Wines Ruvo di Puglia)">P. Brooks Ii (Crifo Wines Ruvo di Puglia)</option><option value="P. Marini (Dole Basket Rimini)">P. Marini (Dole Basket Rimini)</option><option value="P. Sorokas (Fortitudo Bologna)">P. Sorokas (Fortitudo Bologna)</option><option value="Q. De Laurentiis (Victoria Libertas Pesaro)">Q. De Laurentiis (Victoria Libertas Pesaro)</option><option value="R. Allen (Reale Mutua Torino)">R. Allen (Reale Mutua Torino)</option><option value="R. Bolpin (Tezenis Verona)">R. Bolpin (Tezenis Verona)</option><option value="R. Gaspardo (Unieuro Forlì)">R. Gaspardo (Unieuro Forlì)</option><option value="R. Miniotas (Victoria Libertas Pesaro)">R. Miniotas (Victoria Libertas Pesaro)</option><option value="R. Pullazi (Givova Scafati)">R. Pullazi (Givova Scafati)</option><option value="R. Rogic (Wegreenit Urania Milano)">R. Rogic (Wegreenit Urania Milano)</option><option value="R. Tavernelli (Unieuro Forlì)">R. Tavernelli (Unieuro Forlì)</option><option value="R. Zugno (Ferraroni Juvi Cremona)">R. Zugno (Ferraroni Juvi Cremona)</option><option value="S. Anumba (Fortitudo Bologna)">S. Anumba (Fortitudo Bologna)</option><option value="S. Aromando (Gemini Mestre)">S. Aromando (Gemini Mestre)</option><option value="S. Barbante (Ferraroni Juvi Cremona)">S. Barbante (Ferraroni Juvi Cremona)</option><option value="S. Davis Iv (Sella Cento)">S. Davis Iv (Sella Cento)</option><option value="S. Kadjividi Boussounka (Gemini Mestre)">S. Kadjividi Boussounka (Gemini Mestre)</option><option value="S. Knight (Estra Pistoia)">S. Knight (Estra Pistoia)</option><option value="S. Masciadri (Unieuro Forlì)">S. Masciadri (Unieuro Forlì)</option><option value="S. Moretti (Fortitudo Bologna)">S. Moretti (Fortitudo Bologna)</option><option value="S. Pepe (Unieuro Forlì)">S. Pepe (Unieuro Forlì)</option><option value="S. Trucchetti (Victoria Libertas Pesaro)">S. Trucchetti (Victoria Libertas Pesaro)</option><option value="S. Ulaneo (Crifo Wines Ruvo di Puglia)">S. Ulaneo (Crifo Wines Ruvo di Puglia)</option><option value="S. Valsecchi (Gemini Mestre)">S. Valsecchi (Gemini Mestre)</option><option value="S. Zanotti (Estra Pistoia)">S. Zanotti (Estra Pistoia)</option><option value="T. Allen (Givova Scafati)">T. Allen (Givova Scafati)</option><option value="T. Fantoni (Libertas Livorno)">T. Fantoni (Libertas Livorno)</option><option value="T. Guariglia (RSR Sebastiani Rieti)">T. Guariglia (RSR Sebastiani Rieti)</option><option value="T. Laquintana (Crifo Wines Ruvo di Puglia)">T. Laquintana (Crifo Wines Ruvo di Puglia)</option><option value="T. Laquintana (Liofilchem Roseto)">T. Laquintana (Liofilchem Roseto)</option><option value="T. Mcconico (Ferraroni Juvi Cremona)">T. Mcconico (Ferraroni Juvi Cremona)</option><option value="T. Mcgee (Tezenis Verona)">T. Mcgee (Tezenis Verona)</option><option value="T. Pinza (Unieuro Forlì)">T. Pinza (Unieuro Forlì)</option><option value="T. Radonjic (Valtur Brindisi)">T. Radonjic (Valtur Brindisi)</option><option value="T. Reale (Crifo Wines Ruvo di Puglia)">T. Reale (Crifo Wines Ruvo di Puglia)</option><option value="T. Vecchiola (Ferraroni Juvi Cremona)">T. Vecchiola (Ferraroni Juvi Cremona)</option><option value="U. D’almeida (Wegreenit Urania Milano)">U. D’almeida (Wegreenit Urania Milano)</option><option value="U. Stazzonelli (Reale Mutua Torino)">U. Stazzonelli (Reale Mutua Torino)</option><option value="V. Bartoli (Ferraroni Juvi Cremona)">V. Bartoli (Ferraroni Juvi Cremona)</option><option value="V. Guaiana (Fortitudo Bologna)">V. Guaiana (Fortitudo Bologna)</option><option value="V. Mazzola (Fortitudo Bologna)">V. Mazzola (Fortitudo Bologna)</option><option value="W. Stewart Jr (Gemini Mestre)">W. Stewart Jr (Gemini Mestre)</option><option value="Z. Copeland (Valtur Brindisi)">Z. Copeland (Valtur Brindisi)</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-weight: 600;">Giocatore 2:</label>
+                <select id="player2" onchange="updatePlayerRadar()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 250px;">
+                    <option value="">-- Nessuno --</option>
+                    <option value="A. Amato (Wegreenit Urania Milano)">A. Amato (Wegreenit Urania Milano)</option><option value="A. Amici (UEB Gesteco Cividale)">A. Amici (UEB Gesteco Cividale)</option><option value="A. Bertini (Victoria Libertas Pesaro)">A. Bertini (Victoria Libertas Pesaro)</option><option value="A. Chiera (Givova Scafati)">A. Chiera (Givova Scafati)</option><option value="A. Cicchetti (Avellino Basket)">A. Cicchetti (Avellino Basket)</option><option value="A. Cinciarini (Valtur Brindisi)">A. Cinciarini (Valtur Brindisi)</option><option value="A. Del Chiaro (Unieuro Forlì)">A. Del Chiaro (Unieuro Forlì)</option><option value="A. Donadoni (Liofilchem Roseto)">A. Donadoni (Liofilchem Roseto)</option><option value="A. Fall (Sella Cento)">A. Fall (Sella Cento)</option><option value="A. Filloy (Libertas Livorno)">A. Filloy (Libertas Livorno)</option><option value="A. Gentile (Wegreenit Urania Milano)">A. Gentile (Wegreenit Urania Milano)</option><option value="A. Grande (Avellino Basket)">A. Grande (Avellino Basket)</option><option value="A. Iannuzzi (Givova Scafati)">A. Iannuzzi (Givova Scafati)</option><option value="A. La Torre (Ferraroni Juvi Cremona)">A. La Torre (Ferraroni Juvi Cremona)</option><option value="A. Landi (Liofilchem Roseto)">A. Landi (Liofilchem Roseto)</option><option value="A. Loro (Gruppo Mascio Bergamo)">A. Loro (Gruppo Mascio Bergamo)</option><option value="A. Moody (Crifo Wines Ruvo di Puglia)">A. Moody (Crifo Wines Ruvo di Puglia)</option><option value="A. Morgillo (Wegreenit Urania Milano)">A. Morgillo (Wegreenit Urania Milano)</option><option value="A. Mouaha (Valtur Brindisi)">A. Mouaha (Valtur Brindisi)</option><option value="A. Nikolic (Crifo Wines Ruvo di Puglia)">A. Nikolic (Crifo Wines Ruvo di Puglia)</option><option value="A. Panni (Ferraroni Juvi Cremona)">A. Panni (Ferraroni Juvi Cremona)</option><option value="A. Sabatino (Liofilchem Roseto)">A. Sabatino (Liofilchem Roseto)</option><option value="A. Sankare (Dole Basket Rimini)">A. Sankare (Dole Basket Rimini)</option><option value="A. Sarto (Fortitudo Bologna)">A. Sarto (Fortitudo Bologna)</option><option value="A. Scarponi (Sella Cento)">A. Scarponi (Sella Cento)</option><option value="A. Simioni (Dole Basket Rimini)">A. Simioni (Dole Basket Rimini)</option><option value="A. Smith (Tezenis Verona)">A. Smith (Tezenis Verona)</option><option value="A. Sperduto (Liofilchem Roseto)">A. Sperduto (Liofilchem Roseto)</option><option value="A. Woodson (Libertas Livorno)">A. Woodson (Libertas Livorno)</option><option value="A. Zerini (Avellino Basket)">A. Zerini (Avellino Basket)</option><option value="B. Francis (Valtur Brindisi)">B. Francis (Valtur Brindisi)</option><option value="B. Garrett (Ferraroni Juvi Cremona)">B. Garrett (Ferraroni Juvi Cremona)</option><option value="B. Mascolo (Givova Scafati)">B. Mascolo (Givova Scafati)</option><option value="B. Musso (Crifo Wines Ruvo di Puglia)">B. Musso (Crifo Wines Ruvo di Puglia)</option><option value="C. Bechi (Gemini Mestre)">C. Bechi (Gemini Mestre)</option><option value="C. Costi (Avellino Basket)">C. Costi (Avellino Basket)</option><option value="C. Walker (Givova Scafati)">C. Walker (Givova Scafati)</option><option value="D. Bruttini (Reale Mutua Torino)">D. Bruttini (Reale Mutua Torino)</option><option value="D. Cinciarini (Liofilchem Roseto)">D. Cinciarini (Liofilchem Roseto)</option><option value="D. Denegri (Dole Basket Rimini)">D. Denegri (Dole Basket Rimini)</option><option value="D. Freeman (UEB Gesteco Cividale)">D. Freeman (UEB Gesteco Cividale)</option><option value="D. Harper (Unieuro Forlì)">D. Harper (Unieuro Forlì)</option><option value="D. Harrison (Gruppo Mascio Bergamo)">D. Harrison (Gruppo Mascio Bergamo)</option><option value="D. Hogue (Gruppo Mascio Bergamo)">D. Hogue (Gruppo Mascio Bergamo)</option><option value="D. Hogue (RSR Sebastiani Rieti)">D. Hogue (RSR Sebastiani Rieti)</option><option value="D. Magro (Estra Pistoia)">D. Magro (Estra Pistoia)</option><option value="D. Monaldi (Tezenis Verona)">D. Monaldi (Tezenis Verona)</option><option value="D. Pascolo (RSR Sebastiani Rieti)">D. Pascolo (RSR Sebastiani Rieti)</option><option value="D. Perry (RSR Sebastiani Rieti)">D. Perry (RSR Sebastiani Rieti)</option><option value="D. Petrovic (Liofilchem Roseto)">D. Petrovic (Liofilchem Roseto)</option><option value="E. Del Cadia (Ferraroni Juvi Cremona)">E. Del Cadia (Ferraroni Juvi Cremona)</option><option value="E. Esposito (Valtur Brindisi)">E. Esposito (Valtur Brindisi)</option><option value="E. Lombardi (Gruppo Mascio Bergamo)">E. Lombardi (Gruppo Mascio Bergamo)</option><option value="E. Rota (UEB Gesteco Cividale)">E. Rota (UEB Gesteco Cividale)</option><option value="E. Tiberti (Sella Cento)">E. Tiberti (Sella Cento)</option><option value="F. Baldi Rossi (Tezenis Verona)">F. Baldi Rossi (Tezenis Verona)</option><option value="F. Bonacini (Gemini Mestre)">F. Bonacini (Gemini Mestre)</option><option value="F. Ferrari (UEB Gesteco Cividale)">F. Ferrari (UEB Gesteco Cividale)</option><option value="F. Gallo (Estra Pistoia)">F. Gallo (Estra Pistoia)</option><option value="F. Massone (Reale Mutua Torino)">F. Massone (Reale Mutua Torino)</option><option value="F. Mian (RSR Sebastiani Rieti)">F. Mian (RSR Sebastiani Rieti)</option><option value="F. Mussini (Avellino Basket)">F. Mussini (Avellino Basket)</option><option value="F. Poser (Tezenis Verona)">F. Poser (Tezenis Verona)</option><option value="F. Reggiani (Gemini Mestre)">F. Reggiani (Gemini Mestre)</option><option value="F. Stoch (Estra Pistoia)">F. Stoch (Estra Pistoia)</option><option value="F. Valentini (Libertas Livorno)">F. Valentini (Libertas Livorno)</option><option value="F. Zampini (Tezenis Verona)">F. Zampini (Tezenis Verona)</option><option value="G. Allinei (Ferraroni Juvi Cremona)">G. Allinei (Ferraroni Juvi Cremona)</option><option value="G. Camara (Dole Basket Rimini)">G. Camara (Dole Basket Rimini)</option><option value="G. Dell' Agnello (Avellino Basket)">G. Dell' Agnello (Avellino Basket)</option><option value="G. Della Rosa (Fortitudo Bologna)">G. Della Rosa (Fortitudo Bologna)</option><option value="G. Devoe (Sella Cento)">G. Devoe (Sella Cento)</option><option value="G. Gazzotti (Unieuro Forlì)">G. Gazzotti (Unieuro Forlì)</option><option value="G. Leardini (Dole Basket Rimini)">G. Leardini (Dole Basket Rimini)</option><option value="G. Miani (Valtur Brindisi)">G. Miani (Valtur Brindisi)</option><option value="G. Pini (Avellino Basket)">G. Pini (Avellino Basket)</option><option value="G. Piunti (RSR Sebastiani Rieti)">G. Piunti (RSR Sebastiani Rieti)</option><option value="G. Robinson (Dole Basket Rimini)">G. Robinson (Dole Basket Rimini)</option><option value="G. Sabatini (Wegreenit Urania Milano)">G. Sabatini (Wegreenit Urania Milano)</option><option value="G. Severini (Reale Mutua Torino)">G. Severini (Reale Mutua Torino)</option><option value="G. Stefanini (Gruppo Mascio Bergamo)">G. Stefanini (Gruppo Mascio Bergamo)</option><option value="G. Tomassini (Dole Basket Rimini)">G. Tomassini (Dole Basket Rimini)</option><option value="G. Vildera (Valtur Brindisi)">G. Vildera (Valtur Brindisi)</option><option value="I. Alipiev (Gemini Mestre)">I. Alipiev (Gemini Mestre)</option><option value="I. Lupusor (Wegreenit Urania Milano)">I. Lupusor (Wegreenit Urania Milano)</option><option value="J. Borra (Crifo Wines Ruvo di Puglia)">J. Borra (Crifo Wines Ruvo di Puglia)</option><option value="J. Cannon (Liofilchem Roseto)">J. Cannon (Liofilchem Roseto)</option><option value="J. Chandler (Avellino Basket)">J. Chandler (Avellino Basket)</option><option value="J. Johnson (Estra Pistoia)">J. Johnson (Estra Pistoia)</option><option value="J. Johnson (Tezenis Verona)">J. Johnson (Tezenis Verona)</option><option value="J. Lewis (Avellino Basket)">J. Lewis (Avellino Basket)</option><option value="J. Robinson (Liofilchem Roseto)">J. Robinson (Liofilchem Roseto)</option><option value="J. Williams (RSR Sebastiani Rieti)">J. Williams (RSR Sebastiani Rieti)</option><option value="K. Allen (Unieuro Forlì)">K. Allen (Unieuro Forlì)</option><option value="K. Curry (Gemini Mestre)">K. Curry (Gemini Mestre)</option><option value="K. Felder (Victoria Libertas Pesaro)">K. Felder (Victoria Libertas Pesaro)</option><option value="K. Gamble (Wegreenit Urania Milano)">K. Gamble (Wegreenit Urania Milano)</option><option value="K. Taylor (Wegreenit Urania Milano)">K. Taylor (Wegreenit Urania Milano)</option><option value="K. Tsetserukou (Liofilchem Roseto)">K. Tsetserukou (Liofilchem Roseto)</option><option value="L. Ambrosin (Tezenis Verona)">L. Ambrosin (Tezenis Verona)</option><option value="L. Bosso (Gruppo Mascio Bergamo)">L. Bosso (Gruppo Mascio Bergamo)</option><option value="L. Bucarelli (Victoria Libertas Pesaro)">L. Bucarelli (Victoria Libertas Pesaro)</option><option value="L. Campogrande (Estra Pistoia)">L. Campogrande (Estra Pistoia)</option><option value="L. Caroti (Givova Scafati)">L. Caroti (Givova Scafati)</option><option value="L. Cesana (UEB Gesteco Cividale)">L. Cesana (UEB Gesteco Cividale)</option><option value="L. Conti (Sella Cento)">L. Conti (Sella Cento)</option><option value="L. Fresno (Givova Scafati)">L. Fresno (Givova Scafati)</option><option value="L. Galmarini (Gemini Mestre)">L. Galmarini (Gemini Mestre)</option><option value="L. Marangon (UEB Gesteco Cividale)">L. Marangon (UEB Gesteco Cividale)</option><option value="L. Maspero (Valtur Brindisi)">L. Maspero (Valtur Brindisi)</option><option value="L. Moore (Fortitudo Bologna)">L. Moore (Fortitudo Bologna)</option><option value="L. Piccin (RSR Sebastiani Rieti)">L. Piccin (RSR Sebastiani Rieti)</option><option value="L. Pollone (Dole Basket Rimini)">L. Pollone (Dole Basket Rimini)</option><option value="L. Possamai (Libertas Livorno)">L. Possamai (Libertas Livorno)</option><option value="L. Redivo (UEB Gesteco Cividale)">L. Redivo (UEB Gesteco Cividale)</option><option value="L. Saccaggi (Estra Pistoia)">L. Saccaggi (Estra Pistoia)</option><option value="L. Tortu' (Reale Mutua Torino)">L. Tortu' (Reale Mutua Torino)</option><option value="L. Tozzi (Libertas Livorno)">L. Tozzi (Libertas Livorno)</option><option value="L. Udom (RSR Sebastiani Rieti)">L. Udom (RSR Sebastiani Rieti)</option><option value="M. Anumba (Crifo Wines Ruvo di Puglia)">M. Anumba (Crifo Wines Ruvo di Puglia)</option><option value="M. Berti (UEB Gesteco Cividale)">M. Berti (UEB Gesteco Cividale)</option><option value="M. Bogliardi (Gruppo Mascio Bergamo)">M. Bogliardi (Gruppo Mascio Bergamo)</option><option value="M. Cavallero (Wegreenit Urania Milano)">M. Cavallero (Wegreenit Urania Milano)</option><option value="M. Cusin (Reale Mutua Torino)">M. Cusin (Reale Mutua Torino)</option><option value="M. Fantinelli (Fortitudo Bologna)">M. Fantinelli (Fortitudo Bologna)</option><option value="M. Imbro' (Fortitudo Bologna)">M. Imbro' (Fortitudo Bologna)</option><option value="M. Jerkovic (Crifo Wines Ruvo di Puglia)">M. Jerkovic (Crifo Wines Ruvo di Puglia)</option><option value="M. Jurkatamm (Avellino Basket)">M. Jurkatamm (Avellino Basket)</option><option value="M. Mastellari (UEB Gesteco Cividale)">M. Mastellari (UEB Gesteco Cividale)</option><option value="M. Mollura (Givova Scafati)">M. Mollura (Givova Scafati)</option><option value="M. Montano (Sella Cento)">M. Montano (Sella Cento)</option><option value="M. Moretti (Sella Cento)">M. Moretti (Sella Cento)</option><option value="M. Ogden (Dole Basket Rimini)">M. Ogden (Dole Basket Rimini)</option><option value="M. Palumbo (RSR Sebastiani Rieti)">M. Palumbo (RSR Sebastiani Rieti)</option><option value="M. Parravicini (RSR Sebastiani Rieti)">M. Parravicini (RSR Sebastiani Rieti)</option><option value="M. Piccoli (Libertas Livorno)">M. Piccoli (Libertas Livorno)</option><option value="M. Pollone (Gruppo Mascio Bergamo)">M. Pollone (Gruppo Mascio Bergamo)</option><option value="M. Schina (Reale Mutua Torino)">M. Schina (Reale Mutua Torino)</option><option value="M. Serpilli (Tezenis Verona)">M. Serpilli (Tezenis Verona)</option><option value="M. Spanghero (Tezenis Verona)">M. Spanghero (Tezenis Verona)</option><option value="M. Tambone (Victoria Libertas Pesaro)">M. Tambone (Victoria Libertas Pesaro)</option><option value="M. Teague (Reale Mutua Torino)">M. Teague (Reale Mutua Torino)</option><option value="M. Tiby (Libertas Livorno)">M. Tiby (Libertas Livorno)</option><option value="M. Timperi (Liofilchem Roseto)">M. Timperi (Liofilchem Roseto)</option><option value="M. Udom (Gruppo Mascio Bergamo)">M. Udom (Gruppo Mascio Bergamo)</option><option value="N. Alessandrini (Estra Pistoia)">N. Alessandrini (Estra Pistoia)</option><option value="N. Berdini (Sella Cento)">N. Berdini (Sella Cento)</option><option value="N. Dellosto (Estra Pistoia)">N. Dellosto (Estra Pistoia)</option><option value="N. Filoni (Libertas Livorno)">N. Filoni (Libertas Livorno)</option><option value="N. Giordano (Gemini Mestre)">N. Giordano (Gemini Mestre)</option><option value="N. Italiano (Givova Scafati)">N. Italiano (Givova Scafati)</option><option value="N. Nobili (Gruppo Mascio Bergamo)">N. Nobili (Gruppo Mascio Bergamo)</option><option value="N. Tanfoglio (Sella Cento)">N. Tanfoglio (Sella Cento)</option><option value="N. Virginio (Victoria Libertas Pesaro)">N. Virginio (Victoria Libertas Pesaro)</option><option value="O. Maretto (Victoria Libertas Pesaro)">O. Maretto (Victoria Libertas Pesaro)</option><option value="P. Aradori (Unieuro Forlì)">P. Aradori (Unieuro Forlì)</option><option value="P. Brooks Ii (Crifo Wines Ruvo di Puglia)">P. Brooks Ii (Crifo Wines Ruvo di Puglia)</option><option value="P. Marini (Dole Basket Rimini)">P. Marini (Dole Basket Rimini)</option><option value="P. Sorokas (Fortitudo Bologna)">P. Sorokas (Fortitudo Bologna)</option><option value="Q. De Laurentiis (Victoria Libertas Pesaro)">Q. De Laurentiis (Victoria Libertas Pesaro)</option><option value="R. Allen (Reale Mutua Torino)">R. Allen (Reale Mutua Torino)</option><option value="R. Bolpin (Tezenis Verona)">R. Bolpin (Tezenis Verona)</option><option value="R. Gaspardo (Unieuro Forlì)">R. Gaspardo (Unieuro Forlì)</option><option value="R. Miniotas (Victoria Libertas Pesaro)">R. Miniotas (Victoria Libertas Pesaro)</option><option value="R. Pullazi (Givova Scafati)">R. Pullazi (Givova Scafati)</option><option value="R. Rogic (Wegreenit Urania Milano)">R. Rogic (Wegreenit Urania Milano)</option><option value="R. Tavernelli (Unieuro Forlì)">R. Tavernelli (Unieuro Forlì)</option><option value="R. Zugno (Ferraroni Juvi Cremona)">R. Zugno (Ferraroni Juvi Cremona)</option><option value="S. Anumba (Fortitudo Bologna)">S. Anumba (Fortitudo Bologna)</option><option value="S. Aromando (Gemini Mestre)">S. Aromando (Gemini Mestre)</option><option value="S. Barbante (Ferraroni Juvi Cremona)">S. Barbante (Ferraroni Juvi Cremona)</option><option value="S. Davis Iv (Sella Cento)">S. Davis Iv (Sella Cento)</option><option value="S. Kadjividi Boussounka (Gemini Mestre)">S. Kadjividi Boussounka (Gemini Mestre)</option><option value="S. Knight (Estra Pistoia)">S. Knight (Estra Pistoia)</option><option value="S. Masciadri (Unieuro Forlì)">S. Masciadri (Unieuro Forlì)</option><option value="S. Moretti (Fortitudo Bologna)">S. Moretti (Fortitudo Bologna)</option><option value="S. Pepe (Unieuro Forlì)">S. Pepe (Unieuro Forlì)</option><option value="S. Trucchetti (Victoria Libertas Pesaro)">S. Trucchetti (Victoria Libertas Pesaro)</option><option value="S. Ulaneo (Crifo Wines Ruvo di Puglia)">S. Ulaneo (Crifo Wines Ruvo di Puglia)</option><option value="S. Valsecchi (Gemini Mestre)">S. Valsecchi (Gemini Mestre)</option><option value="S. Zanotti (Estra Pistoia)">S. Zanotti (Estra Pistoia)</option><option value="T. Allen (Givova Scafati)">T. Allen (Givova Scafati)</option><option value="T. Fantoni (Libertas Livorno)">T. Fantoni (Libertas Livorno)</option><option value="T. Guariglia (RSR Sebastiani Rieti)">T. Guariglia (RSR Sebastiani Rieti)</option><option value="T. Laquintana (Crifo Wines Ruvo di Puglia)">T. Laquintana (Crifo Wines Ruvo di Puglia)</option><option value="T. Laquintana (Liofilchem Roseto)">T. Laquintana (Liofilchem Roseto)</option><option value="T. Mcconico (Ferraroni Juvi Cremona)">T. Mcconico (Ferraroni Juvi Cremona)</option><option value="T. Mcgee (Tezenis Verona)">T. Mcgee (Tezenis Verona)</option><option value="T. Pinza (Unieuro Forlì)">T. Pinza (Unieuro Forlì)</option><option value="T. Radonjic (Valtur Brindisi)">T. Radonjic (Valtur Brindisi)</option><option value="T. Reale (Crifo Wines Ruvo di Puglia)">T. Reale (Crifo Wines Ruvo di Puglia)</option><option value="T. Vecchiola (Ferraroni Juvi Cremona)">T. Vecchiola (Ferraroni Juvi Cremona)</option><option value="U. D’almeida (Wegreenit Urania Milano)">U. D’almeida (Wegreenit Urania Milano)</option><option value="U. Stazzonelli (Reale Mutua Torino)">U. Stazzonelli (Reale Mutua Torino)</option><option value="V. Bartoli (Ferraroni Juvi Cremona)">V. Bartoli (Ferraroni Juvi Cremona)</option><option value="V. Guaiana (Fortitudo Bologna)">V. Guaiana (Fortitudo Bologna)</option><option value="V. Mazzola (Fortitudo Bologna)">V. Mazzola (Fortitudo Bologna)</option><option value="W. Stewart Jr (Gemini Mestre)">W. Stewart Jr (Gemini Mestre)</option><option value="Z. Copeland (Valtur Brindisi)">Z. Copeland (Valtur Brindisi)</option>
+                </select>
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 350px; gap: 20px; align-items: start;">
+            <div id="player-radar-chart"></div>
+            <div id="player-comparison-table" style="background: #f9f9f9; border-radius: 8px; padding: 15px;"></div>
+        </div>
+    </div>
+
+    <script>
+        const playerData = {"A. Amato (Wegreenit Urania Milano)": [41.7, 53.1, 21.2, 52.4, 0.0, 67.4], "A. Amici (UEB Gesteco Cividale)": [10.2, 10.0, 8.9, 3.3, 0.0, 73.9], "A. Bertini (Victoria Libertas Pesaro)": [48.1, 18.6, 32.7, 93.3, 28.1, 83.2], "A. Chiera (Givova Scafati)": [11.8, 4.5, 8.3, 14.0, 0.0, 91.9], "A. Cicchetti (Avellino Basket)": [39.9, 15.0, 45.9, 24.6, 23.7, 82.1], "A. Cinciarini (Valtur Brindisi)": [35.7, 87.9, 47.5, 100.0, 5.6, 59.2], "A. Del Chiaro (Unieuro Forl\u00ec)": [18.2, 8.6, 31.7, 16.7, 11.3, 73.2], "A. Donadoni (Liofilchem Roseto)": [29.2, 19.3, 25.7, 53.3, 16.9, 61.6], "A. Fall (Sella Cento)": [24.7, 6.4, 44.6, 16.7, 56.2, 66.9], "A. Filloy (Libertas Livorno)": [28.4, 29.3, 17.8, 50.0, 5.6, 57.1], "A. Gentile (Wegreenit Urania Milano)": [79.2, 50.0, 65.0, 41.7, 28.1, 64.8], "A. Grande (Avellino Basket)": [50.6, 35.7, 22.8, 56.7, 0.0, 83.1], "A. Iannuzzi (Givova Scafati)": [28.9, 9.0, 52.1, 10.5, 41.4, 78.0], "A. La Torre (Ferraroni Juvi Cremona)": [10.5, 13.5, 16.7, 24.6, 0.0, 56.9], "A. Landi (Liofilchem Roseto)": [19.2, 12.1, 19.8, 13.3, 5.6, 62.3], "A. Loro (Gruppo Mascio Bergamo)": [62.1, 12.7, 56.7, 63.0, 56.2, 82.7], "A. Moody (Crifo Wines Ruvo di Puglia)": [61.7, 36.1, 29.2, 52.6, 0.0, 64.8], "A. Morgillo (Wegreenit Urania Milano)": [23.8, 5.5, 31.2, 25.6, 43.3, 76.6], "A. Mouaha (Valtur Brindisi)": [19.5, 20.7, 30.7, 53.3, 0.0, 55.6], "A. Nikolic (Crifo Wines Ruvo di Puglia)": [24.7, 7.9, 31.2, 33.3, 5.6, 67.0], "A. Panni (Ferraroni Juvi Cremona)": [47.6, 39.3, 15.3, 50.0, 0.0, 70.7], "A. Sabatino (Liofilchem Roseto)": [29.2, 18.6, 12.4, 36.7, 5.6, 68.8], "A. Sankare (Dole Basket Rimini)": [10.7, 2.9, 25.7, 20.0, 5.6, 55.8], "A. Sarto (Fortitudo Bologna)": [65.6, 25.0, 36.6, 6.7, 11.3, 78.9], "A. Scarponi (Sella Cento)": [6.9, 3.6, 8.0, 8.3, 0.0, 45.1], "A. Simioni (Dole Basket Rimini)": [48.9, 12.1, 45.0, 43.3, 16.9, 89.9], "A. Smith (Tezenis Verona)": [24.9, 1.6, 38.5, 29.6, 37.5, 65.4], "A. Sperduto (Liofilchem Roseto)": [49.5, 12.2, 17.7, 33.3, 0.0, 69.3], "A. Woodson (Libertas Livorno)": [92.5, 33.3, 33.6, 33.3, 12.5, 77.5], "A. Zerini (Avellino Basket)": [18.8, 20.6, 31.4, 25.9, 100.0, 62.1], "B. Francis (Valtur Brindisi)": [63.0, 19.5, 9.9, 30.3, 0.0, 77.1], "B. Garrett (Ferraroni Juvi Cremona)": [68.3, 30.0, 25.7, 46.7, 5.6, 77.3], "B. Mascolo (Givova Scafati)": [71.4, 62.4, 51.1, 98.2, 5.9, 63.7], "B. Musso (Crifo Wines Ruvo di Puglia)": [21.5, 24.8, 15.6, 70.2, 0.0, 65.1], "C. Bechi (Gemini Mestre)": [34.1, 49.2, 22.6, 40.7, 0.0, 62.4], "C. Costi (Avellino Basket)": [8.0, 5.0, 19.8, 13.3, 5.6, 66.3], "C. Walker (Givova Scafati)": [90.8, 29.3, 57.3, 59.6, 11.8, 80.7], "D. Bruttini (Reale Mutua Torino)": [20.2, 8.6, 38.1, 33.3, 5.6, 59.3], "D. Cinciarini (Liofilchem Roseto)": [49.6, 15.2, 17.9, 29.2, 0.0, 77.7], "D. Denegri (Dole Basket Rimini)": [67.6, 60.7, 30.7, 66.7, 5.6, 76.3], "D. Freeman (UEB Gesteco Cividale)": [67.9, 15.4, 68.5, 71.8, 77.9, 77.5], "D. Harper (Unieuro Forl\u00ec)": [74.6, 60.2, 51.1, 80.7, 29.6, 74.2], "D. Harrison (Gruppo Mascio Bergamo)": [97.6, 46.9, 42.4, 100.0, 8.0, 78.0], "D. Hogue (Gruppo Mascio Bergamo)": [62.5, 18.1, 71.3, 35.6, 0.0, 74.0], "D. Hogue (RSR Sebastiani Rieti)": [39.9, 45.7, 57.4, 26.7, 0.0, 67.1], "D. Magro (Estra Pistoia)": [24.9, 6.4, 38.6, 30.0, 28.1, 95.0], "D. Monaldi (Tezenis Verona)": [34.6, 25.7, 17.2, 44.4, 0.0, 72.8], "D. Pascolo (RSR Sebastiani Rieti)": [20.0, 12.9, 30.7, 40.0, 45.0, 72.3], "D. Perry (RSR Sebastiani Rieti)": [81.0, 53.6, 32.7, 90.0, 0.0, 74.7], "D. Petrovic (Liofilchem Roseto)": [47.9, 12.1, 30.7, 36.7, 11.3, 83.5], "E. Del Cadia (Ferraroni Juvi Cremona)": [20.0, 16.7, 34.1, 63.0, 37.5, 79.4], "E. Esposito (Valtur Brindisi)": [53.6, 17.9, 39.1, 43.3, 16.9, 73.1], "E. Lombardi (Gruppo Mascio Bergamo)": [54.2, 24.8, 40.9, 66.7, 45.0, 76.7], "E. Rota (UEB Gesteco Cividale)": [37.2, 57.9, 30.7, 70.0, 0.0, 75.9], "E. Tiberti (Sella Cento)": [39.0, 7.1, 35.9, 45.8, 35.2, 89.0], "F. Baldi Rossi (Tezenis Verona)": [41.0, 15.9, 33.6, 37.0, 6.2, 70.9], "F. Bonacini (Gemini Mestre)": [42.6, 21.0, 23.8, 57.8, 7.5, 73.9], "F. Ferrari (UEB Gesteco Cividale)": [34.4, 9.6, 39.4, 26.7, 50.6, 67.8], "F. Gallo (Estra Pistoia)": [37.4, 36.4, 29.2, 26.7, 73.1, 66.0], "F. Massone (Reale Mutua Torino)": [59.6, 42.1, 29.7, 90.0, 0.0, 66.0], "F. Mian (RSR Sebastiani Rieti)": [39.2, 14.3, 9.9, 31.1, 0.0, 77.6], "F. Mussini (Avellino Basket)": [67.1, 38.6, 27.2, 76.7, 5.6, 76.3], "F. Poser (Tezenis Verona)": [30.8, 11.9, 45.7, 29.6, 18.8, 77.8], "F. Reggiani (Gemini Mestre)": [15.3, 3.1, 23.3, 9.5, 16.1, 61.7], "F. Stoch (Estra Pistoia)": [8.5, 7.9, 5.4, 0.0, 0.0, 66.3], "F. Valentini (Libertas Livorno)": [50.9, 45.0, 20.3, 53.3, 5.6, 71.0], "F. Zampini (Tezenis Verona)": [65.1, 67.9, 36.1, 80.0, 5.6, 78.3], "G. Allinei (Ferraroni Juvi Cremona)": [44.9, 11.4, 16.3, 23.3, 0.0, 78.5], "G. Camara (Dole Basket Rimini)": [40.4, 3.6, 36.1, 23.3, 61.9, 88.2], "G. Dell' Agnello (Avellino Basket)": [45.4, 30.7, 47.5, 33.3, 11.3, 78.7], "G. Della Rosa (Fortitudo Bologna)": [42.4, 66.4, 19.3, 60.0, 0.0, 69.5], "G. Devoe (Sella Cento)": [76.3, 55.0, 50.0, 70.0, 33.8, 73.8], "G. Gazzotti (Unieuro Forl\u00ec)": [10.7, 8.6, 36.1, 13.3, 5.6, 71.1], "G. Leardini (Dole Basket Rimini)": [19.2, 10.7, 18.8, 30.0, 5.6, 74.9], "G. Miani (Valtur Brindisi)": [51.3, 8.4, 46.6, 90.2, 6.6, 78.8], "G. Pini (Avellino Basket)": [9.2, 9.8, 19.3, 17.5, 41.4, 55.8], "G. Piunti (RSR Sebastiani Rieti)": [24.4, 7.1, 26.2, 23.3, 22.5, 81.2], "G. Robinson (Dole Basket Rimini)": [58.6, 58.9, 29.7, 83.3, 14.1, 63.3], "G. Sabatini (Wegreenit Urania Milano)": [31.2, 42.1, 31.7, 90.0, 0.0, 65.4], "G. Severini (Reale Mutua Torino)": [21.7, 7.9, 24.8, 33.3, 0.0, 69.9], "G. Stefanini (Gruppo Mascio Bergamo)": [75.4, 49.2, 40.7, 96.3, 0.0, 73.8], "G. Tomassini (Dole Basket Rimini)": [51.1, 36.4, 14.9, 53.3, 5.6, 78.9], "G. Vildera (Valtur Brindisi)": [59.6, 19.3, 63.9, 20.0, 22.5, 78.7], "I. Alipiev (Gemini Mestre)": [69.8, 8.3, 56.9, 50.0, 56.2, 81.0], "I. Lupusor (Wegreenit Urania Milano)": [34.1, 12.0, 31.3, 21.1, 0.0, 81.0], "J. Borra (Crifo Wines Ruvo di Puglia)": [38.9, 12.9, 52.0, 6.7, 5.6, 76.4], "J. Cannon (Liofilchem Roseto)": [74.6, 24.3, 55.9, 36.7, 11.3, 100.0], "J. Chandler (Avellino Basket)": [53.4, 24.3, 27.7, 53.3, 0.0, 65.9], "J. Johnson (Estra Pistoia)": [93.7, 52.6, 28.1, 59.6, 5.9, 80.4], "J. Johnson (Tezenis Verona)": [40.6, 18.4, 80.6, 57.1, 0.0, 55.7], "J. Lewis (Avellino Basket)": [77.1, 24.3, 63.4, 53.3, 28.1, 78.4], "J. Robinson (Liofilchem Roseto)": [75.3, 95.0, 42.1, 66.7, 11.3, 80.1], "J. Williams (RSR Sebastiani Rieti)": [62.8, 16.7, 44.6, 88.9, 37.5, 80.3], "K. Allen (Unieuro Forl\u00ec)": [65.2, 29.5, 32.3, 53.3, 75.0, 66.1], "K. Curry (Gemini Mestre)": [85.3, 52.4, 38.0, 51.9, 6.2, 76.6], "K. Felder (Victoria Libertas Pesaro)": [42.4, 46.9, 29.7, 52.4, 24.1, 69.0], "K. Gamble (Wegreenit Urania Milano)": [25.7, 10.2, 42.4, 19.0, 64.3, 59.1], "K. Taylor (Wegreenit Urania Milano)": [100.0, 47.9, 39.1, 40.0, 11.3, 74.2], "K. Tsetserukou (Liofilchem Roseto)": [14.7, 2.9, 17.3, 10.0, 28.1, 91.6], "L. Ambrosin (Tezenis Verona)": [48.1, 10.7, 33.7, 83.3, 16.9, 71.9], "L. Bosso (Gruppo Mascio Bergamo)": [18.3, 31.2, 6.9, 6.1, 3.4, 67.6], "L. Bucarelli (Victoria Libertas Pesaro)": [49.9, 70.7, 44.8, 59.6, 5.9, 76.9], "L. Campogrande (Estra Pistoia)": [14.2, 2.9, 13.9, 23.3, 11.3, 61.2], "L. Caroti (Givova Scafati)": [43.3, 30.8, 17.7, 59.6, 0.0, 78.0], "L. Cesana (UEB Gesteco Cividale)": [29.2, 10.0, 12.4, 26.7, 0.0, 76.0], "L. Conti (Sella Cento)": [43.9, 22.9, 39.1, 43.3, 28.1, 75.7], "L. Fresno (Givova Scafati)": [9.7, 6.0, 12.0, 10.5, 0.0, 62.0], "L. Galmarini (Gemini Mestre)": [39.6, 26.2, 54.5, 51.9, 31.3, 90.4], "L. Marangon (UEB Gesteco Cividale)": [45.4, 18.6, 37.1, 63.3, 22.5, 72.8], "L. Maspero (Valtur Brindisi)": [6.0, 8.6, 9.4, 26.7, 0.0, 50.1], "L. Moore (Fortitudo Bologna)": [85.7, 46.8, 33.3, 78.8, 10.2, 70.8], "L. Piccin (RSR Sebastiani Rieti)": [22.7, 8.6, 24.3, 26.7, 5.6, 73.3], "L. Pollone (Dole Basket Rimini)": [20.0, 8.6, 22.8, 40.0, 16.9, 71.5], "L. Possamai (Libertas Livorno)": [26.9, 5.7, 36.6, 33.3, 50.6, 80.1], "L. Redivo (UEB Gesteco Cividale)": [58.6, 57.1, 22.8, 56.7, 0.0, 64.8], "L. Saccaggi (Estra Pistoia)": [47.6, 46.4, 26.7, 43.3, 5.6, 81.2], "L. Tortu' (Reale Mutua Torino)": [19.0, 6.4, 27.7, 23.3, 5.6, 46.9], "L. Tozzi (Libertas Livorno)": [41.4, 12.9, 34.2, 43.3, 11.3, 81.3], "L. Udom (RSR Sebastiani Rieti)": [51.6, 27.1, 39.1, 90.0, 16.9, 85.1], "M. Anumba (Crifo Wines Ruvo di Puglia)": [23.7, 12.1, 26.7, 43.3, 5.6, 77.3], "M. Berti (UEB Gesteco Cividale)": [34.7, 11.4, 50.0, 40.0, 73.1, 84.8], "M. Bogliardi (Gruppo Mascio Bergamo)": [24.1, 46.8, 13.2, 55.6, 18.8, 72.1], "M. Cavallero (Wegreenit Urania Milano)": [51.6, 10.0, 45.5, 30.0, 11.3, 80.5], "M. Cusin (Reale Mutua Torino)": [17.9, 5.3, 41.2, 14.0, 47.4, 66.2], "M. Fantinelli (Fortitudo Bologna)": [42.7, 100.0, 46.2, 66.7, 25.0, 63.6], "M. Imbro' (Fortitudo Bologna)": [24.9, 24.7, 18.9, 18.2, 0.0, 54.9], "M. Jerkovic (Crifo Wines Ruvo di Puglia)": [47.6, 7.9, 49.5, 76.7, 28.1, 79.2], "M. Jurkatamm (Avellino Basket)": [35.7, 25.7, 19.8, 36.7, 16.9, 82.2], "M. Mastellari (UEB Gesteco Cividale)": [50.6, 23.6, 21.3, 36.7, 5.6, 83.6], "M. Mollura (Givova Scafati)": [29.9, 11.3, 21.9, 24.6, 17.8, 73.9], "M. Montano (Sella Cento)": [33.3, 18.3, 19.3, 51.9, 6.2, 60.9], "M. Moretti (Sella Cento)": [13.2, 4.2, 16.9, 3.9, 72.8, 90.4], "M. Ogden (Dole Basket Rimini)": [61.2, 27.8, 80.3, 74.1, 31.3, 78.3], "M. Palumbo (RSR Sebastiani Rieti)": [32.7, 33.6, 38.1, 36.7, 56.2, 69.8], "M. Parravicini (RSR Sebastiani Rieti)": [33.1, 43.6, 17.7, 66.7, 0.0, 68.7], "M. Piccoli (Libertas Livorno)": [21.9, 18.6, 46.5, 83.3, 0.0, 59.4], "M. Pollone (Gruppo Mascio Bergamo)": [13.7, 17.9, 28.9, 55.6, 0.0, 58.7], "M. Schina (Reale Mutua Torino)": [35.2, 45.0, 20.3, 70.0, 0.0, 69.7], "M. Serpilli (Tezenis Verona)": [36.4, 7.1, 45.0, 36.7, 39.4, 76.0], "M. Spanghero (Tezenis Verona)": [23.7, 15.7, 8.9, 16.7, 5.6, 78.6], "M. Tambone (Victoria Libertas Pesaro)": [77.3, 50.7, 32.2, 50.0, 5.6, 83.9], "M. Teague (Reale Mutua Torino)": [83.8, 34.3, 35.6, 60.0, 11.3, 73.9], "M. Tiby (Libertas Livorno)": [86.5, 38.6, 83.2, 40.0, 22.5, 74.1], "M. Timperi (Liofilchem Roseto)": [25.2, 12.9, 38.1, 50.0, 5.6, 75.7], "M. Udom (Gruppo Mascio Bergamo)": [44.1, 18.0, 56.8, 56.1, 11.8, 69.8], "N. Alessandrini (Estra Pistoia)": [32.9, 10.7, 41.1, 20.0, 22.5, 64.7], "N. Berdini (Sella Cento)": [47.6, 62.1, 41.6, 63.3, 11.3, 72.6], "N. Dellosto (Estra Pistoia)": [18.0, 5.7, 18.3, 13.3, 11.3, 79.0], "N. Filoni (Libertas Livorno)": [27.7, 8.6, 44.6, 86.7, 45.0, 70.3], "N. Giordano (Gemini Mestre)": [41.7, 18.5, 16.3, 35.3, 0.0, 66.3], "N. Italiano (Givova Scafati)": [17.3, 7.6, 21.1, 22.2, 0.0, 70.4], "N. Nobili (Gruppo Mascio Bergamo)": [13.4, 2.3, 13.5, 14.0, 0.0, 73.5], "N. Tanfoglio (Sella Cento)": [18.0, 15.0, 11.9, 10.0, 0.0, 59.3], "N. Virginio (Victoria Libertas Pesaro)": [27.9, 10.7, 32.2, 43.3, 28.1, 62.6], "O. Maretto (Victoria Libertas Pesaro)": [49.4, 24.3, 39.6, 63.3, 5.6, 76.7], "P. Aradori (Unieuro Forl\u00ec)": [46.1, 12.1, 27.2, 30.0, 0.0, 73.9], "P. Brooks Ii (Crifo Wines Ruvo di Puglia)": [69.8, 22.1, 29.7, 26.7, 11.3, 73.4], "P. Marini (Dole Basket Rimini)": [72.1, 47.1, 44.6, 46.7, 16.9, 69.5], "P. Sorokas (Fortitudo Bologna)": [82.8, 21.4, 97.0, 40.0, 33.8, 76.8], "Q. De Laurentiis (Victoria Libertas Pesaro)": [28.9, 12.0, 29.7, 31.6, 77.0, 76.6], "R. Allen (Reale Mutua Torino)": [96.5, 30.0, 100.0, 80.0, 50.6, 74.3], "R. Bolpin (Tezenis Verona)": [26.7, 26.4, 26.7, 43.3, 0.0, 60.1], "R. Gaspardo (Unieuro Forl\u00ec)": [63.3, 14.3, 35.6, 36.7, 50.6, 75.8], "R. Miniotas (Victoria Libertas Pesaro)": [70.6, 30.0, 75.7, 46.7, 16.9, 82.3], "R. Pullazi (Givova Scafati)": [40.2, 10.5, 39.1, 31.6, 0.0, 74.3], "R. Rogic (Wegreenit Urania Milano)": [28.8, 20.6, 22.0, 29.6, 0.0, 81.6], "R. Tavernelli (Unieuro Forl\u00ec)": [15.5, 27.9, 26.2, 40.0, 0.0, 71.8], "R. Zugno (Ferraroni Juvi Cremona)": [8.5, 28.6, 9.9, 46.7, 11.3, 53.6], "S. Anumba (Fortitudo Bologna)": [17.3, 3.8, 23.1, 13.3, 0.0, 56.9], "S. Aromando (Gemini Mestre)": [51.3, 11.9, 50.6, 33.3, 6.2, 70.0], "S. Barbante (Ferraroni Juvi Cremona)": [35.7, 18.6, 39.6, 36.7, 33.8, 64.4], "S. Davis Iv (Sella Cento)": [98.8, 25.7, 65.8, 60.0, 16.9, 71.7], "S. Kadjividi Boussounka (Gemini Mestre)": [11.9, 2.4, 42.9, 11.1, 25.0, 81.7], "S. Knight (Estra Pistoia)": [70.8, 13.6, 54.0, 33.3, 28.1, 77.0], "S. Masciadri (Unieuro Forl\u00ec)": [23.4, 7.9, 27.7, 33.3, 22.5, 78.2], "S. Moretti (Fortitudo Bologna)": [26.7, 15.7, 50.5, 20.0, 50.6, 82.8], "S. Pepe (Unieuro Forl\u00ec)": [53.9, 25.0, 21.8, 26.7, 5.6, 70.3], "S. Trucchetti (Victoria Libertas Pesaro)": [26.5, 24.1, 9.4, 31.6, 0.0, 72.4], "S. Ulaneo (Crifo Wines Ruvo di Puglia)": [33.6, 11.3, 49.0, 35.1, 29.6, 74.0], "S. Valsecchi (Gemini Mestre)": [49.9, 16.1, 17.3, 50.0, 0.0, 80.2], "S. Zanotti (Estra Pistoia)": [44.4, 7.9, 60.9, 16.7, 73.1, 71.7], "T. Allen (Givova Scafati)": [65.9, 14.3, 56.8, 45.6, 53.3, 76.3], "T. Fantoni (Libertas Livorno)": [12.7, 10.7, 22.8, 13.3, 0.0, 77.0], "T. Guariglia (RSR Sebastiani Rieti)": [54.1, 21.4, 48.0, 20.0, 11.3, 79.2], "T. Laquintana (Crifo Wines Ruvo di Puglia)": [37.2, 30.8, 31.2, 41.0, 0.0, 67.8], "T. Laquintana (Liofilchem Roseto)": [23.9, 22.9, 35.6, 53.3, 0.0, 63.8], "T. Mcconico (Ferraroni Juvi Cremona)": [54.9, 32.1, 46.4, 83.3, 21.1, 73.7], "T. Mcgee (Tezenis Verona)": [79.2, 38.7, 24.5, 54.9, 19.9, 79.4], "T. Pinza (Unieuro Forl\u00ec)": [14.0, 8.6, 7.4, 16.7, 0.0, 73.1], "T. Radonjic (Valtur Brindisi)": [40.4, 10.7, 44.6, 36.7, 5.6, 83.8], "T. Reale (Crifo Wines Ruvo di Puglia)": [23.7, 20.0, 6.4, 46.7, 0.0, 65.6], "T. Vecchiola (Ferraroni Juvi Cremona)": [29.2, 45.1, 26.7, 87.2, 8.7, 61.3], "U. D\u2019almeida (Wegreenit Urania Milano)": [35.7, 9.3, 54.0, 10.0, 90.0, 79.0], "U. Stazzonelli (Reale Mutua Torino)": [12.7, 5.7, 16.3, 20.0, 5.6, 55.5], "V. Bartoli (Ferraroni Juvi Cremona)": [38.2, 24.1, 49.8, 40.0, 73.9, 70.6], "V. Guaiana (Fortitudo Bologna)": [18.7, 16.4, 23.8, 33.3, 5.6, 66.1], "V. Mazzola (Fortitudo Bologna)": [34.2, 10.2, 41.0, 19.0, 16.1, 96.0], "W. Stewart Jr (Gemini Mestre)": [46.9, 11.4, 37.6, 66.7, 45.0, 62.4], "Z. Copeland (Valtur Brindisi)": [86.0, 37.1, 32.2, 60.0, 5.6, 77.6]};
+        const playerRaw = {"A. Amato (Wegreenit Urania Milano)": {"Punti": 8.4, "Assist": 3.7, "Rimbalzi": 2.1, "Recuperi": 0.8, "Stoppate": 0.0, "Efficienza": 0.5}, "A. Amici (UEB Gesteco Cividale)": {"Punti": 2.0, "Assist": 0.7, "Rimbalzi": 0.9, "Recuperi": 0.1, "Stoppate": 0.0, "Efficienza": 0.6}, "A. Bertini (Victoria Libertas Pesaro)": {"Punti": 9.7, "Assist": 1.3, "Rimbalzi": 3.3, "Recuperi": 1.4, "Stoppate": 0.2, "Efficienza": 0.6}, "A. Chiera (Givova Scafati)": {"Punti": 2.4, "Assist": 0.3, "Rimbalzi": 0.8, "Recuperi": 0.2, "Stoppate": 0.0, "Efficienza": 0.7}, "A. Cicchetti (Avellino Basket)": {"Punti": 8.0, "Assist": 1.1, "Rimbalzi": 4.6, "Recuperi": 0.4, "Stoppate": 0.2, "Efficienza": 0.6}, "A. Cinciarini (Valtur Brindisi)": {"Punti": 7.2, "Assist": 6.2, "Rimbalzi": 4.8, "Recuperi": 1.5, "Stoppate": 0.1, "Efficienza": 0.5}, "A. Del Chiaro (Unieuro Forl\u00ec)": {"Punti": 3.6, "Assist": 0.6, "Rimbalzi": 3.2, "Recuperi": 0.2, "Stoppate": 0.1, "Efficienza": 0.6}, "A. Donadoni (Liofilchem Roseto)": {"Punti": 5.8, "Assist": 1.4, "Rimbalzi": 2.6, "Recuperi": 0.8, "Stoppate": 0.1, "Efficienza": 0.5}, "A. Fall (Sella Cento)": {"Punti": 5.0, "Assist": 0.5, "Rimbalzi": 4.5, "Recuperi": 0.2, "Stoppate": 0.5, "Efficienza": 0.5}, "A. Filloy (Libertas Livorno)": {"Punti": 5.7, "Assist": 2.0, "Rimbalzi": 1.8, "Recuperi": 0.8, "Stoppate": 0.1, "Efficienza": 0.4}, "A. Gentile (Wegreenit Urania Milano)": {"Punti": 15.9, "Assist": 3.5, "Rimbalzi": 6.6, "Recuperi": 0.6, "Stoppate": 0.2, "Efficienza": 0.5}, "A. Grande (Avellino Basket)": {"Punti": 10.2, "Assist": 2.5, "Rimbalzi": 2.3, "Recuperi": 0.8, "Stoppate": 0.0, "Efficienza": 0.6}, "A. Iannuzzi (Givova Scafati)": {"Punti": 5.8, "Assist": 0.6, "Rimbalzi": 5.3, "Recuperi": 0.2, "Stoppate": 0.4, "Efficienza": 0.6}, "A. La Torre (Ferraroni Juvi Cremona)": {"Punti": 2.1, "Assist": 0.9, "Rimbalzi": 1.7, "Recuperi": 0.4, "Stoppate": 0.0, "Efficienza": 0.4}, "A. Landi (Liofilchem Roseto)": {"Punti": 3.9, "Assist": 0.8, "Rimbalzi": 2.0, "Recuperi": 0.2, "Stoppate": 0.1, "Efficienza": 0.5}, "A. Loro (Gruppo Mascio Bergamo)": {"Punti": 12.4, "Assist": 0.9, "Rimbalzi": 5.7, "Recuperi": 0.9, "Stoppate": 0.5, "Efficienza": 0.6}, "A. Moody (Crifo Wines Ruvo di Puglia)": {"Punti": 12.4, "Assist": 2.5, "Rimbalzi": 2.9, "Recuperi": 0.8, "Stoppate": 0.0, "Efficienza": 0.5}, "A. Morgillo (Wegreenit Urania Milano)": {"Punti": 4.8, "Assist": 0.4, "Rimbalzi": 3.2, "Recuperi": 0.4, "Stoppate": 0.4, "Efficienza": 0.6}, "A. Mouaha (Valtur Brindisi)": {"Punti": 3.9, "Assist": 1.4, "Rimbalzi": 3.1, "Recuperi": 0.8, "Stoppate": 0.0, "Efficienza": 0.4}, "A. Nikolic (Crifo Wines Ruvo di Puglia)": {"Punti": 5.0, "Assist": 0.6, "Rimbalzi": 3.1, "Recuperi": 0.5, "Stoppate": 0.1, "Efficienza": 0.5}, "A. Panni (Ferraroni Juvi Cremona)": {"Punti": 9.6, "Assist": 2.8, "Rimbalzi": 1.6, "Recuperi": 0.8, "Stoppate": 0.0, "Efficienza": 0.5}, "A. Sabatino (Liofilchem Roseto)": {"Punti": 5.8, "Assist": 1.3, "Rimbalzi": 1.2, "Recuperi": 0.6, "Stoppate": 0.1, "Efficienza": 0.5}, "A. Sankare (Dole Basket Rimini)": {"Punti": 2.1, "Assist": 0.2, "Rimbalzi": 2.6, "Recuperi": 0.3, "Stoppate": 0.1, "Efficienza": 0.4}, "A. Sarto (Fortitudo Bologna)": {"Punti": 13.2, "Assist": 1.8, "Rimbalzi": 3.7, "Recuperi": 0.1, "Stoppate": 0.1, "Efficienza": 0.6}, "A. Scarponi (Sella Cento)": {"Punti": 1.4, "Assist": 0.2, "Rimbalzi": 0.8, "Recuperi": 0.1, "Stoppate": 0.0, "Efficienza": 0.3}, "A. Simioni (Dole Basket Rimini)": {"Punti": 9.8, "Assist": 0.8, "Rimbalzi": 4.5, "Recuperi": 0.7, "Stoppate": 0.1, "Efficienza": 0.7}, "A. Smith (Tezenis Verona)": {"Punti": 5.0, "Assist": 0.1, "Rimbalzi": 3.9, "Recuperi": 0.4, "Stoppate": 0.3, "Efficienza": 0.5}, "A. Sperduto (Liofilchem Roseto)": {"Punti": 9.9, "Assist": 0.9, "Rimbalzi": 1.8, "Recuperi": 0.5, "Stoppate": 0.0, "Efficienza": 0.5}, "A. Woodson (Libertas Livorno)": {"Punti": 18.6, "Assist": 2.3, "Rimbalzi": 3.4, "Recuperi": 0.5, "Stoppate": 0.1, "Efficienza": 0.6}, "A. Zerini (Avellino Basket)": {"Punti": 3.8, "Assist": 1.4, "Rimbalzi": 3.2, "Recuperi": 0.4, "Stoppate": 0.9, "Efficienza": 0.5}, "B. Francis (Valtur Brindisi)": {"Punti": 12.6, "Assist": 1.4, "Rimbalzi": 1.0, "Recuperi": 0.5, "Stoppate": 0.0, "Efficienza": 0.6}, "B. Garrett (Ferraroni Juvi Cremona)": {"Punti": 13.7, "Assist": 2.1, "Rimbalzi": 2.6, "Recuperi": 0.7, "Stoppate": 0.1, "Efficienza": 0.6}, "B. Mascolo (Givova Scafati)": {"Punti": 14.3, "Assist": 4.4, "Rimbalzi": 5.2, "Recuperi": 1.5, "Stoppate": 0.1, "Efficienza": 0.5}, "B. Musso (Crifo Wines Ruvo di Puglia)": {"Punti": 4.3, "Assist": 1.7, "Rimbalzi": 1.6, "Recuperi": 1.1, "Stoppate": 0.0, "Efficienza": 0.5}, "C. Bechi (Gemini Mestre)": {"Punti": 6.8, "Assist": 3.4, "Rimbalzi": 2.3, "Recuperi": 0.6, "Stoppate": 0.0, "Efficienza": 0.5}, "C. Costi (Avellino Basket)": {"Punti": 1.6, "Assist": 0.3, "Rimbalzi": 2.0, "Recuperi": 0.2, "Stoppate": 0.1, "Efficienza": 0.5}, "C. Walker (Givova Scafati)": {"Punti": 18.2, "Assist": 2.1, "Rimbalzi": 5.8, "Recuperi": 0.9, "Stoppate": 0.1, "Efficienza": 0.6}, "D. Bruttini (Reale Mutua Torino)": {"Punti": 4.0, "Assist": 0.6, "Rimbalzi": 3.9, "Recuperi": 0.5, "Stoppate": 0.1, "Efficienza": 0.5}, "D. Cinciarini (Liofilchem Roseto)": {"Punti": 9.9, "Assist": 1.1, "Rimbalzi": 1.8, "Recuperi": 0.4, "Stoppate": 0.0, "Efficienza": 0.6}, "D. Denegri (Dole Basket Rimini)": {"Punti": 13.6, "Assist": 4.2, "Rimbalzi": 3.1, "Recuperi": 1.0, "Stoppate": 0.1, "Efficienza": 0.6}, "D. Freeman (UEB Gesteco Cividale)": {"Punti": 13.6, "Assist": 1.1, "Rimbalzi": 6.9, "Recuperi": 1.1, "Stoppate": 0.7, "Efficienza": 0.6}, "D. Harper (Unieuro Forl\u00ec)": {"Punti": 14.9, "Assist": 4.2, "Rimbalzi": 5.2, "Recuperi": 1.2, "Stoppate": 0.3, "Efficienza": 0.6}, "D. Harrison (Gruppo Mascio Bergamo)": {"Punti": 19.6, "Assist": 3.3, "Rimbalzi": 4.3, "Recuperi": 1.5, "Stoppate": 0.1, "Efficienza": 0.6}, "D. Hogue (Gruppo Mascio Bergamo)": {"Punti": 12.5, "Assist": 1.3, "Rimbalzi": 7.2, "Recuperi": 0.5, "Stoppate": 0.0, "Efficienza": 0.6}, "D. Hogue (RSR Sebastiani Rieti)": {"Punti": 8.0, "Assist": 3.2, "Rimbalzi": 5.8, "Recuperi": 0.4, "Stoppate": 0.0, "Efficienza": 0.5}, "D. Magro (Estra Pistoia)": {"Punti": 5.0, "Assist": 0.5, "Rimbalzi": 3.9, "Recuperi": 0.5, "Stoppate": 0.2, "Efficienza": 0.7}, "D. Monaldi (Tezenis Verona)": {"Punti": 6.9, "Assist": 1.8, "Rimbalzi": 1.7, "Recuperi": 0.7, "Stoppate": 0.0, "Efficienza": 0.6}, "D. Pascolo (RSR Sebastiani Rieti)": {"Punti": 4.0, "Assist": 0.9, "Rimbalzi": 3.1, "Recuperi": 0.6, "Stoppate": 0.4, "Efficienza": 0.5}, "D. Perry (RSR Sebastiani Rieti)": {"Punti": 16.2, "Assist": 3.8, "Rimbalzi": 3.3, "Recuperi": 1.4, "Stoppate": 0.0, "Efficienza": 0.6}, "D. Petrovic (Liofilchem Roseto)": {"Punti": 9.6, "Assist": 0.8, "Rimbalzi": 3.1, "Recuperi": 0.6, "Stoppate": 0.1, "Efficienza": 0.6}, "E. Del Cadia (Ferraroni Juvi Cremona)": {"Punti": 4.0, "Assist": 1.2, "Rimbalzi": 3.4, "Recuperi": 0.9, "Stoppate": 0.3, "Efficienza": 0.6}, "E. Esposito (Valtur Brindisi)": {"Punti": 10.8, "Assist": 1.2, "Rimbalzi": 4.0, "Recuperi": 0.7, "Stoppate": 0.1, "Efficienza": 0.6}, "E. Lombardi (Gruppo Mascio Bergamo)": {"Punti": 10.9, "Assist": 1.7, "Rimbalzi": 4.1, "Recuperi": 1.0, "Stoppate": 0.4, "Efficienza": 0.6}, "E. Rota (UEB Gesteco Cividale)": {"Punti": 7.5, "Assist": 4.0, "Rimbalzi": 3.1, "Recuperi": 1.1, "Stoppate": 0.0, "Efficienza": 0.6}, "E. Tiberti (Sella Cento)": {"Punti": 7.8, "Assist": 0.5, "Rimbalzi": 3.6, "Recuperi": 0.7, "Stoppate": 0.3, "Efficienza": 0.7}, "F. Baldi Rossi (Tezenis Verona)": {"Punti": 8.2, "Assist": 1.1, "Rimbalzi": 3.4, "Recuperi": 0.6, "Stoppate": 0.1, "Efficienza": 0.5}, "F. Bonacini (Gemini Mestre)": {"Punti": 8.5, "Assist": 1.5, "Rimbalzi": 2.4, "Recuperi": 0.9, "Stoppate": 0.1, "Efficienza": 0.6}, "F. Ferrari (UEB Gesteco Cividale)": {"Punti": 6.9, "Assist": 0.7, "Rimbalzi": 4.0, "Recuperi": 0.4, "Stoppate": 0.5, "Efficienza": 0.5}, "F. Gallo (Estra Pistoia)": {"Punti": 7.5, "Assist": 2.5, "Rimbalzi": 3.0, "Recuperi": 0.4, "Stoppate": 0.7, "Efficienza": 0.5}, "F. Massone (Reale Mutua Torino)": {"Punti": 11.9, "Assist": 3.0, "Rimbalzi": 3.0, "Recuperi": 1.4, "Stoppate": 0.0, "Efficienza": 0.5}, "F. Mian (RSR Sebastiani Rieti)": {"Punti": 7.9, "Assist": 1.0, "Rimbalzi": 1.0, "Recuperi": 0.5, "Stoppate": 0.0, "Efficienza": 0.6}, "F. Mussini (Avellino Basket)": {"Punti": 13.4, "Assist": 2.7, "Rimbalzi": 2.8, "Recuperi": 1.1, "Stoppate": 0.1, "Efficienza": 0.6}, "F. Poser (Tezenis Verona)": {"Punti": 6.2, "Assist": 0.8, "Rimbalzi": 4.6, "Recuperi": 0.4, "Stoppate": 0.2, "Efficienza": 0.6}, "F. Reggiani (Gemini Mestre)": {"Punti": 3.1, "Assist": 0.2, "Rimbalzi": 2.4, "Recuperi": 0.1, "Stoppate": 0.1, "Efficienza": 0.5}, "F. Stoch (Estra Pistoia)": {"Punti": 1.7, "Assist": 0.6, "Rimbalzi": 0.6, "Recuperi": 0.0, "Stoppate": 0.0, "Efficienza": 0.5}, "F. Valentini (Libertas Livorno)": {"Punti": 10.2, "Assist": 3.1, "Rimbalzi": 2.0, "Recuperi": 0.8, "Stoppate": 0.1, "Efficienza": 0.5}, "F. Zampini (Tezenis Verona)": {"Punti": 13.1, "Assist": 4.8, "Rimbalzi": 3.6, "Recuperi": 1.2, "Stoppate": 0.1, "Efficienza": 0.6}, "G. Allinei (Ferraroni Juvi Cremona)": {"Punti": 9.0, "Assist": 0.8, "Rimbalzi": 1.6, "Recuperi": 0.3, "Stoppate": 0.0, "Efficienza": 0.6}, "G. Camara (Dole Basket Rimini)": {"Punti": 8.1, "Assist": 0.2, "Rimbalzi": 3.6, "Recuperi": 0.3, "Stoppate": 0.6, "Efficienza": 0.7}, "G. Dell' Agnello (Avellino Basket)": {"Punti": 9.1, "Assist": 2.1, "Rimbalzi": 4.8, "Recuperi": 0.5, "Stoppate": 0.1, "Efficienza": 0.6}, "G. Della Rosa (Fortitudo Bologna)": {"Punti": 8.5, "Assist": 4.7, "Rimbalzi": 1.9, "Recuperi": 0.9, "Stoppate": 0.0, "Efficienza": 0.5}, "G. Devoe (Sella Cento)": {"Punti": 15.3, "Assist": 3.9, "Rimbalzi": 5.0, "Recuperi": 1.1, "Stoppate": 0.3, "Efficienza": 0.6}, "G. Gazzotti (Unieuro Forl\u00ec)": {"Punti": 2.1, "Assist": 0.6, "Rimbalzi": 3.6, "Recuperi": 0.2, "Stoppate": 0.1, "Efficienza": 0.5}, "G. Leardini (Dole Basket Rimini)": {"Punti": 3.9, "Assist": 0.8, "Rimbalzi": 1.9, "Recuperi": 0.5, "Stoppate": 0.1, "Efficienza": 0.6}, "G. Miani (Valtur Brindisi)": {"Punti": 10.3, "Assist": 0.6, "Rimbalzi": 4.7, "Recuperi": 1.4, "Stoppate": 0.1, "Efficienza": 0.6}, "G. Pini (Avellino Basket)": {"Punti": 1.8, "Assist": 0.7, "Rimbalzi": 1.9, "Recuperi": 0.3, "Stoppate": 0.4, "Efficienza": 0.4}, "G. Piunti (RSR Sebastiani Rieti)": {"Punti": 4.9, "Assist": 0.5, "Rimbalzi": 2.6, "Recuperi": 0.3, "Stoppate": 0.2, "Efficienza": 0.6}, "G. Robinson (Dole Basket Rimini)": {"Punti": 11.8, "Assist": 4.1, "Rimbalzi": 3.0, "Recuperi": 1.2, "Stoppate": 0.1, "Efficienza": 0.5}, "G. Sabatini (Wegreenit Urania Milano)": {"Punti": 6.2, "Assist": 3.0, "Rimbalzi": 3.2, "Recuperi": 1.4, "Stoppate": 0.0, "Efficienza": 0.5}, "G. Severini (Reale Mutua Torino)": {"Punti": 4.3, "Assist": 0.6, "Rimbalzi": 2.5, "Recuperi": 0.5, "Stoppate": 0.0, "Efficienza": 0.5}, "G. Stefanini (Gruppo Mascio Bergamo)": {"Punti": 15.1, "Assist": 3.4, "Rimbalzi": 4.1, "Recuperi": 1.4, "Stoppate": 0.0, "Efficienza": 0.6}, "G. Tomassini (Dole Basket Rimini)": {"Punti": 10.2, "Assist": 2.5, "Rimbalzi": 1.5, "Recuperi": 0.8, "Stoppate": 0.1, "Efficienza": 0.6}, "G. Vildera (Valtur Brindisi)": {"Punti": 11.9, "Assist": 1.4, "Rimbalzi": 6.5, "Recuperi": 0.3, "Stoppate": 0.2, "Efficienza": 0.6}, "I. Alipiev (Gemini Mestre)": {"Punti": 14.0, "Assist": 0.6, "Rimbalzi": 5.8, "Recuperi": 0.8, "Stoppate": 0.5, "Efficienza": 0.6}, "I. Lupusor (Wegreenit Urania Milano)": {"Punti": 6.8, "Assist": 0.8, "Rimbalzi": 3.2, "Recuperi": 0.3, "Stoppate": 0.0, "Efficienza": 0.6}, "J. Borra (Crifo Wines Ruvo di Puglia)": {"Punti": 7.8, "Assist": 0.9, "Rimbalzi": 5.2, "Recuperi": 0.1, "Stoppate": 0.1, "Efficienza": 0.6}, "J. Cannon (Liofilchem Roseto)": {"Punti": 14.9, "Assist": 1.7, "Rimbalzi": 5.7, "Recuperi": 0.6, "Stoppate": 0.1, "Efficienza": 0.8}, "J. Chandler (Avellino Basket)": {"Punti": 10.7, "Assist": 1.7, "Rimbalzi": 2.8, "Recuperi": 0.8, "Stoppate": 0.0, "Efficienza": 0.5}, "J. Johnson (Estra Pistoia)": {"Punti": 18.8, "Assist": 3.7, "Rimbalzi": 2.8, "Recuperi": 0.9, "Stoppate": 0.1, "Efficienza": 0.6}, "J. Johnson (Tezenis Verona)": {"Punti": 8.1, "Assist": 1.3, "Rimbalzi": 8.1, "Recuperi": 0.9, "Stoppate": 0.0, "Efficienza": 0.4}, "J. Lewis (Avellino Basket)": {"Punti": 15.4, "Assist": 1.7, "Rimbalzi": 6.4, "Recuperi": 0.8, "Stoppate": 0.2, "Efficienza": 0.6}, "J. Robinson (Liofilchem Roseto)": {"Punti": 15.1, "Assist": 6.7, "Rimbalzi": 4.2, "Recuperi": 1.0, "Stoppate": 0.1, "Efficienza": 0.6}, "J. Williams (RSR Sebastiani Rieti)": {"Punti": 12.6, "Assist": 1.2, "Rimbalzi": 4.5, "Recuperi": 1.3, "Stoppate": 0.3, "Efficienza": 0.6}, "K. Allen (Unieuro Forl\u00ec)": {"Punti": 13.1, "Assist": 2.1, "Rimbalzi": 3.3, "Recuperi": 0.8, "Stoppate": 0.7, "Efficienza": 0.5}, "K. Curry (Gemini Mestre)": {"Punti": 17.1, "Assist": 3.7, "Rimbalzi": 3.8, "Recuperi": 0.8, "Stoppate": 0.1, "Efficienza": 0.6}, "K. Felder (Victoria Libertas Pesaro)": {"Punti": 8.5, "Assist": 3.3, "Rimbalzi": 3.0, "Recuperi": 0.8, "Stoppate": 0.2, "Efficienza": 0.5}, "K. Gamble (Wegreenit Urania Milano)": {"Punti": 5.1, "Assist": 0.7, "Rimbalzi": 4.3, "Recuperi": 0.3, "Stoppate": 0.6, "Efficienza": 0.4}, "K. Taylor (Wegreenit Urania Milano)": {"Punti": 20.1, "Assist": 3.4, "Rimbalzi": 4.0, "Recuperi": 0.6, "Stoppate": 0.1, "Efficienza": 0.6}, "K. Tsetserukou (Liofilchem Roseto)": {"Punti": 3.0, "Assist": 0.2, "Rimbalzi": 1.8, "Recuperi": 0.1, "Stoppate": 0.2, "Efficienza": 0.7}, "L. Ambrosin (Tezenis Verona)": {"Punti": 9.7, "Assist": 0.8, "Rimbalzi": 3.4, "Recuperi": 1.2, "Stoppate": 0.1, "Efficienza": 0.5}, "L. Bosso (Gruppo Mascio Bergamo)": {"Punti": 3.7, "Assist": 2.2, "Rimbalzi": 0.7, "Recuperi": 0.1, "Stoppate": 0.0, "Efficienza": 0.5}, "L. Bucarelli (Victoria Libertas Pesaro)": {"Punti": 10.0, "Assist": 4.9, "Rimbalzi": 4.5, "Recuperi": 0.9, "Stoppate": 0.1, "Efficienza": 0.6}, "L. Campogrande (Estra Pistoia)": {"Punti": 2.9, "Assist": 0.2, "Rimbalzi": 1.4, "Recuperi": 0.3, "Stoppate": 0.1, "Efficienza": 0.5}, "L. Caroti (Givova Scafati)": {"Punti": 8.7, "Assist": 2.2, "Rimbalzi": 1.8, "Recuperi": 0.9, "Stoppate": 0.0, "Efficienza": 0.6}, "L. Cesana (UEB Gesteco Cividale)": {"Punti": 5.8, "Assist": 0.7, "Rimbalzi": 1.2, "Recuperi": 0.4, "Stoppate": 0.0, "Efficienza": 0.6}, "L. Conti (Sella Cento)": {"Punti": 8.8, "Assist": 1.6, "Rimbalzi": 4.0, "Recuperi": 0.7, "Stoppate": 0.2, "Efficienza": 0.6}, "L. Fresno (Givova Scafati)": {"Punti": 1.9, "Assist": 0.4, "Rimbalzi": 1.2, "Recuperi": 0.2, "Stoppate": 0.0, "Efficienza": 0.5}, "L. Galmarini (Gemini Mestre)": {"Punti": 7.9, "Assist": 1.8, "Rimbalzi": 5.5, "Recuperi": 0.8, "Stoppate": 0.3, "Efficienza": 0.7}, "L. Marangon (UEB Gesteco Cividale)": {"Punti": 9.1, "Assist": 1.3, "Rimbalzi": 3.8, "Recuperi": 0.9, "Stoppate": 0.2, "Efficienza": 0.6}, "L. Maspero (Valtur Brindisi)": {"Punti": 1.2, "Assist": 0.6, "Rimbalzi": 0.9, "Recuperi": 0.4, "Stoppate": 0.0, "Efficienza": 0.4}, "L. Moore (Fortitudo Bologna)": {"Punti": 17.2, "Assist": 3.3, "Rimbalzi": 3.4, "Recuperi": 1.2, "Stoppate": 0.1, "Efficienza": 0.5}, "L. Piccin (RSR Sebastiani Rieti)": {"Punti": 4.5, "Assist": 0.6, "Rimbalzi": 2.5, "Recuperi": 0.4, "Stoppate": 0.1, "Efficienza": 0.6}, "L. Pollone (Dole Basket Rimini)": {"Punti": 4.0, "Assist": 0.6, "Rimbalzi": 2.3, "Recuperi": 0.6, "Stoppate": 0.1, "Efficienza": 0.5}, "L. Possamai (Libertas Livorno)": {"Punti": 5.4, "Assist": 0.4, "Rimbalzi": 3.7, "Recuperi": 0.5, "Stoppate": 0.5, "Efficienza": 0.6}, "L. Redivo (UEB Gesteco Cividale)": {"Punti": 11.8, "Assist": 4.0, "Rimbalzi": 2.3, "Recuperi": 0.8, "Stoppate": 0.0, "Efficienza": 0.5}, "L. Saccaggi (Estra Pistoia)": {"Punti": 9.6, "Assist": 3.2, "Rimbalzi": 2.7, "Recuperi": 0.7, "Stoppate": 0.1, "Efficienza": 0.6}, "L. Tortu' (Reale Mutua Torino)": {"Punti": 3.8, "Assist": 0.5, "Rimbalzi": 2.8, "Recuperi": 0.3, "Stoppate": 0.1, "Efficienza": 0.4}, "L. Tozzi (Libertas Livorno)": {"Punti": 8.3, "Assist": 0.9, "Rimbalzi": 3.5, "Recuperi": 0.7, "Stoppate": 0.1, "Efficienza": 0.6}, "L. Udom (RSR Sebastiani Rieti)": {"Punti": 10.3, "Assist": 1.9, "Rimbalzi": 4.0, "Recuperi": 1.4, "Stoppate": 0.1, "Efficienza": 0.6}, "M. Anumba (Crifo Wines Ruvo di Puglia)": {"Punti": 4.8, "Assist": 0.8, "Rimbalzi": 2.7, "Recuperi": 0.7, "Stoppate": 0.1, "Efficienza": 0.6}, "M. Berti (UEB Gesteco Cividale)": {"Punti": 7.0, "Assist": 0.8, "Rimbalzi": 5.0, "Recuperi": 0.6, "Stoppate": 0.7, "Efficienza": 0.6}, "M. Bogliardi (Gruppo Mascio Bergamo)": {"Punti": 4.8, "Assist": 3.3, "Rimbalzi": 1.3, "Recuperi": 0.8, "Stoppate": 0.2, "Efficienza": 0.5}, "M. Cavallero (Wegreenit Urania Milano)": {"Punti": 10.3, "Assist": 0.7, "Rimbalzi": 4.6, "Recuperi": 0.5, "Stoppate": 0.1, "Efficienza": 0.6}, "M. Cusin (Reale Mutua Torino)": {"Punti": 3.6, "Assist": 0.4, "Rimbalzi": 4.2, "Recuperi": 0.2, "Stoppate": 0.4, "Efficienza": 0.5}, "M. Fantinelli (Fortitudo Bologna)": {"Punti": 8.6, "Assist": 7.0, "Rimbalzi": 4.7, "Recuperi": 1.0, "Stoppate": 0.2, "Efficienza": 0.5}, "M. Imbro' (Fortitudo Bologna)": {"Punti": 5.0, "Assist": 1.7, "Rimbalzi": 1.9, "Recuperi": 0.3, "Stoppate": 0.0, "Efficienza": 0.4}, "M. Jerkovic (Crifo Wines Ruvo di Puglia)": {"Punti": 9.6, "Assist": 0.6, "Rimbalzi": 5.0, "Recuperi": 1.1, "Stoppate": 0.2, "Efficienza": 0.6}, "M. Jurkatamm (Avellino Basket)": {"Punti": 7.2, "Assist": 1.8, "Rimbalzi": 2.0, "Recuperi": 0.6, "Stoppate": 0.1, "Efficienza": 0.6}, "M. Mastellari (UEB Gesteco Cividale)": {"Punti": 10.2, "Assist": 1.6, "Rimbalzi": 2.1, "Recuperi": 0.6, "Stoppate": 0.1, "Efficienza": 0.6}, "M. Mollura (Givova Scafati)": {"Punti": 6.0, "Assist": 0.8, "Rimbalzi": 2.2, "Recuperi": 0.4, "Stoppate": 0.2, "Efficienza": 0.6}, "M. Montano (Sella Cento)": {"Punti": 6.7, "Assist": 1.3, "Rimbalzi": 1.9, "Recuperi": 0.8, "Stoppate": 0.1, "Efficienza": 0.5}, "M. Moretti (Sella Cento)": {"Punti": 2.6, "Assist": 0.3, "Rimbalzi": 1.7, "Recuperi": 0.1, "Stoppate": 0.6, "Efficienza": 0.7}, "M. Ogden (Dole Basket Rimini)": {"Punti": 12.3, "Assist": 1.9, "Rimbalzi": 8.1, "Recuperi": 1.1, "Stoppate": 0.3, "Efficienza": 0.6}, "M. Palumbo (RSR Sebastiani Rieti)": {"Punti": 6.5, "Assist": 2.4, "Rimbalzi": 3.9, "Recuperi": 0.6, "Stoppate": 0.5, "Efficienza": 0.5}, "M. Parravicini (RSR Sebastiani Rieti)": {"Punti": 6.6, "Assist": 3.1, "Rimbalzi": 1.8, "Recuperi": 1.0, "Stoppate": 0.0, "Efficienza": 0.5}, "M. Piccoli (Libertas Livorno)": {"Punti": 4.4, "Assist": 1.3, "Rimbalzi": 4.7, "Recuperi": 1.2, "Stoppate": 0.0, "Efficienza": 0.5}, "M. Pollone (Gruppo Mascio Bergamo)": {"Punti": 2.8, "Assist": 1.2, "Rimbalzi": 2.9, "Recuperi": 0.8, "Stoppate": 0.0, "Efficienza": 0.4}, "M. Schina (Reale Mutua Torino)": {"Punti": 7.0, "Assist": 3.1, "Rimbalzi": 2.0, "Recuperi": 1.1, "Stoppate": 0.0, "Efficienza": 0.5}, "M. Serpilli (Tezenis Verona)": {"Punti": 7.3, "Assist": 0.5, "Rimbalzi": 4.5, "Recuperi": 0.6, "Stoppate": 0.3, "Efficienza": 0.6}, "M. Spanghero (Tezenis Verona)": {"Punti": 4.8, "Assist": 1.1, "Rimbalzi": 0.9, "Recuperi": 0.2, "Stoppate": 0.1, "Efficienza": 0.6}, "M. Tambone (Victoria Libertas Pesaro)": {"Punti": 15.5, "Assist": 3.5, "Rimbalzi": 3.2, "Recuperi": 0.8, "Stoppate": 0.1, "Efficienza": 0.6}, "M. Teague (Reale Mutua Torino)": {"Punti": 16.8, "Assist": 2.4, "Rimbalzi": 3.6, "Recuperi": 0.9, "Stoppate": 0.1, "Efficienza": 0.6}, "M. Tiby (Libertas Livorno)": {"Punti": 17.4, "Assist": 2.7, "Rimbalzi": 8.4, "Recuperi": 0.6, "Stoppate": 0.2, "Efficienza": 0.6}, "M. Timperi (Liofilchem Roseto)": {"Punti": 5.0, "Assist": 0.9, "Rimbalzi": 3.9, "Recuperi": 0.8, "Stoppate": 0.1, "Efficienza": 0.6}, "M. Udom (Gruppo Mascio Bergamo)": {"Punti": 8.8, "Assist": 1.3, "Rimbalzi": 5.7, "Recuperi": 0.8, "Stoppate": 0.1, "Efficienza": 0.5}, "N. Alessandrini (Estra Pistoia)": {"Punti": 6.6, "Assist": 0.8, "Rimbalzi": 4.2, "Recuperi": 0.3, "Stoppate": 0.2, "Efficienza": 0.5}, "N. Berdini (Sella Cento)": {"Punti": 9.6, "Assist": 4.3, "Rimbalzi": 4.2, "Recuperi": 0.9, "Stoppate": 0.1, "Efficienza": 0.6}, "N. Dellosto (Estra Pistoia)": {"Punti": 3.6, "Assist": 0.4, "Rimbalzi": 1.9, "Recuperi": 0.2, "Stoppate": 0.1, "Efficienza": 0.6}, "N. Filoni (Libertas Livorno)": {"Punti": 5.5, "Assist": 0.6, "Rimbalzi": 4.5, "Recuperi": 1.3, "Stoppate": 0.4, "Efficienza": 0.5}, "N. Giordano (Gemini Mestre)": {"Punti": 8.4, "Assist": 1.3, "Rimbalzi": 1.6, "Recuperi": 0.5, "Stoppate": 0.0, "Efficienza": 0.5}, "N. Italiano (Givova Scafati)": {"Punti": 3.5, "Assist": 0.5, "Rimbalzi": 2.1, "Recuperi": 0.3, "Stoppate": 0.0, "Efficienza": 0.5}, "N. Nobili (Gruppo Mascio Bergamo)": {"Punti": 2.7, "Assist": 0.2, "Rimbalzi": 1.4, "Recuperi": 0.2, "Stoppate": 0.0, "Efficienza": 0.6}, "N. Tanfoglio (Sella Cento)": {"Punti": 3.6, "Assist": 1.1, "Rimbalzi": 1.2, "Recuperi": 0.1, "Stoppate": 0.0, "Efficienza": 0.5}, "N. Virginio (Victoria Libertas Pesaro)": {"Punti": 5.6, "Assist": 0.8, "Rimbalzi": 3.2, "Recuperi": 0.7, "Stoppate": 0.2, "Efficienza": 0.5}, "O. Maretto (Victoria Libertas Pesaro)": {"Punti": 9.9, "Assist": 1.7, "Rimbalzi": 4.0, "Recuperi": 0.9, "Stoppate": 0.1, "Efficienza": 0.6}, "P. Aradori (Unieuro Forl\u00ec)": {"Punti": 9.2, "Assist": 0.8, "Rimbalzi": 2.8, "Recuperi": 0.5, "Stoppate": 0.0, "Efficienza": 0.6}, "P. Brooks Ii (Crifo Wines Ruvo di Puglia)": {"Punti": 14.0, "Assist": 1.6, "Rimbalzi": 3.0, "Recuperi": 0.4, "Stoppate": 0.1, "Efficienza": 0.6}, "P. Marini (Dole Basket Rimini)": {"Punti": 14.4, "Assist": 3.3, "Rimbalzi": 4.5, "Recuperi": 0.7, "Stoppate": 0.1, "Efficienza": 0.5}, "P. Sorokas (Fortitudo Bologna)": {"Punti": 16.6, "Assist": 1.5, "Rimbalzi": 9.8, "Recuperi": 0.6, "Stoppate": 0.3, "Efficienza": 0.6}, "Q. De Laurentiis (Victoria Libertas Pesaro)": {"Punti": 5.8, "Assist": 0.8, "Rimbalzi": 3.0, "Recuperi": 0.5, "Stoppate": 0.7, "Efficienza": 0.6}, "R. Allen (Reale Mutua Torino)": {"Punti": 19.4, "Assist": 2.1, "Rimbalzi": 10.1, "Recuperi": 1.2, "Stoppate": 0.5, "Efficienza": 0.6}, "R. Bolpin (Tezenis Verona)": {"Punti": 5.3, "Assist": 1.9, "Rimbalzi": 2.7, "Recuperi": 0.7, "Stoppate": 0.0, "Efficienza": 0.5}, "R. Gaspardo (Unieuro Forl\u00ec)": {"Punti": 12.7, "Assist": 1.0, "Rimbalzi": 3.6, "Recuperi": 0.6, "Stoppate": 0.5, "Efficienza": 0.6}, "R. Miniotas (Victoria Libertas Pesaro)": {"Punti": 14.2, "Assist": 2.1, "Rimbalzi": 7.7, "Recuperi": 0.7, "Stoppate": 0.1, "Efficienza": 0.6}, "R. Pullazi (Givova Scafati)": {"Punti": 8.1, "Assist": 0.7, "Rimbalzi": 3.9, "Recuperi": 0.5, "Stoppate": 0.0, "Efficienza": 0.6}, "R. Rogic (Wegreenit Urania Milano)": {"Punti": 5.8, "Assist": 1.4, "Rimbalzi": 2.2, "Recuperi": 0.4, "Stoppate": 0.0, "Efficienza": 0.6}, "R. Tavernelli (Unieuro Forl\u00ec)": {"Punti": 3.1, "Assist": 1.9, "Rimbalzi": 2.6, "Recuperi": 0.6, "Stoppate": 0.0, "Efficienza": 0.5}, "R. Zugno (Ferraroni Juvi Cremona)": {"Punti": 1.7, "Assist": 2.0, "Rimbalzi": 1.0, "Recuperi": 0.7, "Stoppate": 0.1, "Efficienza": 0.4}, "S. Anumba (Fortitudo Bologna)": {"Punti": 3.5, "Assist": 0.3, "Rimbalzi": 2.3, "Recuperi": 0.2, "Stoppate": 0.0, "Efficienza": 0.4}, "S. Aromando (Gemini Mestre)": {"Punti": 10.3, "Assist": 0.8, "Rimbalzi": 5.1, "Recuperi": 0.5, "Stoppate": 0.1, "Efficienza": 0.5}, "S. Barbante (Ferraroni Juvi Cremona)": {"Punti": 7.2, "Assist": 1.3, "Rimbalzi": 4.0, "Recuperi": 0.6, "Stoppate": 0.3, "Efficienza": 0.5}, "S. Davis Iv (Sella Cento)": {"Punti": 19.8, "Assist": 1.8, "Rimbalzi": 6.7, "Recuperi": 0.9, "Stoppate": 0.1, "Efficienza": 0.5}, "S. Kadjividi Boussounka (Gemini Mestre)": {"Punti": 2.4, "Assist": 0.2, "Rimbalzi": 4.3, "Recuperi": 0.2, "Stoppate": 0.2, "Efficienza": 0.6}, "S. Knight (Estra Pistoia)": {"Punti": 14.2, "Assist": 0.9, "Rimbalzi": 5.5, "Recuperi": 0.5, "Stoppate": 0.2, "Efficienza": 0.6}, "S. Masciadri (Unieuro Forl\u00ec)": {"Punti": 4.7, "Assist": 0.6, "Rimbalzi": 2.8, "Recuperi": 0.5, "Stoppate": 0.2, "Efficienza": 0.6}, "S. Moretti (Fortitudo Bologna)": {"Punti": 5.3, "Assist": 1.1, "Rimbalzi": 5.1, "Recuperi": 0.3, "Stoppate": 0.5, "Efficienza": 0.6}, "S. Pepe (Unieuro Forl\u00ec)": {"Punti": 10.8, "Assist": 1.8, "Rimbalzi": 2.2, "Recuperi": 0.4, "Stoppate": 0.1, "Efficienza": 0.5}, "S. Trucchetti (Victoria Libertas Pesaro)": {"Punti": 5.3, "Assist": 1.7, "Rimbalzi": 0.9, "Recuperi": 0.5, "Stoppate": 0.0, "Efficienza": 0.5}, "S. Ulaneo (Crifo Wines Ruvo di Puglia)": {"Punti": 6.7, "Assist": 0.8, "Rimbalzi": 4.9, "Recuperi": 0.5, "Stoppate": 0.3, "Efficienza": 0.6}, "S. Valsecchi (Gemini Mestre)": {"Punti": 10.0, "Assist": 1.1, "Rimbalzi": 1.8, "Recuperi": 0.8, "Stoppate": 0.0, "Efficienza": 0.6}, "S. Zanotti (Estra Pistoia)": {"Punti": 8.9, "Assist": 0.6, "Rimbalzi": 6.2, "Recuperi": 0.2, "Stoppate": 0.7, "Efficienza": 0.5}, "T. Allen (Givova Scafati)": {"Punti": 13.2, "Assist": 1.0, "Rimbalzi": 5.7, "Recuperi": 0.7, "Stoppate": 0.5, "Efficienza": 0.6}, "T. Fantoni (Libertas Livorno)": {"Punti": 2.5, "Assist": 0.8, "Rimbalzi": 2.3, "Recuperi": 0.2, "Stoppate": 0.0, "Efficienza": 0.6}, "T. Guariglia (RSR Sebastiani Rieti)": {"Punti": 10.8, "Assist": 1.5, "Rimbalzi": 4.8, "Recuperi": 0.3, "Stoppate": 0.1, "Efficienza": 0.6}, "T. Laquintana (Crifo Wines Ruvo di Puglia)": {"Punti": 7.5, "Assist": 2.2, "Rimbalzi": 3.2, "Recuperi": 0.6, "Stoppate": 0.0, "Efficienza": 0.5}, "T. Laquintana (Liofilchem Roseto)": {"Punti": 4.8, "Assist": 1.6, "Rimbalzi": 3.6, "Recuperi": 0.8, "Stoppate": 0.0, "Efficienza": 0.5}, "T. Mcconico (Ferraroni Juvi Cremona)": {"Punti": 11.0, "Assist": 2.2, "Rimbalzi": 4.7, "Recuperi": 1.2, "Stoppate": 0.2, "Efficienza": 0.6}, "T. Mcgee (Tezenis Verona)": {"Punti": 15.9, "Assist": 2.7, "Rimbalzi": 2.5, "Recuperi": 0.8, "Stoppate": 0.2, "Efficienza": 0.6}, "T. Pinza (Unieuro Forl\u00ec)": {"Punti": 2.8, "Assist": 0.6, "Rimbalzi": 0.8, "Recuperi": 0.2, "Stoppate": 0.0, "Efficienza": 0.6}, "T. Radonjic (Valtur Brindisi)": {"Punti": 8.1, "Assist": 0.8, "Rimbalzi": 4.5, "Recuperi": 0.6, "Stoppate": 0.1, "Efficienza": 0.6}, "T. Reale (Crifo Wines Ruvo di Puglia)": {"Punti": 4.8, "Assist": 1.4, "Rimbalzi": 0.7, "Recuperi": 0.7, "Stoppate": 0.0, "Efficienza": 0.5}, "T. Vecchiola (Ferraroni Juvi Cremona)": {"Punti": 5.8, "Assist": 3.2, "Rimbalzi": 2.7, "Recuperi": 1.3, "Stoppate": 0.1, "Efficienza": 0.5}, "U. D\u2019almeida (Wegreenit Urania Milano)": {"Punti": 7.2, "Assist": 0.7, "Rimbalzi": 5.5, "Recuperi": 0.1, "Stoppate": 0.8, "Efficienza": 0.6}, "U. Stazzonelli (Reale Mutua Torino)": {"Punti": 2.5, "Assist": 0.4, "Rimbalzi": 1.6, "Recuperi": 0.3, "Stoppate": 0.1, "Efficienza": 0.4}, "V. Bartoli (Ferraroni Juvi Cremona)": {"Punti": 7.7, "Assist": 1.7, "Rimbalzi": 5.0, "Recuperi": 0.6, "Stoppate": 0.7, "Efficienza": 0.5}, "V. Guaiana (Fortitudo Bologna)": {"Punti": 3.8, "Assist": 1.1, "Rimbalzi": 2.4, "Recuperi": 0.5, "Stoppate": 0.1, "Efficienza": 0.5}, "V. Mazzola (Fortitudo Bologna)": {"Punti": 6.9, "Assist": 0.7, "Rimbalzi": 4.1, "Recuperi": 0.3, "Stoppate": 0.1, "Efficienza": 0.7}, "W. Stewart Jr (Gemini Mestre)": {"Punti": 9.4, "Assist": 0.8, "Rimbalzi": 3.8, "Recuperi": 1.0, "Stoppate": 0.4, "Efficienza": 0.5}, "Z. Copeland (Valtur Brindisi)": {"Punti": 17.2, "Assist": 2.6, "Rimbalzi": 3.2, "Recuperi": 0.9, "Stoppate": 0.1, "Efficienza": 0.6}};
+        const playerCategories = ["Punti", "Assist", "Rimbalzi", "Recuperi", "Stoppate", "Efficienza"];
+
+        function updatePlayerRadar() {
+            const p1 = document.getElementById('player1').value;
+            const p2 = document.getElementById('player2').value;
+
+            const data = [];
+            const colors = ['#302B8F', '#00F95B'];
+
+            [p1, p2].forEach((player, i) => {
+                if (player && playerData[player]) {
+                    const vals = [...playerData[player]];
+                    const cats = [...playerCategories];
+                    vals.push(vals[0]);
+                    cats.push(cats[0]);
+
+                    data.push({
+                        type: 'scatterpolar',
+                        r: vals,
+                        theta: cats,
+                        fill: 'toself',
+                        fillcolor: colors[i] + '33',
+                        line: { color: colors[i], width: 2 },
+                        name: player
+                    });
+                }
+            });
+
+            const layout = {
+                polar: {
+                    radialaxis: { visible: true, range: [0, 100] }
+                },
+                showlegend: true,
+                height: 450,
+                margin: { t: 30, b: 30 }
+            };
+
+            Plotly.newPlot('player-radar-chart', data, layout);
+            updatePlayerComparisonTable(p1, p2);
+        }
+
+        function updatePlayerComparisonTable(p1, p2) {
+            const tableDiv = document.getElementById('player-comparison-table');
+
+            if (!p2 || !playerRaw[p1] || !playerRaw[p2]) {
+                if (playerRaw[p1]) {
+                    let html = '<h4 style="margin: 0 0 12px 0; color: #302B8F;">Valori per Partita</h4>';
+                    html += '<table style="width: 100%; font-size: 14px;">';
+                    playerCategories.forEach(cat => {
+                        const val = playerRaw[p1][cat];
+                        html += `<tr><td style="padding: 6px 0;">${cat}</td><td style="text-align: right; font-weight: 600;">${val}</td></tr>`;
+                    });
+                    html += '</table>';
+                    tableDiv.innerHTML = html;
+                }
+                return;
+            }
+
+            let html = '<h4 style="margin: 0 0 12px 0;">Confronto Valori</h4>';
+            html += '<table style="width: 100%; font-size: 13px;">';
+            html += '<tr style="border-bottom: 1px solid #ddd;"><th style="text-align: left; padding: 6px 0;">Stat</th>';
+            html += '<th style="text-align: right; color: #302B8F;">G1</th>';
+            html += '<th style="text-align: right; color: #00a63e;">G2</th></tr>';
+
+            playerCategories.forEach(cat => {
+                const v1 = playerRaw[p1][cat] || 0;
+                const v2 = playerRaw[p2][cat] || 0;
+                const better1 = v1 > v2;
+                const c1 = better1 ? '#22c55e' : (v1 < v2 ? '#ef4444' : '#666');
+                const c2 = !better1 ? '#22c55e' : (v1 > v2 ? '#ef4444' : '#666');
+
+                html += `<tr><td style="padding: 6px 0;">${cat}</td>`;
+                html += `<td style="text-align: right; color: ${c1}; font-weight: 600;">${v1}</td>`;
+                html += `<td style="text-align: right; color: ${c2}; font-weight: 600;">${v2}</td></tr>`;
+            });
+            html += '</table>';
+            tableDiv.innerHTML = html;
+        }
+
+        updatePlayerRadar();
+    </script>
+    
+
+        <div class="site-footer">
+            <img src="../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <div>Ultimo aggiornamento: 13/01/2026 22:35</div>
+            <div>Generato con LNP Stats</div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Espandi sezione corrente
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('expanded');
+            });
+        });
+
+        // Espandi automaticamente la sezione attiva
+        const activeLink = document.querySelector('.sidebar-link.active');
+        if (activeLink) {
+            let parent = activeLink.closest('.sidebar-section');
+            if (parent) parent.classList.add('expanded');
+        }
+    </script>
+</body>
+</html>
