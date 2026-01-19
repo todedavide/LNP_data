@@ -30,6 +30,32 @@ def normalize_team_names(df):
     return df
 
 
+def fix_pbp_time_format(df):
+    """
+    Corregge il caso speciale 00:00 = 10:00 (fine quarto).
+
+    Il tempo nel PBP è in formato count-up (tempo trascorso nel quarto),
+    ma 00:00 è un caso speciale che significa 10:00 (fine quarto).
+    """
+    if df is None or df.empty:
+        return df
+
+    df = df.copy()
+
+    if 'time_seconds' in df.columns and 'quarter' in df.columns:
+        # Caso speciale: 00:00 significa 10:00 (fine quarto)
+        df.loc[df['time_seconds'] == 0, 'time_seconds'] = 600
+
+        # Ricalcola total_seconds
+        df['total_seconds'] = (df['quarter'] - 1) * 600 + df['time_seconds']
+
+        # Ricalcola clutch (ultimi 2 min = da 8:00 a 10:00)
+        if 'gap' in df.columns:
+            df['clutch'] = (df['quarter'] == 4) & (df['time_seconds'] >= 480) & (df['gap'].abs() <= 5)
+
+    return df
+
+
 def load_pbp_data(campionato_filter=None):
     """
     Carica dati play-by-play per uno o più campionati.
@@ -53,12 +79,14 @@ def load_pbp_data(campionato_filter=None):
             if os.path.exists(path):
                 dfs.append(pd.read_pickle(path))
         result = pd.concat(dfs, ignore_index=True) if dfs else None
-        return normalize_team_names(result)
+        result = normalize_team_names(result)
+        return fix_pbp_time_format(result)
 
     if campionato_filter and campionato_filter in files_map:
         path = os.path.join(DATA_DIR, files_map[campionato_filter])
         if os.path.exists(path):
-            return normalize_team_names(pd.read_pickle(path))
+            result = normalize_team_names(pd.read_pickle(path))
+            return fix_pbp_time_format(result)
         return None
 
     # Tutti i campionati
@@ -68,7 +96,8 @@ def load_pbp_data(campionato_filter=None):
         if os.path.exists(path):
             dfs.append(pd.read_pickle(path))
     result = pd.concat(dfs, ignore_index=True) if dfs else None
-    return normalize_team_names(result)
+    result = normalize_team_names(result)
+    return fix_pbp_time_format(result)
 
 
 def load_quarters_data(campionato_filter=None):
@@ -172,8 +201,10 @@ def compute_clutch_stats(pbp_df):
     if pbp_df is None or pbp_df.empty:
         return pd.DataFrame()
 
-    # Filtra eventi clutch
-    clutch_df = pbp_df[pbp_df['clutch'] == True].copy()
+    # Filtra eventi clutch e rimuovi righe senza player valido
+    clutch_df = pbp_df[(pbp_df['clutch'] == True) &
+                       (pbp_df['player'].notna()) &
+                       (pbp_df['player'] != '')].copy()
 
     if clutch_df.empty:
         return pd.DataFrame()
@@ -219,8 +250,9 @@ def compute_clutch_stats(pbp_df):
         0
     )
 
-    # Calcola punti totali per confronto
-    total_points = pbp_df[pbp_df['points'] > 0].groupby('player')['points'].sum()
+    # Calcola punti totali per confronto (solo player validi)
+    valid_scoring = pbp_df[(pbp_df['points'] > 0) & (pbp_df['player'].notna()) & (pbp_df['player'] != '')]
+    total_points = valid_scoring.groupby('player')['points'].sum()
     clutch_stats['total_points'] = clutch_stats['player'].map(total_points).fillna(0)
 
     # Percentuale punti in clutch
@@ -316,8 +348,11 @@ def compute_q4_heroes(pbp_df, min_games=5):
     if pbp_df is None or pbp_df.empty:
         return pd.DataFrame()
 
+    # Filtra righe con player valido
+    valid_df = pbp_df[(pbp_df['player'].notna()) & (pbp_df['player'] != '')]
+
     # Punti nel Q4
-    q4_df = pbp_df[(pbp_df['quarter'] == 4) & (pbp_df['points'] > 0)]
+    q4_df = valid_df[(valid_df['quarter'] == 4) & (valid_df['points'] > 0)]
     q4_stats = q4_df.groupby(['player', 'team']).agg({
         'points': 'sum',
         'game_code': 'nunique'
@@ -325,7 +360,7 @@ def compute_q4_heroes(pbp_df, min_games=5):
     q4_stats.columns = ['player', 'team', 'q4_points', 'q4_games']
 
     # Punti nei quarti 1-3
-    other_df = pbp_df[(pbp_df['quarter'] < 4) & (pbp_df['points'] > 0)]
+    other_df = valid_df[(valid_df['quarter'] < 4) & (valid_df['points'] > 0)]
     other_stats = other_df.groupby('player').agg({
         'points': 'sum',
         'game_code': 'nunique'
@@ -431,6 +466,7 @@ def compute_scoring_runs(pbp_df, min_run=8):
     """
     Identifica i "run" (parziali) significativi nelle partite.
     Un run è una sequenza di punti consecutivi di una squadra.
+    Deduce i punti dalla sequenza di punteggio, non dal testo delle azioni.
 
     Args:
         pbp_df: DataFrame PBP
@@ -453,33 +489,55 @@ def compute_scoring_runs(pbp_df, min_run=8):
         home_team = game_df['home_team'].iloc[0]
         away_team = game_df['away_team'].iloc[0]
 
-        # Trova i run calcolando i parziali
+        # Estrai sequenza unica di punteggi (rimuovi duplicati consecutivi)
+        prev_home, prev_away = 0, 0
+        score_changes = []
+
+        for _, event in game_df.iterrows():
+            curr_home = event['score_home']
+            curr_away = event['score_away']
+
+            # Salta se punteggio non cambiato o diminuito (dati corrotti)
+            if curr_home == prev_home and curr_away == prev_away:
+                continue
+            if curr_home < prev_home or curr_away < prev_away:
+                continue
+
+            # Determina chi ha segnato dalla differenza di punteggio
+            home_pts = curr_home - prev_home
+            away_pts = curr_away - prev_away
+
+            if home_pts > 0 and away_pts == 0:
+                score_changes.append(('home', home_pts))
+            elif away_pts > 0 and home_pts == 0:
+                score_changes.append(('away', away_pts))
+            # Se entrambi cambiano, potrebbero essere eventi multipli - ignora
+
+            prev_home, prev_away = curr_home, curr_away
+
+        # Trova i run dalla sequenza di cambi punteggio
         current_run_team = None
         current_run_points = 0
 
-        for _, event in game_df.iterrows():
-            if event['points'] > 0:
-                if event['is_home_action']:
-                    scoring_team = home_team
-                else:
-                    scoring_team = away_team
+        for team_type, pts in score_changes:
+            scoring_team = home_team if team_type == 'home' else away_team
 
-                if scoring_team == current_run_team:
-                    current_run_points += event['points']
-                else:
-                    # Salva il run precedente se significativo
-                    if current_run_points >= min_run and current_run_team:
-                        other_team = away_team if current_run_team == home_team else home_team
-                        runs_data.append({
-                            'team': current_run_team,
-                            'opponent': other_team,
-                            'run_points': current_run_points,
-                            'game_code': game_code
-                        })
+            if scoring_team == current_run_team:
+                current_run_points += pts
+            else:
+                # Salva il run precedente se significativo
+                if current_run_points >= min_run and current_run_team:
+                    other_team = away_team if current_run_team == home_team else home_team
+                    runs_data.append({
+                        'team': current_run_team,
+                        'opponent': other_team,
+                        'run_points': current_run_points,
+                        'game_code': game_code
+                    })
 
-                    # Inizia nuovo run
-                    current_run_team = scoring_team
-                    current_run_points = event['points']
+                # Inizia nuovo run
+                current_run_team = scoring_team
+                current_run_points = pts
 
         # Salva l'ultimo run
         if current_run_points >= min_run and current_run_team:
@@ -525,20 +583,23 @@ def compute_scoring_runs(pbp_df, min_run=8):
     return team_runs.sort_values('run_diff', ascending=False)
 
 
-def compute_comeback_stats(pbp_df, min_deficit=10):
+def compute_comeback_stats(pbp_df, min_deficit=10, comeback_threshold=2):
     """
     Trova le squadre che rimontano da grandi deficit.
 
+    Una "rimonta" = da -min_deficit o peggio, tornare almeno a -comeback_threshold
+    Una "rimonta riuscita" = rimonta che finisce con vittoria
+
     Args:
         pbp_df: DataFrame PBP
-        min_deficit: Minimo svantaggio da cui rimontare
+        min_deficit: Minimo svantaggio da cui partire (default 10)
+        comeback_threshold: Scarto massimo per considerare rimonta completata (default 2)
 
     Returns:
-        DataFrame con: team, comebacks, comeback_wins, max_deficit_overcome,
-                       blown_leads, avg_deficit_overcome
+        tuple: (DataFrame aggregato, DataFrame dettagli partite)
     """
     if pbp_df is None or pbp_df.empty:
-        return pd.DataFrame()
+        return pd.DataFrame(), pd.DataFrame()
 
     comeback_data = []
     blown_lead_data = []
@@ -546,7 +607,30 @@ def compute_comeback_stats(pbp_df, min_deficit=10):
     # Analizza partita per partita
     for game_code in pbp_df['game_code'].unique():
         game_df = pbp_df[pbp_df['game_code'] == game_code].copy()
-        game_df = game_df.sort_values('total_seconds')
+
+        if game_df.empty or 'gap' not in game_df.columns:
+            continue
+
+        # Ordina per tempo E punteggio totale per gestire eventi con stesso timestamp
+        game_df['total_score'] = game_df['score_home'] + game_df['score_away']
+        game_df = game_df.sort_values(['total_seconds', 'total_score'])
+
+        # Rimuovi eventi anomali dove il punteggio diminuisce
+        valid_mask = [True]  # Primo evento sempre valido
+        prev_home = game_df.iloc[0]['score_home']
+        prev_away = game_df.iloc[0]['score_away']
+
+        for i in range(1, len(game_df)):
+            row = game_df.iloc[i]
+            # Valido se il punteggio non diminuisce (tolleranza per errori minori)
+            if row['score_home'] >= prev_home - 1 and row['score_away'] >= prev_away - 1:
+                valid_mask.append(True)
+                prev_home = row['score_home']
+                prev_away = row['score_away']
+            else:
+                valid_mask.append(False)
+
+        game_df = game_df[valid_mask]
 
         if game_df.empty:
             continue
@@ -554,95 +638,184 @@ def compute_comeback_stats(pbp_df, min_deficit=10):
         home_team = game_df['home_team'].iloc[0]
         away_team = game_df['away_team'].iloc[0]
 
-        # Calcola gap nel tempo per la home team
-        # gap positivo = home avanti, gap negativo = away avanti
-        # Trova il massimo svantaggio per ogni squadra
-
-        # Per la home: trova il gap minimo (massimo svantaggio)
-        min_gap = game_df['gap'].min()  # Massimo svantaggio home (gap negativo)
-        max_gap = game_df['gap'].max()  # Massimo vantaggio home
-
-        # Gap finale
+        # Gap e punteggio finale
         final_gap = game_df.iloc[-1]['gap'] if len(game_df) > 0 else 0
-        # Se non c'è gap finale chiaro, usa score
+        final_home = 0
+        final_away = 0
         if 'score_home' in game_df.columns and 'score_away' in game_df.columns:
-            final_home = game_df.iloc[-1]['score_home']
-            final_away = game_df.iloc[-1]['score_away']
+            final_home = int(game_df.iloc[-1]['score_home'])
+            final_away = int(game_df.iloc[-1]['score_away'])
             final_gap = final_home - final_away
 
         home_won = final_gap > 0
 
-        # Home ha rimontato?
-        if min_gap <= -min_deficit and home_won:
+        # Traccia rimonte per HOME team
+        home_max_deficit = 0
+        home_max_deficit_time = 0
+        home_max_deficit_quarter = 0
+        home_came_back = False
+
+        for _, event in game_df.iterrows():
+            gap = event['gap']
+            if gap < -min_deficit:
+                if abs(gap) > home_max_deficit:
+                    home_max_deficit = abs(gap)
+                    home_max_deficit_time = event.get('total_seconds', 0)
+                    home_max_deficit_quarter = event.get('quarter', 0)
+            if home_max_deficit >= min_deficit and gap >= -comeback_threshold:
+                home_came_back = True
+                break
+
+        if home_max_deficit >= min_deficit and home_came_back:
+            # Trova il massimo vantaggio/minimo svantaggio DOPO il momento del deficit
+            best_gap_after = -home_max_deficit  # Inizia dal peggior punto
+            best_gap_after_time = home_max_deficit_time
+            best_gap_after_quarter = home_max_deficit_quarter
+            passed_deficit = False
+
+            for _, event in game_df.iterrows():
+                gap = event['gap']
+                # Segnala quando superiamo il momento del max deficit
+                if event.get('total_seconds', 0) >= home_max_deficit_time:
+                    passed_deficit = True
+                # Cerca il miglior gap solo DOPO il momento del deficit
+                if passed_deficit and gap > best_gap_after:
+                    best_gap_after = gap
+                    best_gap_after_time = event.get('total_seconds', 0)
+                    best_gap_after_quarter = event.get('quarter', 0)
+
+            # Converti tempi in minuti:secondi
+            mins = int(home_max_deficit_time // 60)
+            secs = int(home_max_deficit_time % 60)
+            best_mins = int(best_gap_after_time // 60)
+            best_secs = int(best_gap_after_time % 60)
+
             comeback_data.append({
                 'team': home_team,
-                'deficit_overcome': abs(min_gap),
-                'won': True,
+                'opponent': away_team,
+                'deficit': home_max_deficit,
+                'deficit_time': f"{mins}:{secs:02d}",
+                'deficit_quarter': int(home_max_deficit_quarter),
+                'best_after': best_gap_after,  # Positivo = in vantaggio
+                'best_after_time': f"{best_mins}:{best_secs:02d}",
+                'best_after_quarter': int(best_gap_after_quarter),
+                'final_score': f"{final_home}-{final_away}",
+                'won': home_won,
                 'game_code': game_code
             })
+            # Dettaglio blown lead (prospettiva away team che subisce rimonta)
             blown_lead_data.append({
                 'team': away_team,
-                'lead_blown': abs(min_gap),
-                'game_code': game_code
-            })
-        elif min_gap <= -min_deficit and not home_won:
-            # Home era sotto di tanto ma non ha rimontato
-            comeback_data.append({
-                'team': home_team,
-                'deficit_overcome': 0,
-                'won': False,
+                'opponent': home_team,
+                'max_lead': home_max_deficit,
+                'max_lead_time': f"{mins}:{secs:02d}",
+                'max_lead_quarter': int(home_max_deficit_quarter),
+                'worst_after': -best_gap_after,  # Negativo = in svantaggio
+                'worst_after_time': f"{best_mins}:{best_secs:02d}",
+                'worst_after_quarter': int(best_gap_after_quarter),
+                'final_score': f"{final_away}-{final_home}",
+                'lost': home_won,  # away team perde se home vince
                 'game_code': game_code
             })
 
-        # Away ha rimontato?
-        if max_gap >= min_deficit and not home_won:
+        # Traccia rimonte per AWAY team
+        away_max_deficit = 0
+        away_max_deficit_time = 0
+        away_max_deficit_quarter = 0
+        away_came_back = False
+
+        for _, event in game_df.iterrows():
+            gap = event['gap']
+            if gap > min_deficit:
+                if gap > away_max_deficit:
+                    away_max_deficit = gap
+                    away_max_deficit_time = event.get('total_seconds', 0)
+                    away_max_deficit_quarter = event.get('quarter', 0)
+            if away_max_deficit >= min_deficit and gap <= comeback_threshold:
+                away_came_back = True
+                break
+
+        if away_max_deficit >= min_deficit and away_came_back:
+            # Trova il massimo vantaggio DOPO il momento del deficit per away
+            best_gap_after = away_max_deficit  # Inizia dal peggior punto (positivo per away = sotto)
+            best_gap_after_time = away_max_deficit_time
+            best_gap_after_quarter = away_max_deficit_quarter
+            passed_deficit = False
+
+            for _, event in game_df.iterrows():
+                gap = event['gap']
+                # Segnala quando superiamo il momento del max deficit
+                if event.get('total_seconds', 0) >= away_max_deficit_time:
+                    passed_deficit = True
+                # Per away, gap negativo = away avanti, quindi cerchiamo il gap più basso
+                if passed_deficit and gap < best_gap_after:
+                    best_gap_after = gap
+                    best_gap_after_time = event.get('total_seconds', 0)
+                    best_gap_after_quarter = event.get('quarter', 0)
+
+            mins = int(away_max_deficit_time // 60)
+            secs = int(away_max_deficit_time % 60)
+            best_mins = int(best_gap_after_time // 60)
+            best_secs = int(best_gap_after_time % 60)
+
+            # Per away: best_after negativo = in vantaggio, lo invertiamo per coerenza
             comeback_data.append({
                 'team': away_team,
-                'deficit_overcome': max_gap,
-                'won': True,
+                'opponent': home_team,
+                'deficit': away_max_deficit,
+                'deficit_time': f"{mins}:{secs:02d}",
+                'deficit_quarter': int(away_max_deficit_quarter),
+                'best_after': -best_gap_after,  # Inverti: positivo = in vantaggio
+                'best_after_time': f"{best_mins}:{best_secs:02d}",
+                'best_after_quarter': int(best_gap_after_quarter),
+                'final_score': f"{final_away}-{final_home}",
+                'won': not home_won,
                 'game_code': game_code
             })
+            # Dettaglio blown lead (prospettiva home team che subisce rimonta)
             blown_lead_data.append({
                 'team': home_team,
-                'lead_blown': max_gap,
-                'game_code': game_code
-            })
-        elif max_gap >= min_deficit and home_won:
-            comeback_data.append({
-                'team': away_team,
-                'deficit_overcome': 0,
-                'won': False,
+                'opponent': away_team,
+                'max_lead': away_max_deficit,
+                'max_lead_time': f"{mins}:{secs:02d}",
+                'max_lead_quarter': int(away_max_deficit_quarter),
+                'worst_after': best_gap_after,  # gap positivo = home sotto
+                'worst_after_time': f"{best_mins}:{best_secs:02d}",
+                'worst_after_quarter': int(best_gap_after_quarter),
+                'final_score': f"{final_home}-{final_away}",
+                'lost': not home_won,  # home team perde se home non vince
                 'game_code': game_code
             })
 
     if not comeback_data:
-        return pd.DataFrame()
+        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
 
     comeback_df = pd.DataFrame(comeback_data)
+    details_df = comeback_df.copy()  # Dettagli singole partite rimonte
 
-    # Statistiche per squadra
-    successful = comeback_df[comeback_df['deficit_overcome'] > 0]
+    # Dettagli blown leads
+    blown_details_df = pd.DataFrame(blown_lead_data) if blown_lead_data else pd.DataFrame()
 
-    if successful.empty:
-        return pd.DataFrame()
-
-    comebacks = successful.groupby('team').agg({
-        'deficit_overcome': ['count', 'max', 'mean'],
+    # Statistiche aggregate per squadra
+    comebacks = comeback_df.groupby('team').agg({
+        'deficit': ['count', 'max', 'mean'],
         'won': 'sum'
     }).reset_index()
     comebacks.columns = ['team', 'comebacks', 'max_deficit', 'avg_deficit', 'comeback_wins']
 
-    # Blown leads
+    # Blown leads aggregate
     if blown_lead_data:
         blown_df = pd.DataFrame(blown_lead_data)
         blown = blown_df.groupby('team').agg({
-            'lead_blown': ['count', 'max']
+            'max_lead': ['count', 'max'],
+            'lost': 'sum'
         }).reset_index()
-        blown.columns = ['team', 'blown_leads', 'worst_blown']
-        comebacks = comebacks.merge(blown, on='team', how='left').fillna(0)
+        blown.columns = ['team', 'blown_leads', 'worst_blown', 'blown_losses']
+        comebacks = comebacks.merge(blown, on='team', how='outer').fillna(0)
     else:
         comebacks['blown_leads'] = 0
         comebacks['worst_blown'] = 0
+        comebacks['blown_losses'] = 0
 
     comebacks['avg_deficit'] = comebacks['avg_deficit'].round(1)
     comebacks['comebacks'] = comebacks['comebacks'].astype(int)
@@ -650,15 +823,16 @@ def compute_comeback_stats(pbp_df, min_deficit=10):
     comebacks['blown_leads'] = comebacks['blown_leads'].astype(int)
     comebacks['max_deficit'] = comebacks['max_deficit'].astype(int)
     comebacks['worst_blown'] = comebacks['worst_blown'].astype(int)
+    comebacks['blown_losses'] = comebacks['blown_losses'].astype(int)
 
-    # Comeback score: premia rimonte vincenti
     comebacks['comeback_score'] = (
         comebacks['comeback_wins'] * 2 +
         comebacks['comebacks'] -
+        comebacks['blown_losses'] * 2 -
         comebacks['blown_leads']
     )
 
-    return comebacks.sort_values('comeback_score', ascending=False)
+    return comebacks.sort_values('comeback_score', ascending=False), details_df, blown_details_df
 
 
 def get_pbp_summary(campionato_filter):
@@ -696,8 +870,11 @@ def compute_player_quarter_activity(pbp_df):
     if pbp_df is None or pbp_df.empty:
         return pd.DataFrame()
 
+    # Filtra righe con player valido
+    valid_df = pbp_df[(pbp_df['player'].notna()) & (pbp_df['player'] != '')]
+
     # Conta eventi per giocatore per quarto
-    activity = pbp_df.groupby(['player', 'team', 'quarter']).size().unstack(fill_value=0)
+    activity = valid_df.groupby(['player', 'team', 'quarter']).size().unstack(fill_value=0)
     activity = activity.reset_index()
 
     # Rinomina colonne

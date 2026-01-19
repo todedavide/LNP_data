@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance - Serie B - Girone B - LNP Stats</title>
+    <link rel="icon" type="image/png" href="../../../static/favicon180x180.png">
+    <link rel="stylesheet" href="../../../static/twinplay_brand.css">
+    <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--tp-gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--tp-spacing-lg);
+            z-index: 1000;
+            box-shadow: var(--tp-shadow-md);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-md);
+        }
+
+        .header-logo img {
+            height: 36px;
+        }
+
+        .header-logo a {
+            color: white;
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .header-breadcrumb {
+            margin-left: var(--tp-spacing-xl);
+            opacity: 0.8;
+            font-size: 0.875rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: var(--tp-spacing-md);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--tp-light);
+        }
+
+        .sidebar-section-header {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            color: var(--tp-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-sm);
+            transition: background 0.2s;
+        }
+
+        .sidebar-section-header:hover {
+            background: var(--tp-light);
+        }
+
+        .sidebar-section-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            font-size: 0.75rem;
+        }
+
+        .sidebar-section.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-subsection {
+            display: none;
+            background: var(--tp-light);
+        }
+
+        .sidebar-section.expanded .sidebar-subsection {
+            display: block;
+        }
+
+        .sidebar-category {
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: var(--tp-spacing-lg);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--tp-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: var(--tp-spacing-sm);
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: calc(var(--tp-spacing-lg) + 10px);
+            color: var(--tp-dark);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: white;
+            border-left-color: var(--tp-primary);
+        }
+
+        .sidebar-link.active {
+            background: white;
+            border-left-color: var(--tp-primary);
+            color: var(--tp-secondary);
+            font-weight: 600;
+        }
+
+        .sidebar-home-btn {
+            display: block;
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--tp-light);
+            transition: all 0.2s;
+        }
+
+        .sidebar-home-btn:hover {
+            background: var(--tp-light);
+            color: var(--tp-secondary);
+        }
+
+        .sidebar-competition {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            background: var(--tp-gradient-primary);
+            color: white;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: var(--tp-spacing-sm);
+        }
+
+        .sidebar:empty + .main {
+            margin-left: 0;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: var(--tp-spacing-xl);
+            min-height: calc(100vh - var(--header-height));
+            background: var(--tp-light);
+        }
+
+        .page-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.75rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-xs);
+        }
+
+        .page-subtitle {
+            color: var(--tp-gray);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .content-section {
+            background: white;
+            border-radius: var(--tp-radius-lg);
+            padding: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-lg);
+            box-shadow: var(--tp-shadow-sm);
+        }
+
+        .section-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.25rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-lg);
+            padding-bottom: var(--tp-spacing-sm);
+            border-bottom: 2px solid var(--tp-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .stat-card {
+            background: var(--tp-gradient-primary);
+            color: white;
+            padding: var(--tp-spacing-lg);
+            border-radius: var(--tp-radius-lg);
+            text-align: center;
+        }
+
+        .stat-card.accent {
+            background: var(--tp-gradient-accent);
+            color: var(--tp-dark);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+        }
+
+        .stat-value {
+            font-family: var(--tp-font-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: var(--tp-spacing-xs);
+        }
+
+        /* Plotly responsive */
+        .js-plotly-plot {
+            width: 100% !important;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            font-size: 0.8rem;
+        }
+
+        .site-footer img {
+            height: 24px;
+            margin-bottom: var(--tp-spacing-sm);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="header-logo">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <a href="../../../index.html">LNP Stats</a>
+        </div>
+        <div class="header-breadcrumb">Serie B - Girone B / Giocatori / Performance</div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        
+    <a href="../../../index.html" class="sidebar-home-btn">
+        ← Cambia campionato
+    </a>
+    <div class="sidebar-competition">
+        Serie B - Girone B
+    </div>
+    <div class="sidebar-category">Squadre</div><a href="../../../b/girone-b/squadre/classifiche.html" class="sidebar-link ">Classifiche</a><a href="../../../b/girone-b/squadre/andamento.html" class="sidebar-link ">Andamento</a><a href="../../../b/girone-b/squadre/profilo.html" class="sidebar-link ">Profilo</a><a href="../../../b/girone-b/squadre/risultati.html" class="sidebar-link ">Risultati</a><div class="sidebar-category">Giocatori</div><a href="../../../b/girone-b/giocatori/statistiche.html" class="sidebar-link ">Statistiche</a><a href="../../../b/girone-b/giocatori/profilo.html" class="sidebar-link ">Profilo</a><a href="../../../b/girone-b/giocatori/performance.html" class="sidebar-link active">Performance</a><a href="../../../b/girone-b/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../../b/girone-b/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
+    </nav>
+
+    <main class="main">
+        <h1 class="page-title">Performance</h1>
+        <p class="page-subtitle">Serie B - Girone B - Forma, Consistenza e Casa/Trasferta</p>
+
+        
+    
+    <div class="content-section">
+        <h2 class="section-title">Forma Recente - Chi è Hot/Cold</h2>
+        <p style="color: #666; margin-bottom: 20px;">
+            Confronto tra le ultime 5 partite e la media stagionale.
+            <span style="color: #22c55e; font-weight: bold;">Valori positivi</span> = giocatore in crescita.
+            <span style="color: #ef4444; font-weight: bold;">Valori negativi</span> = giocatore in calo.
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <!-- HOT Players -->
+            <div>
+                <h3 style="color: #22c55e; display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+                    <span style="font-size: 1.5em;">🔥</span> Giocatori HOT
+                </h3>
+                <div id="hot-container"></div>
+            </div>
+
+            <!-- COLD Players -->
+            <div>
+                <h3 style="color: #3b82f6; display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+                    <span style="font-size: 1.5em;">❄️</span> Giocatori COLD
+                </h3>
+                <div id="cold-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const hotPlayers = [{"name": "F. Natale", "team": "Umana San Giobbe Chiusi", "gp": 20, "season_pt": 4.6, "last5_pt": 8.6, "pt_diff": 84.9, "season_as": 0.3, "last5_as": 1.0, "as_diff": 233.3, "season_rt": 3.0, "last5_rt": 5.8, "rt_diff": 96.6, "form_score": 131.8}, {"name": "M. Ferrara", "team": "Luiss Roma", "gp": 15, "season_pt": 1.7, "last5_pt": 2.0, "pt_diff": 20.0, "season_as": 0.6, "last5_as": 1.4, "as_diff": 133.3, "season_rt": 2.2, "last5_rt": 4.4, "rt_diff": 100.0, "form_score": 70.0}, {"name": "L. Mongelli", "team": "Consorzio Leonardo Dany Quarrata", "gp": 21, "season_pt": 1.8, "last5_pt": 4.8, "pt_diff": 172.4, "season_as": 0.7, "last5_as": 0.4, "as_diff": -44.0, "season_rt": 0.9, "last5_rt": 0.6, "rt_diff": -30.0, "form_score": 67.0}, {"name": "A. Feliciangeli", "team": "OraS\u00ec Ravenna", "gp": 21, "season_pt": 5.7, "last5_pt": 11.4, "pt_diff": 99.5, "season_as": 1.8, "last5_as": 2.2, "as_diff": 24.9, "season_rt": 1.9, "last5_rt": 2.4, "rt_diff": 26.0, "form_score": 62.4}, {"name": "T. Morena", "team": "OraS\u00ec Ravenna", "gp": 21, "season_pt": 2.5, "last5_pt": 4.6, "pt_diff": 82.3, "season_as": 0.7, "last5_as": 0.8, "as_diff": 20.0, "season_rt": 2.1, "last5_rt": 2.8, "rt_diff": 30.7, "form_score": 53.3}, {"name": "A. Bazan", "team": "Virtus GVM Roma 1960", "gp": 21, "season_pt": 4.7, "last5_pt": 6.6, "pt_diff": 41.4, "season_as": 0.7, "last5_as": 1.0, "as_diff": 50.0, "season_rt": 1.6, "last5_rt": 3.0, "rt_diff": 85.3, "form_score": 52.8}, {"name": "J. Soliani", "team": "Power Basket Nocera", "gp": 18, "season_pt": 3.1, "last5_pt": 3.6, "pt_diff": 15.7, "season_as": 1.4, "last5_as": 2.4, "as_diff": 72.8, "season_rt": 1.2, "last5_rt": 2.2, "rt_diff": 88.6, "form_score": 47.4}, {"name": "G. Spizzichini", "team": "PSA Basket Casoria", "gp": 19, "season_pt": 4.5, "last5_pt": 7.0, "pt_diff": 56.5, "season_as": 2.9, "last5_as": 3.6, "as_diff": 22.1, "season_rt": 3.0, "last5_rt": 4.4, "rt_diff": 46.7, "form_score": 44.2}, {"name": "A. Valentini", "team": "Consultinvest Loreto Pesaro", "gp": 21, "season_pt": 9.1, "last5_pt": 11.6, "pt_diff": 27.5, "season_as": 0.5, "last5_as": 1.0, "as_diff": 90.9, "season_rt": 5.0, "last5_rt": 5.4, "rt_diff": 7.0, "form_score": 42.4}, {"name": "V. Zedda", "team": "UP Andrea Costa Imola", "gp": 14, "season_pt": 5.5, "last5_pt": 7.0, "pt_diff": 27.3, "season_as": 0.9, "last5_as": 1.4, "as_diff": 63.3, "season_rt": 2.6, "last5_rt": 3.4, "rt_diff": 28.6, "form_score": 38.4}, {"name": "M. Saladini", "team": "Power Basket Nocera", "gp": 18, "season_pt": 9.2, "last5_pt": 12.2, "pt_diff": 33.1, "season_as": 2.9, "last5_as": 4.0, "as_diff": 35.8, "season_rt": 2.5, "last5_rt": 3.8, "rt_diff": 52.0, "form_score": 37.7}, {"name": "M. Menconi", "team": "Solbat Golfo Piombino", "gp": 20, "season_pt": 4.8, "last5_pt": 6.4, "pt_diff": 32.0, "season_as": 1.8, "last5_as": 2.6, "as_diff": 40.5, "season_rt": 1.0, "last5_rt": 1.4, "rt_diff": 33.3, "form_score": 34.8}, {"name": "M. Visintin", "team": "Virtus GVM Roma 1960", "gp": 21, "season_pt": 6.9, "last5_pt": 9.2, "pt_diff": 34.2, "season_as": 2.2, "last5_as": 3.2, "as_diff": 46.1, "season_rt": 2.9, "last5_rt": 3.4, "rt_diff": 19.0, "form_score": 34.7}, {"name": "A. Naoni", "team": "OraS\u00ec Ravenna", "gp": 17, "season_pt": 5.7, "last5_pt": 7.6, "pt_diff": 33.2, "season_as": 1.2, "last5_as": 1.6, "as_diff": 29.5, "season_rt": 1.3, "last5_rt": 1.8, "rt_diff": 39.1, "form_score": 33.3}, {"name": "L. Raffaelli", "team": "Umana San Giobbe Chiusi", "gp": 20, "season_pt": 9.8, "last5_pt": 11.8, "pt_diff": 20.4, "season_as": 2.6, "last5_as": 4.2, "as_diff": 64.7, "season_rt": 1.2, "last5_rt": 1.4, "rt_diff": 16.7, "form_score": 32.9}];
+        const coldPlayers = [{"name": "M. Graziano", "team": "Luiss Roma", "gp": 18, "season_pt": 2.6, "last5_pt": 0.0, "pt_diff": -100.0, "season_as": 0.3, "last5_as": 0.0, "as_diff": -100.0, "season_rt": 0.6, "last5_rt": 0.0, "rt_diff": -100.0, "form_score": -100.0}, {"name": "S. Redini", "team": "Ristopro Fabriano", "gp": 20, "season_pt": 0.8, "last5_pt": 0.0, "pt_diff": -100.0, "season_as": 0.2, "last5_as": 0.0, "as_diff": -100.0, "season_rt": 0.4, "last5_rt": 0.0, "rt_diff": -100.0, "form_score": -100.0}, {"name": "T. Gatto", "team": "UP Andrea Costa Imola", "gp": 14, "season_pt": 5.7, "last5_pt": 0.6, "pt_diff": -89.5, "season_as": 0.9, "last5_as": 0.0, "as_diff": -100.0, "season_rt": 3.4, "last5_rt": 0.2, "rt_diff": -94.0, "form_score": -93.6}, {"name": "J. Fokou", "team": "Virtus GVM Roma 1960", "gp": 21, "season_pt": 1.2, "last5_pt": 0.0, "pt_diff": -100.0, "season_as": 0.2, "last5_as": 0.0, "as_diff": -100.0, "season_rt": 0.9, "last5_rt": 0.4, "rt_diff": -53.3, "form_score": -90.7}, {"name": "S. Errede", "team": "Virtus Imola", "gp": 20, "season_pt": 1.6, "last5_pt": 0.0, "pt_diff": -100.0, "season_as": 0.2, "last5_as": 0.0, "as_diff": -100.0, "season_rt": 1.2, "last5_rt": 0.6, "rt_diff": -50.0, "form_score": -90.0}, {"name": "I. Boev", "team": "Virtus Imola", "gp": 19, "season_pt": 2.8, "last5_pt": 1.0, "pt_diff": -64.8, "season_as": 0.3, "last5_as": 0.0, "as_diff": -100.0, "season_rt": 2.0, "last5_rt": 0.0, "rt_diff": -100.0, "form_score": -82.4}, {"name": "E. Caiazza", "team": "Adamant Ferrara", "gp": 19, "season_pt": 3.3, "last5_pt": 0.8, "pt_diff": -75.9, "season_as": 1.2, "last5_as": 0.4, "as_diff": -67.0, "season_rt": 1.6, "last5_rt": 0.4, "rt_diff": -75.5, "form_score": -73.1}, {"name": "E. Buffo", "team": "Solbat Golfo Piombino", "gp": 18, "season_pt": 5.2, "last5_pt": 1.2, "pt_diff": -77.0, "season_as": 1.1, "last5_as": 0.6, "as_diff": -46.0, "season_rt": 1.7, "last5_rt": 0.4, "rt_diff": -76.8, "form_score": -67.7}, {"name": "N. Calabrese", "team": "Consorzio Leonardo Dany Quarrata", "gp": 12, "season_pt": 6.2, "last5_pt": 1.0, "pt_diff": -83.8, "season_as": 0.8, "last5_as": 0.4, "as_diff": -46.7, "season_rt": 2.2, "last5_rt": 1.0, "rt_diff": -55.6, "form_score": -67.0}, {"name": "F. Matrone", "team": "Power Basket Nocera", "gp": 11, "season_pt": 3.5, "last5_pt": 1.2, "pt_diff": -66.2, "season_as": 0.5, "last5_as": 0.2, "as_diff": -63.3, "season_rt": 4.3, "last5_rt": 1.6, "rt_diff": -62.6, "form_score": -64.6}, {"name": "S. Vecerina", "team": "Paperdi Juvecaserta 2021", "gp": 18, "season_pt": 5.1, "last5_pt": 2.6, "pt_diff": -48.6, "season_as": 3.2, "last5_as": 1.0, "as_diff": -69.0, "season_rt": 2.5, "last5_rt": 0.8, "rt_diff": -68.0, "form_score": -58.6}, {"name": "N. Castellino", "team": "Virtus Imola", "gp": 13, "season_pt": 4.8, "last5_pt": 2.2, "pt_diff": -53.9, "season_as": 2.1, "last5_as": 1.0, "as_diff": -51.9, "season_rt": 2.7, "last5_rt": 0.6, "rt_diff": -77.7, "form_score": -58.0}, {"name": "M. Santiangeli", "team": "Tema Sinergie Faenza", "gp": 19, "season_pt": 7.3, "last5_pt": 3.0, "pt_diff": -59.0, "season_as": 1.8, "last5_as": 0.6, "as_diff": -67.4, "season_rt": 4.0, "last5_rt": 2.4, "rt_diff": -40.0, "form_score": -57.7}, {"name": "R. Ponziani", "team": "Ristopro Fabriano", "gp": 21, "season_pt": 8.2, "last5_pt": 3.0, "pt_diff": -63.4, "season_as": 0.8, "last5_as": 0.4, "as_diff": -47.5, "season_rt": 4.2, "last5_rt": 2.4, "rt_diff": -43.4, "form_score": -54.6}, {"name": "G. Dron", "team": "OraS\u00ec Ravenna", "gp": 20, "season_pt": 11.7, "last5_pt": 4.8, "pt_diff": -59.0, "season_as": 3.2, "last5_as": 1.4, "as_diff": -56.2, "season_rt": 3.2, "last5_rt": 2.0, "rt_diff": -36.5, "form_score": -53.7}];
+
+        function renderPlayerCard(player, isHot) {
+            const color = isHot ? '#22c55e' : '#3b82f6';
+            const arrow = isHot ? '↑' : '↓';
+
+            function diffBadge(val) {
+                const c = val > 0 ? '#22c55e' : val < 0 ? '#ef4444' : '#666';
+                const prefix = val > 0 ? '+' : '';
+                return `<span style="color: ${c}; font-weight: 600;">${prefix}${val}%</span>`;
+            }
+
+            return `
+                <div style="background: white; border-radius: 8px; padding: 15px; margin-bottom: 10px; border-left: 4px solid ${color};">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div>
+                            <div style="font-weight: 600;">${player.name}</div>
+                            <div style="font-size: 12px; color: #666;">${player.team} | ${player.gp} partite</div>
+                        </div>
+                        <div style="background: ${color}; color: white; padding: 4px 12px; border-radius: 20px; font-weight: bold;">
+                            ${player.form_score > 0 ? '+' : ''}${player.form_score}%
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 13px;">
+                        <div style="text-align: center; background: #f9f9f9; padding: 8px; border-radius: 6px;">
+                            <div style="color: #666; font-size: 11px;">Punti</div>
+                            <div><b>${player.last5_pt}</b> vs ${player.season_pt}</div>
+                            ${diffBadge(player.pt_diff)}
+                        </div>
+                        <div style="text-align: center; background: #f9f9f9; padding: 8px; border-radius: 6px;">
+                            <div style="color: #666; font-size: 11px;">Assist</div>
+                            <div><b>${player.last5_as}</b> vs ${player.season_as}</div>
+                            ${diffBadge(player.as_diff)}
+                        </div>
+                        <div style="text-align: center; background: #f9f9f9; padding: 8px; border-radius: 6px;">
+                            <div style="color: #666; font-size: 11px;">Rimbalzi</div>
+                            <div><b>${player.last5_rt}</b> vs ${player.season_rt}</div>
+                            ${diffBadge(player.rt_diff)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        document.getElementById('hot-container').innerHTML = hotPlayers.map(p => renderPlayerCard(p, true)).join('');
+        document.getElementById('cold-container').innerHTML = coldPlayers.map(p => renderPlayerCard(p, false)).join('');
+    </script>
+    
+
+    <h2 class="section-title" style="margin-top: 2rem;">Consistenza</h2>
+    
+    <div class="content-section">
+        <h2 class="section-title">Affidabilità Giocatori</h2>
+        <p style="color: #666; margin-bottom: 20px;">
+            Il punteggio di <strong>Affidabilità</strong> (0-100) indica quanto un giocatore è costante nelle sue performance.
+            <br>Punteggio alto = sai cosa aspettarti. Punteggio basso = performance imprevedibili.
+            <br><span style="font-size: 13px;">Il punteggio è aggiustato per il numero di partite: con poche partite il valore viene "tirato" verso 50.</span>
+        </p>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button id="btn-top" onclick="showView('top')" style="padding: 8px 16px; border: 2px solid #302B8F; border-radius: 6px; cursor: pointer; font-weight: 600; background: #302B8F; color: white;">
+                Più Costanti
+            </button>
+            <button id="btn-bottom" onclick="showView('bottom')" style="padding: 8px 16px; border: 2px solid #302B8F; border-radius: 6px; cursor: pointer; font-weight: 600; background: white; color: #302B8F;">
+                Più Variabili
+            </button>
+        </div>
+
+        <div id="table-container"></div>
+    </div>
+
+    <script>
+        const playersData = [{"giocatore": "S. Centanni", "team": "Ristopro Fabriano", "media": 14.9, "affidabilita": 76.0, "partite": 11}, {"giocatore": "M. Arrigoni", "team": "General Contractor Jesi", "media": 14.8, "affidabilita": 76.0, "partite": 21}, {"giocatore": "E. Vettori", "team": "Tema Sinergie Faenza", "media": 16.8, "affidabilita": 76.0, "partite": 20}, {"giocatore": "R. Salvioni", "team": "Luiss Roma", "media": 12.8, "affidabilita": 73.0, "partite": 20}, {"giocatore": "M. Gherardini", "team": "Allianz Pazienza San Severo", "media": 16.5, "affidabilita": 71.0, "partite": 21}, {"giocatore": "L. Donadio", "team": "Power Basket Nocera", "media": 13.9, "affidabilita": 71.0, "partite": 19}, {"giocatore": "F. Paolin", "team": "OraS\u00ec Ravenna", "media": 12.3, "affidabilita": 71.0, "partite": 21}, {"giocatore": "C. Vijber", "team": "PSA Basket Casoria", "media": 13.5, "affidabilita": 69.0, "partite": 8}, {"giocatore": "M. Bakovi?", "team": "Benacquista Assicurazioni Latina", "media": 13.9, "affidabilita": 67.0, "partite": 19}, {"giocatore": "B. Sacchetti", "team": "Benacquista Assicurazioni Latina", "media": 12.5, "affidabilita": 66.0, "partite": 13}, {"giocatore": "N. Bertocco", "team": "Umana San Giobbe Chiusi", "media": 13.6, "affidabilita": 66.0, "partite": 20}, {"giocatore": "M. Radunic", "team": "Paperdi Juvecaserta 2021", "media": 13.7, "affidabilita": 66.0, "partite": 21}, {"giocatore": "D. Gabrovsek", "team": "Verodol CBD Pielle Livorno", "media": 14.3, "affidabilita": 66.0, "partite": 21}, {"giocatore": "C. Cappelletti", "team": "Power Basket Nocera", "media": 11.7, "affidabilita": 65.0, "partite": 17}, {"giocatore": "N. Raivio", "team": "Solbat Golfo Piombino", "media": 17.6, "affidabilita": 64.0, "partite": 20}, {"giocatore": "F. Regoli", "team": "Consorzio Leonardo Dany Quarrata", "media": 11.0, "affidabilita": 63.0, "partite": 21}, {"giocatore": "V. Cucci", "team": "Luiss Roma", "media": 9.0, "affidabilita": 62.0, "partite": 18}, {"giocatore": "A. Gallo", "team": "Benacquista Assicurazioni Latina", "media": 13.7, "affidabilita": 62.0, "partite": 19}, {"giocatore": "F. Piccone", "team": "General Contractor Jesi", "media": 14.1, "affidabilita": 62.0, "partite": 21}, {"giocatore": "S. Giunta", "team": "Solbat Golfo Piombino", "media": 11.4, "affidabilita": 61.0, "partite": 20}, {"giocatore": "K. Palsson", "team": "General Contractor Jesi", "media": 14.7, "affidabilita": 61.0, "partite": 18}, {"giocatore": "G. Berra", "team": "PSA Basket Casoria", "media": 12.4, "affidabilita": 61.0, "partite": 20}, {"giocatore": "E. Leonzio", "team": "Verodol CBD Pielle Livorno", "media": 14.2, "affidabilita": 61.0, "partite": 21}, {"giocatore": "A. Sperduto", "team": "Paperdi Juvecaserta 2021", "media": 10.4, "affidabilita": 60.0, "partite": 7}, {"giocatore": "D. D'argenzio", "team": "Paperdi Juvecaserta 2021", "media": 18.8, "affidabilita": 60.0, "partite": 21}, {"giocatore": "E. Stankevicius", "team": "Virtus Imola", "media": 26.4, "affidabilita": 60.0, "partite": 5}, {"giocatore": "D. Lucas", "team": "Allianz Pazienza San Severo", "media": 12.6, "affidabilita": 60.0, "partite": 21}, {"giocatore": "A. Pastore", "team": "Benacquista Assicurazioni Latina", "media": 10.0, "affidabilita": 60.0, "partite": 19}, {"giocatore": "K. \u0160ilke-\u017eunda", "team": "Ristopro Fabriano", "media": 13.3, "affidabilita": 60.0, "partite": 21}, {"giocatore": "A. Fragonara", "team": "Tema Sinergie Faenza", "media": 13.9, "affidabilita": 59.0, "partite": 20}, {"giocatore": "K. Brigato", "team": "OraS\u00ec Ravenna", "media": 13.0, "affidabilita": 59.0, "partite": 21}, {"giocatore": "F. Bugatti", "team": "Allianz Pazienza San Severo", "media": 17.0, "affidabilita": 58.0, "partite": 21}, {"giocatore": "I. Kucan", "team": "Virtus Imola", "media": 12.3, "affidabilita": 57.0, "partite": 15}, {"giocatore": "A. Mobio", "team": "Allianz Pazienza San Severo", "media": 14.2, "affidabilita": 57.0, "partite": 21}, {"giocatore": "R. Jakstas", "team": "OraS\u00ec Ravenna", "media": 12.0, "affidabilita": 56.0, "partite": 21}, {"giocatore": "M. Mbacke", "team": "Tema Sinergie Faenza", "media": 9.1, "affidabilita": 56.0, "partite": 20}, {"giocatore": "G. Leggio", "team": "Virtus GVM Roma 1960", "media": 9.8, "affidabilita": 56.0, "partite": 21}, {"giocatore": "J. Fernandez", "team": "Luiss Roma", "media": 13.5, "affidabilita": 55.0, "partite": 19}, {"giocatore": "S. Angelucci", "team": "Consorzio Leonardo Dany Quarrata", "media": 12.0, "affidabilita": 55.0, "partite": 21}, {"giocatore": "F. Dri", "team": "Ristopro Fabriano", "media": 10.8, "affidabilita": 55.0, "partite": 21}, {"giocatore": "L. Delfino", "team": "Consultinvest Loreto Pesaro", "media": 10.1, "affidabilita": 55.0, "partite": 21}, {"giocatore": "L. Battistini", "team": "Virtus GVM Roma 1960", "media": 12.8, "affidabilita": 55.0, "partite": 21}, {"giocatore": "D. Hadzic", "team": "Paperdi Juvecaserta 2021", "media": 11.8, "affidabilita": 52.0, "partite": 21}, {"giocatore": "T. Van Ounsem", "team": "Tema Sinergie Faenza", "media": 13.2, "affidabilita": 52.0, "partite": 20}, {"giocatore": "D. Marchini", "team": "Adamant Ferrara", "media": 10.4, "affidabilita": 51.0, "partite": 21}, {"giocatore": "L. Maglietti", "team": "General Contractor Jesi", "media": 10.0, "affidabilita": 50.0, "partite": 21}, {"giocatore": "M. Petrucci", "team": "Umana San Giobbe Chiusi", "media": 8.2, "affidabilita": 50.0, "partite": 20}, {"giocatore": "T. Kupstas", "team": "UP Andrea Costa Imola", "media": 11.3, "affidabilita": 50.0, "partite": 21}, {"giocatore": "R. Chessari", "team": "UP Andrea Costa Imola", "media": 8.1, "affidabilita": 49.0, "partite": 21}, {"giocatore": "J. Wojciechowksi", "team": "Ristopro Fabriano", "media": 10.2, "affidabilita": 49.0, "partite": 9}, {"giocatore": "G. Giorgi", "team": "Virtus Imola", "media": 12.2, "affidabilita": 48.0, "partite": 10}, {"giocatore": "E. Cena", "team": "OraS\u00ec Ravenna", "media": 8.0, "affidabilita": 48.0, "partite": 21}, {"giocatore": "J. Lucarelli", "team": "Verodol CBD Pielle Livorno", "media": 9.2, "affidabilita": 47.0, "partite": 19}, {"giocatore": "L. Abega", "team": "Ristopro Fabriano", "media": 12.6, "affidabilita": 46.0, "partite": 8}, {"giocatore": "N. Moffa", "team": "UP Andrea Costa Imola", "media": 13.1, "affidabilita": 45.0, "partite": 21}, {"giocatore": "L. Pollini", "team": "Virtus Imola", "media": 11.3, "affidabilita": 44.0, "partite": 20}, {"giocatore": "A. Renzi", "team": "Adamant Ferrara", "media": 11.6, "affidabilita": 44.0, "partite": 21}, {"giocatore": "A. Petracca", "team": "PSA Basket Casoria", "media": 8.7, "affidabilita": 43.0, "partite": 20}, {"giocatore": "R. Santiago", "team": "Adamant Ferrara", "media": 10.9, "affidabilita": 42.0, "partite": 16}, {"giocatore": "L. Raffaelli", "team": "Umana San Giobbe Chiusi", "media": 9.8, "affidabilita": 42.0, "partite": 20}, {"giocatore": "M. Saladini", "team": "Power Basket Nocera", "media": 9.2, "affidabilita": 42.0, "partite": 18}, {"giocatore": "L. Rasio", "team": "Umana San Giobbe Chiusi", "media": 11.8, "affidabilita": 42.0, "partite": 20}, {"giocatore": "M. Solaroli", "team": "Adamant Ferrara", "media": 8.5, "affidabilita": 42.0, "partite": 21}, {"giocatore": "M. Pasqualin", "team": "Luiss Roma", "media": 10.8, "affidabilita": 42.0, "partite": 20}, {"giocatore": "L. Baldi", "team": "Virtus Imola", "media": 11.2, "affidabilita": 41.0, "partite": 20}, {"giocatore": "D. Klyuchnyk", "team": "Verodol CBD Pielle Livorno", "media": 8.5, "affidabilita": 41.0, "partite": 21}, {"giocatore": "A. Cipolla", "team": "Benacquista Assicurazioni Latina", "media": 8.7, "affidabilita": 40.0, "partite": 20}, {"giocatore": "V. Nobile", "team": "Paperdi Juvecaserta 2021", "media": 8.2, "affidabilita": 39.0, "partite": 20}, {"giocatore": "G. Dron", "team": "OraS\u00ec Ravenna", "media": 11.7, "affidabilita": 38.0, "partite": 20}, {"giocatore": "T. Pillastrini", "team": "Consultinvest Loreto Pesaro", "media": 8.8, "affidabilita": 38.0, "partite": 20}, {"giocatore": "W. Tio Tiagande", "team": "Adamant Ferrara", "media": 12.4, "affidabilita": 38.0, "partite": 21}, {"giocatore": "M. Melchiorri", "team": "Virtus Imola", "media": 11.5, "affidabilita": 37.0, "partite": 20}, {"giocatore": "Y. Rodriguez", "team": "Virtus GVM Roma 1960", "media": 10.8, "affidabilita": 37.0, "partite": 20}, {"giocatore": "G. Lenti", "team": "Virtus GVM Roma 1960", "media": 8.4, "affidabilita": 36.0, "partite": 21}, {"giocatore": "L. Fabiani", "team": "Solbat Golfo Piombino", "media": 8.6, "affidabilita": 36.0, "partite": 20}, {"giocatore": "R. Ponziani", "team": "Ristopro Fabriano", "media": 8.2, "affidabilita": 36.0, "partite": 21}, {"giocatore": "F. Gravaghi", "team": "Umana San Giobbe Chiusi", "media": 11.2, "affidabilita": 35.0, "partite": 20}, {"giocatore": "M. Graziani", "team": "Consultinvest Loreto Pesaro", "media": 10.9, "affidabilita": 35.0, "partite": 21}, {"giocatore": "A. Tiberti", "team": "Consorzio Leonardo Dany Quarrata", "media": 9.6, "affidabilita": 34.0, "partite": 21}, {"giocatore": "M. Barattini", "team": "Virtus GVM Roma 1960", "media": 10.3, "affidabilita": 33.0, "partite": 21}, {"giocatore": "T. Molteni", "team": "Consorzio Leonardo Dany Quarrata", "media": 10.5, "affidabilita": 33.0, "partite": 21}, {"giocatore": "R. Romondia", "team": "Ristopro Fabriano", "media": 9.4, "affidabilita": 32.0, "partite": 20}, {"giocatore": "A. Valentini", "team": "Consultinvest Loreto Pesaro", "media": 9.1, "affidabilita": 32.0, "partite": 21}, {"giocatore": "D. Vavoli", "team": "Ristopro Fabriano", "media": 9.6, "affidabilita": 32.0, "partite": 21}, {"giocatore": "B. Misolic", "team": "Power Basket Nocera", "media": 8.4, "affidabilita": 31.0, "partite": 19}, {"giocatore": "F. Tognacci", "team": "Consultinvest Loreto Pesaro", "media": 9.1, "affidabilita": 26.0, "partite": 21}, {"giocatore": "G. Sanguinetti", "team": "UP Andrea Costa Imola", "media": 10.2, "affidabilita": 25.0, "partite": 20}, {"giocatore": "L. Hahn", "team": "PSA Basket Casoria", "media": 8.4, "affidabilita": 24.0, "partite": 12}, {"giocatore": "T. De Gregori", "team": "Consorzio Leonardo Dany Quarrata", "media": 8.3, "affidabilita": 19.0, "partite": 17}, {"giocatore": "I. Majcuni?", "team": "Virtus GVM Roma 1960", "media": 8.2, "affidabilita": 17.0, "partite": 21}];
+        let currentView = 'top';
+
+        function showView(view) {
+            currentView = view;
+            document.getElementById('btn-top').style.background = view === 'top' ? '#302B8F' : 'white';
+            document.getElementById('btn-top').style.color = view === 'top' ? 'white' : '#302B8F';
+            document.getElementById('btn-bottom').style.background = view === 'bottom' ? '#302B8F' : 'white';
+            document.getElementById('btn-bottom').style.color = view === 'bottom' ? 'white' : '#302B8F';
+            render();
+        }
+
+        function render() {
+            const data = currentView === 'top' ? playersData.slice(0, 20) : playersData.slice(-20).reverse();
+
+            let html = '<table style="width: 100%; border-collapse: collapse; font-size: 14px;">';
+            html += '<thead><tr style="background: #302B8F; color: white;">';
+            html += '<th style="padding: 10px; text-align: left;">#</th>';
+            html += '<th style="padding: 10px; text-align: left;">Giocatore</th>';
+            html += '<th style="padding: 10px; text-align: center;">Media PT</th>';
+            html += '<th style="padding: 10px; text-align: center;">Partite</th>';
+            html += '<th style="padding: 10px; text-align: center;">Affidabilità</th>';
+            html += '</tr></thead><tbody>';
+
+            data.forEach((row, i) => {
+                const bg = i % 2 === 0 ? 'white' : '#f9f9f9';
+                const aff = row.affidabilita;
+                const barColor = aff >= 70 ? '#22c55e' : aff >= 40 ? '#f59e0b' : '#ef4444';
+
+                html += `<tr style="background: ${bg};">`;
+                html += `<td style="padding: 10px; font-weight: bold;">${i + 1}</td>`;
+                html += `<td style="padding: 10px;"><div style="font-weight: 600;">${row.giocatore}</div><div style="font-size: 12px; color: #666;">${row.team}</div></td>`;
+                html += `<td style="padding: 10px; text-align: center; font-weight: 600;">${row.media}</td>`;
+                html += `<td style="padding: 10px; text-align: center; color: #666;">${row.partite}</td>`;
+                html += `<td style="padding: 10px; width: 150px;">`;
+                html += `<div style="display: flex; align-items: center; gap: 8px;">`;
+                html += `<div style="flex: 1; background: #e5e5e5; height: 10px; border-radius: 5px;">`;
+                html += `<div style="width: ${aff}%; background: ${barColor}; height: 100%; border-radius: 5px;"></div>`;
+                html += `</div>`;
+                html += `<span style="font-weight: 600; width: 30px; text-align: right;">${aff}</span>`;
+                html += `</div></td>`;
+                html += `</tr>`;
+            });
+
+            html += '</tbody></table>';
+            document.getElementById('table-container').innerHTML = html;
+        }
+
+        render();
+    </script>
+    
+
+    <h2 class="section-title" style="margin-top: 2rem;">Casa vs Trasferta</h2>
+    
+    <div class="content-section">
+        <h2 class="section-title">Casa vs Trasferta</h2>
+        <p style="color: #666; margin-bottom: 20px;">
+            Differenza di rendimento tra partite in casa e in trasferta.
+            <span style="color: #3b82f6; font-weight: bold;">Blu</span> = meglio in casa,
+            <span style="color: #f97316; font-weight: bold;">Arancione</span> = meglio in trasferta.
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <!-- Home Warriors -->
+            <div>
+                <h3 style="color: #3b82f6; display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+                    <span style="font-size: 1.5em;">🏠</span> Meglio in Casa
+                </h3>
+                <div id="home-container"></div>
+            </div>
+
+            <!-- Road Warriors -->
+            <div>
+                <h3 style="color: #f97316; display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+                    <span style="font-size: 1.5em;">🚗</span> Meglio in Trasferta
+                </h3>
+                <div id="road-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const homeWarriors = [{"name": "L. Abega", "team": "Ristopro Fabriano", "gp_home": 4, "gp_away": 4, "home_pt": 15.8, "away_pt": 9.5, "pt_diff": 6.2, "home_as": 4.2, "away_as": 2.5, "as_diff": 1.8, "home_rt": 6.2, "away_rt": 4.5, "rt_diff": 1.8, "home_advantage": 4.0}, {"name": "F. Tognacci", "team": "Consultinvest Loreto Pesaro", "gp_home": 10, "gp_away": 11, "home_pt": 12.7, "away_pt": 5.9, "pt_diff": 6.8, "home_as": 1.8, "away_as": 2.2, "as_diff": -0.4, "home_rt": 3.0, "away_rt": 2.2, "rt_diff": 0.8, "home_advantage": 3.4}, {"name": "A. Sperduto", "team": "Paperdi Juvecaserta 2021", "gp_home": 4, "gp_away": 3, "home_pt": 12.5, "away_pt": 7.7, "pt_diff": 4.8, "home_as": 2.5, "away_as": 1.7, "as_diff": 0.8, "home_rt": 4.2, "away_rt": 2.0, "rt_diff": 2.2, "home_advantage": 3.1}, {"name": "M. Melchiorri", "team": "Virtus Imola", "gp_home": 11, "gp_away": 9, "home_pt": 13.3, "away_pt": 9.3, "pt_diff": 3.9, "home_as": 3.0, "away_as": 1.9, "as_diff": 1.1, "home_rt": 5.5, "away_rt": 4.1, "rt_diff": 1.4, "home_advantage": 2.6}, {"name": "S. Vecerina", "team": "Paperdi Juvecaserta 2021", "gp_home": 10, "gp_away": 8, "home_pt": 6.3, "away_pt": 3.5, "pt_diff": 2.8, "home_as": 4.4, "away_as": 1.8, "as_diff": 2.7, "home_rt": 2.9, "away_rt": 2.0, "rt_diff": 0.9, "home_advantage": 2.4}, {"name": "D. Gabrovsek", "team": "Verodol CBD Pielle Livorno", "gp_home": 10, "gp_away": 11, "home_pt": 16.6, "away_pt": 12.2, "pt_diff": 4.4, "home_as": 0.9, "away_as": 1.1, "as_diff": -0.2, "home_rt": 5.2, "away_rt": 4.5, "rt_diff": 0.7, "home_advantage": 2.3}, {"name": "G. Sanguinetti", "team": "UP Andrea Costa Imola", "gp_home": 10, "gp_away": 10, "home_pt": 11.3, "away_pt": 9.0, "pt_diff": 2.3, "home_as": 4.1, "away_as": 1.3, "as_diff": 2.8, "home_rt": 3.5, "away_rt": 2.0, "rt_diff": 1.5, "home_advantage": 2.3}, {"name": "L. Baldi", "team": "Virtus Imola", "gp_home": 11, "gp_away": 9, "home_pt": 13.2, "away_pt": 8.9, "pt_diff": 4.3, "home_as": 2.5, "away_as": 2.2, "as_diff": 0.2, "home_rt": 1.8, "away_rt": 1.6, "rt_diff": 0.3, "home_advantage": 2.3}, {"name": "L. Rasio", "team": "Umana San Giobbe Chiusi", "gp_home": 11, "gp_away": 9, "home_pt": 13.1, "away_pt": 10.3, "pt_diff": 2.8, "home_as": 3.1, "away_as": 2.0, "as_diff": 1.1, "home_rt": 10.0, "away_rt": 7.0, "rt_diff": 3.0, "home_advantage": 2.3}, {"name": "D. Vavoli", "team": "Ristopro Fabriano", "gp_home": 11, "gp_away": 10, "home_pt": 10.9, "away_pt": 8.1, "pt_diff": 2.8, "home_as": 3.4, "away_as": 1.1, "as_diff": 2.3, "home_rt": 7.2, "away_rt": 6.4, "rt_diff": 0.8, "home_advantage": 2.2}, {"name": "F. Gravaghi", "team": "Umana San Giobbe Chiusi", "gp_home": 11, "gp_away": 9, "home_pt": 13.1, "away_pt": 8.9, "pt_diff": 4.2, "home_as": 1.8, "away_as": 1.4, "as_diff": 0.4, "home_rt": 3.0, "away_rt": 3.1, "rt_diff": -0.1, "home_advantage": 2.2}, {"name": "G. Tamani", "team": "UP Andrea Costa Imola", "gp_home": 7, "gp_away": 7, "home_pt": 5.7, "away_pt": 2.0, "pt_diff": 3.7, "home_as": 0.1, "away_as": 0.3, "as_diff": -0.1, "home_rt": 2.6, "away_rt": 1.3, "rt_diff": 1.3, "home_advantage": 2.1}, {"name": "K. Ly-lee", "team": "Paperdi Juvecaserta 2021", "gp_home": 11, "gp_away": 10, "home_pt": 5.6, "away_pt": 2.0, "pt_diff": 3.6, "home_as": 0.3, "away_as": 0.1, "as_diff": 0.2, "home_rt": 3.7, "away_rt": 2.6, "rt_diff": 1.1, "home_advantage": 2.1}, {"name": "M. Graziano", "team": "Luiss Roma", "gp_home": 8, "gp_away": 10, "home_pt": 4.8, "away_pt": 0.9, "pt_diff": 3.8, "home_as": 0.2, "away_as": 0.3, "as_diff": -0.0, "home_rt": 1.1, "away_rt": 0.2, "rt_diff": 0.9, "home_advantage": 2.1}, {"name": "T. Molteni", "team": "Consorzio Leonardo Dany Quarrata", "gp_home": 9, "gp_away": 12, "home_pt": 11.3, "away_pt": 9.9, "pt_diff": 1.4, "home_as": 5.7, "away_as": 2.8, "as_diff": 2.9, "home_rt": 5.3, "away_rt": 3.3, "rt_diff": 2.0, "home_advantage": 2.0}];
+        const roadWarriors = [{"name": "I. Majcuni?", "team": "Virtus GVM Roma 1960", "gp_home": 11, "gp_away": 10, "home_pt": 5.6, "away_pt": 11.0, "pt_diff": -5.4, "home_as": 1.3, "away_as": 0.9, "as_diff": 0.4, "home_rt": 2.2, "away_rt": 3.1, "rt_diff": -0.9, "home_advantage": -2.8}, {"name": "T. Gatto", "team": "UP Andrea Costa Imola", "gp_home": 9, "gp_away": 5, "home_pt": 4.3, "away_pt": 8.2, "pt_diff": -3.9, "home_as": 0.6, "away_as": 1.4, "as_diff": -0.8, "home_rt": 2.7, "away_rt": 4.6, "rt_diff": -1.9, "home_advantage": -2.6}, {"name": "N. Castellino", "team": "Virtus Imola", "gp_home": 7, "gp_away": 6, "home_pt": 3.1, "away_pt": 6.7, "pt_diff": -3.5, "home_as": 1.4, "away_as": 2.8, "as_diff": -1.4, "home_rt": 2.1, "away_rt": 3.3, "rt_diff": -1.2, "home_advantage": -2.4}, {"name": "J. Soliani", "team": "Power Basket Nocera", "gp_home": 8, "gp_away": 10, "home_pt": 1.1, "away_pt": 4.7, "pt_diff": -3.6, "home_as": 1.0, "away_as": 1.7, "as_diff": -0.7, "home_rt": 0.6, "away_rt": 1.6, "rt_diff": -1.0, "home_advantage": -2.2}, {"name": "D. D'argenzio", "team": "Paperdi Juvecaserta 2021", "gp_home": 11, "gp_away": 10, "home_pt": 16.9, "away_pt": 20.9, "pt_diff": -4.0, "home_as": 3.9, "away_as": 3.2, "as_diff": 0.7, "home_rt": 3.1, "away_rt": 4.9, "rt_diff": -1.8, "home_advantage": -2.1}, {"name": "V. Nobile", "team": "Paperdi Juvecaserta 2021", "gp_home": 10, "gp_away": 10, "home_pt": 6.0, "away_pt": 10.3, "pt_diff": -4.3, "home_as": 2.4, "away_as": 2.5, "as_diff": -0.1, "home_rt": 3.1, "away_rt": 2.6, "rt_diff": 0.5, "home_advantage": -2.1}, {"name": "W. Tio Tiagande", "team": "Adamant Ferrara", "gp_home": 10, "gp_away": 11, "home_pt": 10.6, "away_pt": 14.0, "pt_diff": -3.4, "home_as": 0.5, "away_as": 1.4, "as_diff": -0.9, "home_rt": 10.5, "away_rt": 9.2, "rt_diff": 1.3, "home_advantage": -1.7}, {"name": "D. Marchini", "team": "Adamant Ferrara", "gp_home": 10, "gp_away": 11, "home_pt": 8.7, "away_pt": 12.0, "pt_diff": -3.3, "home_as": 2.7, "away_as": 2.6, "as_diff": 0.1, "home_rt": 1.5, "away_rt": 1.4, "rt_diff": 0.1, "home_advantage": -1.6}, {"name": "R. Chessari", "team": "UP Andrea Costa Imola", "gp_home": 11, "gp_away": 10, "home_pt": 6.7, "away_pt": 9.6, "pt_diff": -2.9, "home_as": 2.6, "away_as": 2.6, "as_diff": 0.0, "home_rt": 3.0, "away_rt": 3.9, "rt_diff": -0.9, "home_advantage": -1.6}, {"name": "L. Toniato", "team": "General Contractor Jesi", "gp_home": 8, "gp_away": 7, "home_pt": 3.5, "away_pt": 5.9, "pt_diff": -2.4, "home_as": 0.6, "away_as": 0.9, "as_diff": -0.2, "home_rt": 1.9, "away_rt": 3.3, "rt_diff": -1.4, "home_advantage": -1.5}, {"name": "Y. Rodriguez", "team": "Virtus GVM Roma 1960", "gp_home": 11, "gp_away": 9, "home_pt": 9.3, "away_pt": 12.7, "pt_diff": -3.4, "home_as": 3.5, "away_as": 2.8, "as_diff": 0.8, "home_rt": 2.7, "away_rt": 2.3, "rt_diff": 0.4, "home_advantage": -1.4}, {"name": "E. Carnevale", "team": "Solbat Golfo Piombino", "gp_home": 8, "gp_away": 10, "home_pt": 4.5, "away_pt": 7.2, "pt_diff": -2.7, "home_as": 0.2, "away_as": 0.3, "as_diff": -0.0, "home_rt": 2.0, "away_rt": 1.9, "rt_diff": 0.1, "home_advantage": -1.3}, {"name": "J. Fernandez", "team": "Luiss Roma", "gp_home": 9, "gp_away": 10, "home_pt": 12.7, "away_pt": 14.2, "pt_diff": -1.5, "home_as": 1.8, "away_as": 3.2, "as_diff": -1.4, "home_rt": 2.0, "away_rt": 2.7, "rt_diff": -0.7, "home_advantage": -1.3}, {"name": "S. Errede", "team": "Virtus Imola", "gp_home": 11, "gp_away": 9, "home_pt": 0.5, "away_pt": 2.9, "pt_diff": -2.3, "home_as": 0.2, "away_as": 0.1, "as_diff": 0.1, "home_rt": 1.2, "away_rt": 1.2, "rt_diff": -0.0, "home_advantage": -1.2}, {"name": "F. Forti", "team": "Solbat Golfo Piombino", "gp_home": 10, "gp_away": 10, "home_pt": 2.6, "away_pt": 4.4, "pt_diff": -1.8, "home_as": 1.4, "away_as": 1.4, "as_diff": 0.0, "home_rt": 0.6, "away_rt": 1.4, "rt_diff": -0.8, "home_advantage": -1.1}];
+
+        function renderSplitCard(player, isHome) {
+            const color = isHome ? '#3b82f6' : '#f97316';
+
+            function diffBadge(val, reverse = false) {
+                const isGood = reverse ? val < 0 : val > 0;
+                const c = val === 0 ? '#666' : (isGood ? '#22c55e' : '#ef4444');
+                const prefix = val > 0 ? '+' : '';
+                return `<span style="color: ${c}; font-weight: 600;">${prefix}${val}</span>`;
+            }
+
+            return `
+                <div style="background: white; border-radius: 8px; padding: 15px; margin-bottom: 10px; border-left: 4px solid ${color};">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div>
+                            <div style="font-weight: 600;">${player.name}</div>
+                            <div style="font-size: 12px; color: #666;">${player.team} | 🏠 ${player.gp_home} / 🚗 ${player.gp_away}</div>
+                        </div>
+                        <div style="background: ${color}; color: white; padding: 4px 12px; border-radius: 20px; font-weight: bold;">
+                            ${player.home_advantage > 0 ? '+' : ''}${player.home_advantage}
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 13px;">
+                        <div style="text-align: center; background: #f9f9f9; padding: 8px; border-radius: 6px;">
+                            <div style="color: #666; font-size: 11px;">Punti</div>
+                            <div><span style="color: #3b82f6;">${player.home_pt}</span> / <span style="color: #f97316;">${player.away_pt}</span></div>
+                            ${diffBadge(player.pt_diff, !isHome)}
+                        </div>
+                        <div style="text-align: center; background: #f9f9f9; padding: 8px; border-radius: 6px;">
+                            <div style="color: #666; font-size: 11px;">Assist</div>
+                            <div><span style="color: #3b82f6;">${player.home_as}</span> / <span style="color: #f97316;">${player.away_as}</span></div>
+                            ${diffBadge(player.as_diff, !isHome)}
+                        </div>
+                        <div style="text-align: center; background: #f9f9f9; padding: 8px; border-radius: 6px;">
+                            <div style="color: #666; font-size: 11px;">Rimbalzi</div>
+                            <div><span style="color: #3b82f6;">${player.home_rt}</span> / <span style="color: #f97316;">${player.away_rt}</span></div>
+                            ${diffBadge(player.rt_diff, !isHome)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        document.getElementById('home-container').innerHTML = homeWarriors.map(p => renderSplitCard(p, true)).join('');
+        document.getElementById('road-container').innerHTML = roadWarriors.map(p => renderSplitCard(p, false)).join('');
+    </script>
+    
+    
+
+        <div class="site-footer">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <div>Ultimo aggiornamento: 19/01/2026 11:22</div>
+            <div>Generato con LNP Stats</div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Espandi sezione corrente
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('expanded');
+            });
+        });
+
+        // Espandi automaticamente la sezione attiva
+        const activeLink = document.querySelector('.sidebar-link.active');
+        if (activeLink) {
+            let parent = activeLink.closest('.sidebar-section');
+            if (parent) parent.classList.add('expanded');
+        }
+    </script>
+</body>
+</html>

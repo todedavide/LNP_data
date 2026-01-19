@@ -765,9 +765,11 @@ def compute_team_game_stats(overall_df):
     opp_stats = opp_stats.rename(columns=rename_map)
     opp_stats['Gap_opp'] = -opp_stats['Gap_opp']  # Inverti il gap
 
+    # Merge usando anche il Gap (che è stato invertito) per evitare duplicati
     team_games = team_games.merge(
         opp_stats,
-        on=['Team', 'Opponent'],
+        left_on=['Team', 'Opponent', 'Gap'],
+        right_on=['Team', 'Opponent', 'Gap_opp'],
         how='left',
         suffixes=('', '_opp')
     )

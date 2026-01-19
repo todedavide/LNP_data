@@ -29,9 +29,6 @@ def read_play_by_play(soup):
 
     for event in events:
         try:
-            # Quarter dall'attributo
-            quarter = event.get('q', '')
-
             # Tempo e punteggio
             score_time = event.find(class_='filmlistnewscoretime')
             score_score = event.find(class_='filmlistnewscorescore')
@@ -41,6 +38,10 @@ def read_play_by_play(soup):
 
             time_text = score_time.get_text(strip=True)
             score_text = score_score.get_text(strip=True)
+
+            # Estrai quarter dal testo (es. "Q4 09:59") - più affidabile dell'attributo q
+            quarter_match = re.search(r'Q(\d)', time_text)
+            quarter = quarter_match.group(1) if quarter_match else event.get('q', '0')
 
             # Estrai minuto dal formato "Q4 09:59"
             time_match = re.search(r'(\d{1,2}:\d{2})', time_text)
@@ -494,39 +495,48 @@ def enrich_pbp_dataframe(df):
 
     df['time_seconds'] = df['time'].apply(time_to_seconds)
 
-    # Secondi totali dall'inizio partita (tempo è già trascorso nel quarto)
+    # Caso speciale: 00:00 nel sito significa 10:00 (fine quarto)
+    # Tutti gli altri tempi sono in formato count-up normale
+    df.loc[df['time_seconds'] == 0, 'time_seconds'] = 600
+
+    # Secondi totali dall'inizio partita
     df['total_seconds'] = (df['quarter'] - 1) * 600 + df['time_seconds']
 
     # Gap punteggio (positivo = vantaggio casa)
     df['gap'] = df['score_home'] - df['score_away']
 
-    # Identifica azioni di punteggio
+    # Identifica azioni di punteggio dal testo (per riferimento)
     score_actions = [
         'Tiro realizzato', 'Tiro libero realizzato', 'Tripla realizzata',
         'realizzato', r'\d\)'  # pattern nei testi es. "(2)", "(3)"
     ]
     df['is_score'] = df['action_type'].str.contains('|'.join(score_actions), case=False, na=False, regex=True)
 
-    # Punti segnati per azione
-    def get_points(action):
-        if pd.isna(action):
-            return 0
-        action = str(action).lower()
-        if 'libero realizzato' in action or '(1-' in action:
-            return 1
-        if 'tripla realizzata' in action or '(3-' in action or ('da 3 punti' in action and 'realizzat' in action):
-            return 3
-        if 'realizzato' in action or 'realizzata' in action or '(2-' in action:
-            return 2
-        return 0
-
-    df['points'] = df['action_type'].apply(get_points)
-
     # Azione della squadra di casa
     df['is_home_action'] = df['team'] == df['home_team']
 
-    # Situazione clutch: ultimi 2 minuti di Q4 (tempo >= 8:00 = 480s) e gap <= 5
-    df['clutch'] = (df['quarter'] == 4) & (df['time_seconds'] >= 480) & (df['gap'].abs() <= 5)
+    # Calcola punti dalla variazione del punteggio (più affidabile del parsing testo)
+    # Per ogni partita, calcola la differenza di punteggio rispetto all'evento precedente
+    df = df.sort_values(['game_code', 'total_seconds', 'score_home', 'score_away'])
+
+    df['prev_score_home'] = df.groupby('game_code')['score_home'].shift(1).fillna(0).astype(int)
+    df['prev_score_away'] = df.groupby('game_code')['score_away'].shift(1).fillna(0).astype(int)
+
+    df['home_pts_change'] = (df['score_home'] - df['prev_score_home']).clip(lower=0)
+    df['away_pts_change'] = (df['score_away'] - df['prev_score_away']).clip(lower=0)
+
+    # Punti segnati: assegna i punti in base a chi ha effettivamente segnato
+    # (non in base a chi sta facendo l'azione, che potrebbe essere un timeout/cambio)
+    df['points'] = df['home_pts_change'] + df['away_pts_change']
+
+    # Indica se i punti sono stati segnati da home o away
+    df['points_by_home'] = df['home_pts_change'] > 0
+
+    # Rimuovi colonne temporanee
+    df = df.drop(columns=['prev_score_home', 'prev_score_away', 'home_pts_change', 'away_pts_change'])
+
+    # Situazione clutch: ultimi 2 minuti di Q4 o overtime (da 8:00 a 10:00) e gap <= 5
+    df['clutch'] = (df['quarter'] >= 4) & (df['time_seconds'] >= 480) & (df['gap'].abs() <= 5)
 
     return df
 

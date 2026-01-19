@@ -1103,7 +1103,7 @@ def generate_giocatori_statistiche(campionato_filter, camp_name):
         <!-- Contenuto dinamico -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">
             <div id="table-container"></div>
-            <div id="chart-container"></div>
+            <div id="stats-chart-container"></div>
         </div>
     </div>
 
@@ -1348,7 +1348,7 @@ def generate_giocatori_statistiche(campionato_filter, camp_name):
                 yaxis: {{ automargin: true }}
             }};
 
-            Plotly.newPlot('chart-container', chartData, layout, {{ responsive: true }});
+            Plotly.newPlot('stats-chart-container', chartData, layout, {{ responsive: true }});
         }}
 
         initTabs();
@@ -2227,7 +2227,7 @@ def generate_giocatori_distribuzione_tiri(campionato_filter, camp_name):
             <button id="btn-TL" onclick="showChart('TL')" style="padding: 10px 20px; border: 2px solid #302B8F; border-radius: 8px; cursor: pointer; font-weight: 600; background: white; color: #302B8F;">Tiri Liberi</button>
         </div>
 
-        <div id="chart-container" style="height: 500px;"></div>
+        <div id="shots-chart-container" style="height: 500px;"></div>
     </div>
 
     <script>
@@ -2254,7 +2254,7 @@ def generate_giocatori_distribuzione_tiri(campionato_filter, camp_name):
         function renderChart() {{
             const data = shotData[currentType];
             if (!data) {{
-                document.getElementById('chart-container').innerHTML = '<p>Dati non disponibili per questo tipo di tiro.</p>';
+                document.getElementById('shots-chart-container').innerHTML = '<p>Dati non disponibili per questo tipo di tiro.</p>';
                 return;
             }}
 
@@ -2311,7 +2311,7 @@ def generate_giocatori_distribuzione_tiri(campionato_filter, camp_name):
                 margin: {{ t: 20, b: 60, l: 70, r: 40 }}
             }};
 
-            Plotly.newPlot('chart-container', [trace], layout, {{ responsive: true }});
+            Plotly.newPlot('shots-chart-container', [trace], layout, {{ responsive: true }});
         }}
 
         showChart('3PT');
@@ -3724,12 +3724,136 @@ def generate_partite_momenti_decisivi(campionato_filter, camp_name):
             </div>
             '''
 
+    # DISTRIBUZIONE GIOCATORI PER QUARTO
+    player_activity = compute_player_quarter_activity(pbp_df)
+
+    if not player_activity.empty:
+        significant_players = player_activity[player_activity['total_events'] >= 30].copy()
+
+        if not significant_players.empty:
+            # Grafico: Top 20 giocatori per Q4 share
+            q4_specialists = significant_players.nlargest(20, 'q4_share')
+
+            fig_q4 = go.Figure()
+
+            fig_q4.add_trace(go.Bar(
+                y=q4_specialists['player'],
+                x=q4_specialists['q4_share'],
+                orientation='h',
+                marker=dict(
+                    color=q4_specialists['q4_share'],
+                    colorscale='Blues',
+                ),
+                text=[f"{v:.1f}%" for v in q4_specialists['q4_share']],
+                textposition='outside',
+                hovertemplate='<b>%{y}</b><br>Q4 Share: %{x:.1f}%<br>Team: %{customdata}<extra></extra>',
+                customdata=q4_specialists['team']
+            ))
+
+            fig_q4.update_layout(
+                title='Chi è Più Attivo nel 4° Quarto (% attività in Q4)',
+                xaxis_title='% Eventi in Q4',
+                yaxis=dict(autorange='reversed'),
+                height=550,
+                margin=dict(l=150, r=80)
+            )
+
+            content += f'''
+            <div class="content-section">
+                <h2 class="section-title">⏱️ Distribuzione Attività per Quarto (%)</h2>
+                <p style="color: #666; margin-bottom: 15px;">
+                    Analisi dell'attività dei giocatori nei vari quarti (punti, rimbalzi, assist, falli, etc.).
+                    La % indica quanta parte della loro attività totale avviene nel 4° quarto.
+                </p>
+                {plotly_to_html(fig_q4)}
+            </div>
+            '''
+
+            # Grafico con numeri assoluti Q4 per partita
+            # Calcola eventi Q4 per partita
+            significant_players['games_played'] = significant_players['total_events'] / significant_players[['q1_events', 'q2_events', 'q3_events', 'q4_events']].sum(axis=1) * significant_players['total_events']
+            # Stima partite giocate come totale eventi / media eventi per partita (circa 15-20)
+            significant_players['q4_per_game'] = significant_players['q4_events'] / (significant_players['total_events'] / 18)  # ~18 eventi per partita media
+
+            q4_absolute = significant_players.nlargest(20, 'q4_per_game')
+
+            fig_q4_abs = go.Figure()
+
+            fig_q4_abs.add_trace(go.Bar(
+                y=q4_absolute['player'],
+                x=q4_absolute['q4_per_game'],
+                orientation='h',
+                marker=dict(
+                    color=q4_absolute['q4_per_game'],
+                    colorscale='Oranges',
+                ),
+                text=[f"{v:.1f}" for v in q4_absolute['q4_per_game']],
+                textposition='outside',
+                hovertemplate='<b>%{y}</b><br>Eventi Q4/partita: %{x:.1f}<br>Team: %{customdata}<extra></extra>',
+                customdata=q4_absolute['team']
+            ))
+
+            fig_q4_abs.update_layout(
+                title='Attività nel 4° Quarto (eventi per partita)',
+                xaxis_title='Eventi per Partita in Q4',
+                yaxis=dict(autorange='reversed'),
+                height=550,
+                margin=dict(l=150, r=80)
+            )
+
+            content += f'''
+            <div class="content-section">
+                <h2 class="section-title">📊 Attività Assoluta nel Q4</h2>
+                <p style="color: #666; margin-bottom: 15px;">
+                    Numero stimato di eventi (punti, rimbalzi, assist, etc.) nel 4° quarto per partita.
+                </p>
+                {plotly_to_html(fig_q4_abs)}
+            </div>
+            '''
+
+            # Stacked bar per distribuzione completa (top 15 per eventi totali)
+            top_players = significant_players.nlargest(15, 'total_events')
+
+            fig_dist = go.Figure()
+
+            for q, col, color in [
+                ('Q1', 'q1_events', '#94a3b8'),
+                ('Q2', 'q2_events', '#64748b'),
+                ('Q3', 'q3_events', '#475569'),
+                ('Q4', 'q4_events', '#302B8F')
+            ]:
+                fig_dist.add_trace(go.Bar(
+                    name=q,
+                    y=top_players['player'],
+                    x=top_players[col],
+                    orientation='h',
+                    marker_color=color,
+                    hovertemplate=f'<b>%{{y}}</b><br>{q}: %{{x}} eventi<extra></extra>'
+                ))
+
+            fig_dist.update_layout(
+                title='Distribuzione Eventi per Quarto (Top 15 per attività totale)',
+                xaxis_title='Numero Eventi',
+                barmode='stack',
+                yaxis=dict(autorange='reversed'),
+                height=500,
+                margin=dict(l=150, r=50),
+                legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1)
+            )
+
+            content += f'''
+            <div class="content-section">
+                <h2 class="section-title">📊 Distribuzione Completa</h2>
+                {plotly_to_html(fig_dist)}
+            </div>
+            '''
+
     return {
         'content': content,
         'title': f'Momenti Decisivi - {camp_name}',
         'page_title': 'Momenti Decisivi',
         'subtitle': f'{camp_name} - Clutch Stats & Q4 Heroes',
-        'breadcrumb': f'{camp_name} / Partite / Momenti Decisivi'
+        'breadcrumb': f'{camp_name} / Giocatori / Momenti Decisivi'
     }
 
 
@@ -3878,8 +4002,7 @@ def generate_partite_andamento(campionato_filter, camp_name):
             </div>
             '''
 
-            # Tabella migliori run
-            top_runs = runs.head(10)
+            # Tabella parziali - mostra tutte le squadre
             table_html = '''
             <table class="stats-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
                 <thead>
@@ -3895,7 +4018,7 @@ def generate_partite_andamento(campionato_filter, camp_name):
                 <tbody>
             '''
 
-            for i, row in top_runs.iterrows():
+            for i, row in runs.iterrows():
                 bg = '#f8f8f8' if i % 2 == 0 else 'white'
                 diff_color = '#22c55e' if row['run_diff'] > 0 else '#ef4444' if row['run_diff'] < 0 else '#666'
                 table_html += f'''
@@ -3919,13 +4042,24 @@ def generate_partite_andamento(campionato_filter, camp_name):
             '''
 
         # COMEBACK KINGS
-        comebacks = compute_comeback_stats(pbp_df, min_deficit=10)
+        comebacks, comeback_details, blown_details = compute_comeback_stats(pbp_df, min_deficit=10, comeback_threshold=2)
 
         if not comebacks.empty:
             fig = go.Figure()
 
+            # Rimonte tentate (tornare da -10 a -2)
             fig.add_trace(go.Bar(
-                name='Rimonte Riuscite',
+                name='Rimonte Tentate',
+                x=comebacks['team'],
+                y=comebacks['comebacks'],
+                marker_color='#93c5fd',
+                text=comebacks['comebacks'],
+                textposition='auto'
+            ))
+
+            # Rimonte che finiscono con vittoria
+            fig.add_trace(go.Bar(
+                name='Rimonte Vinte',
                 x=comebacks['team'],
                 y=comebacks['comeback_wins'],
                 marker_color='#22c55e',
@@ -3933,12 +4067,23 @@ def generate_partite_andamento(campionato_filter, camp_name):
                 textposition='auto'
             ))
 
+            # Rimonte subite (avversario rimonta)
             fig.add_trace(go.Bar(
-                name='Vantaggi Sprecati',
+                name='Rimonte Subite',
                 x=comebacks['team'],
                 y=comebacks['blown_leads'],
-                marker_color='#ef4444',
+                marker_color='#fca5a5',
                 text=comebacks['blown_leads'],
+                textposition='auto'
+            ))
+
+            # Rimonte subite che finiscono in sconfitta
+            fig.add_trace(go.Bar(
+                name='Rimonte Subite (Perse)',
+                x=comebacks['team'],
+                y=comebacks['blown_losses'],
+                marker_color='#ef4444',
+                text=comebacks['blown_losses'],
                 textposition='auto'
             ))
 
@@ -3955,37 +4100,49 @@ def generate_partite_andamento(campionato_filter, camp_name):
             <div class="content-section">
                 <h2 class="section-title">👑 Comeback Kings</h2>
                 <p style="color: #666; margin-bottom: 15px;">
-                    Squadre che riescono a rimontare da -10 o più punti di svantaggio,
-                    e squadre che si fanno rimontare dopo essere state avanti di 10+.
+                    <b>Rimonta</b> = da -10 o peggio, tornare almeno a -2.<br>
+                    <b>Rimonta Vinta</b> = rimonta che finisce con vittoria.<br>
+                    <b>Rimonta Subita</b> = avevi +10, avversario torna a -2.<br>
+                    <b>Rimonta Subita (Persa)</b> = rimonta subita che finisce in sconfitta.
                 </p>
                 {plotly_to_html(fig)}
             </div>
             '''
 
-            # Tabella dettaglio
+            # Tabella dettaglio - tutte le squadre
             table_html = '''
             <table class="stats-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
                 <thead>
                     <tr style="background: #302B8F; color: white;">
                         <th style="padding: 12px; text-align: left;">Squadra</th>
                         <th style="padding: 12px; text-align: center;">Rimonte</th>
-                        <th style="padding: 12px; text-align: center;">Rimonte Vinte</th>
+                        <th style="padding: 12px; text-align: center;">Vinte</th>
+                        <th style="padding: 12px; text-align: center;">%</th>
                         <th style="padding: 12px; text-align: center;">Max Deficit</th>
-                        <th style="padding: 12px; text-align: center;">Vantaggi Persi</th>
+                        <th style="padding: 12px; text-align: center;">Subite</th>
+                        <th style="padding: 12px; text-align: center;">Perse</th>
+                        <th style="padding: 12px; text-align: center;">%</th>
                     </tr>
                 </thead>
                 <tbody>
             '''
 
-            for i, row in comebacks.head(15).iterrows():
+            for i, row in comebacks.iterrows():
                 bg = '#f8f8f8' if i % 2 == 0 else 'white'
+                win_pct = (row['comeback_wins'] / row['comebacks'] * 100) if row['comebacks'] > 0 else 0
+                pct_color = '#22c55e' if win_pct >= 50 else '#ef4444' if win_pct < 30 else '#666'
+                loss_pct = (row['blown_losses'] / row['blown_leads'] * 100) if row['blown_leads'] > 0 else 0
+                loss_pct_color = '#ef4444' if loss_pct >= 50 else '#22c55e' if loss_pct < 30 else '#666'
                 table_html += f'''
                     <tr style="background: {bg};">
                         <td style="padding: 10px; font-weight: 600;">{row['team']}</td>
                         <td style="padding: 10px; text-align: center;">{int(row['comebacks'])}</td>
                         <td style="padding: 10px; text-align: center; color: #22c55e; font-weight: 700;">{int(row['comeback_wins'])}</td>
+                        <td style="padding: 10px; text-align: center; color: {pct_color};">{win_pct:.0f}%</td>
                         <td style="padding: 10px; text-align: center;">-{int(row['max_deficit'])}</td>
-                        <td style="padding: 10px; text-align: center; color: #ef4444;">{int(row['blown_leads'])}</td>
+                        <td style="padding: 10px; text-align: center; color: #fca5a5;">{int(row['blown_leads'])}</td>
+                        <td style="padding: 10px; text-align: center; color: #ef4444; font-weight: 700;">{int(row['blown_losses'])}</td>
+                        <td style="padding: 10px; text-align: center; color: {loss_pct_color};">{loss_pct:.0f}%</td>
                     </tr>
                 '''
 
@@ -3998,83 +4155,224 @@ def generate_partite_andamento(campionato_filter, camp_name):
             </div>
             '''
 
-    # DISTRIBUZIONE GIOCATORI PER QUARTO
-    if pbp_df is not None and not pbp_df.empty:
-        player_activity = compute_player_quarter_activity(pbp_df)
+            # Dettaglio partite per squadra (interattivo)
+            if not comeback_details.empty:
+                # Prepara dati per JavaScript
+                details_by_team = {}
+                for team in comeback_details['team'].unique():
+                    team_data = comeback_details[comeback_details['team'] == team]
+                    details_by_team[team] = []
+                    for _, row in team_data.iterrows():
+                        details_by_team[team].append({
+                            'opponent': row['opponent'],
+                            'deficit': int(row['deficit']),
+                            'deficit_time': row['deficit_time'],
+                            'deficit_quarter': int(row['deficit_quarter']),
+                            'best_after': int(row['best_after']),
+                            'best_after_time': row['best_after_time'],
+                            'best_after_quarter': int(row['best_after_quarter']),
+                            'final_score': row['final_score'],
+                            'won': bool(row['won'])
+                        })
 
-        if not player_activity.empty:
-            # Filtra giocatori significativi
-            significant_players = player_activity[player_activity['total_events'] >= 30].copy()
-
-            if not significant_players.empty:
-                # Grafico: Top 20 giocatori per Q4 share (chi gioca di più nel finale)
-                q4_specialists = significant_players.nlargest(20, 'q4_share')
-
-                fig_q4 = go.Figure()
-
-                fig_q4.add_trace(go.Bar(
-                    y=q4_specialists['player'],
-                    x=q4_specialists['q4_share'],
-                    orientation='h',
-                    marker=dict(
-                        color=q4_specialists['q4_share'],
-                        colorscale='Blues',
-                    ),
-                    text=[f"{v:.1f}%" for v in q4_specialists['q4_share']],
-                    textposition='outside',
-                    hovertemplate='<b>%{y}</b><br>Q4 Share: %{x:.1f}%<br>Team: %{customdata}<extra></extra>',
-                    customdata=q4_specialists['team']
-                ))
-
-                fig_q4.update_layout(
-                    title='Chi Gioca di Più nel 4° Quarto (% eventi in Q4)',
-                    xaxis_title='% Eventi in Q4',
-                    yaxis=dict(autorange='reversed'),
-                    height=550,
-                    margin=dict(l=150, r=80)
-                )
+                details_json = json.dumps(details_by_team)
 
                 content += f'''
                 <div class="content-section">
-                    <h2 class="section-title">⏱️ Distribuzione per Quarto</h2>
+                    <h2 class="section-title">🔍 Dettaglio Partite</h2>
                     <p style="color: #666; margin-bottom: 15px;">
-                        Analisi dell'attività dei giocatori nei vari quarti. La % indica quanta parte
-                        della loro attività avviene nel 4° quarto (un proxy per i minuti giocati).
+                        Seleziona una squadra per vedere i dettagli di ogni rimonta.
                     </p>
-                    {plotly_to_html(fig_q4)}
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="font-weight: 600;">Squadra:</label>
+                        <select id="comeback-team-select" onchange="showComebackDetails()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
+                            {''.join(f'<option value="{t}">{t}</option>' for t in sorted(details_by_team.keys()))}
+                        </select>
+                    </div>
+
+                    <div id="comeback-details-content"></div>
                 </div>
+
+                <script>
+                    const comebackDetailsData = {details_json};
+
+                    function showComebackDetails() {{
+                        const team = document.getElementById('comeback-team-select').value;
+                        const data = comebackDetailsData[team] || [];
+                        const container = document.getElementById('comeback-details-content');
+
+                        if (data.length === 0) {{
+                            container.innerHTML = '<p>Nessuna rimonta per questa squadra.</p>';
+                            return;
+                        }}
+
+                        let html = `
+                            <table class="stats-table" style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #302B8F; color: white;">
+                                        <th style="padding: 12px; text-align: left;">Avversario</th>
+                                        <th style="padding: 12px; text-align: center;">Max Svantaggio</th>
+                                        <th style="padding: 12px; text-align: center;">Quando</th>
+                                        <th style="padding: 12px; text-align: center;">Max Vantaggio Dopo</th>
+                                        <th style="padding: 12px; text-align: center;">Quando</th>
+                                        <th style="padding: 12px; text-align: center;">Finale</th>
+                                        <th style="padding: 12px; text-align: center;">Esito</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+
+                        data.forEach((game, i) => {{
+                            const bg = i % 2 === 0 ? '#f8f8f8' : 'white';
+                            const esitoColor = game.won ? '#22c55e' : '#ef4444';
+                            const esitoText = game.won ? '✓ Vinta' : '✗ Persa';
+                            const deficitQuarter = ['', '1° Q', '2° Q', '3° Q', '4° Q', 'OT'][game.deficit_quarter] || game.deficit_quarter + '° Q';
+                            const bestQuarter = ['', '1° Q', '2° Q', '3° Q', '4° Q', 'OT'][game.best_after_quarter] || game.best_after_quarter + '° Q';
+
+                            // Formatta best_after: positivo = vantaggio, negativo = ancora sotto
+                            let bestAfterText, bestAfterColor;
+                            if (game.best_after > 0) {{
+                                bestAfterText = '+' + game.best_after;
+                                bestAfterColor = '#22c55e';
+                            }} else if (game.best_after < 0) {{
+                                bestAfterText = game.best_after;
+                                bestAfterColor = '#ef4444';
+                            }} else {{
+                                bestAfterText = '0';
+                                bestAfterColor = '#666';
+                            }}
+
+                            html += `
+                                <tr style="background: ${{bg}};">
+                                    <td style="padding: 10px; font-weight: 600;">${{game.opponent}}</td>
+                                    <td style="padding: 10px; text-align: center; color: #ef4444; font-weight: 700;">-${{game.deficit}}</td>
+                                    <td style="padding: 10px; text-align: center;">${{deficitQuarter}} (${{game.deficit_time}})</td>
+                                    <td style="padding: 10px; text-align: center; color: ${{bestAfterColor}}; font-weight: 700;">${{bestAfterText}}</td>
+                                    <td style="padding: 10px; text-align: center;">${{bestQuarter}} (${{game.best_after_time}})</td>
+                                    <td style="padding: 10px; text-align: center; font-weight: 600;">${{game.final_score}}</td>
+                                    <td style="padding: 10px; text-align: center; color: ${{esitoColor}}; font-weight: 700;">${{esitoText}}</td>
+                                </tr>
+                            `;
+                        }});
+
+                        html += '</tbody></table>';
+                        container.innerHTML = html;
+                    }}
+
+                    // Mostra prima squadra all'avvio
+                    document.addEventListener('DOMContentLoaded', showComebackDetails);
+                </script>
                 '''
 
-                # Stacked bar per distribuzione completa (top 15 per eventi totali)
-                top_players = significant_players.nlargest(15, 'total_events')
+            # Dettaglio rimonte subite (blown leads)
+            if not blown_details.empty:
+                blown_by_team = {}
+                for team in blown_details['team'].unique():
+                    team_data = blown_details[blown_details['team'] == team]
+                    blown_by_team[team] = []
+                    for _, row in team_data.iterrows():
+                        blown_by_team[team].append({
+                            'opponent': row['opponent'],
+                            'max_lead': int(row['max_lead']),
+                            'max_lead_time': row['max_lead_time'],
+                            'max_lead_quarter': int(row['max_lead_quarter']),
+                            'worst_after': int(row['worst_after']),
+                            'worst_after_time': row['worst_after_time'],
+                            'worst_after_quarter': int(row['worst_after_quarter']),
+                            'final_score': row['final_score'],
+                            'lost': bool(row['lost'])
+                        })
 
-                fig_dist = go.Figure()
+                blown_json = json.dumps(blown_by_team)
 
-                for q, col, color in [
-                    ('Q1', 'q1_events', '#94a3b8'),
-                    ('Q2', 'q2_events', '#64748b'),
-                    ('Q3', 'q3_events', '#475569'),
-                    ('Q4', 'q4_events', '#302B8F')
-                ]:
-                    fig_dist.add_trace(go.Bar(
-                        name=q,
-                        y=top_players['player'],
-                        x=top_players[col],
-                        orientation='h',
-                        marker_color=color,
-                        hovertemplate=f'<b>%{{y}}</b><br>{q}: %{{x}} eventi<extra></extra>'
-                    ))
+                content += f'''
+                <div class="content-section">
+                    <h2 class="section-title">Dettaglio Rimonte Subite</h2>
+                    <p style="color: #666; margin-bottom: 15px;">
+                        Seleziona una squadra per vedere le partite in cui ha subito una rimonta.
+                    </p>
 
-                fig_dist.update_layout(
-                    title='Distribuzione Eventi per Quarto (Top 15 giocatori)',
-                    xaxis_title='Numero Eventi',
-                    barmode='stack',
-                    yaxis=dict(autorange='reversed'),
-                    height=500,
-                    margin=dict(l=150, r=50),
-                    legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1)
-                )
+                    <div style="margin-bottom: 20px;">
+                        <label style="font-weight: 600;">Squadra:</label>
+                        <select id="blown-team-select" onchange="showBlownDetails()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
+                            {''.join(f'<option value="{t}">{t}</option>' for t in sorted(blown_by_team.keys()))}
+                        </select>
+                    </div>
 
+                    <div id="blown-details-content"></div>
+                </div>
+
+                <script>
+                    const blownDetailsData = {blown_json};
+
+                    function showBlownDetails() {{
+                        const team = document.getElementById('blown-team-select').value;
+                        const data = blownDetailsData[team] || [];
+                        const container = document.getElementById('blown-details-content');
+
+                        if (data.length === 0) {{
+                            container.innerHTML = '<p>Nessuna rimonta subita per questa squadra.</p>';
+                            return;
+                        }}
+
+                        let html = `
+                            <table class="stats-table" style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #302B8F; color: white;">
+                                        <th style="padding: 12px; text-align: left;">Avversario</th>
+                                        <th style="padding: 12px; text-align: center;">Max Vantaggio</th>
+                                        <th style="padding: 12px; text-align: center;">Quando</th>
+                                        <th style="padding: 12px; text-align: center;">Max Svantaggio Dopo</th>
+                                        <th style="padding: 12px; text-align: center;">Quando</th>
+                                        <th style="padding: 12px; text-align: center;">Finale</th>
+                                        <th style="padding: 12px; text-align: center;">Esito</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+
+                        data.forEach((game, i) => {{
+                            const bg = i % 2 === 0 ? '#f8f8f8' : 'white';
+                            const esitoColor = game.lost ? '#ef4444' : '#22c55e';
+                            const esitoText = game.lost ? '✗ Persa' : '✓ Vinta';
+                            const leadQuarter = ['', '1° Q', '2° Q', '3° Q', '4° Q', 'OT'][game.max_lead_quarter] || game.max_lead_quarter + '° Q';
+                            const worstQuarter = ['', '1° Q', '2° Q', '3° Q', '4° Q', 'OT'][game.worst_after_quarter] || game.worst_after_quarter + '° Q';
+
+                            // Formatta worst_after: negativo = sotto, positivo = ancora sopra
+                            let worstAfterText, worstAfterColor;
+                            if (game.worst_after < 0) {{
+                                worstAfterText = game.worst_after;
+                                worstAfterColor = '#ef4444';
+                            }} else if (game.worst_after > 0) {{
+                                worstAfterText = '+' + game.worst_after;
+                                worstAfterColor = '#22c55e';
+                            }} else {{
+                                worstAfterText = '0';
+                                worstAfterColor = '#666';
+                            }}
+
+                            html += `
+                                <tr style="background: ${{bg}};">
+                                    <td style="padding: 10px; font-weight: 600;">${{game.opponent}}</td>
+                                    <td style="padding: 10px; text-align: center; color: #22c55e; font-weight: 700;">+${{game.max_lead}}</td>
+                                    <td style="padding: 10px; text-align: center;">${{leadQuarter}} (${{game.max_lead_time}})</td>
+                                    <td style="padding: 10px; text-align: center; color: ${{worstAfterColor}}; font-weight: 700;">${{worstAfterText}}</td>
+                                    <td style="padding: 10px; text-align: center;">${{worstQuarter}} (${{game.worst_after_time}})</td>
+                                    <td style="padding: 10px; text-align: center; font-weight: 600;">${{game.final_score}}</td>
+                                    <td style="padding: 10px; text-align: center; color: ${{esitoColor}}; font-weight: 700;">${{esitoText}}</td>
+                                </tr>
+                            `;
+                        }});
+
+                        html += '</tbody></table>';
+                        container.innerHTML = html;
+                    }}
+
+                    // Mostra prima squadra all'avvio
+                    document.addEventListener('DOMContentLoaded', showBlownDetails);
+                </script>
+                '''
 
     return {
         'content': content,
@@ -4082,6 +4380,151 @@ def generate_partite_andamento(campionato_filter, camp_name):
         'page_title': 'Andamento & Parziali',
         'subtitle': f'{camp_name} - Quarti, Run, Rimonte',
         'breadcrumb': f'{camp_name} / Partite / Andamento'
+    }
+
+
+# ============ PAGINE COMBINATE ============
+
+def generate_giocatori_statistiche_combined(campionato_filter, camp_name):
+    """Genera pagina combinata: Statistiche + Distribuzione Tiri."""
+    stats = generate_giocatori_statistiche(campionato_filter, camp_name)
+    tiri = generate_giocatori_distribuzione_tiri(campionato_filter, camp_name)
+
+    content = f'''
+    {stats['content']}
+
+    <h2 class="section-title" style="margin-top: 2rem;">Distribuzione Tiri</h2>
+    {tiri['content']}
+    '''
+
+    return {
+        'content': content,
+        'title': f'Statistiche - {camp_name}',
+        'page_title': 'Statistiche',
+        'subtitle': f'{camp_name} - Statistiche e Distribuzione Tiri',
+        'breadcrumb': f'{camp_name} / Giocatori / Statistiche'
+    }
+
+
+def generate_giocatori_profilo_combined(campionato_filter, camp_name):
+    """Genera pagina combinata: Clustering + Giocatori Simili + Radar."""
+    clustering = generate_analisi_clustering(campionato_filter, camp_name)
+    simili = generate_giocatori_simili(campionato_filter, camp_name)
+    radar = generate_giocatori_radar(campionato_filter, camp_name)
+
+    content = f'''
+    {clustering['content']}
+
+    <h2 class="section-title" style="margin-top: 2rem;">Giocatori Simili</h2>
+    {simili['content']}
+
+    <h2 class="section-title" style="margin-top: 2rem;">Radar Confronto</h2>
+    {radar['content']}
+    '''
+
+    return {
+        'content': content,
+        'title': f'Profilo Giocatori - {camp_name}',
+        'page_title': 'Profilo',
+        'subtitle': f'{camp_name} - Clustering, Giocatori Simili e Radar',
+        'breadcrumb': f'{camp_name} / Giocatori / Profilo'
+    }
+
+
+def generate_giocatori_performance_combined(campionato_filter, camp_name):
+    """Genera pagina combinata: Forma + Consistenza + Casa vs Trasferta."""
+    forma = generate_giocatori_forma(campionato_filter, camp_name)
+    consistenza = generate_giocatori_consistenza(campionato_filter, camp_name)
+    casa_trasf = generate_giocatori_casa_trasferta(campionato_filter, camp_name)
+
+    content = f'''
+    {forma['content']}
+
+    <h2 class="section-title" style="margin-top: 2rem;">Consistenza</h2>
+    {consistenza['content']}
+
+    <h2 class="section-title" style="margin-top: 2rem;">Casa vs Trasferta</h2>
+    {casa_trasf['content']}
+    '''
+
+    return {
+        'content': content,
+        'title': f'Performance - {camp_name}',
+        'page_title': 'Performance',
+        'subtitle': f'{camp_name} - Forma, Consistenza e Casa/Trasferta',
+        'breadcrumb': f'{camp_name} / Giocatori / Performance'
+    }
+
+
+def generate_giocatori_impatto_combined(campionato_filter, camp_name):
+    """Genera pagina Impatto."""
+    impatto = generate_giocatori_impatto(campionato_filter, camp_name)
+
+    return {
+        'content': impatto['content'],
+        'title': f'Impatto - {camp_name}',
+        'page_title': 'Impatto',
+        'subtitle': f'{camp_name} - Impatto sul Gioco',
+        'breadcrumb': f'{camp_name} / Giocatori / Impatto'
+    }
+
+
+def generate_squadre_andamento_combined(campionato_filter, camp_name):
+    """Genera pagina Andamento."""
+    andamento = generate_partite_andamento(campionato_filter, camp_name)
+
+    return {
+        'content': andamento['content'],
+        'title': f'Andamento - {camp_name}',
+        'page_title': 'Andamento',
+        'subtitle': f'{camp_name} - Andamento e Parziali',
+        'breadcrumb': f'{camp_name} / Squadre / Andamento'
+    }
+
+
+def generate_squadre_risultati_combined(campionato_filter, camp_name):
+    """Genera pagina combinata: Vittorie vs Sconfitte + Casa vs Trasferta."""
+    vittorie = generate_squadre_vittorie_sconfitte(campionato_filter, camp_name)
+    casa_trasf = generate_squadre_casa_trasferta(campionato_filter, camp_name)
+
+    content = f'''
+    {vittorie['content']}
+
+    <h2 class="section-title" style="margin-top: 2rem;">Casa vs Trasferta</h2>
+    {casa_trasf['content']}
+    '''
+
+    return {
+        'content': content,
+        'title': f'Risultati - {camp_name}',
+        'page_title': 'Risultati',
+        'subtitle': f'{camp_name} - Vittorie/Sconfitte e Casa/Trasferta',
+        'breadcrumb': f'{camp_name} / Squadre / Risultati'
+    }
+
+
+def generate_squadre_profilo_combined(campionato_filter, camp_name):
+    """Genera pagina combinata: Radar + Dipendenza + Quando Vince."""
+    radar = generate_squadre_radar(campionato_filter, camp_name)
+    dipendenza = generate_analisi_dipendenza(campionato_filter, camp_name)
+    quando_vince = generate_analisi_quando_vince(campionato_filter, camp_name)
+
+    content = f'''
+    {radar['content']}
+
+    <h2 class="section-title" style="margin-top: 2rem;">Dipendenza Giocatori</h2>
+    {dipendenza['content']}
+
+    <h2 class="section-title" style="margin-top: 2rem;">Quando Vince</h2>
+    {quando_vince['content']}
+    '''
+
+    return {
+        'content': content,
+        'title': f'Profilo Squadre - {camp_name}',
+        'page_title': 'Profilo',
+        'subtitle': f'{camp_name} - Radar, Dipendenza e Pattern Vittoria',
+        'breadcrumb': f'{camp_name} / Squadre / Profilo'
     }
 
 
@@ -4104,28 +4547,18 @@ def generate_all_pages():
         print(f"Generando pagine per: {camp_name}")
 
         try:
-            # Squadre
+            # Squadre (4 pagine)
             pages[f'{path_prefix}/squadre/classifiche.html'] = generate_squadre_classifiche(camp_filter, camp_name)
-            pages[f'{path_prefix}/squadre/radar.html'] = generate_squadre_radar(camp_filter, camp_name)
-            pages[f'{path_prefix}/squadre/vittorie-sconfitte.html'] = generate_squadre_vittorie_sconfitte(camp_filter, camp_name)
-            pages[f'{path_prefix}/squadre/casa-trasferta.html'] = generate_squadre_casa_trasferta(camp_filter, camp_name)
+            pages[f'{path_prefix}/squadre/andamento.html'] = generate_squadre_andamento_combined(camp_filter, camp_name)
+            pages[f'{path_prefix}/squadre/profilo.html'] = generate_squadre_profilo_combined(camp_filter, camp_name)
+            pages[f'{path_prefix}/squadre/risultati.html'] = generate_squadre_risultati_combined(camp_filter, camp_name)
 
-            # Giocatori
-            pages[f'{path_prefix}/giocatori/statistiche.html'] = generate_giocatori_statistiche(camp_filter, camp_name)
-            pages[f'{path_prefix}/giocatori/radar.html'] = generate_giocatori_radar(camp_filter, camp_name)
-            pages[f'{path_prefix}/giocatori/consistenza.html'] = generate_giocatori_consistenza(camp_filter, camp_name)
-            pages[f'{path_prefix}/giocatori/simili.html'] = generate_giocatori_simili(camp_filter, camp_name)
-            pages[f'{path_prefix}/giocatori/forma.html'] = generate_giocatori_forma(camp_filter, camp_name)
-            pages[f'{path_prefix}/giocatori/casa-trasferta.html'] = generate_giocatori_casa_trasferta(camp_filter, camp_name)
-            pages[f'{path_prefix}/giocatori/distribuzione-tiri.html'] = generate_giocatori_distribuzione_tiri(camp_filter, camp_name)
-            pages[f'{path_prefix}/giocatori/impatto.html'] = generate_giocatori_impatto(camp_filter, camp_name)
-            pages[f'{path_prefix}/giocatori/clustering.html'] = generate_analisi_clustering(camp_filter, camp_name)
-            pages[f'{path_prefix}/giocatori/dipendenza.html'] = generate_analisi_dipendenza(camp_filter, camp_name)
+            # Giocatori (5 pagine)
+            pages[f'{path_prefix}/giocatori/statistiche.html'] = generate_giocatori_statistiche_combined(camp_filter, camp_name)
+            pages[f'{path_prefix}/giocatori/profilo.html'] = generate_giocatori_profilo_combined(camp_filter, camp_name)
+            pages[f'{path_prefix}/giocatori/performance.html'] = generate_giocatori_performance_combined(camp_filter, camp_name)
+            pages[f'{path_prefix}/giocatori/impatto.html'] = generate_giocatori_impatto_combined(camp_filter, camp_name)
             pages[f'{path_prefix}/giocatori/momenti-decisivi.html'] = generate_partite_momenti_decisivi(camp_filter, camp_name)
-
-            # Pagine squadra aggiuntive
-            pages[f'{path_prefix}/squadre/quando-vince.html'] = generate_analisi_quando_vince(camp_filter, camp_name)
-            pages[f'{path_prefix}/squadre/andamento.html'] = generate_partite_andamento(camp_filter, camp_name)
 
         except Exception as e:
             print(f"  Errore per {camp_name}: {e}")

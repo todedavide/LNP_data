@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profilo Squadre - Serie B - Girone B - LNP Stats</title>
+    <link rel="icon" type="image/png" href="../../../static/favicon180x180.png">
+    <link rel="stylesheet" href="../../../static/twinplay_brand.css">
+    <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--tp-gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--tp-spacing-lg);
+            z-index: 1000;
+            box-shadow: var(--tp-shadow-md);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-md);
+        }
+
+        .header-logo img {
+            height: 36px;
+        }
+
+        .header-logo a {
+            color: white;
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .header-breadcrumb {
+            margin-left: var(--tp-spacing-xl);
+            opacity: 0.8;
+            font-size: 0.875rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: var(--tp-spacing-md);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--tp-light);
+        }
+
+        .sidebar-section-header {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            color: var(--tp-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-sm);
+            transition: background 0.2s;
+        }
+
+        .sidebar-section-header:hover {
+            background: var(--tp-light);
+        }
+
+        .sidebar-section-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            font-size: 0.75rem;
+        }
+
+        .sidebar-section.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-subsection {
+            display: none;
+            background: var(--tp-light);
+        }
+
+        .sidebar-section.expanded .sidebar-subsection {
+            display: block;
+        }
+
+        .sidebar-category {
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: var(--tp-spacing-lg);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--tp-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: var(--tp-spacing-sm);
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: calc(var(--tp-spacing-lg) + 10px);
+            color: var(--tp-dark);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: white;
+            border-left-color: var(--tp-primary);
+        }
+
+        .sidebar-link.active {
+            background: white;
+            border-left-color: var(--tp-primary);
+            color: var(--tp-secondary);
+            font-weight: 600;
+        }
+
+        .sidebar-home-btn {
+            display: block;
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--tp-light);
+            transition: all 0.2s;
+        }
+
+        .sidebar-home-btn:hover {
+            background: var(--tp-light);
+            color: var(--tp-secondary);
+        }
+
+        .sidebar-competition {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            background: var(--tp-gradient-primary);
+            color: white;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: var(--tp-spacing-sm);
+        }
+
+        .sidebar:empty + .main {
+            margin-left: 0;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: var(--tp-spacing-xl);
+            min-height: calc(100vh - var(--header-height));
+            background: var(--tp-light);
+        }
+
+        .page-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.75rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-xs);
+        }
+
+        .page-subtitle {
+            color: var(--tp-gray);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .content-section {
+            background: white;
+            border-radius: var(--tp-radius-lg);
+            padding: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-lg);
+            box-shadow: var(--tp-shadow-sm);
+        }
+
+        .section-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.25rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-lg);
+            padding-bottom: var(--tp-spacing-sm);
+            border-bottom: 2px solid var(--tp-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .stat-card {
+            background: var(--tp-gradient-primary);
+            color: white;
+            padding: var(--tp-spacing-lg);
+            border-radius: var(--tp-radius-lg);
+            text-align: center;
+        }
+
+        .stat-card.accent {
+            background: var(--tp-gradient-accent);
+            color: var(--tp-dark);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+        }
+
+        .stat-value {
+            font-family: var(--tp-font-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: var(--tp-spacing-xs);
+        }
+
+        /* Plotly responsive */
+        .js-plotly-plot {
+            width: 100% !important;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            font-size: 0.8rem;
+        }
+
+        .site-footer img {
+            height: 24px;
+            margin-bottom: var(--tp-spacing-sm);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="header-logo">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <a href="../../../index.html">LNP Stats</a>
+        </div>
+        <div class="header-breadcrumb">Serie B - Girone B / Squadre / Profilo</div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        
+    <a href="../../../index.html" class="sidebar-home-btn">
+        ← Cambia campionato
+    </a>
+    <div class="sidebar-competition">
+        Serie B - Girone B
+    </div>
+    <div class="sidebar-category">Squadre</div><a href="../../../b/girone-b/squadre/classifiche.html" class="sidebar-link ">Classifiche</a><a href="../../../b/girone-b/squadre/andamento.html" class="sidebar-link ">Andamento</a><a href="../../../b/girone-b/squadre/profilo.html" class="sidebar-link active">Profilo</a><a href="../../../b/girone-b/squadre/risultati.html" class="sidebar-link ">Risultati</a><div class="sidebar-category">Giocatori</div><a href="../../../b/girone-b/giocatori/statistiche.html" class="sidebar-link ">Statistiche</a><a href="../../../b/girone-b/giocatori/profilo.html" class="sidebar-link ">Profilo</a><a href="../../../b/girone-b/giocatori/performance.html" class="sidebar-link ">Performance</a><a href="../../../b/girone-b/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../../b/girone-b/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
+    </nav>
+
+    <main class="main">
+        <h1 class="page-title">Profilo</h1>
+        <p class="page-subtitle">Serie B - Girone B - Radar, Dipendenza e Pattern Vittoria</p>
+
+        
+    
+    <div class="content-section">
+        <h2 class="section-title">Confronto Radar Squadre</h2>
+        <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
+            <div>
+                <label style="font-weight: 600;">Squadra 1:</label>
+                <select id="team1" onchange="updateRadar()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
+                    <option value="Adamant Ferrara">Adamant Ferrara</option><option value="Allianz Pazienza San Severo">Allianz Pazienza San Severo</option><option value="Benacquista Assicurazioni Latina">Benacquista Assicurazioni Latina</option><option value="Consorzio Leonardo Dany Quarrata">Consorzio Leonardo Dany Quarrata</option><option value="Consultinvest Loreto Pesaro">Consultinvest Loreto Pesaro</option><option value="General Contractor Jesi">General Contractor Jesi</option><option value="Luiss Roma">Luiss Roma</option><option value="OraSì Ravenna">OraSì Ravenna</option><option value="PSA Basket Casoria">PSA Basket Casoria</option><option value="Paperdi Juvecaserta 2021">Paperdi Juvecaserta 2021</option><option value="Power Basket Nocera">Power Basket Nocera</option><option value="Ristopro Fabriano">Ristopro Fabriano</option><option value="Solbat Golfo Piombino">Solbat Golfo Piombino</option><option value="Tema Sinergie Faenza">Tema Sinergie Faenza</option><option value="UP Andrea Costa Imola">UP Andrea Costa Imola</option><option value="Umana San Giobbe Chiusi">Umana San Giobbe Chiusi</option><option value="Verodol CBD Pielle Livorno">Verodol CBD Pielle Livorno</option><option value="Virtus GVM Roma 1960">Virtus GVM Roma 1960</option><option value="Virtus Imola">Virtus Imola</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-weight: 600;">Squadra 2:</label>
+                <select id="team2" onchange="updateRadar()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
+                    <option value="">-- Nessuna --</option>
+                    <option value="Adamant Ferrara">Adamant Ferrara</option><option value="Allianz Pazienza San Severo">Allianz Pazienza San Severo</option><option value="Benacquista Assicurazioni Latina">Benacquista Assicurazioni Latina</option><option value="Consorzio Leonardo Dany Quarrata">Consorzio Leonardo Dany Quarrata</option><option value="Consultinvest Loreto Pesaro">Consultinvest Loreto Pesaro</option><option value="General Contractor Jesi">General Contractor Jesi</option><option value="Luiss Roma">Luiss Roma</option><option value="OraSì Ravenna">OraSì Ravenna</option><option value="PSA Basket Casoria">PSA Basket Casoria</option><option value="Paperdi Juvecaserta 2021">Paperdi Juvecaserta 2021</option><option value="Power Basket Nocera">Power Basket Nocera</option><option value="Ristopro Fabriano">Ristopro Fabriano</option><option value="Solbat Golfo Piombino">Solbat Golfo Piombino</option><option value="Tema Sinergie Faenza">Tema Sinergie Faenza</option><option value="UP Andrea Costa Imola">UP Andrea Costa Imola</option><option value="Umana San Giobbe Chiusi">Umana San Giobbe Chiusi</option><option value="Verodol CBD Pielle Livorno">Verodol CBD Pielle Livorno</option><option value="Virtus GVM Roma 1960">Virtus GVM Roma 1960</option><option value="Virtus Imola">Virtus Imola</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 350px; gap: 20px; align-items: start;">
+            <div id="radar-chart"></div>
+            <div id="comparison-table" style="background: #f9f9f9; border-radius: 8px; padding: 15px;"></div>
+        </div>
+    </div>
+
+    <script>
+        const teamData = {"Adamant Ferrara": [88.1, 77.2, 92.6, 58.3, 57.4, 92.0, 85.1], "Allianz Pazienza San Severo": [93.9, 71.4, 83.2, 100.0, 92.6, 92.8, 85.0], "Benacquista Assicurazioni Latina": [95.1, 97.2, 83.5, 96.6, 64.2, 100.0, 86.5], "Consorzio Leonardo Dany Quarrata": [84.0, 84.4, 89.6, 87.4, 72.2, 86.5, 83.4], "Consultinvest Loreto Pesaro": [80.8, 67.3, 85.6, 88.6, 40.7, 82.4, 77.7], "General Contractor Jesi": [91.3, 82.5, 83.2, 77.1, 46.3, 87.8, 100.0], "Luiss Roma": [88.0, 75.3, 87.1, 85.2, 77.8, 90.1, 93.6], "OraS\u00ec Ravenna": [89.6, 74.8, 82.4, 86.9, 29.6, 87.8, 82.9], "PSA Basket Casoria": [77.6, 57.1, 86.3, 76.2, 56.4, 84.0, 73.7], "Paperdi Juvecaserta 2021": [100.0, 100.0, 100.0, 75.6, 58.3, 97.7, 90.2], "Power Basket Nocera": [82.6, 69.4, 88.3, 52.4, 32.7, 90.1, 83.0], "Ristopro Fabriano": [88.6, 77.4, 86.8, 68.0, 44.4, 88.6, 90.3], "Solbat Golfo Piombino": [90.0, 94.1, 86.4, 86.5, 86.0, 91.8, 82.2], "Tema Sinergie Faenza": [91.4, 78.8, 93.7, 58.8, 99.2, 83.2, 95.2], "UP Andrea Costa Imola": [85.2, 63.7, 87.8, 90.9, 59.3, 88.3, 89.2], "Umana San Giobbe Chiusi": [87.2, 77.8, 92.2, 66.0, 60.3, 90.1, 79.6], "Verodol CBD Pielle Livorno": [90.3, 70.7, 91.2, 63.4, 100.0, 87.7, 92.9], "Virtus GVM Roma 1960": [92.7, 71.7, 89.2, 74.3, 87.0, 98.6, 86.8], "Virtus Imola": [84.4, 66.2, 78.6, 58.8, 60.3, 84.5, 86.7]};
+        const teamRaw = {"Adamant Ferrara": {"Punti": 75.48, "Assist": 15.29, "Rimbalzi": 35.05, "Recuperi": 4.86, "Stoppate": 1.48, "Tiro 2PT": 51.62, "Tiro 3PT": 32.42}, "Allianz Pazienza San Severo": {"Punti": 80.43, "Assist": 14.14, "Rimbalzi": 31.48, "Recuperi": 8.33, "Stoppate": 2.38, "Tiro 2PT": 52.05, "Tiro 3PT": 32.37}, "Benacquista Assicurazioni Latina": {"Punti": 81.45, "Assist": 19.25, "Rimbalzi": 31.6, "Recuperi": 8.05, "Stoppate": 1.65, "Tiro 2PT": 56.11, "Tiro 3PT": 32.95}, "Consorzio Leonardo Dany Quarrata": {"Punti": 71.95, "Assist": 16.71, "Rimbalzi": 33.9, "Recuperi": 7.29, "Stoppate": 1.86, "Tiro 2PT": 48.51, "Tiro 3PT": 31.8}, "Consultinvest Loreto Pesaro": {"Punti": 69.19, "Assist": 13.33, "Rimbalzi": 32.38, "Recuperi": 7.38, "Stoppate": 1.05, "Tiro 2PT": 46.25, "Tiro 3PT": 29.61}, "General Contractor Jesi": {"Punti": 78.19, "Assist": 16.33, "Rimbalzi": 31.48, "Recuperi": 6.43, "Stoppate": 1.19, "Tiro 2PT": 49.25, "Tiro 3PT": 38.1}, "Luiss Roma": {"Punti": 75.4, "Assist": 14.9, "Rimbalzi": 32.95, "Recuperi": 7.1, "Stoppate": 2.0, "Tiro 2PT": 50.53, "Tiro 3PT": 35.66}, "OraS\u00ec Ravenna": {"Punti": 76.76, "Assist": 14.81, "Rimbalzi": 31.19, "Recuperi": 7.24, "Stoppate": 0.76, "Tiro 2PT": 49.26, "Tiro 3PT": 31.59}, "PSA Basket Casoria": {"Punti": 66.5, "Assist": 11.3, "Rimbalzi": 32.65, "Recuperi": 6.35, "Stoppate": 1.45, "Tiro 2PT": 47.15, "Tiro 3PT": 28.08}, "Paperdi Juvecaserta 2021": {"Punti": 85.65, "Assist": 19.8, "Rimbalzi": 37.85, "Recuperi": 6.3, "Stoppate": 1.5, "Tiro 2PT": 54.84, "Tiro 3PT": 34.37}, "Power Basket Nocera": {"Punti": 70.74, "Assist": 13.74, "Rimbalzi": 33.42, "Recuperi": 4.37, "Stoppate": 0.84, "Tiro 2PT": 50.55, "Tiro 3PT": 31.61}, "Ristopro Fabriano": {"Punti": 75.9, "Assist": 15.33, "Rimbalzi": 32.86, "Recuperi": 5.67, "Stoppate": 1.14, "Tiro 2PT": 49.73, "Tiro 3PT": 34.39}, "Solbat Golfo Piombino": {"Punti": 77.05, "Assist": 18.63, "Rimbalzi": 32.68, "Recuperi": 7.21, "Stoppate": 2.21, "Tiro 2PT": 51.52, "Tiro 3PT": 31.33}, "Tema Sinergie Faenza": {"Punti": 78.25, "Assist": 15.6, "Rimbalzi": 35.45, "Recuperi": 4.9, "Stoppate": 2.55, "Tiro 2PT": 46.67, "Tiro 3PT": 36.28}, "UP Andrea Costa Imola": {"Punti": 72.95, "Assist": 12.62, "Rimbalzi": 33.24, "Recuperi": 7.57, "Stoppate": 1.52, "Tiro 2PT": 49.52, "Tiro 3PT": 33.98}, "Umana San Giobbe Chiusi": {"Punti": 74.7, "Assist": 15.4, "Rimbalzi": 34.9, "Recuperi": 5.5, "Stoppate": 1.55, "Tiro 2PT": 50.57, "Tiro 3PT": 30.32}, "Verodol CBD Pielle Livorno": {"Punti": 77.38, "Assist": 14.0, "Rimbalzi": 34.52, "Recuperi": 5.29, "Stoppate": 2.57, "Tiro 2PT": 49.21, "Tiro 3PT": 35.39}, "Virtus GVM Roma 1960": {"Punti": 79.43, "Assist": 14.19, "Rimbalzi": 33.76, "Recuperi": 6.19, "Stoppate": 2.24, "Tiro 2PT": 55.34, "Tiro 3PT": 33.06}, "Virtus Imola": {"Punti": 72.3, "Assist": 13.1, "Rimbalzi": 29.75, "Recuperi": 4.9, "Stoppate": 1.55, "Tiro 2PT": 47.41, "Tiro 3PT": 33.05}};
+        const categories = ["Punti", "Assist", "Rimbalzi", "Recuperi", "Stoppate", "Tiro 2PT", "Tiro 3PT"];
+
+        function updateRadar() {
+            const t1 = document.getElementById('team1').value;
+            const t2 = document.getElementById('team2').value;
+
+            const data = [];
+            const colors = ['#302B8F', '#00F95B'];
+
+            [t1, t2].forEach((team, i) => {
+                if (team && teamData[team]) {
+                    const vals = [...teamData[team]];
+                    const cats = [...categories];
+                    vals.push(vals[0]);
+                    cats.push(cats[0]);
+
+                    data.push({
+                        type: 'scatterpolar',
+                        r: vals,
+                        theta: cats,
+                        fill: 'toself',
+                        fillcolor: colors[i] + '33',
+                        line: { color: colors[i], width: 2 },
+                        name: team
+                    });
+                }
+            });
+
+            const layout = {
+                polar: {
+                    radialaxis: { visible: true, range: [0, 100] }
+                },
+                showlegend: true,
+                height: 450,
+                margin: { t: 30, b: 30 }
+            };
+
+            Plotly.newPlot('radar-chart', data, layout);
+
+            // Update comparison table
+            updateComparisonTable(t1, t2);
+        }
+
+        function updateComparisonTable(t1, t2) {
+            const tableDiv = document.getElementById('comparison-table');
+
+            if (!t2 || !teamRaw[t1] || !teamRaw[t2]) {
+                // Single team view
+                if (teamRaw[t1]) {
+                    let html = '<h4 style="margin: 0 0 12px 0; color: #302B8F;">Valori Medi</h4>';
+                    html += '<table style="width: 100%; font-size: 14px;">';
+                    categories.forEach(cat => {
+                        const val = teamRaw[t1][cat];
+                        html += `<tr><td style="padding: 6px 0;">${cat}</td><td style="text-align: right; font-weight: 600;">${val}</td></tr>`;
+                    });
+                    html += '</table>';
+                    tableDiv.innerHTML = html;
+                }
+                return;
+            }
+
+            // Two team comparison
+            let html = '<h4 style="margin: 0 0 12px 0; color: #302B8F;">Confronto Valori</h4>';
+            html += '<table style="width: 100%; font-size: 13px; border-collapse: collapse;">';
+            html += '<thead><tr style="border-bottom: 2px solid #ddd;">';
+            html += '<th style="text-align: left; padding: 6px 4px;">Stat</th>';
+            html += '<th style="text-align: center; padding: 6px 4px; color: #302B8F;">🔵</th>';
+            html += '<th style="text-align: center; padding: 6px 4px; color: #00F95B;">🟢</th>';
+            html += '</tr></thead><tbody>';
+
+            categories.forEach(cat => {
+                const v1 = teamRaw[t1][cat];
+                const v2 = teamRaw[t2][cat];
+                const better1 = v1 > v2;
+                const better2 = v2 > v1;
+                const c1 = better1 ? '#22c55e' : (better2 ? '#ef4444' : '#666');
+                const c2 = better2 ? '#22c55e' : (better1 ? '#ef4444' : '#666');
+                const w1 = better1 ? 'bold' : 'normal';
+                const w2 = better2 ? 'bold' : 'normal';
+
+                html += `<tr style="border-bottom: 1px solid #eee;">`;
+                html += `<td style="padding: 6px 4px;">${cat}</td>`;
+                html += `<td style="text-align: center; padding: 6px 4px; color: ${c1}; font-weight: ${w1};">${v1}</td>`;
+                html += `<td style="text-align: center; padding: 6px 4px; color: ${c2}; font-weight: ${w2};">${v2}</td>`;
+                html += `</tr>`;
+            });
+
+            html += '</tbody></table>';
+            tableDiv.innerHTML = html;
+        }
+
+        updateRadar();
+    </script>
+    
+
+    <h2 class="section-title" style="margin-top: 2rem;">Dipendenza Giocatori</h2>
+    
+    <div class="content-section">
+        <h2 class="section-title">Dipendenza dai Top Scorer</h2>
+        <p style="color: #666; margin-bottom: 20px;">
+            Quanto ogni squadra dipende dai propri top 3 giocatori per punti e minuti.
+            Un'alta concentrazione può essere un rischio in caso di infortunio.
+        </p>
+
+        <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap; align-items: center;">
+            <div>
+                <label style="font-weight: 600;">Statistica:</label>
+                <select id="stat-type" onchange="updateChart()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
+                    <option value="PT">Punti</option>
+                    <option value="MIN">Minuti</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="dep-chart" style="min-height: 500px;"></div>
+
+        <div style="margin-top: 30px;">
+            <h3 style="margin-bottom: 15px;">Dettaglio per Squadra</h3>
+            <select id="team-select" onchange="updateDetail()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
+                <option value="Adamant Ferrara">Adamant Ferrara</option><option value="Allianz Pazienza San Severo">Allianz Pazienza San Severo</option><option value="Benacquista Assicurazioni Latina">Benacquista Assicurazioni Latina</option><option value="Consorzio Leonardo Dany Quarrata">Consorzio Leonardo Dany Quarrata</option><option value="Consultinvest Loreto Pesaro">Consultinvest Loreto Pesaro</option><option value="General Contractor Jesi">General Contractor Jesi</option><option value="Luiss Roma">Luiss Roma</option><option value="OraSì Ravenna">OraSì Ravenna</option><option value="PSA Basket Casoria">PSA Basket Casoria</option><option value="Paperdi Juvecaserta 2021">Paperdi Juvecaserta 2021</option><option value="Power Basket Nocera">Power Basket Nocera</option><option value="Ristopro Fabriano">Ristopro Fabriano</option><option value="Solbat Golfo Piombino">Solbat Golfo Piombino</option><option value="Tema Sinergie Faenza">Tema Sinergie Faenza</option><option value="UP Andrea Costa Imola">UP Andrea Costa Imola</option><option value="Umana San Giobbe Chiusi">Umana San Giobbe Chiusi</option><option value="Verodol CBD Pielle Livorno">Verodol CBD Pielle Livorno</option><option value="Virtus GVM Roma 1960">Virtus GVM Roma 1960</option><option value="Virtus Imola">Virtus Imola</option>
+            </select>
+            <div id="team-detail" style="margin-top: 15px;"></div>
+        </div>
+    </div>
+
+    <script>
+        const depData = [{"Team": "PSA Basket Casoria", "Giocatori": 11, "PT_totali": 1330.0, "PT_Top1_nome": "G. Berra", "PT_Top2_nome": "A. Petracca", "PT_Top3_nome": "V. Taddeo", "PT_Top1_pct": 18.646616541353385, "PT_Top2_pct": 31.654135338345863, "PT_Top3_pct": 41.80451127819549, "PT_Altri_pct": 58.19548872180451, "MIN_totali": 3955.083333333333, "MIN_Top1_nome": "A. Petracca", "MIN_Top2_nome": "G. Berra", "MIN_Top3_nome": "R. Rota", "MIN_Top1_pct": 13.247929879269297, "MIN_Top2_pct": 25.654748108973685, "MIN_Top3_pct": 37.78639303849477, "MIN_Altri_pct": 62.21360696150523}, {"Team": "OraS\u00ec Ravenna", "Giocatori": 10, "PT_totali": 1612.0, "PT_Top1_nome": "K. Brigato", "PT_Top2_nome": "F. Paolin", "PT_Top3_nome": "R. Jakstas", "PT_Top1_pct": 16.87344913151365, "PT_Top2_pct": 32.878411910669975, "PT_Top3_pct": 48.44913151364764, "PT_Altri_pct": 51.55086848635235, "MIN_totali": 4223.233333333333, "MIN_Top1_nome": "K. Brigato", "MIN_Top2_nome": "R. Jakstas", "MIN_Top3_nome": "F. Paolin", "MIN_Top1_pct": 13.648310536161079, "MIN_Top2_pct": 27.12574094098519, "MIN_Top3_pct": 40.33876098092299, "MIN_Altri_pct": 59.66123901907701}, {"Team": "Ristopro Fabriano", "Giocatori": 12, "PT_totali": 1594.0, "PT_Top1_nome": "K. \u0160ilke-\u017eunda", "PT_Top2_nome": "F. Dri", "PT_Top3_nome": "D. Vavoli", "PT_Top1_pct": 17.503136762860727, "PT_Top2_pct": 31.74404015056462, "PT_Top3_pct": 44.35382685069008, "PT_Altri_pct": 55.64617314930991, "MIN_totali": 4247.933333333333, "MIN_Top1_nome": "K. \u0160ilke-\u017eunda", "MIN_Top2_nome": "D. Vavoli", "MIN_Top3_nome": "F. Dri", "MIN_Top1_pct": 14.87546885544343, "MIN_Top2_pct": 27.57340824557824, "MIN_Top3_pct": 39.89351684740815, "MIN_Altri_pct": 60.10648315259185}, {"Team": "Benacquista Assicurazioni Latina", "Giocatori": 10, "PT_totali": 1629.0, "PT_Top1_nome": "M. Bakovi?", "PT_Top2_nome": "A. Gallo", "PT_Top3_nome": "A. Pastore", "PT_Top1_pct": 16.206261510128915, "PT_Top2_pct": 32.22836095764273, "PT_Top3_pct": 43.89195825659914, "PT_Altri_pct": 56.10804174340086, "MIN_totali": 3898.7, "MIN_Top1_nome": "E. Di Emidio", "MIN_Top2_nome": "A. Gallo", "MIN_Top3_nome": "A. Cipolla", "MIN_Top1_pct": 12.16431118064996, "MIN_Top2_pct": 23.860945101358574, "MIN_Top3_pct": 35.265173861372595, "MIN_Altri_pct": 64.73482613862741}, {"Team": "Tema Sinergie Faenza", "Giocatori": 10, "PT_totali": 1565.0, "PT_Top1_nome": "E. Vettori", "PT_Top2_nome": "A. Fragonara", "PT_Top3_nome": "T. Van Ounsem", "PT_Top1_pct": 21.46964856230032, "PT_Top2_pct": 39.233226837060705, "PT_Top3_pct": 56.16613418530352, "PT_Altri_pct": 43.83386581469649, "MIN_totali": 3984.666666666667, "MIN_Top1_nome": "E. Vettori", "MIN_Top2_nome": "A. Fragonara", "MIN_Top3_nome": "T. Van Ounsem", "MIN_Top1_pct": 15.528275054375104, "MIN_Top2_pct": 30.451313367910316, "MIN_Top3_pct": 43.09603480006691, "MIN_Altri_pct": 56.90396519993308}, {"Team": "Allianz Pazienza San Severo", "Giocatori": 9, "PT_totali": 1689.0, "PT_Top1_nome": "F. Bugatti", "PT_Top2_nome": "M. Gherardini", "PT_Top3_nome": "A. Mobio", "PT_Top1_pct": 21.07756068679692, "PT_Top2_pct": 41.62226169330965, "PT_Top3_pct": 59.26583777383067, "PT_Altri_pct": 40.73416222616933, "MIN_totali": 4187.5, "MIN_Top1_nome": "A. Mobio", "MIN_Top2_nome": "F. Bugatti", "MIN_Top3_nome": "M. Gherardini", "MIN_Top1_pct": 16.15402985074627, "MIN_Top2_pct": 31.85233830845771, "MIN_Top3_pct": 45.83562189054726, "MIN_Altri_pct": 54.16437810945274}, {"Team": "Adamant Ferrara", "Giocatori": 10, "PT_totali": 1585.0, "PT_Top1_nome": "W. Tio Tiagande", "PT_Top2_nome": "A. Renzi", "PT_Top3_nome": "D. Marchini", "PT_Top1_pct": 16.40378548895899, "PT_Top2_pct": 31.73501577287066, "PT_Top3_pct": 45.55205047318612, "PT_Altri_pct": 54.44794952681388, "MIN_totali": 4076.3, "MIN_Top1_nome": "W. Tio Tiagande", "MIN_Top2_nome": "M. Solaroli", "MIN_Top3_nome": "N. Pellicano", "MIN_Top1_pct": 12.658538380393985, "MIN_Top2_pct": 25.02269214729043, "MIN_Top3_pct": 37.33532860682482, "MIN_Altri_pct": 62.66467139317518}, {"Team": "Verodol CBD Pielle Livorno", "Giocatori": 9, "PT_totali": 1625.0, "PT_Top1_nome": "D. Gabrovsek", "PT_Top2_nome": "E. Leonzio", "PT_Top3_nome": "D. Klyuchnyk", "PT_Top1_pct": 18.461538461538463, "PT_Top2_pct": 36.861538461538466, "PT_Top3_pct": 47.815384615384616, "PT_Altri_pct": 52.184615384615384, "MIN_totali": 4075.5333333333333, "MIN_Top1_nome": "D. Gabrovsek", "MIN_Top2_nome": "M. Ebeling", "MIN_Top3_nome": "E. Leonzio", "MIN_Top1_pct": 14.250077699442198, "MIN_Top2_pct": 28.35988745849214, "MIN_Top3_pct": 41.736050905402976, "MIN_Altri_pct": 58.263949094597024}, {"Team": "General Contractor Jesi", "Giocatori": 9, "PT_totali": 1642.0, "PT_Top1_nome": "M. Arrigoni", "PT_Top2_nome": "F. Piccone", "PT_Top3_nome": "K. Palsson", "PT_Top1_pct": 18.940316686967112, "PT_Top2_pct": 36.96711327649208, "PT_Top3_pct": 53.04506699147381, "PT_Altri_pct": 46.95493300852619, "MIN_totali": 4233.733333333334, "MIN_Top1_nome": "M. Arrigoni", "MIN_Top2_nome": "L. Maglietti", "MIN_Top3_nome": "F. Piccone", "MIN_Top1_pct": 15.073772556923753, "MIN_Top2_pct": 29.646017699115042, "MIN_Top3_pct": 43.61792586527257, "MIN_Altri_pct": 56.38207413472743}, {"Team": "UP Andrea Costa Imola", "Giocatori": 12, "PT_totali": 1532.0, "PT_Top1_nome": "N. Moffa", "PT_Top2_nome": "T. Kupstas", "PT_Top3_nome": "G. Sanguinetti", "PT_Top1_pct": 17.950391644908617, "PT_Top2_pct": 33.420365535248045, "PT_Top3_pct": 46.671018276762396, "PT_Altri_pct": 53.328981723237604, "MIN_totali": 4218.883333333334, "MIN_Top1_nome": "T. Kupstas", "MIN_Top2_nome": "D. Raucci", "MIN_Top3_nome": "N. Moffa", "MIN_Top1_pct": 15.419562048409329, "MIN_Top2_pct": 27.95210422979224, "MIN_Top3_pct": 40.244851520742046, "MIN_Altri_pct": 59.75514847925795}, {"Team": "Power Basket Nocera", "Giocatori": 10, "PT_totali": 1344.0, "PT_Top1_nome": "L. Donadio", "PT_Top2_nome": "C. Cappelletti", "PT_Top3_nome": "M. Saladini", "PT_Top1_pct": 19.642857142857142, "PT_Top2_pct": 34.44940476190476, "PT_Top3_pct": 46.726190476190474, "PT_Altri_pct": 53.273809523809526, "MIN_totali": 3762.5833333333335, "MIN_Top1_nome": "L. Donadio", "MIN_Top2_nome": "N. Nonkovic", "MIN_Top3_nome": "D. Czerapowicz", "MIN_Top1_pct": 16.536510819250957, "MIN_Top2_pct": 31.011051803946753, "MIN_Top3_pct": 42.43626940710061, "MIN_Altri_pct": 57.56373059289939}, {"Team": "Paperdi Juvecaserta 2021", "Giocatori": 11, "PT_totali": 1713.0, "PT_Top1_nome": "D. D'argenzio", "PT_Top2_nome": "M. Radunic", "PT_Top3_nome": "D. Hadzic", "PT_Top1_pct": 23.058960887332166, "PT_Top2_pct": 39.813193228254526, "PT_Top3_pct": 54.290718038528894, "PT_Altri_pct": 45.709281961471106, "MIN_totali": 4241.733333333333, "MIN_Top1_nome": "M. Radunic", "MIN_Top2_nome": "D. D'argenzio", "MIN_Top3_nome": "V. Nobile", "MIN_Top1_pct": 13.58014019426021, "MIN_Top2_pct": 27.01175620029548, "MIN_Top3_pct": 39.82687894885739, "MIN_Altri_pct": 60.17312105114261}, {"Team": "Consultinvest Loreto Pesaro", "Giocatori": 9, "PT_totali": 1453.0, "PT_Top1_nome": "M. Graziani", "PT_Top2_nome": "L. Delfino", "PT_Top3_nome": "F. Tognacci", "PT_Top1_pct": 15.691672401927049, "PT_Top2_pct": 30.282174810736407, "PT_Top3_pct": 43.49621472814866, "PT_Altri_pct": 56.503785271851335, "MIN_totali": 4122.35, "MIN_Top1_nome": "L. Delfino", "MIN_Top2_nome": "E. Sgarzini", "MIN_Top3_nome": "M. Graziani", "MIN_Top1_pct": 14.094307049781474, "MIN_Top2_pct": 27.60844340404543, "MIN_Top3_pct": 40.631759392902914, "MIN_Altri_pct": 59.36824060709708}, {"Team": "Solbat Golfo Piombino", "Giocatori": 10, "PT_totali": 1464.0, "PT_Top1_nome": "N. Raivio", "PT_Top2_nome": "S. Giunta", "PT_Top3_nome": "L. Fabiani", "PT_Top1_pct": 24.112021857923498, "PT_Top2_pct": 39.75409836065574, "PT_Top3_pct": 51.502732240437155, "PT_Altri_pct": 48.49726775956284, "MIN_totali": 3858.8166666666666, "MIN_Top1_nome": "N. Raivio", "MIN_Top2_nome": "S. Giunta", "MIN_Top3_nome": "M. Ammannato", "MIN_Top1_pct": 16.591442108763914, "MIN_Top2_pct": 31.969213359881483, "MIN_Top3_pct": 45.01898250327173, "MIN_Altri_pct": 54.98101749672828}, {"Team": "Consorzio Leonardo Dany Quarrata", "Giocatori": 11, "PT_totali": 1511.0, "PT_Top1_nome": "S. Angelucci", "PT_Top2_nome": "F. Regoli", "PT_Top3_nome": "T. Molteni", "PT_Top1_pct": 16.61151555261416, "PT_Top2_pct": 31.89940436796823, "PT_Top3_pct": 46.525479814692254, "PT_Altri_pct": 53.47452018530774, "MIN_totali": 4241.233333333334, "MIN_Top1_nome": "F. Regoli", "MIN_Top2_nome": "S. Angelucci", "MIN_Top3_nome": "T. Molteni", "MIN_Top1_pct": 14.741781085690484, "MIN_Top2_pct": 29.128712560025775, "MIN_Top3_pct": 43.09241808593412, "MIN_Altri_pct": 56.90758191406587}, {"Team": "Virtus GVM Roma 1960", "Giocatori": 10, "PT_totali": 1668.0, "PT_Top1_nome": "L. Battistini", "PT_Top2_nome": "M. Barattini", "PT_Top3_nome": "Y. Rodriguez", "PT_Top1_pct": 16.127098321342924, "PT_Top2_pct": 29.136690647482016, "PT_Top3_pct": 42.086330935251794, "PT_Altri_pct": 57.9136690647482, "MIN_totali": 4198.25, "MIN_Top1_nome": "G. Lenti", "MIN_Top2_nome": "I. Majcuni?", "MIN_Top3_nome": "L. Battistini", "MIN_Top1_pct": 12.48456698227436, "MIN_Top2_pct": 24.96794299211973, "MIN_Top3_pct": 36.654558446971954, "MIN_Altri_pct": 63.345441553028046}, {"Team": "Luiss Roma", "Giocatori": 11, "PT_totali": 1508.0, "PT_Top1_nome": "J. Fernandez", "PT_Top2_nome": "R. Salvioni", "PT_Top3_nome": "M. Pasqualin", "PT_Top1_pct": 16.976127320954905, "PT_Top2_pct": 33.88594164456234, "PT_Top3_pct": 48.143236074270554, "PT_Altri_pct": 51.856763925729446, "MIN_totali": 3884.9166666666665, "MIN_Top1_nome": "R. Salvioni", "MIN_Top2_nome": "R. Casella", "MIN_Top3_nome": "M. Pasqualin", "MIN_Top1_pct": 13.740749479825823, "MIN_Top2_pct": 26.14127287157597, "MIN_Top3_pct": 37.87168321928827, "MIN_Altri_pct": 62.12831678071172}, {"Team": "Umana San Giobbe Chiusi", "Giocatori": 10, "PT_totali": 1494.0, "PT_Top1_nome": "N. Bertocco", "PT_Top2_nome": "L. Rasio", "PT_Top3_nome": "F. Gravaghi", "PT_Top1_pct": 18.20615796519411, "PT_Top2_pct": 34.069611780455155, "PT_Top3_pct": 49.062918340026776, "PT_Altri_pct": 50.937081659973224, "MIN_totali": 3934.1666666666665, "MIN_Top1_nome": "M. Petrucci", "MIN_Top2_nome": "F. Gravaghi", "MIN_Top3_nome": "L. Rasio", "MIN_Top1_pct": 15.129845371743276, "MIN_Top2_pct": 28.377462402033466, "MIN_Top3_pct": 41.38699428087269, "MIN_Altri_pct": 58.61300571912731}, {"Team": "Virtus Imola", "Giocatori": 11, "PT_totali": 1446.0, "PT_Top1_nome": "M. Melchiorri", "PT_Top2_nome": "L. Pollini", "PT_Top3_nome": "L. Baldi", "PT_Top1_pct": 15.90594744121715, "PT_Top2_pct": 31.535269709543567, "PT_Top3_pct": 47.0954356846473, "PT_Altri_pct": 52.9045643153527, "MIN_totali": 3842.1, "MIN_Top1_nome": "M. Melchiorri", "MIN_Top2_nome": "M. Mazzoni", "MIN_Top3_nome": "L. Pollini", "MIN_Top1_pct": 17.129521181992487, "MIN_Top2_pct": 30.156251355595458, "MIN_Top3_pct": 43.160858211221296, "MIN_Altri_pct": 56.839141788778704}];
+        const teamPlayers = {"Virtus GVM Roma 1960": [{"name": "L. Battistini", "pt": 269, "pt_pct": 16.1, "min": 490, "min_pct": 11.7}, {"name": "M. Barattini", "pt": 217, "pt_pct": 13.0, "min": 468, "min_pct": 11.2}, {"name": "Y. Rodriguez", "pt": 216, "pt_pct": 12.9, "min": 442, "min_pct": 10.5}, {"name": "G. Leggio", "pt": 205, "pt_pct": 12.3, "min": 467, "min_pct": 11.1}, {"name": "G. Lenti", "pt": 177, "pt_pct": 10.6, "min": 524, "min_pct": 12.5}, {"name": "I. Majcuni?", "pt": 172, "pt_pct": 10.3, "min": 524, "min_pct": 12.5}, {"name": "D. Toscano", "pt": 145, "pt_pct": 8.7, "min": 466, "min_pct": 11.1}, {"name": "M. Visintin", "pt": 144, "pt_pct": 8.6, "min": 413, "min_pct": 9.8}, {"name": "A. Bazan", "pt": 98, "pt_pct": 5.9, "min": 283, "min_pct": 6.8}, {"name": "J. Fokou", "pt": 25, "pt_pct": 1.5, "min": 116, "min_pct": 2.8}], "Ristopro Fabriano": [{"name": "K. \u0160ilke-\u017eunda", "pt": 279, "pt_pct": 17.5, "min": 631, "min_pct": 14.9}, {"name": "F. Dri", "pt": 227, "pt_pct": 14.2, "min": 523, "min_pct": 12.3}, {"name": "D. Vavoli", "pt": 201, "pt_pct": 12.6, "min": 539, "min_pct": 12.7}, {"name": "R. Romondia", "pt": 189, "pt_pct": 11.9, "min": 478, "min_pct": 11.3}, {"name": "R. Ponziani", "pt": 172, "pt_pct": 10.8, "min": 516, "min_pct": 12.2}, {"name": "S. Centanni", "pt": 164, "pt_pct": 10.3, "min": 357, "min_pct": 8.4}, {"name": "L. Abega", "pt": 101, "pt_pct": 6.3, "min": 233, "min_pct": 5.5}, {"name": "J. Wojciechowksi", "pt": 92, "pt_pct": 5.8, "min": 249, "min_pct": 5.9}, {"name": "S. Beyrne", "pt": 80, "pt_pct": 5.0, "min": 338, "min_pct": 8.0}, {"name": "M. Diarra", "pt": 41, "pt_pct": 2.6, "min": 137, "min_pct": 3.2}, {"name": "A. Beltrami", "pt": 33, "pt_pct": 2.1, "min": 123, "min_pct": 2.9}, {"name": "S. Redini", "pt": 15, "pt_pct": 0.9, "min": 119, "min_pct": 2.8}], "Benacquista Assicurazioni Latina": [{"name": "M. Bakovi?", "pt": 264, "pt_pct": 16.2, "min": 405, "min_pct": 10.4}, {"name": "A. Gallo", "pt": 261, "pt_pct": 16.0, "min": 456, "min_pct": 11.7}, {"name": "A. Pastore", "pt": 190, "pt_pct": 11.7, "min": 437, "min_pct": 11.2}, {"name": "A. Cipolla", "pt": 174, "pt_pct": 10.7, "min": 444, "min_pct": 11.4}, {"name": "B. Sacchetti", "pt": 162, "pt_pct": 9.9, "min": 321, "min_pct": 8.2}, {"name": "R. Chiti", "pt": 152, "pt_pct": 9.3, "min": 413, "min_pct": 10.6}, {"name": "E. Di Emidio", "pt": 124, "pt_pct": 7.6, "min": 474, "min_pct": 12.2}, {"name": "O. Maiga", "pt": 114, "pt_pct": 7.0, "min": 331, "min_pct": 8.5}, {"name": "I. Simonetti", "pt": 101, "pt_pct": 6.2, "min": 260, "min_pct": 6.7}, {"name": "C. Nwohuocha", "pt": 87, "pt_pct": 5.3, "min": 354, "min_pct": 9.1}], "OraS\u00ec Ravenna": [{"name": "K. Brigato", "pt": 272, "pt_pct": 16.9, "min": 576, "min_pct": 13.6}, {"name": "F. Paolin", "pt": 258, "pt_pct": 16.0, "min": 558, "min_pct": 13.2}, {"name": "R. Jakstas", "pt": 251, "pt_pct": 15.6, "min": 569, "min_pct": 13.5}, {"name": "G. Dron", "pt": 234, "pt_pct": 14.5, "min": 497, "min_pct": 11.8}, {"name": "E. Cena", "pt": 169, "pt_pct": 10.5, "min": 502, "min_pct": 11.9}, {"name": "A. Feliciangeli", "pt": 120, "pt_pct": 7.4, "min": 382, "min_pct": 9.0}, {"name": "A. Naoni", "pt": 97, "pt_pct": 6.0, "min": 239, "min_pct": 5.7}, {"name": "M. Ghigo", "pt": 89, "pt_pct": 5.5, "min": 368, "min_pct": 8.7}, {"name": "D. Paiano", "pt": 69, "pt_pct": 4.3, "min": 268, "min_pct": 6.4}, {"name": "T. Morena", "pt": 53, "pt_pct": 3.3, "min": 260, "min_pct": 6.2}], "Tema Sinergie Faenza": [{"name": "E. Vettori", "pt": 336, "pt_pct": 21.5, "min": 618, "min_pct": 15.5}, {"name": "A. Fragonara", "pt": 278, "pt_pct": 17.8, "min": 594, "min_pct": 14.9}, {"name": "T. Van Ounsem", "pt": 265, "pt_pct": 16.9, "min": 503, "min_pct": 12.6}, {"name": "M. Mbacke", "pt": 181, "pt_pct": 11.6, "min": 502, "min_pct": 12.6}, {"name": "C. Fumagalli", "pt": 142, "pt_pct": 9.1, "min": 462, "min_pct": 11.6}, {"name": "M. Santiangeli", "pt": 139, "pt_pct": 8.9, "min": 423, "min_pct": 10.6}, {"name": "R. Romano", "pt": 60, "pt_pct": 3.8, "min": 167, "min_pct": 4.2}, {"name": "F. Stefanini", "pt": 58, "pt_pct": 3.7, "min": 281, "min_pct": 7.1}, {"name": "M. Rinaldin", "pt": 58, "pt_pct": 3.7, "min": 227, "min_pct": 5.7}, {"name": "V. Longo", "pt": 48, "pt_pct": 3.1, "min": 202, "min_pct": 5.1}], "Allianz Pazienza San Severo": [{"name": "F. Bugatti", "pt": 356, "pt_pct": 21.1, "min": 657, "min_pct": 15.7}, {"name": "M. Gherardini", "pt": 347, "pt_pct": 20.5, "min": 585, "min_pct": 14.0}, {"name": "A. Mobio", "pt": 298, "pt_pct": 17.6, "min": 676, "min_pct": 16.2}, {"name": "D. Lucas", "pt": 264, "pt_pct": 15.6, "min": 552, "min_pct": 13.2}, {"name": "M. Morelli", "pt": 121, "pt_pct": 7.2, "min": 534, "min_pct": 12.8}, {"name": "P. Bandini", "pt": 110, "pt_pct": 6.5, "min": 452, "min_pct": 10.8}, {"name": "A. Gattel", "pt": 81, "pt_pct": 4.8, "min": 272, "min_pct": 6.5}, {"name": "R. Ndour", "pt": 74, "pt_pct": 4.4, "min": 244, "min_pct": 5.8}, {"name": "M. Todisco", "pt": 38, "pt_pct": 2.2, "min": 211, "min_pct": 5.1}], "Power Basket Nocera": [{"name": "L. Donadio", "pt": 264, "pt_pct": 19.6, "min": 622, "min_pct": 16.5}, {"name": "C. Cappelletti", "pt": 199, "pt_pct": 14.8, "min": 407, "min_pct": 10.8}, {"name": "M. Saladini", "pt": 165, "pt_pct": 12.3, "min": 362, "min_pct": 9.6}, {"name": "B. Misolic", "pt": 159, "pt_pct": 11.8, "min": 429, "min_pct": 11.4}, {"name": "N. Nonkovic", "pt": 150, "pt_pct": 11.2, "min": 544, "min_pct": 14.5}, {"name": "D. Czerapowicz", "pt": 112, "pt_pct": 8.3, "min": 429, "min_pct": 11.4}, {"name": "A. Truglio", "pt": 105, "pt_pct": 7.8, "min": 307, "min_pct": 8.2}, {"name": "A. Guastamacchia", "pt": 95, "pt_pct": 7.1, "min": 312, "min_pct": 8.3}, {"name": "J. Soliani", "pt": 56, "pt_pct": 4.2, "min": 168, "min_pct": 4.5}, {"name": "F. Matrone", "pt": 39, "pt_pct": 2.9, "min": 177, "min_pct": 4.7}], "Paperdi Juvecaserta 2021": [{"name": "D. D'argenzio", "pt": 395, "pt_pct": 23.1, "min": 569, "min_pct": 13.4}, {"name": "M. Radunic", "pt": 287, "pt_pct": 16.8, "min": 576, "min_pct": 13.6}, {"name": "D. Hadzic", "pt": 248, "pt_pct": 14.5, "min": 487, "min_pct": 11.5}, {"name": "V. Nobile", "pt": 163, "pt_pct": 9.5, "min": 543, "min_pct": 12.8}, {"name": "A. Lo Biondo", "pt": 149, "pt_pct": 8.7, "min": 459, "min_pct": 10.8}, {"name": "L. Brambilla", "pt": 114, "pt_pct": 6.7, "min": 492, "min_pct": 11.6}, {"name": "M. Lagan\u00e0", "pt": 95, "pt_pct": 5.5, "min": 221, "min_pct": 5.2}, {"name": "S. Vecerina", "pt": 91, "pt_pct": 5.3, "min": 406, "min_pct": 9.6}, {"name": "K. Ly-lee", "pt": 82, "pt_pct": 4.8, "min": 198, "min_pct": 4.7}, {"name": "A. Sperduto", "pt": 73, "pt_pct": 4.3, "min": 151, "min_pct": 3.6}, {"name": "S. Pisapia", "pt": 16, "pt_pct": 0.9, "min": 134, "min_pct": 3.2}], "Umana San Giobbe Chiusi": [{"name": "N. Bertocco", "pt": 272, "pt_pct": 18.2, "min": 462, "min_pct": 11.8}, {"name": "L. Rasio", "pt": 237, "pt_pct": 15.9, "min": 511, "min_pct": 13.0}, {"name": "F. Gravaghi", "pt": 224, "pt_pct": 15.0, "min": 521, "min_pct": 13.2}, {"name": "L. Raffaelli", "pt": 196, "pt_pct": 13.1, "min": 439, "min_pct": 11.2}, {"name": "M. Petrucci", "pt": 165, "pt_pct": 11.0, "min": 595, "min_pct": 15.1}, {"name": "A. Lorenzetti", "pt": 105, "pt_pct": 7.0, "min": 299, "min_pct": 7.6}, {"name": "F. Natale", "pt": 93, "pt_pct": 6.2, "min": 341, "min_pct": 8.7}, {"name": "G. Candotto", "pt": 86, "pt_pct": 5.8, "min": 328, "min_pct": 8.3}, {"name": "T. Minoli", "pt": 75, "pt_pct": 5.0, "min": 259, "min_pct": 6.6}, {"name": "Y. Moreno", "pt": 41, "pt_pct": 2.7, "min": 175, "min_pct": 4.5}], "Consorzio Leonardo Dany Quarrata": [{"name": "S. Angelucci", "pt": 251, "pt_pct": 16.6, "min": 610, "min_pct": 14.4}, {"name": "F. Regoli", "pt": 231, "pt_pct": 15.3, "min": 625, "min_pct": 14.7}, {"name": "T. Molteni", "pt": 221, "pt_pct": 14.6, "min": 592, "min_pct": 14.0}, {"name": "A. Tiberti", "pt": 202, "pt_pct": 13.4, "min": 540, "min_pct": 12.7}, {"name": "T. De Gregori", "pt": 141, "pt_pct": 9.3, "min": 290, "min_pct": 6.8}, {"name": "A. Novori", "pt": 128, "pt_pct": 8.5, "min": 312, "min_pct": 7.4}, {"name": "M. Coltro", "pt": 88, "pt_pct": 5.8, "min": 411, "min_pct": 9.7}, {"name": "L. Prenga", "pt": 84, "pt_pct": 5.6, "min": 284, "min_pct": 6.7}, {"name": "N. Calabrese", "pt": 74, "pt_pct": 4.9, "min": 189, "min_pct": 4.5}, {"name": "F. Scandiuzzi", "pt": 54, "pt_pct": 3.6, "min": 223, "min_pct": 5.3}, {"name": "L. Mongelli", "pt": 37, "pt_pct": 2.4, "min": 160, "min_pct": 3.8}], "PSA Basket Casoria": [{"name": "G. Berra", "pt": 248, "pt_pct": 18.6, "min": 490, "min_pct": 12.4}, {"name": "A. Petracca", "pt": 173, "pt_pct": 13.0, "min": 523, "min_pct": 13.2}, {"name": "V. Taddeo", "pt": 135, "pt_pct": 10.2, "min": 383, "min_pct": 9.7}, {"name": "R. Rota", "pt": 135, "pt_pct": 10.2, "min": 479, "min_pct": 12.1}, {"name": "M. Seck", "pt": 111, "pt_pct": 8.3, "min": 478, "min_pct": 12.1}, {"name": "F. Mehmedoviq", "pt": 110, "pt_pct": 8.3, "min": 284, "min_pct": 7.2}, {"name": "C. Vijber", "pt": 108, "pt_pct": 8.1, "min": 219, "min_pct": 5.6}, {"name": "L. Hahn", "pt": 101, "pt_pct": 7.6, "min": 300, "min_pct": 7.6}, {"name": "G. Spizzichini", "pt": 85, "pt_pct": 6.4, "min": 349, "min_pct": 8.8}, {"name": "P. Ruggiero", "pt": 84, "pt_pct": 6.3, "min": 342, "min_pct": 8.7}, {"name": "G. Giorgi", "pt": 40, "pt_pct": 3.0, "min": 102, "min_pct": 2.6}], "Adamant Ferrara": [{"name": "W. Tio Tiagande", "pt": 260, "pt_pct": 16.4, "min": 516, "min_pct": 12.7}, {"name": "A. Renzi", "pt": 243, "pt_pct": 15.3, "min": 446, "min_pct": 11.0}, {"name": "D. Marchini", "pt": 219, "pt_pct": 13.8, "min": 415, "min_pct": 10.2}, {"name": "M. Solaroli", "pt": 178, "pt_pct": 11.2, "min": 504, "min_pct": 12.4}, {"name": "R. Santiago", "pt": 175, "pt_pct": 11.0, "min": 387, "min_pct": 9.5}, {"name": "G. Casagrande", "pt": 135, "pt_pct": 8.5, "min": 318, "min_pct": 7.8}, {"name": "N. Pellicano", "pt": 112, "pt_pct": 7.1, "min": 501, "min_pct": 12.3}, {"name": "S. Sackey", "pt": 111, "pt_pct": 7.0, "min": 379, "min_pct": 9.3}, {"name": "T. Bellini", "pt": 89, "pt_pct": 5.6, "min": 392, "min_pct": 9.6}, {"name": "E. Caiazza", "pt": 63, "pt_pct": 4.0, "min": 214, "min_pct": 5.3}], "Luiss Roma": [{"name": "J. Fernandez", "pt": 256, "pt_pct": 17.0, "min": 391, "min_pct": 10.1}, {"name": "R. Salvioni", "pt": 255, "pt_pct": 16.9, "min": 533, "min_pct": 13.7}, {"name": "M. Pasqualin", "pt": 215, "pt_pct": 14.3, "min": 455, "min_pct": 11.7}, {"name": "V. Cucci", "pt": 162, "pt_pct": 10.7, "min": 383, "min_pct": 9.9}, {"name": "R. Casella", "pt": 129, "pt_pct": 8.6, "min": 481, "min_pct": 12.4}, {"name": "A. Sylla", "pt": 123, "pt_pct": 8.2, "min": 383, "min_pct": 9.9}, {"name": "M. Jovovic", "pt": 117, "pt_pct": 7.8, "min": 384, "min_pct": 9.9}, {"name": "M. Fallucca", "pt": 100, "pt_pct": 6.6, "min": 294, "min_pct": 7.6}, {"name": "C. Atamah", "pt": 79, "pt_pct": 5.2, "min": 292, "min_pct": 7.5}, {"name": "M. Graziano", "pt": 47, "pt_pct": 3.1, "min": 121, "min_pct": 3.1}, {"name": "M. Ferrara", "pt": 25, "pt_pct": 1.7, "min": 163, "min_pct": 4.2}], "Consultinvest Loreto Pesaro": [{"name": "M. Graziani", "pt": 228, "pt_pct": 15.7, "min": 536, "min_pct": 13.0}, {"name": "L. Delfino", "pt": 212, "pt_pct": 14.6, "min": 581, "min_pct": 14.1}, {"name": "F. Tognacci", "pt": 192, "pt_pct": 13.2, "min": 505, "min_pct": 12.3}, {"name": "A. Valentini", "pt": 191, "pt_pct": 13.1, "min": 386, "min_pct": 9.4}, {"name": "T. Pillastrini", "pt": 177, "pt_pct": 12.2, "min": 455, "min_pct": 11.1}, {"name": "E. Sgarzini", "pt": 166, "pt_pct": 11.4, "min": 557, "min_pct": 13.5}, {"name": "D. Terenzi", "pt": 129, "pt_pct": 8.9, "min": 466, "min_pct": 11.3}, {"name": "J. Aglio", "pt": 105, "pt_pct": 7.2, "min": 437, "min_pct": 10.6}, {"name": "L. Lomtazde", "pt": 53, "pt_pct": 3.6, "min": 195, "min_pct": 4.7}], "Verodol CBD Pielle Livorno": [{"name": "D. Gabrovsek", "pt": 300, "pt_pct": 18.5, "min": 580, "min_pct": 14.3}, {"name": "E. Leonzio", "pt": 299, "pt_pct": 18.4, "min": 545, "min_pct": 13.4}, {"name": "D. Klyuchnyk", "pt": 178, "pt_pct": 11.0, "min": 437, "min_pct": 10.7}, {"name": "J. Lucarelli", "pt": 175, "pt_pct": 10.8, "min": 384, "min_pct": 9.4}, {"name": "M. Venucci", "pt": 156, "pt_pct": 9.6, "min": 456, "min_pct": 11.2}, {"name": "M. Ebeling", "pt": 150, "pt_pct": 9.2, "min": 575, "min_pct": 14.1}, {"name": "M. Mennella", "pt": 143, "pt_pct": 8.8, "min": 341, "min_pct": 8.4}, {"name": "D. Alibegovic", "pt": 131, "pt_pct": 8.1, "min": 331, "min_pct": 8.1}, {"name": "D. Bonacini", "pt": 93, "pt_pct": 5.7, "min": 422, "min_pct": 10.4}], "UP Andrea Costa Imola": [{"name": "N. Moffa", "pt": 275, "pt_pct": 18.0, "min": 518, "min_pct": 12.3}, {"name": "T. Kupstas", "pt": 237, "pt_pct": 15.5, "min": 650, "min_pct": 15.4}, {"name": "G. Sanguinetti", "pt": 203, "pt_pct": 13.3, "min": 435, "min_pct": 10.3}, {"name": "R. Chessari", "pt": 170, "pt_pct": 11.1, "min": 437, "min_pct": 10.4}, {"name": "D. Raucci", "pt": 159, "pt_pct": 10.4, "min": 528, "min_pct": 12.5}, {"name": "E. Thioune", "pt": 112, "pt_pct": 7.3, "min": 402, "min_pct": 9.5}, {"name": "T. Gatto", "pt": 80, "pt_pct": 5.2, "min": 247, "min_pct": 5.9}, {"name": "V. Zedda", "pt": 77, "pt_pct": 5.0, "min": 209, "min_pct": 5.0}, {"name": "L. Gozo", "pt": 76, "pt_pct": 5.0, "min": 273, "min_pct": 6.5}, {"name": "G. Filippini", "pt": 57, "pt_pct": 3.7, "min": 207, "min_pct": 4.9}, {"name": "G. Tamani", "pt": 54, "pt_pct": 3.5, "min": 170, "min_pct": 4.0}, {"name": "S. Abati Toure", "pt": 32, "pt_pct": 2.1, "min": 136, "min_pct": 3.2}], "Solbat Golfo Piombino": [{"name": "N. Raivio", "pt": 353, "pt_pct": 24.1, "min": 640, "min_pct": 16.6}, {"name": "S. Giunta", "pt": 229, "pt_pct": 15.6, "min": 593, "min_pct": 15.4}, {"name": "L. Fabiani", "pt": 172, "pt_pct": 11.7, "min": 337, "min_pct": 8.8}, {"name": "M. Ammannato", "pt": 149, "pt_pct": 10.2, "min": 503, "min_pct": 13.0}, {"name": "N. Ianuale", "pt": 141, "pt_pct": 9.6, "min": 429, "min_pct": 11.1}, {"name": "E. Carnevale", "pt": 108, "pt_pct": 7.4, "min": 225, "min_pct": 5.8}, {"name": "M. Menconi", "pt": 97, "pt_pct": 6.6, "min": 319, "min_pct": 8.3}, {"name": "E. Buffo", "pt": 94, "pt_pct": 6.4, "min": 313, "min_pct": 8.1}, {"name": "F. Forti", "pt": 70, "pt_pct": 4.8, "min": 314, "min_pct": 8.2}, {"name": "G. Ferraresi", "pt": 51, "pt_pct": 3.5, "min": 180, "min_pct": 4.7}], "Virtus Imola": [{"name": "M. Melchiorri", "pt": 230, "pt_pct": 15.9, "min": 658, "min_pct": 17.1}, {"name": "L. Pollini", "pt": 226, "pt_pct": 15.6, "min": 499, "min_pct": 13.0}, {"name": "L. Baldi", "pt": 225, "pt_pct": 15.6, "min": 495, "min_pct": 12.9}, {"name": "I. Kucan", "pt": 184, "pt_pct": 12.7, "min": 453, "min_pct": 11.8}, {"name": "E. Stankevicius", "pt": 132, "pt_pct": 9.1, "min": 175, "min_pct": 4.6}, {"name": "M. Mazzoni", "pt": 127, "pt_pct": 8.8, "min": 500, "min_pct": 13.0}, {"name": "G. Giorgi", "pt": 122, "pt_pct": 8.4, "min": 268, "min_pct": 7.0}, {"name": "N. Castellino", "pt": 62, "pt_pct": 4.3, "min": 206, "min_pct": 5.4}, {"name": "I. Boev", "pt": 54, "pt_pct": 3.7, "min": 205, "min_pct": 5.3}, {"name": "G. Tambwe", "pt": 52, "pt_pct": 3.6, "min": 255, "min_pct": 6.7}, {"name": "S. Errede", "pt": 32, "pt_pct": 2.2, "min": 122, "min_pct": 3.2}], "General Contractor Jesi": [{"name": "M. Arrigoni", "pt": 311, "pt_pct": 18.9, "min": 638, "min_pct": 15.1}, {"name": "F. Piccone", "pt": 296, "pt_pct": 18.0, "min": 591, "min_pct": 14.0}, {"name": "K. Palsson", "pt": 264, "pt_pct": 16.1, "min": 538, "min_pct": 12.7}, {"name": "L. Maglietti", "pt": 210, "pt_pct": 12.8, "min": 616, "min_pct": 14.6}, {"name": "M. Nicoli", "pt": 166, "pt_pct": 10.1, "min": 473, "min_pct": 11.2}, {"name": "S. Bruno", "pt": 146, "pt_pct": 8.9, "min": 542, "min_pct": 12.8}, {"name": "M. Di Pizzo", "pt": 141, "pt_pct": 8.6, "min": 380, "min_pct": 9.0}, {"name": "L. Toniato", "pt": 69, "pt_pct": 4.2, "min": 243, "min_pct": 5.8}, {"name": "L. Del Sole", "pt": 39, "pt_pct": 2.4, "min": 206, "min_pct": 4.9}]};
+
+        function updateChart() {
+            const statType = document.getElementById('stat-type').value;
+            const prefix = statType;
+
+            // Sort by top1 percentage
+            const sorted = [...depData].sort((a, b) => a[prefix + '_Top1_pct'] - b[prefix + '_Top1_pct']);
+
+            const teams = sorted.map(d => d.Team);
+            const top1 = sorted.map(d => d[prefix + '_Top1_pct']);
+            const top2Diff = sorted.map(d => d[prefix + '_Top2_pct'] - d[prefix + '_Top1_pct']);
+            const top3Diff = sorted.map(d => d[prefix + '_Top3_pct'] - d[prefix + '_Top2_pct']);
+            const altri = sorted.map(d => d[prefix + '_Altri_pct']);
+
+            const traces = [
+                {
+                    y: teams, x: top1, name: '1° scorer',
+                    type: 'bar', orientation: 'h',
+                    marker: { color: '#302B8F' },
+                    text: sorted.map(d => d[prefix + '_Top1_nome'].split(' ').pop() + ': ' + d[prefix + '_Top1_pct'].toFixed(0) + '%'),
+                    textposition: 'inside', insidetextanchor: 'middle'
+                },
+                {
+                    y: teams, x: top2Diff, name: '2° scorer',
+                    type: 'bar', orientation: 'h',
+                    marker: { color: '#00F95B' },
+                    text: sorted.map(d => d[prefix + '_Top2_nome'].split(' ').pop() + ': ' + (d[prefix + '_Top2_pct'] - d[prefix + '_Top1_pct']).toFixed(0) + '%'),
+                    textposition: 'inside', insidetextanchor: 'middle'
+                },
+                {
+                    y: teams, x: top3Diff, name: '3° scorer',
+                    type: 'bar', orientation: 'h',
+                    marker: { color: '#fbbf24' },
+                    text: sorted.map(d => d[prefix + '_Top3_nome'].split(' ').pop() + ': ' + (d[prefix + '_Top3_pct'] - d[prefix + '_Top2_pct']).toFixed(0) + '%'),
+                    textposition: 'inside', insidetextanchor: 'middle'
+                },
+                {
+                    y: teams, x: altri, name: 'Altri',
+                    type: 'bar', orientation: 'h',
+                    marker: { color: '#e5e7eb' },
+                    text: sorted.map(d => 'Altri: ' + d[prefix + '_Altri_pct'].toFixed(0) + '%'),
+                    textposition: 'inside', insidetextanchor: 'middle'
+                }
+            ];
+
+            const layout = {
+                barmode: 'stack',
+                height: Math.max(400, teams.length * 35),
+                margin: { l: 150, r: 30, t: 30, b: 50 },
+                xaxis: { title: 'Percentuale %', range: [0, 100] },
+                legend: { orientation: 'h', y: -0.1 }
+            };
+
+            Plotly.newPlot('dep-chart', traces, layout, { responsive: true });
+        }
+
+        function updateDetail() {
+            const team = document.getElementById('team-select').value;
+            const players = teamPlayers[team];
+            if (!players) return;
+
+            let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">';
+
+            // Punti - tutti i giocatori
+            html += '<div style="background: #f9f9f9; padding: 15px; border-radius: 8px;">';
+            html += '<h4 style="margin-bottom: 15px; color: #302B8F;">Distribuzione Punti</h4>';
+            players.forEach((p, i) => {
+                const barColor = i < 3 ? '#302B8F' : '#94a3b8';
+                html += `<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                    <span style="width: 120px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</span>
+                    <div style="flex: 1; background: #e5e7eb; height: 20px; border-radius: 4px; position: relative;">
+                        <div style="width: ${p.pt_pct}%; background: ${barColor}; height: 100%; border-radius: 4px;"></div>
+                    </div>
+                    <span style="width: 50px; font-size: 12px; text-align: right;">${p.pt_pct}%</span>
+                    <span style="width: 40px; font-size: 11px; color: #888; text-align: right;">${p.pt}</span>
+                </div>`;
+            });
+            html += '</div>';
+
+            // Minuti - tutti i giocatori (ordinati per minuti)
+            const playersByMin = [...players].sort((a, b) => b.min - a.min);
+            html += '<div style="background: #f9f9f9; padding: 15px; border-radius: 8px;">';
+            html += '<h4 style="margin-bottom: 15px; color: #302B8F;">Distribuzione Minuti</h4>';
+            playersByMin.forEach((p, i) => {
+                const barColor = i < 3 ? '#302B8F' : '#94a3b8';
+                html += `<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                    <span style="width: 120px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</span>
+                    <div style="flex: 1; background: #e5e7eb; height: 20px; border-radius: 4px; position: relative;">
+                        <div style="width: ${p.min_pct}%; background: ${barColor}; height: 100%; border-radius: 4px;"></div>
+                    </div>
+                    <span style="width: 50px; font-size: 12px; text-align: right;">${p.min_pct}%</span>
+                    <span style="width: 40px; font-size: 11px; color: #888; text-align: right;">${p.min}</span>
+                </div>`;
+            });
+            html += '</div>';
+
+            html += '</div>';
+            document.getElementById('team-detail').innerHTML = html;
+        }
+
+        updateChart();
+        updateDetail();
+    </script>
+    
+
+    <h2 class="section-title" style="margin-top: 2rem;">Quando Vince</h2>
+    
+    <div class="content-section">
+        <h2 class="section-title">Quando Vince Ogni Squadra</h2>
+        <p style="color: #666; margin-bottom: 20px;">
+            Quali condizioni statistiche caratterizzano le vittorie di ogni squadra?
+            Confronto tra situazioni sopra/sotto soglia.
+        </p>
+
+        <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
+            <div>
+                <label style="font-weight: 600;">Squadra:</label>
+                <select id="rule-team" onchange="showRules()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
+                    <option value="Adamant Ferrara">Adamant Ferrara</option><option value="Allianz Pazienza San Severo">Allianz Pazienza San Severo</option><option value="Benacquista Assicurazioni Latina">Benacquista Assicurazioni Latina</option><option value="Consorzio Leonardo Dany Quarrata">Consorzio Leonardo Dany Quarrata</option><option value="Consultinvest Loreto Pesaro">Consultinvest Loreto Pesaro</option><option value="General Contractor Jesi">General Contractor Jesi</option><option value="Luiss Roma">Luiss Roma</option><option value="OraSì Ravenna">OraSì Ravenna</option><option value="PSA Basket Casoria">PSA Basket Casoria</option><option value="Paperdi Juvecaserta 2021">Paperdi Juvecaserta 2021</option><option value="Power Basket Nocera">Power Basket Nocera</option><option value="Ristopro Fabriano">Ristopro Fabriano</option><option value="Solbat Golfo Piombino">Solbat Golfo Piombino</option><option value="Tema Sinergie Faenza">Tema Sinergie Faenza</option><option value="UP Andrea Costa Imola">UP Andrea Costa Imola</option><option value="Umana San Giobbe Chiusi">Umana San Giobbe Chiusi</option><option value="Verodol CBD Pielle Livorno">Verodol CBD Pielle Livorno</option><option value="Virtus GVM Roma 1960">Virtus GVM Roma 1960</option><option value="Virtus Imola">Virtus Imola</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-weight: 600;">Tipo analisi:</label>
+                <select id="rule-type" onchange="showRules()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
+                    <option value="team">Stats squadra (fatti/subiti)</option>
+                    <option value="player">Performance giocatori</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="rules-content"></div>
+    </div>
+
+    <script>
+        const rulesData = {"team": {"Adamant Ferrara": {"rules": [{"condition": "Punti (subiti) \u226480 \u2192 Punti (fatti)", "threshold": 76, "stat": "", "who": "fatti", "left_prob": 0.25, "left_samples": "4", "right_prob": 1.0, "right_samples": "6", "diff": 0.75}, {"condition": "Punti (subiti)", "threshold": 80, "stat": "", "who": "subiti", "left_prob": 0.7, "left_samples": "10", "right_prob": 0.0, "right_samples": "11", "diff": 0.7}], "n_games": 21, "win_rate": 0.3333333333333333}, "Allianz Pazienza San Severo": {"rules": [{"condition": "Punti (subiti)", "threshold": 84, "stat": "", "who": "subiti", "left_prob": 0.8571428571428571, "left_samples": "14", "right_prob": 0.14285714285714285, "right_samples": "7", "diff": 0.7142857142857142}, {"condition": "Punti (subiti) \u226484 \u2192 Punti (fatti)", "threshold": 73, "stat": "", "who": "fatti", "left_prob": 0.3333333333333333, "left_samples": "3", "right_prob": 1.0, "right_samples": "11", "diff": 0.6666666666666667}, {"condition": "Punti (subiti) >84 \u2192 Stoppate (subite)", "threshold": 1, "stat": "", "who": "subite", "left_prob": 0.3333333333333333, "left_samples": "3", "right_prob": 0.0, "right_samples": "4", "diff": 0.3333333333333333}], "n_games": 21, "win_rate": 0.6190476190476191}, "Benacquista Assicurazioni Latina": {"rules": [{"condition": "Punti (subiti)", "threshold": 82, "stat": "", "who": "subiti", "left_prob": 0.9375, "left_samples": "16", "right_prob": 0.25, "right_samples": "4", "diff": 0.6875}, {"condition": "Punti (subiti) \u226482 \u2192 Rimbalzi (subiti)", "threshold": 34, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "13", "right_prob": 0.6666666666666666, "right_samples": "3", "diff": 0.33333333333333337}], "n_games": 20, "win_rate": 0.8}, "Consorzio Leonardo Dany Quarrata": {"rules": [{"condition": "Punti (fatti) >76 \u2192 Rimbalzi (fatti)", "threshold": 31, "stat": "", "who": "fatti", "left_prob": 0.0, "left_samples": "3", "right_prob": 1.0, "right_samples": "6", "diff": 1.0}, {"condition": "Punti (fatti)", "threshold": 76, "stat": "", "who": "fatti", "left_prob": 0.08333333333333333, "left_samples": "12", "right_prob": 0.6666666666666666, "right_samples": "9", "diff": 0.5833333333333333}, {"condition": "Punti (fatti) \u226476 \u2192 Rimbalzi (subiti)", "threshold": 36, "stat": "", "who": "subiti", "left_prob": 0.0, "left_samples": "9", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.3333333333333333}], "n_games": 21, "win_rate": 0.3333333333333333}, "Consultinvest Loreto Pesaro": {"rules": [{"condition": "Recuperi (fatti)", "threshold": 9, "stat": "", "who": "fatti", "left_prob": 0.0625, "left_samples": "16", "right_prob": 0.8, "right_samples": "5", "diff": 0.7375}, {"condition": "Recuperi (fatti) \u22649 \u2192 Assist (subiti)", "threshold": 20, "stat": "", "who": "subiti", "left_prob": 0.0, "left_samples": "13", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.3333333333333333}], "n_games": 21, "win_rate": 0.23809523809523808}, "General Contractor Jesi": {"rules": [{"condition": "Punti (subiti)", "threshold": 77, "stat": "", "who": "subiti", "left_prob": 0.8333333333333334, "left_samples": "12", "right_prob": 0.0, "right_samples": "9", "diff": 0.8333333333333334}, {"condition": "Punti (subiti) \u226477 \u2192 Rimbalzi (subiti)", "threshold": 39, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "9", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.6666666666666667}], "n_games": 21, "win_rate": 0.47619047619047616}, "Luiss Roma": {"rules": [{"condition": "Punti (subiti)", "threshold": 80, "stat": "", "who": "subiti", "left_prob": 0.9333333333333333, "left_samples": "15", "right_prob": 0.2, "right_samples": "5", "diff": 0.7333333333333334}, {"condition": "Punti (subiti) \u226480 \u2192 Stoppate (fatte)", "threshold": 0, "stat": "", "who": "fatte", "left_prob": 0.6666666666666666, "left_samples": "3", "right_prob": 1.0, "right_samples": "12", "diff": 0.33333333333333337}], "n_games": 20, "win_rate": 0.75}, "OraS\u00ec Ravenna": {"rules": [{"condition": "Punti (subiti)", "threshold": 77, "stat": "", "who": "subiti", "left_prob": 0.8181818181818182, "left_samples": "11", "right_prob": 0.0, "right_samples": "10", "diff": 0.8181818181818182}, {"condition": "Punti (subiti) \u226477 \u2192 Assist (fatti)", "threshold": 12, "stat": "", "who": "fatti", "left_prob": 0.3333333333333333, "left_samples": "3", "right_prob": 1.0, "right_samples": "8", "diff": 0.6666666666666667}], "n_games": 21, "win_rate": 0.42857142857142855}, "PSA Basket Casoria": {"rules": [{"condition": "Punti (subiti) \u226471 \u2192 Recuperi (subiti)", "threshold": 6, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "6", "right_prob": 0.25, "right_samples": "4", "diff": 0.75}, {"condition": "Punti (subiti)", "threshold": 71, "stat": "", "who": "subiti", "left_prob": 0.7, "left_samples": "10", "right_prob": 0.0, "right_samples": "10", "diff": 0.7}], "n_games": 20, "win_rate": 0.35}, "Paperdi Juvecaserta 2021": {"rules": [{"condition": "Punti (fatti)", "threshold": 74, "stat": "", "who": "fatti", "left_prob": 0.25, "left_samples": "4", "right_prob": 1.0, "right_samples": "16", "diff": 0.75}], "n_games": 20, "win_rate": 0.85}, "Power Basket Nocera": {"rules": [{"condition": "Punti (fatti) >75 \u2192 Rimbalzi (subiti)", "threshold": 38, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "3", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.6666666666666667}, {"condition": "Punti (fatti)", "threshold": 75, "stat": "", "who": "fatti", "left_prob": 0.0, "left_samples": "13", "right_prob": 0.6666666666666666, "right_samples": "6", "diff": 0.6666666666666666}], "n_games": 19, "win_rate": 0.21052631578947367}, "Ristopro Fabriano": {"rules": [{"condition": "Punti (fatti)", "threshold": 84, "stat": "", "who": "fatti", "left_prob": 0.11764705882352941, "left_samples": "17", "right_prob": 1.0, "right_samples": "4", "diff": 0.8823529411764706}, {"condition": "Punti (fatti) \u226484 \u2192 Punti (subiti)", "threshold": 73, "stat": "", "who": "subiti", "left_prob": 0.6666666666666666, "left_samples": "3", "right_prob": 0.0, "right_samples": "14", "diff": 0.6666666666666666}], "n_games": 21, "win_rate": 0.2857142857142857}, "Solbat Golfo Piombino": {"rules": [{"condition": "Assist (subiti) \u226419 \u2192 Recuperi (fatti)", "threshold": 7, "stat": "", "who": "fatti", "left_prob": 0.2857142857142857, "left_samples": "7", "right_prob": 1.0, "right_samples": "5", "diff": 0.7142857142857143}, {"condition": "Assist (subiti)", "threshold": 19, "stat": "", "who": "subiti", "left_prob": 0.5833333333333334, "left_samples": "12", "right_prob": 0.0, "right_samples": "7", "diff": 0.5833333333333334}], "n_games": 19, "win_rate": 0.3684210526315789}, "Tema Sinergie Faenza": {"rules": [{"condition": "Rimbalzi (subiti)", "threshold": 32, "stat": "", "who": "subiti", "left_prob": 0.9, "left_samples": "10", "right_prob": 0.1, "right_samples": "10", "diff": 0.8}, {"condition": "Rimbalzi (subiti) \u226432 \u2192 Rimbalzi (subiti)", "threshold": 28, "stat": "", "who": "subiti", "left_prob": 0.6666666666666666, "left_samples": "3", "right_prob": 1.0, "right_samples": "7", "diff": 0.33333333333333337}, {"condition": "Rimbalzi (subiti) >32 \u2192 Recuperi (fatti)", "threshold": 5, "stat": "", "who": "fatti", "left_prob": 0.0, "left_samples": "7", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.3333333333333333}], "n_games": 20, "win_rate": 0.5}, "UP Andrea Costa Imola": {"rules": [{"condition": "Rimbalzi (subiti) >29 \u2192 Stoppate (fatte)", "threshold": 1, "stat": "", "who": "fatte", "left_prob": 0.0, "left_samples": "7", "right_prob": 0.7142857142857143, "right_samples": "7", "diff": 0.7142857142857143}, {"condition": "Rimbalzi (subiti)", "threshold": 29, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "7", "right_prob": 0.35714285714285715, "right_samples": "14", "diff": 0.6428571428571428}], "n_games": 21, "win_rate": 0.5714285714285714}, "Umana San Giobbe Chiusi": {"rules": [{"condition": "Assist (subiti) >11 \u2192 Punti (fatti)", "threshold": 82, "stat": "", "who": "fatti", "left_prob": 0.0, "left_samples": "12", "right_prob": 1.0, "right_samples": "3", "diff": 1.0}, {"condition": "Assist (subiti)", "threshold": 11, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "5", "right_prob": 0.2, "right_samples": "15", "diff": 0.8}], "n_games": 20, "win_rate": 0.4}, "Verodol CBD Pielle Livorno": {"rules": [{"condition": "Assist (subiti)", "threshold": 18, "stat": "", "who": "subiti", "left_prob": 0.9444444444444444, "left_samples": "18", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.6111111111111112}, {"condition": "Assist (subiti) \u226418 \u2192 Rimbalzi (subiti)", "threshold": 39, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "15", "right_prob": 0.6666666666666666, "right_samples": "3", "diff": 0.33333333333333337}], "n_games": 21, "win_rate": 0.8571428571428571}, "Virtus GVM Roma 1960": {"rules": [{"condition": "Stoppate (subite)", "threshold": 2, "stat": "", "who": "subite", "left_prob": 0.9444444444444444, "left_samples": "18", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.6111111111111112}, {"condition": "Stoppate (subite) \u22642 \u2192 Punti (subiti)", "threshold": 79, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "15", "right_prob": 0.6666666666666666, "right_samples": "3", "diff": 0.33333333333333337}], "n_games": 21, "win_rate": 0.8571428571428571}, "Virtus Imola": {"rules": [{"condition": "Punti (subiti)", "threshold": 69, "stat": "", "who": "subiti", "left_prob": 1.0, "left_samples": "3", "right_prob": 0.11764705882352941, "right_samples": "17", "diff": 0.8823529411764706}, {"condition": "Punti (subiti) >69 \u2192 Punti (fatti)", "threshold": 81, "stat": "", "who": "fatti", "left_prob": 0.0, "left_samples": "14", "right_prob": 0.6666666666666666, "right_samples": "3", "diff": 0.6666666666666666}], "n_games": 20, "win_rate": 0.25}}, "player": {"PSA Basket Casoria": {"rules": [{"condition": "G. Berra \u226426 minuti \u2192 G. Berra", "threshold": 22, "stat": "minuti", "player": "G. Berra", "left_prob": 0.3333333333333333, "left_samples": "6", "right_prob": 1.0, "right_samples": "5", "diff": 0.6666666666666667}, {"condition": "G. Berra", "threshold": 26, "stat": "minuti", "player": "G. Berra", "left_prob": 0.6363636363636364, "left_samples": "11", "right_prob": 0.0, "right_samples": "9", "diff": 0.6363636363636364}], "n_games": 20, "win_rate": 0.35, "top_players": ["A. Petracca", "G. Berra", "R. Rota", "M. Seck", "V. Taddeo"]}, "OraS\u00ec Ravenna": {"rules": [{"condition": "K. Brigato", "threshold": 29, "stat": "minuti", "player": "K. Brigato", "left_prob": 0.6923076923076923, "left_samples": "13", "right_prob": 0.0, "right_samples": "8", "diff": 0.6923076923076923}, {"condition": "K. Brigato \u226429 minuti \u2192 E. Cena", "threshold": 27, "stat": "minuti", "player": "E. Cena", "left_prob": 0.8888888888888888, "left_samples": "9", "right_prob": 0.25, "right_samples": "4", "diff": 0.6388888888888888}], "n_games": 21, "win_rate": 0.42857142857142855, "top_players": ["K. Brigato", "R. Jakstas", "F. Paolin", "E. Cena", "G. Dron"]}, "Ristopro Fabriano": {"rules": [{"condition": "K. \u0160ilke-\u017eunda >32 minuti \u2192 R. Romondia", "threshold": 27, "stat": "minuti", "player": "R. Romondia", "left_prob": 0.25, "left_samples": "4", "right_prob": 1.0, "right_samples": "4", "diff": 0.75}, {"condition": "K. \u0160ilke-\u017eunda", "threshold": 32, "stat": "minuti", "player": "K. \u0160ilke-\u017eunda", "left_prob": 0.07692307692307693, "left_samples": "13", "right_prob": 0.625, "right_samples": "8", "diff": 0.5480769230769231}, {"condition": "K. \u0160ilke-\u017eunda \u226432 minuti \u2192 K. \u0160ilke-\u017eunda", "threshold": 15, "stat": "punti", "player": "K. \u0160ilke-\u017eunda", "left_prob": 0.0, "left_samples": "10", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.3333333333333333}], "n_games": 21, "win_rate": 0.2857142857142857, "top_players": ["K. \u0160ilke-\u017eunda", "D. Vavoli", "F. Dri", "R. Ponziani", "R. Romondia"]}, "Benacquista Assicurazioni Latina": {"rules": [{"condition": "A. Cipolla", "threshold": 14, "stat": "minuti", "player": "A. Cipolla", "left_prob": 0.0, "left_samples": "3", "right_prob": 0.9411764705882353, "right_samples": "17", "diff": 0.9411764705882353}, {"condition": "A. Cipolla >14 minuti \u2192 R. Chiti", "threshold": 17, "stat": "minuti", "player": "R. Chiti", "left_prob": 0.6666666666666666, "left_samples": "3", "right_prob": 1.0, "right_samples": "14", "diff": 0.33333333333333337}], "n_games": 20, "win_rate": 0.8, "top_players": ["E. Di Emidio", "A. Gallo", "A. Cipolla", "A. Pastore", "R. Chiti"]}, "Tema Sinergie Faenza": {"rules": [{"condition": "M. Mbacke \u226429 minuti \u2192 M. Mbacke", "threshold": 4, "stat": "punti", "player": "M. Mbacke", "left_prob": 0.0, "left_samples": "3", "right_prob": 0.8333333333333334, "right_samples": "12", "diff": 0.8333333333333334}, {"condition": "M. Mbacke", "threshold": 29, "stat": "minuti", "player": "M. Mbacke", "left_prob": 0.6666666666666666, "left_samples": "15", "right_prob": 0.0, "right_samples": "5", "diff": 0.6666666666666666}], "n_games": 20, "win_rate": 0.5, "top_players": ["E. Vettori", "A. Fragonara", "T. Van Ounsem", "M. Mbacke", "C. Fumagalli"]}, "Allianz Pazienza San Severo": {"rules": [{"condition": "A. Mobio", "threshold": 7, "stat": "punti", "player": "A. Mobio", "left_prob": 0.0, "left_samples": "3", "right_prob": 0.7222222222222222, "right_samples": "18", "diff": 0.7222222222222222}, {"condition": "A. Mobio >7 punti \u2192 M. Gherardini", "threshold": 31, "stat": "minuti", "player": "M. Gherardini", "left_prob": 0.8461538461538461, "left_samples": "13", "right_prob": 0.4, "right_samples": "5", "diff": 0.4461538461538461}], "n_games": 21, "win_rate": 0.6190476190476191, "top_players": ["A. Mobio", "F. Bugatti", "M. Gherardini", "D. Lucas", "M. Morelli"]}, "Adamant Ferrara": {"rules": [{"condition": "D. Marchini \u226420 minuti \u2192 A. Renzi", "threshold": 6, "stat": "punti", "player": "A. Renzi", "left_prob": 0.0, "left_samples": "4", "right_prob": 0.875, "right_samples": "8", "diff": 0.875}, {"condition": "D. Marchini", "threshold": 20, "stat": "minuti", "player": "D. Marchini", "left_prob": 0.5833333333333334, "left_samples": "12", "right_prob": 0.0, "right_samples": "9", "diff": 0.5833333333333334}], "n_games": 21, "win_rate": 0.3333333333333333, "top_players": ["W. Tio Tiagande", "M. Solaroli", "N. Pellicano", "A. Renzi", "D. Marchini"]}, "Verodol CBD Pielle Livorno": {"rules": [{"condition": "D. Klyuchnyk", "threshold": 4, "stat": "punti", "player": "D. Klyuchnyk", "left_prob": 0.5, "left_samples": "4", "right_prob": 0.9411764705882353, "right_samples": "17", "diff": 0.4411764705882353}, {"condition": "D. Klyuchnyk >4 punti \u2192 M. Venucci", "threshold": 24, "stat": "minuti", "player": "M. Venucci", "left_prob": 1.0, "left_samples": "14", "right_prob": 0.6666666666666666, "right_samples": "3", "diff": 0.33333333333333337}], "n_games": 21, "win_rate": 0.8571428571428571, "top_players": ["D. Gabrovsek", "M. Ebeling", "E. Leonzio", "M. Venucci", "D. Klyuchnyk"]}, "General Contractor Jesi": {"rules": [{"condition": "K. Palsson \u226431 minuti \u2192 L. Maglietti", "threshold": 31, "stat": "minuti", "player": "L. Maglietti", "left_prob": 0.8888888888888888, "left_samples": "9", "right_prob": 0.25, "right_samples": "4", "diff": 0.6388888888888888}, {"condition": "K. Palsson", "threshold": 31, "stat": "minuti", "player": "K. Palsson", "left_prob": 0.6923076923076923, "left_samples": "13", "right_prob": 0.125, "right_samples": "8", "diff": 0.5673076923076923}, {"condition": "K. Palsson >31 minuti \u2192 L. Maglietti", "threshold": 9, "stat": "punti", "player": "L. Maglietti", "left_prob": 0.0, "left_samples": "5", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.3333333333333333}], "n_games": 21, "win_rate": 0.47619047619047616, "top_players": ["M. Arrigoni", "L. Maglietti", "F. Piccone", "S. Bruno", "K. Palsson"]}, "UP Andrea Costa Imola": {"rules": [{"condition": "N. Moffa", "threshold": 21, "stat": "minuti", "player": "N. Moffa", "left_prob": 0.0, "left_samples": "6", "right_prob": 0.8, "right_samples": "15", "diff": 0.8}, {"condition": "N. Moffa >21 minuti \u2192 T. Kupstas", "threshold": 32, "stat": "minuti", "player": "T. Kupstas", "left_prob": 1.0, "left_samples": "9", "right_prob": 0.5, "right_samples": "6", "diff": 0.5}], "n_games": 21, "win_rate": 0.5714285714285714, "top_players": ["T. Kupstas", "D. Raucci", "N. Moffa", "R. Chessari", "G. Sanguinetti"]}, "Power Basket Nocera": {"rules": [{"condition": "N. Nonkovic", "threshold": 10, "stat": "punti", "player": "N. Nonkovic", "left_prob": 0.07142857142857142, "left_samples": "14", "right_prob": 0.6, "right_samples": "5", "diff": 0.5285714285714286}, {"condition": "N. Nonkovic \u226410 punti \u2192 D. Czerapowicz", "threshold": 20, "stat": "minuti", "player": "D. Czerapowicz", "left_prob": 0.3333333333333333, "left_samples": "3", "right_prob": 0.0, "right_samples": "11", "diff": 0.3333333333333333}], "n_games": 19, "win_rate": 0.21052631578947367, "top_players": ["L. Donadio", "N. Nonkovic", "D. Czerapowicz", "B. Misolic", "C. Cappelletti"]}, "Paperdi Juvecaserta 2021": {"rules": [{"condition": "V. Nobile", "threshold": 34, "stat": "minuti", "player": "V. Nobile", "left_prob": 0.9411764705882353, "left_samples": "17", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.607843137254902}, {"condition": "V. Nobile \u226434 minuti \u2192 M. Radunic", "threshold": 22, "stat": "minuti", "player": "M. Radunic", "left_prob": 0.6666666666666666, "left_samples": "3", "right_prob": 1.0, "right_samples": "14", "diff": 0.33333333333333337}], "n_games": 20, "win_rate": 0.85, "top_players": ["M. Radunic", "D. D'argenzio", "V. Nobile", "L. Brambilla", "D. Hadzic"]}, "Consultinvest Loreto Pesaro": {"rules": [{"condition": "L. Delfino", "threshold": 14, "stat": "punti", "player": "L. Delfino", "left_prob": 0.11764705882352941, "left_samples": "17", "right_prob": 0.75, "right_samples": "4", "diff": 0.6323529411764706}, {"condition": "L. Delfino \u226414 punti \u2192 M. Graziani", "threshold": 22, "stat": "minuti", "player": "M. Graziani", "left_prob": 0.5, "left_samples": "4", "right_prob": 0.0, "right_samples": "13", "diff": 0.5}], "n_games": 21, "win_rate": 0.23809523809523808, "top_players": ["L. Delfino", "E. Sgarzini", "M. Graziani", "F. Tognacci", "D. Terenzi"]}, "Solbat Golfo Piombino": {"rules": [{"condition": "N. Ianuale", "threshold": 12, "stat": "punti", "player": "N. Ianuale", "left_prob": 0.25, "left_samples": "16", "right_prob": 1.0, "right_samples": "3", "diff": 0.75}, {"condition": "N. Ianuale \u226412 punti \u2192 S. Giunta", "threshold": 11, "stat": "punti", "player": "S. Giunta", "left_prob": 0.4444444444444444, "left_samples": "9", "right_prob": 0.0, "right_samples": "7", "diff": 0.4444444444444444}], "n_games": 19, "win_rate": 0.3684210526315789, "top_players": ["N. Raivio", "S. Giunta", "M. Ammannato", "N. Ianuale", "L. Fabiani"]}, "Consorzio Leonardo Dany Quarrata": {"rules": [{"condition": "M. Coltro >21 minuti \u2192 A. Tiberti", "threshold": 28, "stat": "minuti", "player": "A. Tiberti", "left_prob": 0.4, "left_samples": "5", "right_prob": 1.0, "right_samples": "4", "diff": 0.6}, {"condition": "M. Coltro", "threshold": 21, "stat": "minuti", "player": "M. Coltro", "left_prob": 0.08333333333333333, "left_samples": "12", "right_prob": 0.6666666666666666, "right_samples": "9", "diff": 0.5833333333333333}, {"condition": "M. Coltro \u226421 minuti \u2192 A. Tiberti", "threshold": 32, "stat": "minuti", "player": "A. Tiberti", "left_prob": 0.0, "left_samples": "9", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.3333333333333333}], "n_games": 21, "win_rate": 0.3333333333333333, "top_players": ["F. Regoli", "S. Angelucci", "T. Molteni", "A. Tiberti", "M. Coltro"]}, "Virtus GVM Roma 1960": {"rules": [{"condition": "L. Battistini", "threshold": 5, "stat": "punti", "player": "L. Battistini", "left_prob": 0.3333333333333333, "left_samples": "3", "right_prob": 0.9444444444444444, "right_samples": "18", "diff": 0.6111111111111112}, {"condition": "L. Battistini >5 punti \u2192 L. Battistini", "threshold": 30, "stat": "minuti", "player": "L. Battistini", "left_prob": 1.0, "left_samples": "15", "right_prob": 0.6666666666666666, "right_samples": "3", "diff": 0.33333333333333337}], "n_games": 21, "win_rate": 0.8571428571428571, "top_players": ["G. Lenti", "I. Majcuni?", "L. Battistini", "M. Barattini", "G. Leggio"]}, "Luiss Roma": {"rules": [{"condition": "M. Pasqualin", "threshold": 5, "stat": "punti", "player": "M. Pasqualin", "left_prob": 0.25, "left_samples": "4", "right_prob": 0.875, "right_samples": "16", "diff": 0.625}, {"condition": "M. Pasqualin >5 punti \u2192 R. Salvioni", "threshold": 30, "stat": "minuti", "player": "R. Salvioni", "left_prob": 1.0, "left_samples": "11", "right_prob": 0.6, "right_samples": "5", "diff": 0.4}], "n_games": 20, "win_rate": 0.75, "top_players": ["R. Salvioni", "R. Casella", "M. Pasqualin", "J. Fernandez", "M. Jovovic"]}, "Umana San Giobbe Chiusi": {"rules": [{"condition": "L. Rasio", "threshold": 15, "stat": "punti", "player": "L. Rasio", "left_prob": 0.26666666666666666, "left_samples": "15", "right_prob": 0.8, "right_samples": "5", "diff": 0.5333333333333334}, {"condition": "L. Rasio \u226415 punti \u2192 F. Gravaghi", "threshold": 27, "stat": "minuti", "player": "F. Gravaghi", "left_prob": 0.5, "left_samples": "8", "right_prob": 0.0, "right_samples": "7", "diff": 0.5}], "n_games": 20, "win_rate": 0.4, "top_players": ["M. Petrucci", "F. Gravaghi", "L. Rasio", "N. Bertocco", "L. Raffaelli"]}, "Virtus Imola": {"rules": [{"condition": "M. Melchiorri", "threshold": 15, "stat": "punti", "player": "M. Melchiorri", "left_prob": 0.06666666666666667, "left_samples": "15", "right_prob": 0.8, "right_samples": "5", "diff": 0.7333333333333334}, {"condition": "M. Melchiorri \u226415 punti \u2192 M. Mazzoni", "threshold": 30, "stat": "minuti", "player": "M. Mazzoni", "left_prob": 0.0, "left_samples": "12", "right_prob": 0.3333333333333333, "right_samples": "3", "diff": 0.3333333333333333}], "n_games": 20, "win_rate": 0.25, "top_players": ["M. Melchiorri", "M. Mazzoni", "L. Pollini", "L. Baldi", "I. Kucan"]}}};
+
+        function showRules() {
+            const team = document.getElementById('rule-team').value;
+            const type = document.getElementById('rule-type').value;
+            const contentDiv = document.getElementById('rules-content');
+
+            const data = rulesData[type][team];
+            if (!data || !data.rules || data.rules.length === 0) {
+                contentDiv.innerHTML = '<p style="color: #666;">Dati insufficienti per questa squadra.</p>';
+                return;
+            }
+
+            const winRate = (data.win_rate * 100).toFixed(1);
+            const nGames = data.n_games;
+
+            let html = `<div style="margin-bottom: 20px; background: #f9f9f9; padding: 15px; border-radius: 8px;">`;
+            html += `<strong>Win Rate generale:</strong> ${winRate}% (${nGames} partite)`;
+            html += `</div>`;
+
+            html += '<div style="display: grid; gap: 20px;">';
+
+            data.rules.forEach((rule, i) => {
+                const condition = rule.condition || '';
+                const threshold = rule.threshold || 0;
+                const stat = rule.stat || '';  // "punti" o "minuti"
+                const leftProb = (rule.left_prob * 100).toFixed(0);
+                const rightProb = (rule.right_prob * 100).toFixed(0);
+                const leftSamples = rule.left_samples || 0;
+                const rightSamples = rule.right_samples || 0;
+
+                // Determina quale lato è migliore
+                const leftBetter = rule.left_prob > rule.right_prob;
+
+                // Titolo con stat type se disponibile
+                const titleText = stat ? `${condition} - ${threshold} ${stat}` : `${condition} - Soglia: ${threshold}`;
+
+                html += `<div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">`;
+                html += `<div style="background: #302B8F; color: white; padding: 12px 15px; font-weight: 600;">`;
+                html += titleText;
+                html += `</div>`;
+
+                html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">`;
+
+                // Lato sinistro (≤ threshold)
+                const leftBg = leftBetter ? '#dcfce7' : '#fee2e2';
+                const leftBorder = leftBetter ? '#22c55e' : '#ef4444';
+                const statSuffix = stat ? ` ${stat}` : '';
+                html += `<div style="padding: 15px; background: ${leftBg}; border-right: 1px solid #e5e7eb;">`;
+                html += `<div style="font-size: 14px; color: #666; margin-bottom: 5px;">≤ ${threshold}${statSuffix}</div>`;
+                html += `<div style="font-size: 28px; font-weight: 700; color: ${leftBorder};">${leftProb}%</div>`;
+                html += `<div style="font-size: 12px; color: #888;">vittorie (${leftSamples} partite)</div>`;
+                html += `</div>`;
+
+                // Lato destro (> threshold)
+                const rightBg = !leftBetter ? '#dcfce7' : '#fee2e2';
+                const rightBorder = !leftBetter ? '#22c55e' : '#ef4444';
+                html += `<div style="padding: 15px; background: ${rightBg};">`;
+                html += `<div style="font-size: 14px; color: #666; margin-bottom: 5px;">> ${threshold}${statSuffix}</div>`;
+                html += `<div style="font-size: 28px; font-weight: 700; color: ${rightBorder};">${rightProb}%</div>`;
+                html += `<div style="font-size: 12px; color: #888;">vittorie (${rightSamples} partite)</div>`;
+                html += `</div>`;
+
+                html += `</div></div>`;
+            });
+
+            html += '</div>';
+            contentDiv.innerHTML = html;
+        }
+
+        showRules();
+    </script>
+    
+    
+
+        <div class="site-footer">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <div>Ultimo aggiornamento: 19/01/2026 11:22</div>
+            <div>Generato con LNP Stats</div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Espandi sezione corrente
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('expanded');
+            });
+        });
+
+        // Espandi automaticamente la sezione attiva
+        const activeLink = document.querySelector('.sidebar-link.active');
+        if (activeLink) {
+            let parent = activeLink.closest('.sidebar-section');
+            if (parent) parent.classList.add('expanded');
+        }
+    </script>
+</body>
+</html>

@@ -75,6 +75,9 @@ def find_misspelled_names(df, threshold):
             for j in range(i + 1, len(team_df)):
                 name1 = team_df.iloc[i]['Giocatore']
                 name2 = team_df.iloc[j]['Giocatore']
+                # Se le iniziali sono diverse, sono persone diverse (es. S. Bossi vs L. Bosso)
+                if name1[0] != name2[0]:
+                    continue
                 if levenshtein_distance(name1, name2) / len(name1) <= threshold:
                     misspelled_pairs.append((name1, name2))
     return misspelled_pairs

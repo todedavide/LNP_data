@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risultati - Serie A2 - LNP Stats</title>
+    <link rel="icon" type="image/png" href="../../static/favicon180x180.png">
+    <link rel="stylesheet" href="../../static/twinplay_brand.css">
+    <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--tp-gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--tp-spacing-lg);
+            z-index: 1000;
+            box-shadow: var(--tp-shadow-md);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-md);
+        }
+
+        .header-logo img {
+            height: 36px;
+        }
+
+        .header-logo a {
+            color: white;
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .header-breadcrumb {
+            margin-left: var(--tp-spacing-xl);
+            opacity: 0.8;
+            font-size: 0.875rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: var(--tp-spacing-md);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--tp-light);
+        }
+
+        .sidebar-section-header {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            color: var(--tp-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-sm);
+            transition: background 0.2s;
+        }
+
+        .sidebar-section-header:hover {
+            background: var(--tp-light);
+        }
+
+        .sidebar-section-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            font-size: 0.75rem;
+        }
+
+        .sidebar-section.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-subsection {
+            display: none;
+            background: var(--tp-light);
+        }
+
+        .sidebar-section.expanded .sidebar-subsection {
+            display: block;
+        }
+
+        .sidebar-category {
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: var(--tp-spacing-lg);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--tp-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: var(--tp-spacing-sm);
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: calc(var(--tp-spacing-lg) + 10px);
+            color: var(--tp-dark);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: white;
+            border-left-color: var(--tp-primary);
+        }
+
+        .sidebar-link.active {
+            background: white;
+            border-left-color: var(--tp-primary);
+            color: var(--tp-secondary);
+            font-weight: 600;
+        }
+
+        .sidebar-home-btn {
+            display: block;
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--tp-light);
+            transition: all 0.2s;
+        }
+
+        .sidebar-home-btn:hover {
+            background: var(--tp-light);
+            color: var(--tp-secondary);
+        }
+
+        .sidebar-competition {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            background: var(--tp-gradient-primary);
+            color: white;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: var(--tp-spacing-sm);
+        }
+
+        .sidebar:empty + .main {
+            margin-left: 0;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: var(--tp-spacing-xl);
+            min-height: calc(100vh - var(--header-height));
+            background: var(--tp-light);
+        }
+
+        .page-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.75rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-xs);
+        }
+
+        .page-subtitle {
+            color: var(--tp-gray);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .content-section {
+            background: white;
+            border-radius: var(--tp-radius-lg);
+            padding: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-lg);
+            box-shadow: var(--tp-shadow-sm);
+        }
+
+        .section-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.25rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-lg);
+            padding-bottom: var(--tp-spacing-sm);
+            border-bottom: 2px solid var(--tp-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .stat-card {
+            background: var(--tp-gradient-primary);
+            color: white;
+            padding: var(--tp-spacing-lg);
+            border-radius: var(--tp-radius-lg);
+            text-align: center;
+        }
+
+        .stat-card.accent {
+            background: var(--tp-gradient-accent);
+            color: var(--tp-dark);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+        }
+
+        .stat-value {
+            font-family: var(--tp-font-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: var(--tp-spacing-xs);
+        }
+
+        /* Plotly responsive */
+        .js-plotly-plot {
+            width: 100% !important;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            font-size: 0.8rem;
+        }
+
+        .site-footer img {
+            height: 24px;
+            margin-bottom: var(--tp-spacing-sm);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="header-logo">
+            <img src="../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <a href="../../index.html">LNP Stats</a>
+        </div>
+        <div class="header-breadcrumb">Serie A2 / Squadre / Risultati</div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        
+    <a href="../../index.html" class="sidebar-home-btn">
+        ← Cambia campionato
+    </a>
+    <div class="sidebar-competition">
+        Serie A2
+    </div>
+    <div class="sidebar-category">Squadre</div><a href="../../a2/squadre/classifiche.html" class="sidebar-link ">Classifiche</a><a href="../../a2/squadre/andamento.html" class="sidebar-link ">Andamento</a><a href="../../a2/squadre/profilo.html" class="sidebar-link ">Profilo</a><a href="../../a2/squadre/risultati.html" class="sidebar-link active">Risultati</a><div class="sidebar-category">Giocatori</div><a href="../../a2/giocatori/statistiche.html" class="sidebar-link ">Statistiche</a><a href="../../a2/giocatori/profilo.html" class="sidebar-link ">Profilo</a><a href="../../a2/giocatori/performance.html" class="sidebar-link ">Performance</a><a href="../../a2/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../a2/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
+    </nav>
+
+    <main class="main">
+        <h1 class="page-title">Risultati</h1>
+        <p class="page-subtitle">Serie A2 - Vittorie/Sconfitte e Casa/Trasferta</p>
+
+        
+    
+    <div class="content-section">
+        <h2 class="section-title">Vittorie vs Sconfitte per Squadra</h2>
+        <p style="color: #666; margin-bottom: 20px;">
+            Confronta le statistiche nelle partite vinte vs perse. Ordinate per influenza.
+        </p>
+
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: 600;">Squadra:</label>
+            <select id="team-select" onchange="showWinLoss()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
+                <option value="Avellino Basket">Avellino Basket</option><option value="Crifo Wines Ruvo di Puglia">Crifo Wines Ruvo di Puglia</option><option value="Dole Basket Rimini">Dole Basket Rimini</option><option value="Estra Pistoia">Estra Pistoia</option><option value="Ferraroni Juvi Cremona">Ferraroni Juvi Cremona</option><option value="Fortitudo Bologna">Fortitudo Bologna</option><option value="Gemini Mestre">Gemini Mestre</option><option value="Givova Scafati">Givova Scafati</option><option value="Gruppo Mascio Bergamo">Gruppo Mascio Bergamo</option><option value="Libertas Livorno">Libertas Livorno</option><option value="Liofilchem Roseto">Liofilchem Roseto</option><option value="RSR Sebastiani Rieti">RSR Sebastiani Rieti</option><option value="Reale Mutua Torino">Reale Mutua Torino</option><option value="Sella Cento">Sella Cento</option><option value="Tezenis Verona">Tezenis Verona</option><option value="UEB Gesteco Cividale">UEB Gesteco Cividale</option><option value="Unieuro Forlì">Unieuro Forlì</option><option value="Valtur Brindisi">Valtur Brindisi</option><option value="Victoria Libertas Pesaro">Victoria Libertas Pesaro</option><option value="Wegreenit Urania Milano">Wegreenit Urania Milano</option>
+            </select>
+        </div>
+
+        <div id="winloss-content"></div>
+    </div>
+
+    <script>
+        const winLossData = {"Avellino Basket": {"data": [{"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 2.3, "Media Sconfitte": 1.3, "Differenza": 1.0, "Diff %": 79.5, "Influenza": 79.48717948717949}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 18.5, "Media Sconfitte": 12.5, "Differenza": 6.0, "Diff %": 48.0, "Influenza": 48.0}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 4.3, "Media Sconfitte": 6.6, "Differenza": -2.3, "Diff %": -34.3, "Influenza": 34.34343434343434}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 8.3, "Media Sconfitte": 11.2, "Differenza": -2.9, "Diff %": -25.6, "Influenza": 25.595238095238088}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 13.0, "Media Sconfitte": 16.6, "Differenza": -3.6, "Diff %": -21.7, "Influenza": 21.686746987951814}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 68.5, "Media Sconfitte": 83.8, "Differenza": -15.3, "Diff %": -18.3, "Influenza": 18.25775656324582}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 34.6, "Media Sconfitte": 29.4, "Differenza": 5.2, "Diff %": 17.6, "Influenza": 17.630385487528358}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 28.0, "Media Sconfitte": 33.6, "Differenza": -5.6, "Diff %": -16.7, "Influenza": 16.66666666666667}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 83.4, "Media Sconfitte": 73.4, "Differenza": 10.0, "Diff %": 13.6, "Influenza": 13.646684831970934}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 1.6, "Media Sconfitte": 1.8, "Differenza": -0.2, "Diff %": -12.0, "Influenza": 12.037037037037043}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 8.2, "Media Sconfitte": 7.8, "Differenza": 0.5, "Diff %": 5.8, "Influenza": 5.769230769230772}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 6.0, "Media Sconfitte": 5.7, "Differenza": 0.3, "Diff %": 5.3, "Influenza": 5.263157894736839}], "n_wins": 12, "n_losses": 10, "win_rate": 54.5}, "Crifo Wines Ruvo di Puglia": {"data": [{"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 11.5, "Media Sconfitte": 6.3, "Differenza": 5.2, "Diff %": 82.2, "Influenza": 82.17821782178217}, {"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 0.3, "Media Sconfitte": 0.9, "Differenza": -0.6, "Diff %": -64.4, "Influenza": 64.44444444444444}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 0.8, "Media Sconfitte": 1.7, "Differenza": -0.9, "Diff %": -50.6, "Influenza": 50.617283950617285}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 4.8, "Media Sconfitte": 8.6, "Differenza": -3.7, "Diff %": -43.6, "Influenza": 43.552311435523116}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 15.8, "Media Sconfitte": 11.7, "Differenza": 4.1, "Diff %": 35.5, "Influenza": 35.47237076648842}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 7.2, "Media Sconfitte": 9.9, "Differenza": -2.8, "Diff %": -27.9, "Influenza": 27.882599580712785}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 12.2, "Media Sconfitte": 16.8, "Differenza": -4.6, "Diff %": -27.6, "Influenza": 27.63320941759604}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 5.0, "Media Sconfitte": 6.8, "Differenza": -1.8, "Diff %": -25.9, "Influenza": 25.925925925925924}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 85.8, "Media Sconfitte": 69.6, "Differenza": 16.2, "Diff %": 23.3, "Influenza": 23.27947336923997}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 29.0, "Media Sconfitte": 34.7, "Differenza": -5.7, "Diff %": -16.4, "Influenza": 16.396396396396394}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 74.5, "Media Sconfitte": 88.3, "Differenza": -13.8, "Diff %": -15.6, "Influenza": 15.640481245576787}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 32.3, "Media Sconfitte": 29.2, "Differenza": 3.1, "Diff %": 10.5, "Influenza": 10.54131054131055}], "n_wins": 6, "n_losses": 16, "win_rate": 27.3}, "Dole Basket Rimini": {"data": [{"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 2.1, "Media Sconfitte": 1.0, "Differenza": 1.1, "Diff %": 107.1, "Influenza": 107.14285714285717}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 18.9, "Media Sconfitte": 13.0, "Differenza": 5.9, "Diff %": 45.6, "Influenza": 45.60439560439559}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 37.3, "Media Sconfitte": 27.3, "Differenza": 10.0, "Diff %": 36.6, "Influenza": 36.64921465968586}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 11.4, "Media Sconfitte": 8.9, "Differenza": 2.6, "Diff %": 29.0, "Influenza": 29.032258064516125}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 8.1, "Media Sconfitte": 10.4, "Differenza": -2.4, "Diff %": -22.6, "Influenza": 22.6027397260274}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 14.6, "Media Sconfitte": 18.4, "Differenza": -3.8, "Diff %": -20.5, "Influenza": 20.542635658914723}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 88.7, "Media Sconfitte": 75.1, "Differenza": 13.6, "Diff %": 18.1, "Influenza": 18.06083650190114}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 6.9, "Media Sconfitte": 6.0, "Differenza": 0.9, "Diff %": 15.5, "Influenza": 15.47619047619048}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 74.4, "Media Sconfitte": 84.7, "Differenza": -10.3, "Diff %": -12.1, "Influenza": 12.141652613827985}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 5.3, "Media Sconfitte": 6.0, "Differenza": -0.7, "Diff %": -11.9, "Influenza": 11.904761904761907}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 1.9, "Media Sconfitte": 2.0, "Differenza": -0.1, "Diff %": -3.6, "Influenza": 3.57142857142857}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 32.4, "Media Sconfitte": 31.7, "Differenza": 0.7, "Diff %": 2.3, "Influenza": 2.2522522522522554}], "n_wins": 14, "n_losses": 7, "win_rate": 66.7}, "Estra Pistoia": {"data": [{"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 3.0, "Media Sconfitte": 1.8, "Differenza": 1.2, "Diff %": 71.4, "Influenza": 71.42857142857143}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 87.7, "Media Sconfitte": 71.1, "Differenza": 16.6, "Diff %": 23.4, "Influenza": 23.365581940779837}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 35.2, "Media Sconfitte": 29.6, "Differenza": 5.5, "Diff %": 18.7, "Influenza": 18.706047819971864}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 1.8, "Media Sconfitte": 1.6, "Differenza": 0.3, "Diff %": 17.3, "Influenza": 17.33333333333333}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 10.5, "Media Sconfitte": 9.1, "Differenza": 1.4, "Diff %": 15.1, "Influenza": 15.068493150684931}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 12.2, "Media Sconfitte": 13.9, "Differenza": -1.7, "Diff %": -12.3, "Influenza": 12.312312312312317}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 8.2, "Media Sconfitte": 9.2, "Differenza": -1.1, "Diff %": -11.7, "Influenza": 11.711711711711718}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 14.7, "Media Sconfitte": 16.6, "Differenza": -1.9, "Diff %": -11.4, "Influenza": 11.446540880503148}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 76.0, "Media Sconfitte": 82.4, "Differenza": -6.4, "Diff %": -7.8, "Influenza": 7.808946171341925}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 31.8, "Media Sconfitte": 34.2, "Differenza": -2.4, "Diff %": -6.9, "Influenza": 6.886045094454604}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 4.0, "Media Sconfitte": 3.8, "Differenza": 0.2, "Diff %": 6.7, "Influenza": 6.666666666666667}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 6.7, "Media Sconfitte": 6.5, "Differenza": 0.2, "Diff %": 2.6, "Influenza": 2.5641025641025683}], "n_wins": 6, "n_losses": 16, "win_rate": 27.3}, "Ferraroni Juvi Cremona": {"data": [{"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 2.9, "Media Sconfitte": 2.0, "Differenza": 0.9, "Diff %": 44.4, "Influenza": 44.44444444444444}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 1.3, "Media Sconfitte": 1.9, "Differenza": -0.6, "Diff %": -30.7, "Influenza": 30.66666666666667}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 8.3, "Media Sconfitte": 6.4, "Differenza": 1.9, "Diff %": 30.5, "Influenza": 30.522088353413658}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 11.0, "Media Sconfitte": 8.5, "Differenza": 2.5, "Diff %": 28.8, "Influenza": 28.82882882882883}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 6.8, "Media Sconfitte": 8.6, "Differenza": -1.8, "Diff %": -21.3, "Influenza": 21.329365079365076}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 5.8, "Media Sconfitte": 7.0, "Differenza": -1.2, "Diff %": -17.5, "Influenza": 17.460317460317462}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 68.8, "Media Sconfitte": 82.2, "Differenza": -13.5, "Diff %": -16.4, "Influenza": 16.360045733291763}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 18.7, "Media Sconfitte": 16.5, "Differenza": 2.1, "Diff %": 12.9, "Influenza": 12.868217054263562}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 31.3, "Media Sconfitte": 35.5, "Differenza": -4.2, "Diff %": -11.8, "Influenza": 11.83261183261184}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 14.9, "Media Sconfitte": 16.7, "Differenza": -1.8, "Diff %": -10.8, "Influenza": 10.803891449052742}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 78.7, "Media Sconfitte": 71.2, "Differenza": 7.4, "Diff %": 10.4, "Influenza": 10.439164866810668}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 30.0, "Media Sconfitte": 30.4, "Differenza": -0.4, "Diff %": -1.3, "Influenza": 1.2658227848101222}], "n_wins": 9, "n_losses": 13, "win_rate": 40.9}, "Fortitudo Bologna": {"data": [{"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 4.9, "Media Sconfitte": 3.1, "Differenza": 1.8, "Diff %": 58.2, "Influenza": 58.24175824175825}, {"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 1.4, "Media Sconfitte": 0.9, "Differenza": 0.5, "Diff %": 55.8, "Influenza": 55.769230769230774}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 1.0, "Media Sconfitte": 1.9, "Differenza": -0.9, "Diff %": -47.1, "Influenza": 47.05882352941176}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 10.9, "Media Sconfitte": 7.8, "Differenza": 3.1, "Diff %": 40.4, "Influenza": 40.439560439560445}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 78.0, "Media Sconfitte": 60.8, "Differenza": 17.2, "Diff %": 28.3, "Influenza": 28.336380255941496}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 4.2, "Media Sconfitte": 5.9, "Differenza": -1.7, "Diff %": -28.2, "Influenza": 28.156748911465897}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 20.9, "Media Sconfitte": 16.8, "Differenza": 4.1, "Diff %": 24.7, "Influenza": 24.707080998471724}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 15.4, "Media Sconfitte": 20.3, "Differenza": -4.9, "Diff %": -24.3, "Influenza": 24.33795712484236}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 9.9, "Media Sconfitte": 11.4, "Differenza": -1.5, "Diff %": -13.3, "Influenza": 13.293502613890961}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 67.7, "Media Sconfitte": 77.1, "Differenza": -9.4, "Diff %": -12.2, "Influenza": 12.214586566171583}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 28.1, "Media Sconfitte": 30.0, "Differenza": -1.9, "Diff %": -6.4, "Influenza": 6.4102564102564115}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 33.8, "Media Sconfitte": 32.0, "Differenza": 1.8, "Diff %": 5.8, "Influenza": 5.769230769230771}], "n_wins": 13, "n_losses": 9, "win_rate": 59.1}, "Gemini Mestre": {"data": [{"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 1.2, "Media Sconfitte": 2.0, "Differenza": -0.8, "Diff %": -38.9, "Influenza": 38.888888888888886}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 6.6, "Media Sconfitte": 9.2, "Differenza": -2.7, "Diff %": -29.1, "Influenza": 29.129129129129133}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 13.8, "Media Sconfitte": 16.2, "Differenza": -2.5, "Diff %": -15.2, "Influenza": 15.21367521367521}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 30.2, "Media Sconfitte": 35.2, "Differenza": -5.0, "Diff %": -14.3, "Influenza": 14.263199369582349}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 34.3, "Media Sconfitte": 30.3, "Differenza": 4.0, "Diff %": 13.2, "Influenza": 13.186813186813199}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 74.1, "Media Sconfitte": 84.8, "Differenza": -10.7, "Diff %": -12.6, "Influenza": 12.639161755075303}, {"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 1.3, "Media Sconfitte": 1.5, "Differenza": -0.2, "Diff %": -11.1, "Influenza": 11.111111111111116}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 9.2, "Media Sconfitte": 10.2, "Differenza": -0.9, "Diff %": -9.3, "Influenza": 9.2896174863388}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 80.3, "Media Sconfitte": 73.9, "Differenza": 6.4, "Diff %": 8.7, "Influenza": 8.68094701240134}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 4.8, "Media Sconfitte": 5.2, "Differenza": -0.4, "Diff %": -7.5, "Influenza": 7.526881720430115}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 14.2, "Media Sconfitte": 13.3, "Differenza": 0.9, "Diff %": 6.7, "Influenza": 6.666666666666655}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 5.1, "Media Sconfitte": 5.4, "Differenza": -0.3, "Diff %": -5.6, "Influenza": 5.641025641025654}], "n_wins": 9, "n_losses": 12, "win_rate": 42.9}, "Givova Scafati": {"data": [{"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 1.5, "Media Sconfitte": 1.0, "Differenza": 0.5, "Diff %": 53.8, "Influenza": 53.846153846153854}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 6.5, "Media Sconfitte": 4.5, "Differenza": 2.0, "Diff %": 43.6, "Influenza": 43.58974358974359}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 7.5, "Media Sconfitte": 10.1, "Differenza": -2.6, "Diff %": -25.5, "Influenza": 25.546058879392213}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 4.6, "Media Sconfitte": 6.0, "Differenza": -1.4, "Diff %": -23.1, "Influenza": 23.076923076923084}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 13.7, "Media Sconfitte": 17.6, "Differenza": -3.9, "Diff %": -22.3, "Influenza": 22.31314784506274}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 86.8, "Media Sconfitte": 75.1, "Differenza": 11.7, "Diff %": 15.6, "Influenza": 15.602201459106608}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 72.6, "Media Sconfitte": 83.6, "Differenza": -11.0, "Diff %": -13.2, "Influenza": 13.165459353800163}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 12.0, "Media Sconfitte": 10.8, "Differenza": 1.2, "Diff %": 11.6, "Influenza": 11.627906976744185}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 34.8, "Media Sconfitte": 31.2, "Differenza": 3.6, "Diff %": 11.5, "Influenza": 11.50769230769231}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 1.0, "Media Sconfitte": 1.1, "Differenza": -0.1, "Diff %": -11.1, "Influenza": 11.11111111111111}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 27.6, "Media Sconfitte": 30.9, "Differenza": -3.3, "Diff %": -10.6, "Influenza": 10.557458735596382}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 13.9, "Media Sconfitte": 12.9, "Differenza": 1.0, "Diff %": 8.1, "Influenza": 8.140403286034356}], "n_wins": 13, "n_losses": 8, "win_rate": 61.9}, "Gruppo Mascio Bergamo": {"data": [{"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 19.4, "Media Sconfitte": 13.8, "Differenza": 5.6, "Diff %": 41.1, "Influenza": 41.09090909090908}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 10.7, "Media Sconfitte": 7.8, "Differenza": 2.9, "Diff %": 36.6, "Influenza": 36.59574468085106}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 7.9, "Media Sconfitte": 5.8, "Differenza": 2.1, "Diff %": 35.4, "Influenza": 35.428571428571445}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 2.0, "Media Sconfitte": 1.5, "Differenza": 0.5, "Diff %": 33.3, "Influenza": 33.33333333333333}, {"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 1.2, "Media Sconfitte": 1.5, "Differenza": -0.3, "Diff %": -20.0, "Influenza": 20.000000000000004}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 85.4, "Media Sconfitte": 71.2, "Differenza": 14.2, "Diff %": 20.0, "Influenza": 20.0}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 6.5, "Media Sconfitte": 7.4, "Differenza": -0.9, "Diff %": -12.4, "Influenza": 12.359550561797757}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 77.6, "Media Sconfitte": 84.1, "Differenza": -6.5, "Diff %": -7.7, "Influenza": 7.710604558969278}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 10.2, "Media Sconfitte": 9.5, "Differenza": 0.7, "Diff %": 7.4, "Influenza": 7.368421052631572}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 17.7, "Media Sconfitte": 19.1, "Differenza": -1.4, "Diff %": -7.2, "Influenza": 7.248908296943229}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 31.4, "Media Sconfitte": 33.8, "Differenza": -2.4, "Diff %": -7.2, "Influenza": 7.192118226600996}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 32.1, "Media Sconfitte": 33.2, "Differenza": -1.1, "Diff %": -3.5, "Influenza": 3.458646616541349}], "n_wins": 10, "n_losses": 12, "win_rate": 45.5}, "Libertas Livorno": {"data": [{"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 8.1, "Media Sconfitte": 4.9, "Differenza": 3.2, "Diff %": 65.7, "Influenza": 65.68047337278105}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 0.7, "Media Sconfitte": 1.5, "Differenza": -0.8, "Diff %": -53.8, "Influenza": 53.84615384615385}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 15.7, "Media Sconfitte": 12.8, "Differenza": 2.9, "Diff %": 23.1, "Influenza": 23.076923076923073}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 10.4, "Media Sconfitte": 8.8, "Differenza": 1.6, "Diff %": 18.7, "Influenza": 18.681318681318686}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 7.2, "Media Sconfitte": 8.5, "Differenza": -1.3, "Diff %": -15.8, "Influenza": 15.837104072398187}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 11.5, "Media Sconfitte": 13.5, "Differenza": -2.0, "Diff %": -15.1, "Influenza": 15.0997150997151}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 67.9, "Media Sconfitte": 78.5, "Differenza": -10.6, "Diff %": -13.5, "Influenza": 13.473787359137681}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 35.8, "Media Sconfitte": 31.8, "Differenza": 4.1, "Diff %": 12.9, "Influenza": 12.901271956390067}, {"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 1.4, "Media Sconfitte": 1.2, "Differenza": 0.1, "Diff %": 10.8, "Influenza": 10.769230769230766}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 80.2, "Media Sconfitte": 73.6, "Differenza": 6.5, "Diff %": 8.9, "Influenza": 8.867702755648436}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 5.6, "Media Sconfitte": 5.5, "Differenza": 0.1, "Diff %": 2.1, "Influenza": 2.0979020979020904}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 34.8, "Media Sconfitte": 35.5, "Differenza": -0.7, "Diff %": -2.1, "Influenza": 2.0585048754062916}], "n_wins": 13, "n_losses": 8, "win_rate": 61.9}, "Liofilchem Roseto": {"data": [{"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 0.2, "Media Sconfitte": 1.0, "Differenza": -0.8, "Diff %": -75.0, "Influenza": 75.0}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 10.8, "Media Sconfitte": 7.5, "Differenza": 3.2, "Diff %": 42.8, "Influenza": 42.7734375}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 19.8, "Media Sconfitte": 14.5, "Differenza": 5.2, "Diff %": 35.9, "Influenza": 35.93117408906883}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 6.8, "Media Sconfitte": 5.1, "Differenza": 1.6, "Diff %": 31.9, "Influenza": 31.89655172413794}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 0.8, "Media Sconfitte": 1.1, "Differenza": -0.3, "Diff %": -29.2, "Influenza": 29.166666666666668}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 18.2, "Media Sconfitte": 14.8, "Differenza": 3.5, "Diff %": 23.6, "Influenza": 23.60557768924302}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 5.5, "Media Sconfitte": 6.4, "Differenza": -0.9, "Diff %": -14.2, "Influenza": 14.220183486238536}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 9.0, "Media Sconfitte": 10.5, "Differenza": -1.5, "Diff %": -14.0, "Influenza": 14.04494382022472}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 84.5, "Media Sconfitte": 77.5, "Differenza": 7.0, "Diff %": 9.1, "Influenza": 9.073652239939259}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 78.0, "Media Sconfitte": 85.1, "Differenza": -7.1, "Diff %": -8.4, "Influenza": 8.36212854181065}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 29.5, "Media Sconfitte": 27.5, "Differenza": 2.0, "Diff %": 7.2, "Influenza": 7.158119658119652}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 31.5, "Media Sconfitte": 30.1, "Differenza": 1.4, "Diff %": 4.6, "Influenza": 4.589843750000002}], "n_wins": 4, "n_losses": 17, "win_rate": 19.0}, "RSR Sebastiani Rieti": {"data": [{"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 1.8, "Media Sconfitte": 1.1, "Differenza": 0.7, "Diff %": 66.2, "Influenza": 66.15384615384615}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 8.8, "Media Sconfitte": 6.4, "Differenza": 2.4, "Diff %": 37.3, "Influenza": 37.267904509283824}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 8.1, "Media Sconfitte": 6.1, "Differenza": 2.0, "Diff %": 32.2, "Influenza": 32.167832167832174}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 6.0, "Media Sconfitte": 8.7, "Differenza": -2.7, "Diff %": -30.8, "Influenza": 30.769230769230766}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 2.0, "Media Sconfitte": 1.6, "Differenza": 0.4, "Diff %": 28.6, "Influenza": 28.57142857142857}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 7.9, "Media Sconfitte": 9.8, "Differenza": -1.9, "Diff %": -19.0, "Influenza": 18.96853146853147}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 18.1, "Media Sconfitte": 15.2, "Differenza": 2.9, "Diff %": 18.8, "Influenza": 18.753509264458174}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 84.8, "Media Sconfitte": 72.0, "Differenza": 12.8, "Diff %": 17.8, "Influenza": 17.841880341880334}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 70.6, "Media Sconfitte": 83.4, "Differenza": -12.8, "Diff %": -15.4, "Influenza": 15.374372631363311}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 15.5, "Media Sconfitte": 17.1, "Differenza": -1.6, "Diff %": -9.2, "Influenza": 9.190809190809189}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 32.0, "Media Sconfitte": 29.8, "Differenza": 2.2, "Diff %": 7.5, "Influenza": 7.462686567164176}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 28.7, "Media Sconfitte": 30.7, "Differenza": -2.0, "Diff %": -6.4, "Influenza": 6.438127090301003}], "n_wins": 13, "n_losses": 9, "win_rate": 59.1}, "Reale Mutua Torino": {"data": [{"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 1.4, "Media Sconfitte": 0.7, "Differenza": 0.8, "Diff %": 112.5, "Influenza": 112.50000000000003}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 1.5, "Media Sconfitte": 3.0, "Differenza": -1.5, "Diff %": -50.0, "Influenza": 50.0}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 6.2, "Media Sconfitte": 11.0, "Differenza": -4.8, "Diff %": -43.2, "Influenza": 43.18181818181818}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 29.7, "Media Sconfitte": 39.7, "Differenza": -10.0, "Diff %": -25.2, "Influenza": 25.210084033613438}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 13.2, "Media Sconfitte": 17.2, "Differenza": -4.1, "Diff %": -23.5, "Influenza": 23.548387096774192}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 67.9, "Media Sconfitte": 85.4, "Differenza": -17.5, "Diff %": -20.5, "Influenza": 20.513654096228862}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 15.1, "Media Sconfitte": 12.6, "Differenza": 2.5, "Diff %": 20.1, "Influenza": 20.132743362831864}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 8.1, "Media Sconfitte": 7.1, "Differenza": 1.0, "Diff %": 13.7, "Influenza": 13.671875000000014}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 80.8, "Media Sconfitte": 72.1, "Differenza": 8.7, "Diff %": 12.1, "Influenza": 12.095531587057}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 5.6, "Media Sconfitte": 5.7, "Differenza": -0.1, "Diff %": -1.5, "Influenza": 1.470588235294128}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 34.8, "Media Sconfitte": 34.4, "Differenza": 0.3, "Diff %": 0.9, "Influenza": 0.887096774193553}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 6.8, "Media Sconfitte": 6.8, "Differenza": -0.0, "Diff %": -0.4, "Influenza": 0.40983606557376906}], "n_wins": 12, "n_losses": 9, "win_rate": 57.1}, "Sella Cento": {"data": [{"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 6.7, "Media Sconfitte": 4.0, "Differenza": 2.7, "Diff %": 66.7, "Influenza": 66.66666666666667}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 1.1, "Media Sconfitte": 2.0, "Differenza": -0.9, "Diff %": -44.4, "Influenza": 44.44444444444444}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 9.7, "Media Sconfitte": 7.2, "Differenza": 2.5, "Diff %": 35.1, "Influenza": 35.12544802867382}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 16.7, "Media Sconfitte": 13.8, "Differenza": 2.9, "Diff %": 21.0, "Influenza": 21.042830540037244}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 85.4, "Media Sconfitte": 70.9, "Differenza": 14.5, "Diff %": 20.5, "Influenza": 20.474813208001933}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 29.3, "Media Sconfitte": 34.9, "Differenza": -5.6, "Diff %": -16.0, "Influenza": 16.005873715124814}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 5.1, "Media Sconfitte": 5.8, "Differenza": -0.7, "Diff %": -12.6, "Influenza": 12.57309941520468}, {"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 2.1, "Media Sconfitte": 2.4, "Differenza": -0.3, "Diff %": -11.5, "Influenza": 11.46953405017921}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 34.0, "Media Sconfitte": 30.5, "Differenza": 3.5, "Diff %": 11.3, "Influenza": 11.335012594458432}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 14.1, "Media Sconfitte": 15.7, "Differenza": -1.6, "Diff %": -10.1, "Influenza": 10.076252723311544}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 7.7, "Media Sconfitte": 8.4, "Differenza": -0.7, "Diff %": -8.6, "Influenza": 8.562691131498472}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 76.7, "Media Sconfitte": 81.9, "Differenza": -5.3, "Diff %": -6.4, "Influenza": 6.416275430359927}], "n_wins": 9, "n_losses": 13, "win_rate": 40.9}, "Tezenis Verona": {"data": [{"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 1.4, "Media Sconfitte": 0.9, "Differenza": 0.5, "Diff %": 63.3, "Influenza": 63.33333333333333}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 11.5, "Media Sconfitte": 8.0, "Differenza": 3.5, "Diff %": 43.3, "Influenza": 43.333333333333336}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 16.5, "Media Sconfitte": 11.9, "Differenza": 4.7, "Diff %": 39.4, "Influenza": 39.43775100401608}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 0.9, "Media Sconfitte": 1.3, "Differenza": -0.4, "Diff %": -32.6, "Influenza": 32.592592592592595}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 83.5, "Media Sconfitte": 63.4, "Differenza": 20.0, "Diff %": 31.6, "Influenza": 31.591591591591587}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 4.5, "Media Sconfitte": 6.0, "Differenza": -1.5, "Diff %": -25.6, "Influenza": 25.555555555555554}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 11.2, "Media Sconfitte": 14.4, "Differenza": -3.2, "Diff %": -22.4, "Influenza": 22.376237623762382}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 7.3, "Media Sconfitte": 8.3, "Differenza": -1.0, "Diff %": -11.5, "Influenza": 11.49425287356323}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 27.5, "Media Sconfitte": 31.0, "Differenza": -3.5, "Diff %": -11.4, "Influenza": 11.397849462365597}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 6.8, "Media Sconfitte": 6.3, "Differenza": 0.5, "Diff %": 8.2, "Influenza": 8.181818181818182}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 69.9, "Media Sconfitte": 73.7, "Differenza": -3.8, "Diff %": -5.2, "Influenza": 5.2196382428940575}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 29.8, "Media Sconfitte": 30.0, "Differenza": -0.2, "Diff %": -0.7, "Influenza": 0.6666666666666643}], "n_wins": 15, "n_losses": 7, "win_rate": 68.2}, "UEB Gesteco Cividale": {"data": [{"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 1.8, "Media Sconfitte": 1.4, "Differenza": 0.4, "Diff %": 29.9, "Influenza": 29.870129870129876}, {"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 2.1, "Media Sconfitte": 2.8, "Differenza": -0.7, "Diff %": -24.7, "Influenza": 24.67532467532467}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 6.4, "Media Sconfitte": 5.2, "Differenza": 1.1, "Diff %": 21.1, "Influenza": 21.088435374149654}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 80.1, "Media Sconfitte": 66.9, "Differenza": 13.2, "Diff %": 19.7, "Influenza": 19.732977303070758}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 13.9, "Media Sconfitte": 17.1, "Differenza": -3.2, "Diff %": -18.7, "Influenza": 18.665276329509904}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 32.6, "Media Sconfitte": 27.9, "Differenza": 4.7, "Diff %": 16.8, "Influenza": 16.848174247277377}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 9.4, "Media Sconfitte": 11.1, "Differenza": -1.8, "Diff %": -15.9, "Influenza": 15.890850722311392}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 72.6, "Media Sconfitte": 81.9, "Differenza": -9.3, "Diff %": -11.4, "Influenza": 11.363140676117778}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 15.4, "Media Sconfitte": 14.4, "Differenza": 1.1, "Diff %": 7.3, "Influenza": 7.329192546583853}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 5.4, "Media Sconfitte": 5.1, "Differenza": 0.2, "Diff %": 4.5, "Influenza": 4.529616724738669}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 32.9, "Media Sconfitte": 32.2, "Differenza": 0.6, "Diff %": 1.9, "Influenza": 1.882613510520478}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 7.5, "Media Sconfitte": 7.5, "Differenza": 0.0, "Diff %": 0.0, "Influenza": 0.0}], "n_wins": 14, "n_losses": 8, "win_rate": 63.6}, "Unieuro Forl\u00ec": {"data": [{"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 3.1, "Media Sconfitte": 1.1, "Differenza": 2.1, "Diff %": 194.6, "Influenza": 194.6428571428571}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 12.3, "Media Sconfitte": 18.9, "Differenza": -6.6, "Diff %": -34.9, "Influenza": 34.881373043917215}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 5.9, "Media Sconfitte": 4.7, "Differenza": 1.2, "Diff %": 25.5, "Influenza": 25.510204081632637}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 11.3, "Media Sconfitte": 9.2, "Differenza": 2.1, "Diff %": 22.7, "Influenza": 22.670807453416167}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 35.9, "Media Sconfitte": 29.4, "Differenza": 6.5, "Diff %": 22.0, "Influenza": 21.963070942662775}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 9.0, "Media Sconfitte": 10.9, "Differenza": -1.9, "Diff %": -17.7, "Influenza": 17.682926829268293}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 69.4, "Media Sconfitte": 83.5, "Differenza": -14.0, "Diff %": -16.8, "Influenza": 16.818804198995892}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 15.4, "Media Sconfitte": 13.4, "Differenza": 2.0, "Diff %": 15.1, "Influenza": 15.138592750533048}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 1.4, "Media Sconfitte": 1.3, "Differenza": 0.2, "Diff %": 12.8, "Influenza": 12.781954887218053}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 82.3, "Media Sconfitte": 73.8, "Differenza": 8.5, "Diff %": 11.5, "Influenza": 11.498257839721267}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 5.3, "Media Sconfitte": 5.9, "Differenza": -0.6, "Diff %": -9.9, "Influenza": 9.902597402597399}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 34.7, "Media Sconfitte": 34.1, "Differenza": 0.6, "Diff %": 1.7, "Influenza": 1.7020089285714328}], "n_wins": 7, "n_losses": 15, "win_rate": 31.8}, "Valtur Brindisi": {"data": [{"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 0.4, "Media Sconfitte": 1.0, "Differenza": -0.6, "Diff %": -60.0, "Influenza": 60.0}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 10.7, "Media Sconfitte": 18.1, "Differenza": -7.4, "Diff %": -40.8, "Influenza": 40.83989501312336}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 7.3, "Media Sconfitte": 11.0, "Differenza": -3.7, "Diff %": -33.3, "Influenza": 33.333333333333336}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 16.6, "Media Sconfitte": 13.1, "Differenza": 3.5, "Diff %": 26.3, "Influenza": 26.30434782608697}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 6.9, "Media Sconfitte": 5.6, "Differenza": 1.4, "Diff %": 24.4, "Influenza": 24.444444444444454}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 9.0, "Media Sconfitte": 7.6, "Differenza": 1.4, "Diff %": 18.9, "Influenza": 18.86792452830189}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 65.5, "Media Sconfitte": 79.4, "Differenza": -14.0, "Diff %": -17.6, "Influenza": 17.577937649880095}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 5.9, "Media Sconfitte": 7.0, "Differenza": -1.1, "Diff %": -16.2, "Influenza": 16.190476190476197}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 1.6, "Media Sconfitte": 1.9, "Differenza": -0.3, "Diff %": -13.8, "Influenza": 13.846153846153845}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 78.1, "Media Sconfitte": 70.4, "Differenza": 7.7, "Diff %": 10.9, "Influenza": 10.939824205544294}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 32.1, "Media Sconfitte": 29.3, "Differenza": 2.8, "Diff %": 9.7, "Influenza": 9.72357723577236}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 28.3, "Media Sconfitte": 30.4, "Differenza": -2.1, "Diff %": -6.9, "Influenza": 6.885758998435055}], "n_wins": 15, "n_losses": 7, "win_rate": 68.2}, "Victoria Libertas Pesaro": {"data": [{"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 5.0, "Media Sconfitte": 8.2, "Differenza": -3.2, "Diff %": -38.8, "Influenza": 38.77551020408163}, {"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 1.4, "Media Sconfitte": 2.0, "Differenza": -0.6, "Diff %": -28.1, "Influenza": 28.125}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 19.8, "Media Sconfitte": 15.7, "Differenza": 4.1, "Diff %": 26.5, "Influenza": 26.462765957446816}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 8.4, "Media Sconfitte": 11.2, "Differenza": -2.8, "Diff %": -25.0, "Influenza": 24.999999999999996}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 85.7, "Media Sconfitte": 69.5, "Differenza": 16.2, "Diff %": 23.3, "Influenza": 23.29136690647482}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 1.1, "Media Sconfitte": 1.3, "Differenza": -0.3, "Diff %": -20.3, "Influenza": 20.312499999999993}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 10.0, "Media Sconfitte": 8.8, "Differenza": 1.2, "Diff %": 13.2, "Influenza": 13.207547169811312}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 13.7, "Media Sconfitte": 15.7, "Differenza": -2.0, "Diff %": -12.6, "Influenza": 12.63297872340425}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 31.1, "Media Sconfitte": 35.2, "Differenza": -4.1, "Diff %": -11.7, "Influenza": 11.670616113744071}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 73.2, "Media Sconfitte": 81.5, "Differenza": -8.3, "Diff %": -10.2, "Influenza": 10.199386503067483}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 32.6, "Media Sconfitte": 30.2, "Differenza": 2.4, "Diff %": 7.9, "Influenza": 7.941988950276239}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 6.6, "Media Sconfitte": 6.5, "Differenza": 0.1, "Diff %": 1.9, "Influenza": 1.9230769230769231}], "n_wins": 16, "n_losses": 6, "win_rate": 72.7}, "Wegreenit Urania Milano": {"data": [{"Statistica": "ST", "Tipo": "Noi", "Media Vittorie": 2.0, "Media Sconfitte": 1.4, "Differenza": 0.6, "Diff %": 42.9, "Influenza": 42.85714285714287}, {"Statistica": "3PTM", "Tipo": "Noi", "Media Vittorie": 8.0, "Media Sconfitte": 6.1, "Differenza": 1.9, "Diff %": 31.9, "Influenza": 31.868131868131872}, {"Statistica": "RT", "Tipo": "Avversari", "Media Vittorie": 25.4, "Media Sconfitte": 32.3, "Differenza": -6.9, "Diff %": -21.4, "Influenza": 21.354933726067756}, {"Statistica": "3PTM", "Tipo": "Avversari", "Media Vittorie": 8.0, "Media Sconfitte": 10.1, "Differenza": -2.1, "Diff %": -21.1, "Influenza": 21.052631578947363}, {"Statistica": "PR", "Tipo": "Noi", "Media Vittorie": 3.7, "Media Sconfitte": 4.7, "Differenza": -1.0, "Diff %": -20.4, "Influenza": 20.408163265306126}, {"Statistica": "PT", "Tipo": "Noi", "Media Vittorie": 84.1, "Media Sconfitte": 71.0, "Differenza": 13.1, "Diff %": 18.5, "Influenza": 18.511066398390337}, {"Statistica": "AS", "Tipo": "Noi", "Media Vittorie": 16.3, "Media Sconfitte": 14.5, "Differenza": 1.8, "Diff %": 12.6, "Influenza": 12.574061882817636}, {"Statistica": "ST", "Tipo": "Avversari", "Media Vittorie": 1.9, "Media Sconfitte": 1.7, "Differenza": 0.2, "Diff %": 11.4, "Influenza": 11.428571428571427}, {"Statistica": "RT", "Tipo": "Noi", "Media Vittorie": 33.1, "Media Sconfitte": 30.2, "Differenza": 2.9, "Diff %": 9.7, "Influenza": 9.744560075685916}, {"Statistica": "PT", "Tipo": "Avversari", "Media Vittorie": 76.9, "Media Sconfitte": 84.3, "Differenza": -7.5, "Diff %": -8.9, "Influenza": 8.865047995482769}, {"Statistica": "AS", "Tipo": "Avversari", "Media Vittorie": 18.0, "Media Sconfitte": 19.4, "Differenza": -1.4, "Diff %": -7.2, "Influenza": 7.216494845360819}, {"Statistica": "PR", "Tipo": "Avversari", "Media Vittorie": 6.3, "Media Sconfitte": 6.5, "Differenza": -0.2, "Diff %": -3.8, "Influenza": 3.7900874635568513}], "n_wins": 7, "n_losses": 15, "win_rate": 31.8}};
+
+        function showWinLoss() {
+            const team = document.getElementById('team-select').value;
+            const contentDiv = document.getElementById('winloss-content');
+
+            if (!winLossData[team]) {
+                contentDiv.innerHTML = '<p>Dati non disponibili.</p>';
+                return;
+            }
+
+            const data = winLossData[team];
+            const labels = {
+                'PT': 'Punti', 'AS': 'Assist', 'RT': 'Rimbalzi', 'PR': 'Recuperi',
+                'ST': 'Stoppate', '3PTM': 'Triple'
+            };
+
+            // Raggruppa per statistica
+            const statGroups = {};
+            data.data.forEach(row => {
+                const stat = row['Statistica'];
+                if (!statGroups[stat]) statGroups[stat] = { fatte: null, subite: null, maxInfluenza: 0 };
+                if (row['Tipo'] === 'Noi') statGroups[stat].fatte = row;
+                else statGroups[stat].subite = row;
+                statGroups[stat].maxInfluenza = Math.max(statGroups[stat].maxInfluenza, row['Influenza']);
+            });
+
+            const sortedStats = Object.entries(statGroups).sort((a, b) => b[1].maxInfluenza - a[1].maxInfluenza);
+            const allValues = data.data.flatMap(r => [r['Media Vittorie'], r['Media Sconfitte']]);
+            const maxValue = Math.max(...allValues);
+
+            let html = `<p style="margin-bottom: 15px;">
+                <span style="color: #22c55e;">●</span> <strong>${data.n_wins} vittorie</strong> vs
+                <span style="color: #ef4444;">●</span> <strong>${data.n_losses} sconfitte</strong>
+                (Win rate: ${data.win_rate}%)
+            </p>`;
+
+            html += '<div style="display: flex; flex-direction: column; gap: 16px;">';
+
+            sortedStats.forEach(([stat, group]) => {
+                const label = labels[stat] || stat;
+                html += `<div style="background: white; border: 1px solid #e5e5e5; border-radius: 8px; padding: 16px;">`;
+                html += `<div style="text-align: center; margin-bottom: 12px; font-weight: 700; color: #302B8F; font-size: 16px;">${label}</div>`;
+                html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">`;
+
+                ['fatte', 'subite'].forEach((tipo, idx) => {
+                    const rowData = tipo === 'fatte' ? group.fatte : group.subite;
+                    const tipoColor = tipo === 'fatte' ? '#302B8F' : '#f97316';
+
+                    if (!rowData) {
+                        html += `<div style="background: #f9f9f9; border-radius: 8px; padding: 12px; text-align: center; color: #999;">N/D</div>`;
+                        return;
+                    }
+
+                    const winVal = rowData['Media Vittorie'];
+                    const lossVal = rowData['Media Sconfitte'];
+                    const diffPct = rowData['Diff %'];
+                    const diffAbs = rowData['Differenza'];
+                    const isPositive = tipo === 'fatte' ? diffPct > 0 : diffPct < 0;
+                    const diffColor = isPositive ? '#22c55e' : '#ef4444';
+                    const winWidth = (winVal / maxValue) * 100;
+                    const lossWidth = (lossVal / maxValue) * 100;
+
+                    html += `<div style="background: #f9f9f9; border-radius: 8px; padding: 12px;">`;
+                    html += `<div style="text-align: center; margin-bottom: 10px;">`;
+                    html += `<span style="background: ${tipoColor}; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">${tipo}</span>`;
+                    html += `<div style="margin-top: 6px;">`;
+                    html += `<span style="font-size: 20px; font-weight: bold; color: ${diffColor};">${diffPct > 0 ? '+' : ''}${diffPct}%</span>`;
+                    html += `<span style="font-size: 13px; color: #666; margin-left: 6px;">(${diffAbs > 0 ? '+' : ''}${diffAbs})</span>`;
+                    html += `</div></div>`;
+
+                    html += `<div style="display: flex; flex-direction: column; gap: 4px;">`;
+                    html += `<div style="display: flex; align-items: center; gap: 6px;">`;
+                    html += `<div style="width: 16px; font-size: 10px; color: #22c55e; font-weight: bold;">V</div>`;
+                    html += `<div style="flex: 1; background: #e5e5e5; border-radius: 3px; height: 18px; position: relative;">`;
+                    html += `<div style="width: ${winWidth}%; background: #22c55e; height: 100%; border-radius: 3px;"></div>`;
+                    html += `<span style="position: absolute; left: 6px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 600; color: #166534;">${winVal}</span>`;
+                    html += `</div></div>`;
+
+                    html += `<div style="display: flex; align-items: center; gap: 6px;">`;
+                    html += `<div style="width: 16px; font-size: 10px; color: #ef4444; font-weight: bold;">S</div>`;
+                    html += `<div style="flex: 1; background: #e5e5e5; border-radius: 3px; height: 18px; position: relative;">`;
+                    html += `<div style="width: ${lossWidth}%; background: #ef4444; height: 100%; border-radius: 3px;"></div>`;
+                    html += `<span style="position: absolute; left: 6px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 600; color: #991b1b;">${lossVal}</span>`;
+                    html += `</div></div>`;
+                    html += `</div></div>`;
+                });
+
+                html += `</div></div>`;
+            });
+
+            html += '</div>';
+            contentDiv.innerHTML = html;
+        }
+
+        showWinLoss();
+    </script>
+    
+
+    <h2 class="section-title" style="margin-top: 2rem;">Casa vs Trasferta</h2>
+    
+    <div class="content-section">
+        <h2 class="section-title">Casa vs Trasferta</h2>
+        <p style="color: #666; margin-bottom: 20px;">
+            Confronta le performance delle squadre in casa vs in trasferta.
+        </p>
+
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: 600;">Squadra:</label>
+            <select id="team-select" onchange="showHomeAway()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
+                <option value="Avellino Basket">Avellino Basket</option><option value="Crifo Wines Ruvo di Puglia">Crifo Wines Ruvo di Puglia</option><option value="Dole Basket Rimini">Dole Basket Rimini</option><option value="Estra Pistoia">Estra Pistoia</option><option value="Ferraroni Juvi Cremona">Ferraroni Juvi Cremona</option><option value="Fortitudo Bologna">Fortitudo Bologna</option><option value="Gemini Mestre">Gemini Mestre</option><option value="Givova Scafati">Givova Scafati</option><option value="Gruppo Mascio Bergamo">Gruppo Mascio Bergamo</option><option value="Libertas Livorno">Libertas Livorno</option><option value="Liofilchem Roseto">Liofilchem Roseto</option><option value="RSR Sebastiani Rieti">RSR Sebastiani Rieti</option><option value="Reale Mutua Torino">Reale Mutua Torino</option><option value="Sella Cento">Sella Cento</option><option value="Tezenis Verona">Tezenis Verona</option><option value="UEB Gesteco Cividale">UEB Gesteco Cividale</option><option value="Unieuro Forlì">Unieuro Forlì</option><option value="Valtur Brindisi">Valtur Brindisi</option><option value="Victoria Libertas Pesaro">Victoria Libertas Pesaro</option><option value="Wegreenit Urania Milano">Wegreenit Urania Milano</option>
+            </select>
+        </div>
+
+        <div id="home-away-content"></div>
+    </div>
+
+    <script>
+        const teamsData = {"Avellino Basket": {"home": {"gp": 11, "wins": 7, "win_pct": 63.6, "gap_pg": 5.5, "stats": {"PT": 79.8, "AS": 17.7, "RT": 32.2, "PR": 5.0, "ST": 2.0}}, "away": {"gp": 11, "wins": 5, "win_pct": 45.5, "gap_pg": -0.8, "stats": {"PT": 77.9, "AS": 13.8, "RT": 32.3, "PR": 6.7, "ST": 1.7}}}, "Crifo Wines Ruvo di Puglia": {"home": {"gp": 11, "wins": 4, "win_pct": 36.4, "gap_pg": -6.5, "stats": {"PT": 75.2, "AS": 11.3, "RT": 30.5, "PR": 5.8, "ST": 0.3}}, "away": {"gp": 11, "wins": 2, "win_pct": 18.2, "gap_pg": -15.1, "stats": {"PT": 72.9, "AS": 14.4, "RT": 29.6, "PR": 6.7, "ST": 1.3}}}, "Dole Basket Rimini": {"home": {"gp": 11, "wins": 8, "win_pct": 72.7, "gap_pg": 9.0, "stats": {"PT": 78.5, "AS": 18.2, "RT": 32.0, "PR": 7.1, "ST": 1.7}}, "away": {"gp": 11, "wins": 7, "win_pct": 63.6, "gap_pg": 3.8, "stats": {"PT": 82.2, "AS": 14.2, "RT": 32.8, "PR": 5.5, "ST": 1.5}}}, "Estra Pistoia": {"home": {"gp": 11, "wins": 3, "win_pct": 27.3, "gap_pg": -4.3, "stats": {"PT": 76.5, "AS": 14.3, "RT": 31.2, "PR": 3.5, "ST": 2.1}}, "away": {"gp": 11, "wins": 3, "win_pct": 27.3, "gap_pg": -5.6, "stats": {"PT": 74.7, "AS": 12.5, "RT": 31.1, "PR": 4.1, "ST": 2.1}}}, "Ferraroni Juvi Cremona": {"home": {"gp": 11, "wins": 4, "win_pct": 36.4, "gap_pg": -3.4, "stats": {"PT": 72.2, "AS": 18.6, "RT": 30.9, "PR": 7.3, "ST": 1.8}}, "away": {"gp": 11, "wins": 5, "win_pct": 45.5, "gap_pg": -4.7, "stats": {"PT": 76.4, "AS": 16.2, "RT": 29.5, "PR": 7.1, "ST": 2.9}}}, "Fortitudo Bologna": {"home": {"gp": 11, "wins": 10, "win_pct": 90.9, "gap_pg": 12.7, "stats": {"PT": 74.4, "AS": 21.4, "RT": 34.2, "PR": 4.9, "ST": 1.3}}, "away": {"gp": 11, "wins": 3, "win_pct": 27.3, "gap_pg": -5.9, "stats": {"PT": 67.5, "AS": 17.1, "RT": 32.0, "PR": 3.5, "ST": 1.1}}}, "Gemini Mestre": {"home": {"gp": 11, "wins": 5, "win_pct": 45.5, "gap_pg": -4.9, "stats": {"PT": 76.6, "AS": 14.2, "RT": 33.4, "PR": 5.5, "ST": 1.7}}, "away": {"gp": 10, "wins": 4, "win_pct": 40.0, "gap_pg": -2.4, "stats": {"PT": 76.7, "AS": 13.2, "RT": 30.6, "PR": 5.0, "ST": 1.1}}}, "Givova Scafati": {"home": {"gp": 11, "wins": 8, "win_pct": 72.7, "gap_pg": 8.0, "stats": {"PT": 85.3, "AS": 13.7, "RT": 34.8, "PR": 5.5, "ST": 1.2}}, "away": {"gp": 10, "wins": 5, "win_pct": 50.0, "gap_pg": 2.0, "stats": {"PT": 79.2, "AS": 13.3, "RT": 32.0, "PR": 6.0, "ST": 1.5}}}, "Gruppo Mascio Bergamo": {"home": {"gp": 10, "wins": 7, "win_pct": 70.0, "gap_pg": 3.9, "stats": {"PT": 80.2, "AS": 19.7, "RT": 31.7, "PR": 7.6, "ST": 1.2}}, "away": {"gp": 12, "wins": 3, "win_pct": 25.0, "gap_pg": -5.8, "stats": {"PT": 75.5, "AS": 13.5, "RT": 33.6, "PR": 6.1, "ST": 1.5}}}, "Libertas Livorno": {"home": {"gp": 10, "wins": 8, "win_pct": 80.0, "gap_pg": 8.6, "stats": {"PT": 79.6, "AS": 15.3, "RT": 37.5, "PR": 6.6, "ST": 1.6}}, "away": {"gp": 11, "wins": 5, "win_pct": 45.5, "gap_pg": 1.4, "stats": {"PT": 75.9, "AS": 13.9, "RT": 31.4, "PR": 7.1, "ST": 1.1}}}, "Liofilchem Roseto": {"home": {"gp": 11, "wins": 3, "win_pct": 27.3, "gap_pg": -3.8, "stats": {"PT": 78.3, "AS": 15.8, "RT": 26.6, "PR": 6.4, "ST": 0.5}}, "away": {"gp": 10, "wins": 1, "win_pct": 10.0, "gap_pg": -7.4, "stats": {"PT": 79.4, "AS": 15.2, "RT": 29.3, "PR": 4.4, "ST": 1.2}}}, "RSR Sebastiani Rieti": {"home": {"gp": 11, "wins": 7, "win_pct": 63.6, "gap_pg": 5.8, "stats": {"PT": 77.9, "AS": 18.7, "RT": 31.8, "PR": 8.4, "ST": 1.6}}, "away": {"gp": 11, "wins": 6, "win_pct": 54.5, "gap_pg": -0.5, "stats": {"PT": 81.3, "AS": 15.1, "RT": 30.4, "PR": 6.2, "ST": 1.5}}}, "Reale Mutua Torino": {"home": {"gp": 11, "wins": 7, "win_pct": 63.6, "gap_pg": 7.0, "stats": {"PT": 77.9, "AS": 14.7, "RT": 35.6, "PR": 7.2, "ST": 1.2}}, "away": {"gp": 11, "wins": 5, "win_pct": 45.5, "gap_pg": -3.6, "stats": {"PT": 69.3, "AS": 12.0, "RT": 30.5, "PR": 5.7, "ST": 0.9}}}, "Sella Cento": {"home": {"gp": 11, "wins": 7, "win_pct": 63.6, "gap_pg": 4.2, "stats": {"PT": 80.8, "AS": 15.6, "RT": 32.3, "PR": 5.5, "ST": 2.5}}, "away": {"gp": 11, "wins": 2, "win_pct": 18.2, "gap_pg": -8.6, "stats": {"PT": 72.9, "AS": 14.3, "RT": 31.6, "PR": 4.7, "ST": 2.0}}}, "Tezenis Verona": {"home": {"gp": 11, "wins": 10, "win_pct": 90.9, "gap_pg": 8.1, "stats": {"PT": 83.5, "AS": 16.4, "RT": 30.5, "PR": 7.2, "ST": 1.1}}, "away": {"gp": 11, "wins": 5, "win_pct": 45.5, "gap_pg": 0.8, "stats": {"PT": 70.6, "AS": 13.7, "RT": 29.3, "PR": 6.1, "ST": 1.4}}}, "UEB Gesteco Cividale": {"home": {"gp": 10, "wins": 7, "win_pct": 70.0, "gap_pg": 3.9, "stats": {"PT": 74.2, "AS": 14.0, "RT": 30.1, "PR": 6.8, "ST": 2.8}}, "away": {"gp": 12, "wins": 7, "win_pct": 58.3, "gap_pg": -0.8, "stats": {"PT": 76.2, "AS": 15.9, "RT": 31.5, "PR": 5.2, "ST": 1.9}}}, "Unieuro Forl\u00ec": {"home": {"gp": 11, "wins": 4, "win_pct": 36.4, "gap_pg": -2.0, "stats": {"PT": 78.7, "AS": 15.0, "RT": 31.8, "PR": 4.6, "ST": 2.0}}, "away": {"gp": 11, "wins": 3, "win_pct": 27.3, "gap_pg": -6.2, "stats": {"PT": 74.3, "AS": 13.1, "RT": 31.1, "PR": 5.5, "ST": 1.5}}}, "Valtur Brindisi": {"home": {"gp": 11, "wins": 10, "win_pct": 90.9, "gap_pg": 11.2, "stats": {"PT": 78.4, "AS": 17.1, "RT": 32.4, "PR": 6.0, "ST": 0.5}}, "away": {"gp": 11, "wins": 5, "win_pct": 45.5, "gap_pg": 0.0, "stats": {"PT": 73.0, "AS": 13.9, "RT": 30.1, "PR": 7.0, "ST": 0.7}}}, "Victoria Libertas Pesaro": {"home": {"gp": 12, "wins": 9, "win_pct": 75.0, "gap_pg": 5.4, "stats": {"PT": 78.6, "AS": 16.8, "RT": 34.1, "PR": 5.8, "ST": 1.7}}, "away": {"gp": 10, "wins": 7, "win_pct": 70.0, "gap_pg": 4.9, "stats": {"PT": 84.5, "AS": 20.9, "RT": 29.3, "PR": 7.5, "ST": 1.5}}}, "Wegreenit Urania Milano": {"home": {"gp": 11, "wins": 5, "win_pct": 45.5, "gap_pg": -1.4, "stats": {"PT": 81.1, "AS": 18.8, "RT": 30.5, "PR": 4.5, "ST": 1.9}}, "away": {"gp": 11, "wins": 2, "win_pct": 18.2, "gap_pg": -11.1, "stats": {"PT": 69.3, "AS": 11.3, "RT": 31.8, "PR": 4.3, "ST": 1.3}}}};
+        const statLabels = {"PT": "Punti", "AS": "Assist", "RT": "Rimbalzi", "PR": "Recuperi", "ST": "Stoppate"};
+
+        function showHomeAway() {
+            const team = document.getElementById('team-select').value;
+            const contentDiv = document.getElementById('home-away-content');
+
+            if (!teamsData[team]) {
+                contentDiv.innerHTML = '<p>Dati non disponibili.</p>';
+                return;
+            }
+
+            const data = teamsData[team];
+            const home = data.home;
+            const away = data.away;
+
+            let html = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                    <div style="background: linear-gradient(135deg, #22c55e, #16a34a); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 14px; opacity: 0.9;">🏠 CASA</div>
+                        <div style="font-size: 32px; font-weight: 700;">${home.wins}/${home.gp}</div>
+                        <div style="font-size: 18px;">${home.win_pct}% vittorie</div>
+                        <div style="font-size: 14px; margin-top: 8px;">Media: ${home.gap_pg > 0 ? '+' : ''}${home.gap_pg} punti</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 14px; opacity: 0.9;">✈️ TRASFERTA</div>
+                        <div style="font-size: 32px; font-weight: 700;">${away.wins}/${away.gp}</div>
+                        <div style="font-size: 18px;">${away.win_pct}% vittorie</div>
+                        <div style="font-size: 14px; margin-top: 8px;">Media: ${away.gap_pg > 0 ? '+' : ''}${away.gap_pg} punti</div>
+                    </div>
+                </div>
+            `;
+
+            // Confronto statistiche
+            html += '<h3 style="margin-bottom: 15px;">Statistiche per partita</h3>';
+            html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
+
+            Object.keys(statLabels).forEach(stat => {
+                const homeVal = home.stats[stat] || 0;
+                const awayVal = away.stats[stat] || 0;
+                const maxVal = Math.max(homeVal, awayVal) * 1.1;
+                const diff = homeVal - awayVal;
+                const diffColor = diff > 0 ? '#22c55e' : (diff < 0 ? '#ef4444' : '#666');
+
+                html += `
+                    <div style="background: white; border: 1px solid #e5e5e5; border-radius: 8px; padding: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-weight: 600;">${statLabels[stat]}</span>
+                            <span style="color: ${diffColor}; font-weight: 600;">
+                                ${diff > 0 ? '+' : ''}${diff.toFixed(1)}
+                            </span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <div style="font-size: 12px; color: #22c55e; margin-bottom: 3px;">Casa: ${homeVal}</div>
+                                <div style="background: #e5e5e5; border-radius: 4px; height: 8px;">
+                                    <div style="width: ${(homeVal / maxVal) * 100}%; background: #22c55e; height: 100%; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #ef4444; margin-bottom: 3px;">Trasferta: ${awayVal}</div>
+                                <div style="background: #e5e5e5; border-radius: 4px; height: 8px;">
+                                    <div style="width: ${(awayVal / maxVal) * 100}%; background: #ef4444; height: 100%; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            contentDiv.innerHTML = html;
+        }
+
+        showHomeAway();
+    </script>
+    
+    
+
+        <div class="site-footer">
+            <img src="../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <div>Ultimo aggiornamento: 19/01/2026 11:22</div>
+            <div>Generato con LNP Stats</div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Espandi sezione corrente
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('expanded');
+            });
+        });
+
+        // Espandi automaticamente la sezione attiva
+        const activeLink = document.querySelector('.sidebar-link.active');
+        if (activeLink) {
+            let parent = activeLink.closest('.sidebar-section');
+            if (parent) parent.classList.add('expanded');
+        }
+    </script>
+</body>
+</html>
