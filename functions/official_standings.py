@@ -315,19 +315,28 @@ def normalize_team_name_for_match(name):
     """
     name = name.lower().strip()
 
-    # Mappatura diretta per casi problematici
+    # Mappatura diretta per casi problematici (squadre con stessa città)
     direct_mappings = {
+        'gema montecatini': 'gema montecatini',
+        'gema': 'gema montecatini',
+        'la t tecnica': 'gema montecatini',
+        'herons montecatini': 'herons montecatini',
+        'herons': 'herons montecatini',
+        'fabo': 'herons montecatini',
         'bakery': 'bakery piacenza',
-        'assigeco': 'ucc assigeco piacenza',
+        'assigeco': 'assigeco piacenza',
+        'ucc assigeco': 'assigeco piacenza',
+        'andrea costa': 'andrea costa imola',
+        'virtus imola': 'virtus imola',
     }
 
     for key, val in direct_mappings.items():
         if key in name:
             return val
 
-    # Parole chiave identificative
+    # Parole chiave identificative (escluse città con più squadre gestite sopra)
     keywords = [
-        'montecatini', 'vigevano', 'orzinuovi', 'vendemiano', 'lumezzane',
+        'vigevano', 'orzinuovi', 'vendemiano', 'lumezzane',
         'desio', 'omegna', 'agrigento', 'fidenza', 'legnano',
         'treviglio', 'monferrato', 'vicenza', 'armerina', 'fiorenzuola',
         'orlando', 'livorno', 'avellino', 'fortitudo', 'casoria', 'nardò',
@@ -337,7 +346,7 @@ def normalize_team_name_for_match(name):
         'varese', 'trieste', 'pistoia', 'napoli', 'brindisi', 'sassari',
         'cagliari', 'pavia', 'teramo', 'mantova', 'bergamo', 'ancona',
         'civitanova', 'ravenna', 'jesi', 'fabriano', 'siena', 'arezzo',
-        'ozzano', 'imola', 'san miniato', 'empoli', 'piombino',
+        'ozzano', 'san miniato', 'empoli', 'piombino',
         'faenza', 'cesena', 'senigallia', 'san severo', 'monopoli',
         'ruvo', 'corato', 'bisceglie', 'molfetta', 'taranto', 'cerignola',
         'salerno', 'battipaglia', 'torre del greco', 'portici', 'castellammare'
