@@ -390,7 +390,7 @@ def create_dependency_chart(dep_df, stat_type='PT'):
         name='1°',
         orientation='h',
         marker_color='#302B8F',
-        text=[f"{row[top1_nome].split()[-1]}: {row[top1_col]:.0f}%" for _, row in df.iterrows()],
+        text=[f"{' '.join(row[top1_nome].split()[1:])}: {row[top1_col]:.0f}%" for _, row in df.iterrows()],
         textposition='inside',
         insidetextanchor='middle',
     ))
@@ -401,7 +401,7 @@ def create_dependency_chart(dep_df, stat_type='PT'):
         name='2°',
         orientation='h',
         marker_color='#00F95B',
-        text=[f"{row[top2_nome].split()[-1]}: {row[top2_col] - row[top1_col]:.0f}%" for _, row in df.iterrows()],
+        text=[f"{' '.join(row[top2_nome].split()[1:])}: {row[top2_col] - row[top1_col]:.0f}%" for _, row in df.iterrows()],
         textposition='inside',
         insidetextanchor='middle',
     ))
@@ -412,7 +412,7 @@ def create_dependency_chart(dep_df, stat_type='PT'):
         name='3°',
         orientation='h',
         marker_color='#60a5fa',
-        text=[f"{row[top3_nome].split()[-1]}: {row[top3_col] - row[top2_col]:.0f}%" for _, row in df.iterrows()],
+        text=[f"{' '.join(row[top3_nome].split()[1:])}: {row[top3_col] - row[top2_col]:.0f}%" for _, row in df.iterrows()],
         textposition='inside',
         insidetextanchor='middle',
     ))
