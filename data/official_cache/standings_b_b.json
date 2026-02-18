@@ -1,176 +1,176 @@
 {
-  "updated_at": "2026-01-19T11:21:52.832534",
+  "updated_at": "2026-02-17T17:59:59.762038",
   "standings": [
     {
-      "team": "Virtus GVM Roma 1960",
-      "pts": 36,
-      "gp": 21,
-      "wins": 18,
-      "losses": 3,
-      "pf": 1602,
-      "ps": 1426
+      "team": "Verodol CBD Pielle Livorno",
+      "pts": 42,
+      "gp": 25,
+      "wins": 21,
+      "losses": 4,
+      "pf": 1993,
+      "ps": 1810
     },
     {
-      "team": "Verodol CBD Pielle Livorno",
-      "pts": 36,
-      "gp": 21,
-      "wins": 18,
-      "losses": 3,
-      "pf": 1661,
-      "ps": 1497
+      "team": "Virtus GVM Roma 1960",
+      "pts": 42,
+      "gp": 25,
+      "wins": 21,
+      "losses": 4,
+      "pf": 1943,
+      "ps": 1700
     },
     {
       "team": "Paperdi Juvecaserta 2021",
-      "pts": 36,
-      "gp": 21,
-      "wins": 18,
-      "losses": 3,
-      "pf": 1720,
-      "ps": 1581
-    },
-    {
-      "team": "Luiss Roma",
-      "pts": 32,
-      "gp": 21,
-      "wins": 16,
+      "pts": 40,
+      "gp": 25,
+      "wins": 20,
       "losses": 5,
-      "pf": 1633,
-      "ps": 1543
+      "pf": 2020,
+      "ps": 1862
     },
     {
       "team": "Benacquista Assicurazioni Latina",
-      "pts": 32,
-      "gp": 21,
-      "wins": 16,
+      "pts": 38,
+      "gp": 24,
+      "wins": 19,
       "losses": 5,
-      "pf": 1729,
-      "ps": 1602
+      "pf": 1979,
+      "ps": 1807
+    },
+    {
+      "team": "Luiss Roma",
+      "pts": 34,
+      "gp": 24,
+      "wins": 17,
+      "losses": 7,
+      "pf": 1846,
+      "ps": 1762
     },
     {
       "team": "Allianz Pazienza San Severo",
-      "pts": 26,
-      "gp": 21,
-      "wins": 13,
-      "losses": 8,
-      "pf": 1711,
-      "ps": 1677
+      "pts": 30,
+      "gp": 25,
+      "wins": 15,
+      "losses": 10,
+      "pf": 2021,
+      "ps": 1997
     },
     {
       "team": "UP Andrea Costa Imola",
-      "pts": 24,
-      "gp": 21,
-      "wins": 12,
-      "losses": 9,
-      "pf": 1482,
-      "ps": 1386
+      "pts": 28,
+      "gp": 25,
+      "wins": 14,
+      "losses": 11,
+      "pf": 1760,
+      "ps": 1684
     },
     {
       "team": "Tema Sinergie Faenza",
-      "pts": 20,
-      "gp": 20,
-      "wins": 10,
-      "losses": 10,
-      "pf": 1568,
-      "ps": 1527
+      "pts": 26,
+      "gp": 24,
+      "wins": 13,
+      "losses": 11,
+      "pf": 1885,
+      "ps": 1829
     },
     {
       "team": "General Contractor Jesi",
-      "pts": 20,
-      "gp": 21,
-      "wins": 10,
-      "losses": 11,
-      "pf": 1645,
-      "ps": 1586
-    },
-    {
-      "team": "OraSì Ravenna",
-      "pts": 18,
-      "gp": 21,
-      "wins": 9,
-      "losses": 12,
-      "pf": 1612,
-      "ps": 1570
+      "pts": 24,
+      "gp": 25,
+      "wins": 12,
+      "losses": 13,
+      "pf": 1953,
+      "ps": 1893
     },
     {
       "team": "Umana San Giobbe Chiusi",
-      "pts": 16,
-      "gp": 20,
-      "wins": 8,
+      "pts": 22,
+      "gp": 23,
+      "wins": 11,
       "losses": 12,
-      "pf": 1498,
-      "ps": 1554
+      "pf": 1748,
+      "ps": 1784
+    },
+    {
+      "team": "OraSì Ravenna",
+      "pts": 22,
+      "gp": 25,
+      "wins": 11,
+      "losses": 14,
+      "pf": 1928,
+      "ps": 1875
     },
     {
       "team": "Solbat Golfo Piombino",
-      "pts": 16,
-      "gp": 21,
-      "wins": 8,
-      "losses": 13,
-      "pf": 1575,
-      "ps": 1638
+      "pts": 20,
+      "gp": 25,
+      "wins": 10,
+      "losses": 15,
+      "pf": 1878,
+      "ps": 1953
     },
     {
       "team": "Malvin PSA Basket Casoria",
-      "pts": 16,
-      "gp": 21,
-      "wins": 8,
-      "losses": 13,
-      "pf": 1411,
-      "ps": 1492
+      "pts": 20,
+      "gp": 25,
+      "wins": 10,
+      "losses": 15,
+      "pf": 1683,
+      "ps": 1754
+    },
+    {
+      "team": "Adamant Ferrara",
+      "pts": 18,
+      "gp": 25,
+      "wins": 9,
+      "losses": 16,
+      "pf": 1977,
+      "ps": 1998
     },
     {
       "team": "Consorzio Leonardo Dany Quarrata",
       "pts": 14,
-      "gp": 21,
+      "gp": 24,
       "wins": 7,
-      "losses": 14,
-      "pf": 1515,
-      "ps": 1651
+      "losses": 17,
+      "pf": 1745,
+      "ps": 1901
     },
     {
-      "team": "Adamant Ferrara",
-      "pts": 14,
-      "gp": 21,
-      "wins": 7,
-      "losses": 14,
-      "pf": 1653,
-      "ps": 1694
+      "team": "Virtus Imola",
+      "pts": 12,
+      "gp": 24,
+      "wins": 6,
+      "losses": 18,
+      "pf": 1748,
+      "ps": 2004
+    },
+    {
+      "team": "Power Basket Nocera",
+      "pts": 12,
+      "gp": 24,
+      "wins": 6,
+      "losses": 18,
+      "pf": 1708,
+      "ps": 1843
     },
     {
       "team": "Ristopro Fabriano",
       "pts": 12,
-      "gp": 21,
+      "gp": 25,
       "wins": 6,
-      "losses": 15,
-      "pf": 1595,
-      "ps": 1727
-    },
-    {
-      "team": "Virtus Imola",
-      "pts": 10,
-      "gp": 21,
-      "wins": 5,
-      "losses": 16,
-      "pf": 1535,
-      "ps": 1748
+      "losses": 19,
+      "pf": 1870,
+      "ps": 2052
     },
     {
       "team": "Consultinvest Loreto Pesaro",
       "pts": 10,
-      "gp": 21,
+      "gp": 24,
       "wins": 5,
-      "losses": 16,
-      "pf": 1499,
-      "ps": 1619
-    },
-    {
-      "team": "Power Basket Nocera",
-      "pts": 8,
-      "gp": 20,
-      "wins": 4,
-      "losses": 16,
-      "pf": 1417,
-      "ps": 1543
+      "losses": 19,
+      "pf": 1707,
+      "ps": 1884
     }
   ]
 }

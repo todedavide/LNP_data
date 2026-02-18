@@ -144,6 +144,26 @@ def get_base_template():
             font-size: 0.875rem;
         }}
 
+        .header-cta {{
+            margin-left: auto;
+            background: #00F95B;
+            color: #000000;
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            border-radius: var(--tp-radius-md);
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }}
+
+        .header-cta:hover {{
+            background: #00D950;
+            transform: translateY(-1px);
+            box-shadow: var(--tp-shadow-sm);
+        }}
+
         .menu-toggle {{
             display: none;
             background: none;
@@ -392,6 +412,7 @@ def get_base_template():
             <a href="{root_path}index.html">LNP Stats</a>
         </div>
         <div class="header-breadcrumb">{breadcrumb}</div>
+        <a href="https://twinplay.ai" target="_blank" rel="noopener noreferrer" class="header-cta">Scopri TwinPlay.AI</a>
     </header>
 
     <nav class="sidebar" id="sidebar">
@@ -664,6 +685,24 @@ def generate_homepage_html(content):
             font-size: 1.1rem;
         }}
 
+        .home-header .header-cta {{
+            margin-left: auto;
+            background: #00F95B;
+            color: #000000;
+            padding: 8px 16px;
+            border-radius: var(--tp-radius-md);
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }}
+
+        .home-header .header-cta:hover {{
+            background: #00D950;
+            transform: translateY(-1px);
+        }}
+
         .home-main {{
             flex: 1;
             display: flex;
@@ -691,6 +730,7 @@ def generate_homepage_html(content):
     <header class="home-header">
         <img src="static/twinplay_one_row.svg" alt="TwinPlay">
         <span>LNP Stats</span>
+        <a href="https://twinplay.ai" target="_blank" rel="noopener noreferrer" class="header-cta">Scopri TwinPlay.AI</a>
     </header>
 
     <main class="home-main">
@@ -759,3 +799,9 @@ def copy_static_files():
     if os.path.exists(STATIC_SRC):
         shutil.copytree(STATIC_SRC, STATIC_DST)
         print(f"Copiati file statici in: docs/static/")
+
+    # Copia CNAME per GitHub Pages custom domain
+    cname_src = os.path.join(STATIC_SRC, 'CNAME')
+    cname_dst = os.path.join(DOCS_DIR, 'CNAME')
+    if os.path.exists(cname_src):
+        shutil.copy2(cname_src, cname_dst)

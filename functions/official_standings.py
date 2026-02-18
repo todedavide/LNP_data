@@ -271,9 +271,9 @@ def refresh_all_standings():
     Returns:
         dict con tutte le standings
     """
-    import undetected_chromedriver as uc
+    from functions.scraper import create_driver
 
-    driver = uc.Chrome(headless=False)
+    driver = create_driver()
 
     try:
         print("Scaricando classifiche ufficiali LNP...")

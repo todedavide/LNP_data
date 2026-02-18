@@ -1,0 +1,63 @@
+name: Nightly Scrape and Site Update
+
+on:
+  schedule:
+    # Esegue ogni notte alle 3:00 AM (UTC), che sono le 4:00 in Italia (o 5:00 con ora legale)
+    - cron: '0 3 * * *'
+  workflow_dispatch:  # Permette di eseguire manualmente dal tab Actions
+
+jobs:
+  scrape-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install xvfb (virtual display)
+        run: sudo apt-get install -y xvfb
+
+      - name: Run scraping (incremental)
+        run: xvfb-run --auto-servernum python main.py scrape
+        timeout-minutes: 30
+        continue-on-error: true  # Continua anche se lo scraping fallisce parzialmente
+
+      - name: Refresh official standings
+        run: xvfb-run --auto-servernum python main.py standings --refresh
+        timeout-minutes: 5
+        continue-on-error: true
+
+      - name: Generate site
+        run: python main.py site
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --quiet || echo "changes=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push changes
+        if: steps.git-check.outputs.changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add -A
+          git commit -m "chore: nightly data update $(date +'%Y-%m-%d')"
+          git push

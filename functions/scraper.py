@@ -432,10 +432,44 @@ def scrape_campionato(config, driver, incremental=True, include_pbp=True):
     return None
 
 
+def get_chrome_version():
+    """Rileva la versione major di Chrome installata."""
+    import subprocess
+    try:
+        # Linux
+        result = subprocess.run(['google-chrome', '--version'], capture_output=True, text=True)
+        if result.returncode == 0:
+            # "Google Chrome 144.0.7559.132" -> 144
+            version_str = result.stdout.strip().split()[-1]
+            return int(version_str.split('.')[0])
+    except FileNotFoundError:
+        pass
+
+    try:
+        # Alternative path
+        result = subprocess.run(['chromium-browser', '--version'], capture_output=True, text=True)
+        if result.returncode == 0:
+            version_str = result.stdout.strip().split()[-1]
+            return int(version_str.split('.')[0])
+    except FileNotFoundError:
+        pass
+
+    return None  # Lascia che uc gestisca
+
+
 def create_driver():
     """Crea un'istanza del browser."""
-    print("Avvio browser...")
-    return uc.Chrome(headless=False)
+    # Usa headless mode se variabile HEADLESS=1 (per GitHub Actions)
+    headless = os.environ.get('HEADLESS', '0') == '1'
+    chrome_version = get_chrome_version()
+
+    print(f"Avvio browser... {'(headless)' if headless else '(GUI)'}", end='')
+    if chrome_version:
+        print(f" [Chrome {chrome_version}]")
+    else:
+        print()
+
+    return uc.Chrome(headless=headless, version_main=chrome_version)
 
 
 def load_existing_pbp(output_file):

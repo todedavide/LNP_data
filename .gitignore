@@ -13,8 +13,8 @@ __pycache__/
 *$py.class
 *.so
 
-# Data files (pickle)
-data/*.pkl
+# Data files (pickle) - tracked for incremental scraping in GitHub Actions
+# data/*.pkl
 
 # Generated reports (but not docs/ for GitHub Pages)
 reports/*.html
