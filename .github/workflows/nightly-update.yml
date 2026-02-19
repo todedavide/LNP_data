@@ -6,6 +6,9 @@ on:
     - cron: '0 3 * * *'
   workflow_dispatch:  # Permette di eseguire manualmente dal tab Actions
 
+permissions:
+  contents: write
+
 jobs:
   scrape-and-build:
     runs-on: ubuntu-latest
