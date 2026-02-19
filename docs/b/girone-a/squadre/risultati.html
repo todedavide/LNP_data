@@ -472,7 +472,7 @@
 
         <div style="margin-bottom: 20px;">
             <label style="font-weight: 600;">Squadra:</label>
-            <select id="team-select" onchange="showHomeAway()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
+            <select id="team-select-homeaway" onchange="showHomeAway()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
                 <option value="Bakery Basket Piacenza">Bakery Basket Piacenza</option><option value="Elachem Vigevano 1955">Elachem Vigevano 1955</option><option value="Fabo Herons Montecatini">Fabo Herons Montecatini</option><option value="Fiorenzuola Bees">Fiorenzuola Bees</option><option value="Foppiani Fulgor Fidenza">Foppiani Fulgor Fidenza</option><option value="Infodrive Capo d'Orlando">Infodrive Capo d'Orlando</option><option value="La T Tecnica Gema Montecatini">La T Tecnica Gema Montecatini</option><option value="Logiman Orzinuovi">Logiman Orzinuovi</option><option value="LuxArm Lumezzane">LuxArm Lumezzane</option><option value="Moncada Energy Agrigento">Moncada Energy Agrigento</option><option value="Novipiù Monferrato Basket">Novipiù Monferrato Basket</option><option value="Paffoni Fulgor Basket Omegna">Paffoni Fulgor Basket Omegna</option><option value="Rimadesio Desio">Rimadesio Desio</option><option value="Rucker San Vendemiano">Rucker San Vendemiano</option><option value="S4 Energia Vicenza">S4 Energia Vicenza</option><option value="SAE Scientifica-Soevis Legnano">SAE Scientifica-Soevis Legnano</option><option value="Siaz Basket Piazza Armerina">Siaz Basket Piazza Armerina</option><option value="TAV Treviglio Brianza Basket">TAV Treviglio Brianza Basket</option><option value="UCC Assigeco Piacenza">UCC Assigeco Piacenza</option>
             </select>
         </div>
@@ -485,7 +485,7 @@
         const statLabels = {"PT": "Punti", "AS": "Assist", "RT": "Rimbalzi", "PR": "Recuperi", "ST": "Stoppate"};
 
         function showHomeAway() {
-            const team = document.getElementById('team-select').value;
+            const team = document.getElementById('team-select-homeaway').value;
             const contentDiv = document.getElementById('home-away-content');
 
             if (!teamsData[team]) {
@@ -562,8 +562,7 @@
 
         <div class="site-footer">
             <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
-            <div>Ultimo aggiornamento: 19/02/2026 20:40</div>
-            <div>Generato con LNP Stats</div>
+            <div>Ultimo aggiornamento: 19/02/2026 21:50</div>
         </div>
     </main>
 

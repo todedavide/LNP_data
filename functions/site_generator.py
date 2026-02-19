@@ -428,7 +428,6 @@ def get_base_template():
         <div class="site-footer">
             <img src="{root_path}static/twinplay_one_row.svg" alt="TwinPlay">
             <div>Ultimo aggiornamento: {last_update}</div>
-            <div>Generato con LNP Stats</div>
         </div>
     </main>
 

@@ -472,7 +472,7 @@
 
         <div style="margin-bottom: 20px;">
             <label style="font-weight: 600;">Squadra:</label>
-            <select id="team-select" onchange="showHomeAway()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
+            <select id="team-select-homeaway" onchange="showHomeAway()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
                 <option value="Avellino Basket">Avellino Basket</option><option value="Crifo Wines Ruvo di Puglia">Crifo Wines Ruvo di Puglia</option><option value="Dole Basket Rimini">Dole Basket Rimini</option><option value="Estra Pistoia">Estra Pistoia</option><option value="Ferraroni Juvi Cremona">Ferraroni Juvi Cremona</option><option value="Fortitudo Bologna">Fortitudo Bologna</option><option value="Gemini Mestre">Gemini Mestre</option><option value="Givova Scafati">Givova Scafati</option><option value="Gruppo Mascio Bergamo">Gruppo Mascio Bergamo</option><option value="Libertas Livorno">Libertas Livorno</option><option value="Liofilchem Roseto">Liofilchem Roseto</option><option value="RSR Sebastiani Rieti">RSR Sebastiani Rieti</option><option value="Reale Mutua Torino">Reale Mutua Torino</option><option value="Sella Cento">Sella Cento</option><option value="Tezenis Verona">Tezenis Verona</option><option value="UEB Gesteco Cividale">UEB Gesteco Cividale</option><option value="Unieuro Forlì">Unieuro Forlì</option><option value="Valtur Brindisi">Valtur Brindisi</option><option value="Victoria Libertas Pesaro">Victoria Libertas Pesaro</option><option value="Wegreenit Urania Milano">Wegreenit Urania Milano</option>
             </select>
         </div>
@@ -485,7 +485,7 @@
         const statLabels = {"PT": "Punti", "AS": "Assist", "RT": "Rimbalzi", "PR": "Recuperi", "ST": "Stoppate"};
 
         function showHomeAway() {
-            const team = document.getElementById('team-select').value;
+            const team = document.getElementById('team-select-homeaway').value;
             const contentDiv = document.getElementById('home-away-content');
 
             if (!teamsData[team]) {
@@ -562,8 +562,7 @@
 
         <div class="site-footer">
             <img src="../../static/twinplay_one_row.svg" alt="TwinPlay">
-            <div>Ultimo aggiornamento: 19/02/2026 20:40</div>
-            <div>Generato con LNP Stats</div>
+            <div>Ultimo aggiornamento: 19/02/2026 21:50</div>
         </div>
     </main>
 

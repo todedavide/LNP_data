@@ -472,7 +472,7 @@
 
         <div style="margin-bottom: 20px;">
             <label style="font-weight: 600;">Squadra:</label>
-            <select id="team-select" onchange="showHomeAway()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
+            <select id="team-select-homeaway" onchange="showHomeAway()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
                 <option value="Adamant Ferrara">Adamant Ferrara</option><option value="Allianz Pazienza San Severo">Allianz Pazienza San Severo</option><option value="Benacquista Assicurazioni Latina">Benacquista Assicurazioni Latina</option><option value="Consorzio Leonardo Dany Quarrata">Consorzio Leonardo Dany Quarrata</option><option value="Consultinvest Loreto Pesaro">Consultinvest Loreto Pesaro</option><option value="General Contractor Jesi">General Contractor Jesi</option><option value="Juvecaserta 2021">Juvecaserta 2021</option><option value="Loreto Basket Pesaro">Loreto Basket Pesaro</option><option value="Luiss Roma">Luiss Roma</option><option value="OraSì Ravenna">OraSì Ravenna</option><option value="PSA Basket Casoria">PSA Basket Casoria</option><option value="Paperdi Juvecaserta 2021">Paperdi Juvecaserta 2021</option><option value="Pielle Livorno">Pielle Livorno</option><option value="Power Basket Nocera">Power Basket Nocera</option><option value="Raggisolaris Faenza">Raggisolaris Faenza</option><option value="Ristopro Fabriano">Ristopro Fabriano</option><option value="Solbat Golfo Piombino">Solbat Golfo Piombino</option><option value="Tema Sinergie Faenza">Tema Sinergie Faenza</option><option value="UP Andrea Costa Imola">UP Andrea Costa Imola</option><option value="Umana San Giobbe Chiusi">Umana San Giobbe Chiusi</option><option value="Verodol CBD Pielle Livorno">Verodol CBD Pielle Livorno</option><option value="Virtus GVM Roma 1960">Virtus GVM Roma 1960</option><option value="Virtus Imola">Virtus Imola</option>
             </select>
         </div>
@@ -485,7 +485,7 @@
         const statLabels = {"PT": "Punti", "AS": "Assist", "RT": "Rimbalzi", "PR": "Recuperi", "ST": "Stoppate"};
 
         function showHomeAway() {
-            const team = document.getElementById('team-select').value;
+            const team = document.getElementById('team-select-homeaway').value;
             const contentDiv = document.getElementById('home-away-content');
 
             if (!teamsData[team]) {
@@ -562,8 +562,7 @@
 
         <div class="site-footer">
             <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
-            <div>Ultimo aggiornamento: 19/02/2026 20:40</div>
-            <div>Generato con LNP Stats</div>
+            <div>Ultimo aggiornamento: 19/02/2026 21:50</div>
         </div>
     </main>
 
