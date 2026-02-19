@@ -704,7 +704,7 @@ def generate_squadre_casa_trasferta(campionato_filter, camp_name):
 
         <div style="margin-bottom: 20px;">
             <label style="font-weight: 600;">Squadra:</label>
-            <select id="team-select" onchange="showHomeAway()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
+            <select id="team-select-homeaway" onchange="showHomeAway()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
                 {''.join(f'<option value="{t}">{t}</option>' for t in sorted(teams_data.keys()))}
             </select>
         </div>
@@ -717,7 +717,7 @@ def generate_squadre_casa_trasferta(campionato_filter, camp_name):
         const statLabels = {json.dumps(stat_labels)};
 
         function showHomeAway() {{
-            const team = document.getElementById('team-select').value;
+            const team = document.getElementById('team-select-homeaway').value;
             const contentDiv = document.getElementById('home-away-content');
 
             if (!teamsData[team]) {{
