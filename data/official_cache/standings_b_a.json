@@ -1,50 +1,41 @@
 {
-  "updated_at": "2026-02-17T17:59:53.555047",
+  "updated_at": "2026-02-19T20:39:32.606311",
   "standings": [
     {
       "team": "Elachem Vigevano 1955",
-      "pts": 38,
-      "gp": 24,
-      "wins": 19,
+      "pts": 40,
+      "gp": 25,
+      "wins": 20,
       "losses": 5,
-      "pf": 2050,
-      "ps": 1770
+      "pf": 2132,
+      "ps": 1837
     },
     {
       "team": "Rucker San Vendemiano",
-      "pts": 38,
-      "gp": 25,
-      "wins": 19,
+      "pts": 40,
+      "gp": 26,
+      "wins": 20,
       "losses": 6,
-      "pf": 2129,
-      "ps": 1898
+      "pf": 2211,
+      "ps": 1967
     },
     {
       "team": "La T Tecnica Gema Montecatini",
-      "pts": 34,
-      "gp": 25,
-      "wins": 17,
+      "pts": 36,
+      "gp": 26,
+      "wins": 18,
       "losses": 8,
-      "pf": 2052,
-      "ps": 1882
+      "pf": 2145,
+      "ps": 1954
     },
     {
       "team": "Logiman Orzinuovi",
-      "pts": 34,
-      "gp": 25,
-      "wins": 17,
+      "pts": 36,
+      "gp": 26,
+      "wins": 18,
       "losses": 8,
-      "pf": 1943,
-      "ps": 1836
-    },
-    {
-      "team": "SAE Scientifica-Soevis Legnano",
-      "pts": 30,
-      "gp": 24,
-      "wins": 15,
-      "losses": 9,
-      "pf": 1922,
-      "ps": 1814
+      "pf": 2021,
+      "ps": 1909
     },
     {
       "team": "Infodrive Capo d'Orlando",
@@ -56,13 +47,22 @@
       "ps": 1977
     },
     {
-      "team": "TAV Treviglio Brianza Basket",
+      "team": "SAE Scientifica-Soevis Legnano",
       "pts": 30,
       "gp": 25,
       "wins": 15,
       "losses": 10,
-      "pf": 2008,
-      "ps": 1980
+      "pf": 1991,
+      "ps": 1896
+    },
+    {
+      "team": "TAV Treviglio Brianza Basket",
+      "pts": 30,
+      "gp": 26,
+      "wins": 15,
+      "losses": 11,
+      "pf": 2081,
+      "ps": 2058
     },
     {
       "team": "UCC Assigeco Piacenza",
@@ -76,11 +76,20 @@
     {
       "team": "Paffoni Fulgor Basket Omegna",
       "pts": 28,
-      "gp": 25,
+      "gp": 26,
       "wins": 14,
-      "losses": 11,
-      "pf": 1998,
-      "ps": 1954
+      "losses": 12,
+      "pf": 2070,
+      "ps": 2047
+    },
+    {
+      "team": "Rimadesio Desio",
+      "pts": 26,
+      "gp": 25,
+      "wins": 13,
+      "losses": 12,
+      "pf": 2168,
+      "ps": 2103
     },
     {
       "team": "S4 Energia Vicenza",
@@ -101,58 +110,49 @@
       "ps": 2018
     },
     {
-      "team": "Rimadesio Desio",
-      "pts": 24,
-      "gp": 24,
-      "wins": 12,
-      "losses": 12,
-      "pf": 2062,
-      "ps": 2023
-    },
-    {
       "team": "LuxArm Lumezzane",
-      "pts": 22,
-      "gp": 24,
-      "wins": 11,
-      "losses": 13,
-      "pf": 1856,
-      "ps": 1882
-    },
-    {
-      "team": "Siaz Basket Piazza Armerina",
       "pts": 22,
       "gp": 25,
       "wins": 11,
       "losses": 14,
-      "pf": 1880,
-      "ps": 1887
+      "pf": 1924,
+      "ps": 1973
+    },
+    {
+      "team": "Siaz Basket Piazza Armerina",
+      "pts": 22,
+      "gp": 26,
+      "wins": 11,
+      "losses": 15,
+      "pf": 1953,
+      "ps": 1962
     },
     {
       "team": "Fiorenzuola Bees",
       "pts": 20,
-      "gp": 25,
+      "gp": 26,
       "wins": 10,
-      "losses": 15,
-      "pf": 1805,
-      "ps": 1937
+      "losses": 16,
+      "pf": 1872,
+      "ps": 2019
     },
     {
       "team": "Moncada Energy Agrigento",
-      "pts": 16,
-      "gp": 24,
-      "wins": 8,
+      "pts": 18,
+      "gp": 25,
+      "wins": 9,
       "losses": 16,
-      "pf": 1699,
-      "ps": 1794
+      "pf": 1774,
+      "ps": 1867
     },
     {
       "team": "Foppiani Fulgor Fidenza",
-      "pts": 8,
-      "gp": 24,
-      "wins": 4,
+      "pts": 10,
+      "gp": 25,
+      "wins": 5,
       "losses": 20,
-      "pf": 1670,
-      "ps": 1903
+      "pf": 1761,
+      "ps": 1971
     },
     {
       "team": "Novipiù Monferrato Basket",
@@ -166,11 +166,11 @@
     {
       "team": "Bakery Basket Piacenza",
       "pts": 6,
-      "gp": 25,
+      "gp": 26,
       "wins": 3,
-      "losses": 22,
-      "pf": 1697,
-      "ps": 1989
+      "losses": 23,
+      "pf": 1777,
+      "ps": 2095
     }
   ]
 }
