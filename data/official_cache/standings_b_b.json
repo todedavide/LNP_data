@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-19T20:39:39.470094",
+  "updated_at": "2026-02-20T03:51:51.658791",
   "standings": [
     {
       "team": "Virtus GVM Roma 1960",
@@ -48,12 +48,12 @@
     },
     {
       "team": "Allianz Pazienza San Severo",
-      "pts": 30,
-      "gp": 25,
-      "wins": 15,
+      "pts": 32,
+      "gp": 26,
+      "wins": 16,
       "losses": 10,
-      "pf": 2021,
-      "ps": 1997
+      "pf": 2094,
+      "ps": 2067
     },
     {
       "team": "UP Andrea Costa Imola",
@@ -85,11 +85,11 @@
     {
       "team": "Umana San Giobbe Chiusi",
       "pts": 22,
-      "gp": 23,
+      "gp": 24,
       "wins": 11,
-      "losses": 12,
-      "pf": 1748,
-      "ps": 1784
+      "losses": 13,
+      "pf": 1818,
+      "ps": 1857
     },
     {
       "team": "Solbat Golfo Piombino",

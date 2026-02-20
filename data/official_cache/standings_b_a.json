@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-19T20:39:32.606311",
+  "updated_at": "2026-02-20T03:51:44.113039",
   "standings": [
     {
       "team": "Elachem Vigevano 1955",
@@ -38,6 +38,15 @@
       "ps": 1909
     },
     {
+      "team": "UCC Assigeco Piacenza",
+      "pts": 30,
+      "gp": 25,
+      "wins": 15,
+      "losses": 10,
+      "pf": 2016,
+      "ps": 2045
+    },
+    {
       "team": "Infodrive Capo d'Orlando",
       "pts": 30,
       "gp": 25,
@@ -65,13 +74,13 @@
       "ps": 2058
     },
     {
-      "team": "UCC Assigeco Piacenza",
+      "team": "Fabo Herons Montecatini",
       "pts": 28,
-      "gp": 24,
+      "gp": 26,
       "wins": 14,
-      "losses": 10,
-      "pf": 1917,
-      "ps": 1951
+      "losses": 12,
+      "pf": 2206,
+      "ps": 2087
     },
     {
       "team": "Paffoni Fulgor Basket Omegna",
@@ -94,20 +103,11 @@
     {
       "team": "S4 Energia Vicenza",
       "pts": 26,
-      "gp": 25,
+      "gp": 26,
       "wins": 13,
-      "losses": 12,
-      "pf": 1933,
-      "ps": 1948
-    },
-    {
-      "team": "Fabo Herons Montecatini",
-      "pts": 26,
-      "gp": 25,
-      "wins": 13,
-      "losses": 12,
-      "pf": 2111,
-      "ps": 2018
+      "losses": 13,
+      "pf": 2027,
+      "ps": 2047
     },
     {
       "team": "LuxArm Lumezzane",
@@ -157,11 +157,11 @@
     {
       "team": "Novipiù Monferrato Basket",
       "pts": 8,
-      "gp": 25,
+      "gp": 26,
       "wins": 4,
-      "losses": 21,
-      "pf": 1899,
-      "ps": 2162
+      "losses": 22,
+      "pf": 1968,
+      "ps": 2257
     },
     {
       "team": "Bakery Basket Piacenza",
