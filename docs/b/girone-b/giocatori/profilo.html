@@ -52,10 +52,11 @@
             font-size: 1.25rem;
         }
 
-        .header-breadcrumb {
+        .header-title {
             margin-left: var(--tp-spacing-xl);
-            opacity: 0.8;
-            font-size: 0.875rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            font-family: var(--tp-font-primary);
         }
 
         .header-cta {
@@ -213,18 +214,6 @@
             background: var(--tp-light);
         }
 
-        .page-title {
-            font-family: var(--tp-font-primary);
-            font-size: 1.75rem;
-            color: var(--tp-secondary);
-            margin-bottom: var(--tp-spacing-xs);
-        }
-
-        .page-subtitle {
-            color: var(--tp-gray);
-            margin-bottom: var(--tp-spacing-xl);
-        }
-
         .content-section {
             background: white;
             border-radius: var(--tp-radius-lg);
@@ -240,6 +229,51 @@
             margin-bottom: var(--tp-spacing-lg);
             padding-bottom: var(--tp-spacing-sm);
             border-bottom: 2px solid var(--tp-light);
+        }
+
+        /* Info tooltip */
+        .info-tooltip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            font-size: 13px;
+            font-style: normal;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            border-radius: 50%;
+            cursor: help;
+            margin-left: 8px;
+            vertical-align: middle;
+            position: relative;
+            font-weight: 600;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            transition: transform 0.15s ease;
+        }
+
+        .info-tooltip:hover {
+            transform: scale(1.1);
+        }
+
+        .info-tooltip:hover::after {
+            content: attr(title);
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e1b4b;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: normal;
+            width: 280px;
+            z-index: 99999;
+            margin-top: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            line-height: 1.5;
+            pointer-events: none;
         }
 
         /* Responsive */
@@ -325,7 +359,7 @@
             <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
             <a href="../../../index.html">LNP Stats</a>
         </div>
-        <div class="header-breadcrumb">Serie B - Girone B / Giocatori / Profilo</div>
+        <div class="header-title">Profilo</div>
         <a href="https://twinplay.ai" target="_blank" rel="noopener noreferrer" class="header-cta">Scopri TwinPlay.AI</a>
     </header>
 
@@ -341,17 +375,10 @@
     </nav>
 
     <main class="main">
-        <h1 class="page-title">Profilo</h1>
-        <p class="page-subtitle">Serie B - Girone B - Clustering, Giocatori Simili e Radar</p>
-
         
     
     <div class="content-section">
-        <h2 class="section-title">Tipologie di Giocatori</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Ogni giocatore viene assegnato all'archetipo più simile al suo profilo statistico.
-            La similarità è calcolata confrontando i percentili del giocatore con il profilo ideale di ogni archetipo.
-        </p>
+        <h2 class="section-title">Tipologie di Giocatori <span class="info-tooltip" title="Ogni giocatore viene assegnato all'archetipo più simile al suo profilo statistico, confrontando i percentili con il profilo ideale.">ⓘ</span></h2>
 
         <div id="archetype-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px;"></div>
 
@@ -467,13 +494,9 @@
     </script>
     
 
-    <h2 class="section-title" style="margin-top: 2rem;">Giocatori Simili</h2>
     
     <div class="content-section">
-        <h2 class="section-title">Trova Giocatori Simili</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Seleziona un giocatore per vedere chi ha un profilo statistico simile.
-        </p>
+        <h2 class="section-title">Trova Giocatori Simili <span class="info-tooltip" title="Seleziona un giocatore per vedere chi ha un profilo statistico simile.">ⓘ</span></h2>
 
         <div style="margin-bottom: 20px;">
             <label style="font-weight: 600;">Giocatore:</label>
@@ -541,13 +564,9 @@
     </script>
     
 
-    <h2 class="section-title" style="margin-top: 2rem;">Radar Confronto</h2>
     
     <div class="content-section">
-        <h2 class="section-title">Confronto Radar Giocatori</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Confronta il profilo statistico di due giocatori. Valori normalizzati (0-100) dove 100 = miglior giocatore del campionato.
-        </p>
+        <h2 class="section-title">Confronto Radar Giocatori <span class="info-tooltip" title="Confronta il profilo statistico di due giocatori. Valori normalizzati (0-100) dove 100 = miglior giocatore del campionato.">ⓘ</span></h2>
         <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
             <div>
                 <label style="font-weight: 600;">Giocatore 1:</label>
@@ -658,7 +677,7 @@
 
         <div class="site-footer">
             <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
-            <div>Ultimo aggiornamento: 20/02/2026 03:53</div>
+            <div>Ultimo aggiornamento: 20/02/2026 09:29</div>
         </div>
     </main>
 

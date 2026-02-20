@@ -485,10 +485,10 @@ def generate_squadre_vittorie_sconfitte(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Vittorie vs Sconfitte per Squadra</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Confronta le statistiche nelle partite vinte vs perse. Ordinate per influenza.
-        </p>
+        <h2 class="section-title">
+            Vittorie vs Sconfitte per Squadra
+            <span class="info-tooltip" title="Confronta le statistiche nelle partite vinte vs perse. Ordinate per influenza.">ⓘ</span>
+        </h2>
 
         <div style="margin-bottom: 20px;">
             <label style="font-weight: 600;">Squadra:</label>
@@ -518,81 +518,78 @@ def generate_squadre_vittorie_sconfitte(campionato_filter, camp_name):
                 'ST': 'Stoppate', '3PTM': 'Triple'
             }};
 
-            // Raggruppa per statistica
-            const statGroups = {{}};
-            data.data.forEach(row => {{
-                const stat = row['Statistica'];
-                if (!statGroups[stat]) statGroups[stat] = {{ fatte: null, subite: null, maxInfluenza: 0 }};
-                if (row['Tipo'] === 'Noi') statGroups[stat].fatte = row;
-                else statGroups[stat].subite = row;
-                statGroups[stat].maxInfluenza = Math.max(statGroups[stat].maxInfluenza, row['Influenza']);
-            }});
+            // Hero section - Win Rate
+            let html = `
+                <div style="background: linear-gradient(135deg, #1e1b4b, #312e81); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap;">
+                        <div style="text-align: center;">
+                            <div style="color: #a5b4fc; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">Win Rate</div>
+                            <div style="font-size: 42px; font-weight: 800; color: ${{data.win_rate >= 50 ? '#22c55e' : '#ef4444'}}; line-height: 1.1;">
+                                ${{data.win_rate}}%
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 24px; color: rgba(255,255,255,0.8); font-size: 14px;">
+                            <div><span style="color: #22c55e; font-weight: 700; font-size: 20px;">${{data.n_wins}}</span> vittorie</div>
+                            <div><span style="color: #ef4444; font-weight: 700; font-size: 20px;">${{data.n_losses}}</span> sconfitte</div>
+                        </div>
+                    </div>
+                </div>
+            `;
 
-            const sortedStats = Object.entries(statGroups).sort((a, b) => b[1].maxInfluenza - a[1].maxInfluenza);
-            const allValues = data.data.flatMap(r => [r['Media Vittorie'], r['Media Sconfitte']]);
-            const maxValue = Math.max(...allValues);
+            // Funzione per generare le righe delle statistiche
+            function renderStats(statsArray, maxPct) {{
+                let result = '<div style="display: flex; flex-direction: column; gap: 8px;">';
+                statsArray.forEach(row => {{
+                    const stat = row['Statistica'];
+                    const label = labels[stat] || stat;
+                    const winVal = row['Media Vittorie'];
+                    const lossVal = row['Media Sconfitte'];
+                    const diffPct = row['Diff %'];
+                    const isPositive = diffPct > 0;
+                    const barWidth = Math.min(50, (Math.abs(diffPct) / maxPct) * 50);
+                    const barColor = isPositive ? '#22c55e' : '#ef4444';
 
-            let html = `<p style="margin-bottom: 15px;">
-                <span style="color: #22c55e;">●</span> <strong>${{data.n_wins}} vittorie</strong> vs
-                <span style="color: #ef4444;">●</span> <strong>${{data.n_losses}} sconfitte</strong>
-                (Win rate: ${{data.win_rate}}%)
-            </p>`;
-
-            html += '<div style="display: flex; flex-direction: column; gap: 16px;">';
-
-            sortedStats.forEach(([stat, group]) => {{
-                const label = labels[stat] || stat;
-                html += `<div style="background: white; border: 1px solid #e5e5e5; border-radius: 8px; padding: 16px;">`;
-                html += `<div style="text-align: center; margin-bottom: 12px; font-weight: 700; color: #302B8F; font-size: 16px;">${{label}}</div>`;
-                html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">`;
-
-                ['fatte', 'subite'].forEach((tipo, idx) => {{
-                    const rowData = tipo === 'fatte' ? group.fatte : group.subite;
-                    const tipoColor = tipo === 'fatte' ? '#302B8F' : '#f97316';
-
-                    if (!rowData) {{
-                        html += `<div style="background: #f9f9f9; border-radius: 8px; padding: 12px; text-align: center; color: #999;">N/D</div>`;
-                        return;
-                    }}
-
-                    const winVal = rowData['Media Vittorie'];
-                    const lossVal = rowData['Media Sconfitte'];
-                    const diffPct = rowData['Diff %'];
-                    const diffAbs = rowData['Differenza'];
-                    const isPositive = tipo === 'fatte' ? diffPct > 0 : diffPct < 0;
-                    const diffColor = isPositive ? '#22c55e' : '#ef4444';
-                    const winWidth = (winVal / maxValue) * 100;
-                    const lossWidth = (lossVal / maxValue) * 100;
-
-                    html += `<div style="background: #f9f9f9; border-radius: 8px; padding: 12px;">`;
-                    html += `<div style="text-align: center; margin-bottom: 10px;">`;
-                    html += `<span style="background: ${{tipoColor}}; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">${{tipo}}</span>`;
-                    html += `<div style="margin-top: 6px;">`;
-                    html += `<span style="font-size: 20px; font-weight: bold; color: ${{diffColor}};">${{diffPct > 0 ? '+' : ''}}${{diffPct}}%</span>`;
-                    html += `<span style="font-size: 13px; color: #666; margin-left: 6px;">(${{diffAbs > 0 ? '+' : ''}}${{diffAbs}})</span>`;
-                    html += `</div></div>`;
-
-                    html += `<div style="display: flex; flex-direction: column; gap: 4px;">`;
-                    html += `<div style="display: flex; align-items: center; gap: 6px;">`;
-                    html += `<div style="width: 16px; font-size: 10px; color: #22c55e; font-weight: bold;">V</div>`;
-                    html += `<div style="flex: 1; background: #e5e5e5; border-radius: 3px; height: 18px; position: relative;">`;
-                    html += `<div style="width: ${{winWidth}}%; background: #22c55e; height: 100%; border-radius: 3px;"></div>`;
-                    html += `<span style="position: absolute; left: 6px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 600; color: #166534;">${{winVal}}</span>`;
-                    html += `</div></div>`;
-
-                    html += `<div style="display: flex; align-items: center; gap: 6px;">`;
-                    html += `<div style="width: 16px; font-size: 10px; color: #ef4444; font-weight: bold;">S</div>`;
-                    html += `<div style="flex: 1; background: #e5e5e5; border-radius: 3px; height: 18px; position: relative;">`;
-                    html += `<div style="width: ${{lossWidth}}%; background: #ef4444; height: 100%; border-radius: 3px;"></div>`;
-                    html += `<span style="position: absolute; left: 6px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 600; color: #991b1b;">${{lossVal}}</span>`;
-                    html += `</div></div>`;
-                    html += `</div></div>`;
+                    result += `
+                        <div style="background: white; border: 1px solid #e5e5e5; border-radius: 6px; padding: 10px 12px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="font-weight: 600; font-size: 13px; color: #333; width: 70px;">${{label}}</div>
+                                <div style="flex: 1; display: flex; align-items: center; height: 18px;">
+                                    <div style="flex: 1; display: flex; justify-content: flex-end; padding-right: 3px;">
+                                        ${{isPositive ? `<div style="width: ${{barWidth}}%; height: 14px; background: linear-gradient(90deg, #16a34a, #22c55e); border-radius: 3px; min-width: 6px;"></div>` : ''}}
+                                    </div>
+                                    <div style="width: 2px; height: 18px; background: #333;"></div>
+                                    <div style="flex: 1; display: flex; justify-content: flex-start; padding-left: 3px;">
+                                        ${{!isPositive ? `<div style="width: ${{barWidth}}%; height: 14px; background: linear-gradient(90deg, #ef4444, #dc2626); border-radius: 3px; min-width: 6px;"></div>` : ''}}
+                                    </div>
+                                </div>
+                                <div style="font-size: 11px; color: #666; min-width: 80px; text-align: right;">
+                                    <span style="color: #22c55e;">V:${{winVal}}</span> / <span style="color: #ef4444;">S:${{lossVal}}</span>
+                                </div>
+                                <div style="font-weight: 700; font-size: 12px; color: ${{barColor}}; min-width: 60px; text-align: right;">
+                                    ${{diffPct > 0 ? '+' : ''}}${{diffPct.toFixed(0)}}%
+                                </div>
+                            </div>
+                        </div>
+                    `;
                 }});
+                result += '</div>';
+                return result;
+            }}
 
-                html += `</div></div>`;
-            }});
+            // Statistiche "Noi" (fatte)
+            const statsNoi = data.data.filter(r => r['Tipo'] === 'Noi').sort((a, b) => Math.abs(b['Diff %']) - Math.abs(a['Diff %']));
+            const statsAvv = data.data.filter(r => r['Tipo'] === 'Avversari').sort((a, b) => Math.abs(b['Diff %']) - Math.abs(a['Diff %']));
+            const maxPctNoi = Math.max(...statsNoi.map(r => Math.abs(r['Diff %'])));
+            const maxPctAvv = Math.max(...statsAvv.map(r => Math.abs(r['Diff %'])));
 
-            html += '</div>';
+            // Sezione Statistiche Fatte
+            html += '<h3 style="margin-bottom: 10px;">Statistiche fatte <span class="info-tooltip" title="Come cambiano le nostre statistiche quando la squadra vince vs quando perde.">ⓘ</span></h3>';
+            html += renderStats(statsNoi, maxPctNoi);
+
+            // Sezione Statistiche Subite
+            html += '<h3 style="margin: 20px 0 10px 0;">Statistiche subite <span class="info-tooltip" title="Come cambiano le statistiche degli avversari quando la squadra vince vs quando perde.">ⓘ</span></h3>';
+            html += renderStats(statsAvv, maxPctAvv);
+
             contentDiv.innerHTML = html;
         }}
 
@@ -697,10 +694,10 @@ def generate_squadre_casa_trasferta(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Casa vs Trasferta</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Confronta le performance delle squadre in casa vs in trasferta.
-        </p>
+        <h2 class="section-title">
+            Casa vs Trasferta
+            <span class="info-tooltip" title="Confronta le performance delle squadre in casa vs in trasferta.">ⓘ</span>
+        </h2>
 
         <div style="margin-bottom: 20px;">
             <label style="font-weight: 600;">Squadra:</label>
@@ -729,54 +726,107 @@ def generate_squadre_casa_trasferta(campionato_filter, camp_name):
             const home = data.home;
             const away = data.away;
 
+            // Calcola fattore campo
+            const winPctDiff = home.win_pct - away.win_pct;
+            const isHomeStrong = winPctDiff > 0;
+            const absWinDiff = Math.abs(winPctDiff);
+            const barWidth = Math.min(50, absWinDiff); // max 50% per lato
+            const mainColor = isHomeStrong ? '#22c55e' : '#ef4444';
+            const label = isHomeStrong ? '🏠 CASA' : '✈️ TRASFERTA';
+            const sign = isHomeStrong ? '+' : '';
+
             let html = `
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
-                    <div style="background: linear-gradient(135deg, #22c55e, #16a34a); color: white; padding: 20px; border-radius: 12px; text-align: center;">
-                        <div style="font-size: 14px; opacity: 0.9;">🏠 CASA</div>
-                        <div style="font-size: 32px; font-weight: 700;">${{home.wins}}/${{home.gp}}</div>
-                        <div style="font-size: 18px;">${{home.win_pct}}% vittorie</div>
-                        <div style="font-size: 14px; margin-top: 8px;">Media: ${{home.gap_pg > 0 ? '+' : ''}}${{home.gap_pg}} punti</div>
-                    </div>
-                    <div style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 20px; border-radius: 12px; text-align: center;">
-                        <div style="font-size: 14px; opacity: 0.9;">✈️ TRASFERTA</div>
-                        <div style="font-size: 32px; font-weight: 700;">${{away.wins}}/${{away.gp}}</div>
-                        <div style="font-size: 18px;">${{away.win_pct}}% vittorie</div>
-                        <div style="font-size: 14px; margin-top: 8px;">Media: ${{away.gap_pg > 0 ? '+' : ''}}${{away.gap_pg}} punti</div>
+                <!-- FATTORE CAMPO - Compact Hero -->
+                <div style="background: linear-gradient(135deg, #1e1b4b, #312e81); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap;">
+                        <!-- Numero principale -->
+                        <div style="text-align: center;">
+                            <div style="color: #a5b4fc; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">Fattore Campo</div>
+                            <div style="font-size: 42px; font-weight: 800; color: ${{mainColor}}; line-height: 1.1;">
+                                ${{sign}}${{winPctDiff.toFixed(0)}}%
+                            </div>
+                            <div style="font-size: 14px; font-weight: 600; color: white;">
+                                ${{absWinDiff < 5 ? 'Equilibrato' : (isHomeStrong ? 'Meglio in Casa' : 'Meglio in Trasferta')}}
+                            </div>
+                        </div>
+
+                        <!-- Barra + Dettagli -->
+                        <div style="flex: 1; min-width: 280px; max-width: 400px;">
+                            <!-- Barra divergente -->
+                            <div style="display: flex; align-items: center; height: 28px; margin-bottom: 8px;">
+                                <div style="color: #22c55e; font-weight: 600; width: 50px; text-align: right; font-size: 12px;">🏠</div>
+                                <div style="flex: 1; display: flex; height: 22px; margin: 0 8px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden;">
+                                    <div style="flex: 1; display: flex; justify-content: flex-end;">
+                                        ${{isHomeStrong ? `<div style="width: ${{barWidth * 2}}%; background: linear-gradient(90deg, #16a34a, #22c55e); border-radius: 6px 0 0 6px;"></div>` : ''}}
+                                    </div>
+                                    <div style="width: 2px; background: white;"></div>
+                                    <div style="flex: 1; display: flex; justify-content: flex-start;">
+                                        ${{!isHomeStrong ? `<div style="width: ${{barWidth * 2}}%; background: linear-gradient(90deg, #ef4444, #dc2626); border-radius: 0 6px 6px 0;"></div>` : ''}}
+                                    </div>
+                                </div>
+                                <div style="color: #ef4444; font-weight: 600; width: 50px; text-align: left; font-size: 12px;">✈️</div>
+                            </div>
+                            <!-- Record -->
+                            <div style="display: flex; justify-content: space-between; color: rgba(255,255,255,0.7); font-size: 12px; padding: 0 8px;">
+                                <span><span style="color: #22c55e; font-weight: 600;">${{home.wins}}/${{home.gp}}</span> (${{home.win_pct}}%)</span>
+                                <span><span style="color: #ef4444; font-weight: 600;">${{away.wins}}/${{away.gp}}</span> (${{away.win_pct}}%)</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
 
-            // Confronto statistiche
-            html += '<h3 style="margin-bottom: 15px;">Statistiche per partita</h3>';
-            html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
+            // Confronto statistiche - barra divergente basata su differenza %
+            html += '<h3 style="margin-bottom: 15px;">Statistiche per partita <span class="info-tooltip" title="Ordinato per impatto del fattore campo (differenza % maggiore in alto)">ⓘ</span></h3>';
 
-            Object.keys(statLabels).forEach(stat => {{
+            // Calcola differenze percentuali e ordina
+            const statsWithDiff = Object.keys(statLabels).map(stat => {{
                 const homeVal = home.stats[stat] || 0;
                 const awayVal = away.stats[stat] || 0;
-                const maxVal = Math.max(homeVal, awayVal) * 1.1;
+                const avg = (homeVal + awayVal) / 2;
                 const diff = homeVal - awayVal;
-                const diffColor = diff > 0 ? '#22c55e' : (diff < 0 ? '#ef4444' : '#666');
+                const diffPct = avg > 0 ? (diff / avg) * 100 : 0;
+                return {{ stat, homeVal, awayVal, diff, diffPct, absDiffPct: Math.abs(diffPct) }};
+            }}).sort((a, b) => b.absDiffPct - a.absDiffPct);
+
+            // Trova la % max per scalare le barre (cap a 50% per evitare barre troppo corte)
+            const maxPct = Math.min(50, Math.max(...statsWithDiff.map(s => s.absDiffPct)));
+
+            html += '<div style="display: flex; flex-direction: column; gap: 8px;">';
+
+            statsWithDiff.forEach(item => {{
+                const barWidth = maxPct > 0 ? Math.min(100, (item.absDiffPct / maxPct) * 50) : 0;
+                const isHome = item.diff > 0;
+                const barColor = isHome ? '#22c55e' : '#ef4444';
+                const arrow = isHome ? '🏠' : '✈️';
 
                 html += `
-                    <div style="background: white; border: 1px solid #e5e5e5; border-radius: 8px; padding: 12px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <span style="font-weight: 600;">${{statLabels[stat]}}</span>
-                            <span style="color: ${{diffColor}}; font-weight: 600;">
-                                ${{diff > 0 ? '+' : ''}}${{diff.toFixed(1)}}
-                            </span>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <div>
-                                <div style="font-size: 12px; color: #22c55e; margin-bottom: 3px;">Casa: ${{homeVal}}</div>
-                                <div style="background: #e5e5e5; border-radius: 4px; height: 8px;">
-                                    <div style="width: ${{(homeVal / maxVal) * 100}}%; background: #22c55e; height: 100%; border-radius: 4px;"></div>
+                    <div style="background: white; border: 1px solid #e5e5e5; border-radius: 6px; padding: 10px 12px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <!-- Nome statistica -->
+                            <div style="font-weight: 600; font-size: 13px; color: #333; width: 70px;">
+                                ${{statLabels[item.stat]}}
+                            </div>
+
+                            <!-- Barra divergente -->
+                            <div style="flex: 1; display: flex; align-items: center; height: 18px;">
+                                <div style="flex: 1; display: flex; justify-content: flex-end; padding-right: 3px;">
+                                    ${{isHome ? `<div style="width: ${{barWidth}}%; height: 14px; background: linear-gradient(90deg, #16a34a, #22c55e); border-radius: 3px; min-width: ${{barWidth > 0 ? '6px' : '0'}};"></div>` : ''}}
+                                </div>
+                                <div style="width: 2px; height: 18px; background: #333;"></div>
+                                <div style="flex: 1; display: flex; justify-content: flex-start; padding-left: 3px;">
+                                    ${{!isHome ? `<div style="width: ${{barWidth}}%; height: 14px; background: linear-gradient(90deg, #ef4444, #dc2626); border-radius: 3px; min-width: ${{barWidth > 0 ? '6px' : '0'}};"></div>` : ''}}
                                 </div>
                             </div>
-                            <div>
-                                <div style="font-size: 12px; color: #ef4444; margin-bottom: 3px;">Trasferta: ${{awayVal}}</div>
-                                <div style="background: #e5e5e5; border-radius: 4px; height: 8px;">
-                                    <div style="width: ${{(awayVal / maxVal) * 100}}%; background: #ef4444; height: 100%; border-radius: 4px;"></div>
-                                </div>
+
+                            <!-- Valori -->
+                            <div style="font-size: 11px; color: #666; min-width: 90px; text-align: right;">
+                                <span style="color: #22c55e;">${{item.homeVal}}</span> / <span style="color: #ef4444;">${{item.awayVal}}</span>
+                            </div>
+
+                            <!-- Differenza -->
+                            <div style="font-weight: 700; font-size: 12px; color: ${{barColor}}; min-width: 85px; text-align: right;">
+                                ${{arrow}} ${{item.diffPct > 0 ? '+' : ''}}${{item.diffPct.toFixed(0)}}%
                             </div>
                         </div>
                     </div>
@@ -1416,10 +1466,7 @@ def generate_giocatori_radar(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Confronto Radar Giocatori</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Confronta il profilo statistico di due giocatori. Valori normalizzati (0-100) dove 100 = miglior giocatore del campionato.
-        </p>
+        <h2 class="section-title">Confronto Radar Giocatori <span class="info-tooltip" title="Confronta il profilo statistico di due giocatori. Valori normalizzati (0-100) dove 100 = miglior giocatore del campionato.">ⓘ</span></h2>
         <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
             <div>
                 <label style="font-weight: 600;">Giocatore 1:</label>
@@ -1591,12 +1638,7 @@ def generate_giocatori_consistenza(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Affidabilità Giocatori</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Il punteggio di <strong>Affidabilità</strong> (0-100) indica quanto un giocatore è costante nelle sue performance.
-            <br>Punteggio alto = sai cosa aspettarti. Punteggio basso = performance imprevedibili.
-            <br><span style="font-size: 13px;">Il punteggio è aggiustato per il numero di partite: con poche partite il valore viene "tirato" verso 50.</span>
-        </p>
+        <h2 class="section-title">Affidabilità Giocatori <span class="info-tooltip" title="Affidabilità (0-100) indica quanto un giocatore è costante. Alto = sai cosa aspettarti. Basso = imprevedibile. Aggiustato per numero partite.">ⓘ</span></h2>
 
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
             <button id="btn-top" onclick="showView('top')" style="padding: 8px 16px; border: 2px solid #302B8F; border-radius: 6px; cursor: pointer; font-weight: 600; background: #302B8F; color: white;">
@@ -1707,10 +1749,7 @@ def generate_giocatori_simili(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Trova Giocatori Simili</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Seleziona un giocatore per vedere chi ha un profilo statistico simile.
-        </p>
+        <h2 class="section-title">Trova Giocatori Simili <span class="info-tooltip" title="Seleziona un giocatore per vedere chi ha un profilo statistico simile.">ⓘ</span></h2>
 
         <div style="margin-bottom: 20px;">
             <label style="font-weight: 600;">Giocatore:</label>
@@ -1853,12 +1892,7 @@ def generate_giocatori_forma(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Forma Recente - Chi è Hot/Cold</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Confronto tra le ultime 5 partite e la media stagionale.
-            <span style="color: #22c55e; font-weight: bold;">Valori positivi</span> = giocatore in crescita.
-            <span style="color: #ef4444; font-weight: bold;">Valori negativi</span> = giocatore in calo.
-        </p>
+        <h2 class="section-title">Forma Recente - Chi è Hot/Cold <span class="info-tooltip" title="Confronto ultime 5 partite vs media stagionale. Positivi = in crescita. Negativi = in calo.">ⓘ</span></h2>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
             <!-- HOT Players -->
@@ -2025,12 +2059,7 @@ def generate_giocatori_casa_trasferta(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Casa vs Trasferta</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Differenza di rendimento tra partite in casa e in trasferta.
-            <span style="color: #3b82f6; font-weight: bold;">Blu</span> = meglio in casa,
-            <span style="color: #f97316; font-weight: bold;">Arancione</span> = meglio in trasferta.
-        </p>
+        <h2 class="section-title">Casa vs Trasferta <span class="info-tooltip" title="Differenza di rendimento tra casa e trasferta. Blu = meglio in casa, Arancione = meglio in trasferta.">ⓘ</span></h2>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
             <!-- Home Warriors -->
@@ -2214,12 +2243,7 @@ def generate_giocatori_distribuzione_tiri(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Distribuzione Tiri</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            <strong>Frequenza tiri/min</strong> (asse X) vs <strong>Efficienza %</strong> (asse Y).
-            La dimensione dei punti indica il volume totale di tiri.
-            <br><strong>In alto a destra</strong> = alta frequenza + alta efficienza (ideale).
-        </p>
+        <h2 class="section-title">Distribuzione Tiri <span class="info-tooltip" title="Frequenza tiri/min (asse X) vs Efficienza % (asse Y). Dimensione = volume tiri. In alto a destra = ideale.">ⓘ</span></h2>
 
         <div style="display: flex; gap: 8px; margin-bottom: 20px;">
             <button id="btn-3PT" onclick="showChart('3PT')" style="padding: 10px 20px; border: 2px solid #302B8F; border-radius: 8px; cursor: pointer; font-weight: 600; background: #302B8F; color: white;">Tiri da 3</button>
@@ -2433,10 +2457,7 @@ def generate_giocatori_impatto(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Impatto Giocatori</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Metriche avanzate per valutare l'impatto dei giocatori sulla squadra.
-        </p>
+        <h2 class="section-title">Impatto Giocatori <span class="info-tooltip" title="Metriche avanzate per valutare l'impatto dei giocatori sulla squadra.">ⓘ</span></h2>
 
         <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
             <button id="btn-pmraw" onclick="showSection('pmraw')" class="tab-active" style="padding: 10px 20px; border: 2px solid #302B8F; border-radius: 8px; cursor: pointer; font-weight: 600; background: #302B8F; color: white;">+/- per Minuto</button>
@@ -3004,11 +3025,7 @@ def generate_analisi_clustering(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Tipologie di Giocatori</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Ogni giocatore viene assegnato all'archetipo più simile al suo profilo statistico.
-            La similarità è calcolata confrontando i percentili del giocatore con il profilo ideale di ogni archetipo.
-        </p>
+        <h2 class="section-title">Tipologie di Giocatori <span class="info-tooltip" title="Ogni giocatore viene assegnato all'archetipo più simile al suo profilo statistico, confrontando i percentili con il profilo ideale.">ⓘ</span></h2>
 
         <div id="archetype-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px;"></div>
 
@@ -3176,11 +3193,7 @@ def generate_analisi_dipendenza(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Dipendenza dai Top Scorer</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Quanto ogni squadra dipende dai propri top 3 giocatori per punti e minuti.
-            Un'alta concentrazione può essere un rischio in caso di infortunio.
-        </p>
+        <h2 class="section-title">Dipendenza dai Top Scorer <span class="info-tooltip" title="Quanto ogni squadra dipende dai propri top 3 giocatori. Alta concentrazione = rischio in caso di infortunio.">ⓘ</span></h2>
 
         <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap; align-items: center;">
             <div>
@@ -3349,11 +3362,7 @@ def generate_analisi_quando_vince(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Quando Vince Ogni Squadra</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Quali condizioni statistiche caratterizzano le vittorie di ogni squadra?
-            Confronto tra situazioni sopra/sotto soglia.
-        </p>
+        <h2 class="section-title">Quando Vince Ogni Squadra <span class="info-tooltip" title="Quali condizioni statistiche caratterizzano le vittorie? Confronto tra situazioni sopra/sotto soglia.">ⓘ</span></h2>
 
         <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
             <div>
@@ -3479,15 +3488,7 @@ def generate_partite_momenti_decisivi(campionato_filter, camp_name):
     responsibility = compute_clutch_responsibility(pbp_df, min_games=3)
     q4_heroes = compute_q4_heroes(pbp_df, min_games=5)
 
-    content = '''
-    <div class="content-section">
-        <h2 class="section-title">Cos'sono i Momenti Decisivi?</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Analizziamo le performance nei <strong>momenti clutch</strong>: ultimi 2 minuti del 4° quarto
-            quando il punteggio è entro i 5 punti. Chi segna quando conta davvero?
-        </p>
-    </div>
-    '''
+    content = ''
 
     # CLOSER RANKINGS
     if not closer_rankings.empty:
@@ -3522,10 +3523,7 @@ def generate_partite_momenti_decisivi(campionato_filter, camp_name):
 
         content += f'''
         <div class="content-section">
-            <h2 class="section-title">🎯 Top Closer</h2>
-            <p style="color: #666; margin-bottom: 15px;">
-                Giocatori che segnano di più nei momenti clutch (ultimi 2 min, gap ≤5).
-            </p>
+            <h2 class="section-title">🎯 Top Closer <span class="info-tooltip" title="Giocatori che segnano di più nei momenti clutch (ultimi 2 min, gap ≤5).">ⓘ</span></h2>
             {plotly_to_html(fig)}
         </div>
         '''
@@ -3640,10 +3638,7 @@ def generate_partite_momenti_decisivi(campionato_filter, camp_name):
 
         content += f'''
         <div class="content-section">
-            <h2 class="section-title">💪 Responsabilità nei Momenti Chiave</h2>
-            <p style="color: #666; margin-bottom: 15px;">
-                Chi si prende più tiri nei momenti clutch? TS% (True Shooting) misura l'efficienza complessiva.
-            </p>
+            <h2 class="section-title">💪 Responsabilità nei Momenti Chiave <span class="info-tooltip" title="Chi si prende più tiri nei momenti clutch? TS% (True Shooting) misura l'efficienza complessiva.">ⓘ</span></h2>
             {plotly_to_html(fig_resp)}
             {resp_table}
         </div>
@@ -3680,11 +3675,7 @@ def generate_partite_momenti_decisivi(campionato_filter, camp_name):
 
             content += f'''
             <div class="content-section">
-                <h2 class="section-title">🦸 4° Quarto Heroes</h2>
-                <p style="color: #666; margin-bottom: 15px;">
-                    Giocatori che aumentano la loro produzione nel 4° quarto rispetto ai primi tre.
-                    Il boost indica la % di miglioramento dei punti per partita.
-                </p>
+                <h2 class="section-title">🦸 4° Quarto Heroes <span class="info-tooltip" title="Giocatori che aumentano la loro produzione nel 4° quarto rispetto ai primi tre. Il boost indica la % di miglioramento dei punti per partita.">ⓘ</span></h2>
                 {plotly_to_html(fig)}
             </div>
             '''
@@ -3760,11 +3751,7 @@ def generate_partite_momenti_decisivi(campionato_filter, camp_name):
 
             content += f'''
             <div class="content-section">
-                <h2 class="section-title">⏱️ Distribuzione Attività per Quarto (%)</h2>
-                <p style="color: #666; margin-bottom: 15px;">
-                    Analisi dell'attività dei giocatori nei vari quarti (punti, rimbalzi, assist, falli, etc.).
-                    La % indica quanta parte della loro attività totale avviene nel 4° quarto.
-                </p>
+                <h2 class="section-title">⏱️ Distribuzione Attività per Quarto (%) <span class="info-tooltip" title="Analisi dell'attività dei giocatori nei vari quarti (punti, rimbalzi, assist, falli, etc.). La % indica quanta parte della loro attività totale avviene nel 4° quarto.">ⓘ</span></h2>
                 {plotly_to_html(fig_q4)}
             </div>
             '''
@@ -3803,10 +3790,7 @@ def generate_partite_momenti_decisivi(campionato_filter, camp_name):
 
             content += f'''
             <div class="content-section">
-                <h2 class="section-title">📊 Attività Assoluta nel Q4</h2>
-                <p style="color: #666; margin-bottom: 15px;">
-                    Numero stimato di eventi (punti, rimbalzi, assist, etc.) nel 4° quarto per partita.
-                </p>
+                <h2 class="section-title">📊 Attività Assoluta nel Q4 <span class="info-tooltip" title="Numero stimato di eventi (punti, rimbalzi, assist, etc.) nel 4° quarto per partita.">ⓘ</span></h2>
                 {plotly_to_html(fig_q4_abs)}
             </div>
             '''
@@ -3871,15 +3855,7 @@ def generate_partite_andamento(campionato_filter, camp_name):
             'breadcrumb': f'{camp_name} / Partite / Andamento'
         }
 
-    content = '''
-    <div class="content-section">
-        <h2 class="section-title">Analisi Andamento Partite</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Come si sviluppano le partite? Quali squadre partono forte, quali finiscono in crescendo,
-            e chi riesce a rimontare dai grandi svantaggi?
-        </p>
-    </div>
-    '''
+    content = ''
 
     # DISTRIBUZIONE PUNTI PER QUARTO
     if quarters_df is not None and not quarters_df.empty:
@@ -3949,10 +3925,7 @@ def generate_partite_andamento(campionato_filter, camp_name):
 
             content += f'''
             <div class="content-section">
-                <h2 class="section-title">🏁 Partenze vs Chiusure</h2>
-                <p style="color: #666; margin-bottom: 15px;">
-                    Valori positivi = squadre che migliorano nel finale. Valori negativi = squadre che partono forte.
-                </p>
+                <h2 class="section-title">🏁 Partenze vs Chiusure <span class="info-tooltip" title="Valori positivi = squadre che migliorano nel finale. Valori negativi = squadre che partono forte.">ⓘ</span></h2>
                 {plotly_to_html(fig2)}
             </div>
             '''
@@ -3993,11 +3966,7 @@ def generate_partite_andamento(campionato_filter, camp_name):
 
             content += f'''
             <div class="content-section">
-                <h2 class="section-title">🔥 Parziali & Run</h2>
-                <p style="color: #666; margin-bottom: 15px;">
-                    Un "run" è una sequenza di 8+ punti consecutivi senza che l'avversario segni.
-                    Verde = run fatti, Rosso = run subiti.
-                </p>
+                <h2 class="section-title">🔥 Parziali & Run <span class="info-tooltip" title="Un 'run' è una sequenza di 8+ punti consecutivi senza che l'avversario segni. Verde = run fatti, Rosso = run subiti.">ⓘ</span></h2>
                 {plotly_to_html(fig)}
             </div>
             '''
@@ -4098,13 +4067,7 @@ def generate_partite_andamento(campionato_filter, camp_name):
 
             content += f'''
             <div class="content-section">
-                <h2 class="section-title">👑 Comeback Kings</h2>
-                <p style="color: #666; margin-bottom: 15px;">
-                    <b>Rimonta</b> = da -10 o peggio, tornare almeno a -2.<br>
-                    <b>Rimonta Vinta</b> = rimonta che finisce con vittoria.<br>
-                    <b>Rimonta Subita</b> = avevi +10, avversario torna a -2.<br>
-                    <b>Rimonta Subita (Persa)</b> = rimonta subita che finisce in sconfitta.
-                </p>
+                <h2 class="section-title">👑 Comeback Kings <span class="info-tooltip" title="Rimonta = da -10 o peggio, tornare almeno a -2. Rimonta Vinta = finisce con vittoria. Rimonta Subita = avevi +10, avversario torna a -2.">ⓘ</span></h2>
                 {plotly_to_html(fig)}
             </div>
             '''
@@ -4179,10 +4142,7 @@ def generate_partite_andamento(campionato_filter, camp_name):
 
                 content += f'''
                 <div class="content-section">
-                    <h2 class="section-title">🔍 Dettaglio Partite</h2>
-                    <p style="color: #666; margin-bottom: 15px;">
-                        Seleziona una squadra per vedere i dettagli di ogni rimonta.
-                    </p>
+                    <h2 class="section-title">🔍 Dettaglio Rimonte <span class="info-tooltip" title="Seleziona una squadra per vedere i dettagli di ogni rimonta.">ⓘ</span></h2>
 
                     <div style="margin-bottom: 20px;">
                         <label style="font-weight: 600;">Squadra:</label>
@@ -4288,10 +4248,7 @@ def generate_partite_andamento(campionato_filter, camp_name):
 
                 content += f'''
                 <div class="content-section">
-                    <h2 class="section-title">Dettaglio Rimonte Subite</h2>
-                    <p style="color: #666; margin-bottom: 15px;">
-                        Seleziona una squadra per vedere le partite in cui ha subito una rimonta.
-                    </p>
+                    <h2 class="section-title">Dettaglio Rimonte Subite <span class="info-tooltip" title="Seleziona una squadra per vedere le partite in cui ha subito una rimonta.">ⓘ</span></h2>
 
                     <div style="margin-bottom: 20px;">
                         <label style="font-weight: 600;">Squadra:</label>
@@ -4393,7 +4350,6 @@ def generate_giocatori_statistiche_combined(campionato_filter, camp_name):
     content = f'''
     {stats['content']}
 
-    <h2 class="section-title" style="margin-top: 2rem;">Distribuzione Tiri</h2>
     {tiri['content']}
     '''
 
@@ -4415,10 +4371,8 @@ def generate_giocatori_profilo_combined(campionato_filter, camp_name):
     content = f'''
     {clustering['content']}
 
-    <h2 class="section-title" style="margin-top: 2rem;">Giocatori Simili</h2>
     {simili['content']}
 
-    <h2 class="section-title" style="margin-top: 2rem;">Radar Confronto</h2>
     {radar['content']}
     '''
 
@@ -4440,10 +4394,8 @@ def generate_giocatori_performance_combined(campionato_filter, camp_name):
     content = f'''
     {forma['content']}
 
-    <h2 class="section-title" style="margin-top: 2rem;">Consistenza</h2>
     {consistenza['content']}
 
-    <h2 class="section-title" style="margin-top: 2rem;">Casa vs Trasferta</h2>
     {casa_trasf['content']}
     '''
 
@@ -4490,7 +4442,6 @@ def generate_squadre_risultati_combined(campionato_filter, camp_name):
     content = f'''
     {vittorie['content']}
 
-    <h2 class="section-title" style="margin-top: 2rem;">Casa vs Trasferta</h2>
     {casa_trasf['content']}
     '''
 
@@ -4512,10 +4463,8 @@ def generate_squadre_profilo_combined(campionato_filter, camp_name):
     content = f'''
     {radar['content']}
 
-    <h2 class="section-title" style="margin-top: 2rem;">Dipendenza Giocatori</h2>
     {dipendenza['content']}
 
-    <h2 class="section-title" style="margin-top: 2rem;">Quando Vince</h2>
     {quando_vince['content']}
     '''
 
