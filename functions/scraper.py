@@ -89,6 +89,180 @@ def read_play_by_play(soup):
     return pbp_events
 
 
+def read_player_names(driver):
+    """
+    Estrae la mappatura player_code -> nome dalla pagina.
+
+    Il codice giocatore è nella classe della riga (es. class="A789554 odd")
+    Il nome è nella cella con classe 'statsquadraname'
+
+    Returns:
+        Dict con mappatura {player_code: player_name}
+    """
+    try:
+        result = driver.execute_script("""
+            var players = {};
+
+            var rows = document.querySelectorAll('tr');
+            rows.forEach(function(row) {
+                var classes = row.className.split(' ');
+                var playerCode = null;
+
+                // Cerca il codice giocatore (formato A + numeri)
+                classes.forEach(function(cls) {
+                    if (cls.match(/^A\\d+$/)) {
+                        playerCode = cls;
+                    }
+                });
+
+                if (playerCode) {
+                    // Cerca il nome nella cella con classe statsquadraname
+                    var nameCell = row.querySelector('.statsquadraname');
+                    if (nameCell) {
+                        var name = nameCell.textContent.trim().replace(/\\s+/g, ' ');
+                        if (name && name.length > 1) {
+                            players[playerCode] = name;
+                        }
+                    }
+                }
+            });
+
+            return JSON.stringify(players);
+        """)
+
+        if result:
+            import json
+            return json.loads(result)
+        return {}
+
+    except Exception as e:
+        print(f"  Errore estrazione nomi giocatori: {e}")
+        return {}
+
+
+def read_shooting_chart(driver):
+    """
+    Estrae i dati della mappa di tiro dalla variabile JavaScript 'film'.
+
+    Estrae le coordinate di tutti i tiri dal campo (fatti e sbagliati) con:
+    - coordinate x, y sul campo (canvas 360x240)
+    - giocatore
+    - tipo di tiro (paint/midrange/3pt)
+    - esito (fatto/sbagliato)
+    - tempo di gioco
+    - punteggio al momento del tiro
+
+    Codici azione:
+    - 1000: tiro da campo realizzato
+    - 1001: tiro da campo sbagliato
+    - 1005: tripla sbagliata (alternativa)
+    - 1010: tiro speciale realizzato
+
+    Campo 6 (zone):
+    - 1 = area ristretta (paint)
+    - 3 = tripla
+    - 4 = mid-range
+
+    La coordinata x indica la posizione sul campo:
+    - Casa tira verso sinistra (x basso, canestro ~x=0)
+    - Ospiti tirano verso destra (x alto, canestro ~x=360)
+
+    Returns:
+        Lista di dizionari con i dati dei tiri
+    """
+    try:
+        shots_data = driver.execute_script("""
+            if (typeof film === 'undefined') return null;
+
+            // Codici azione relativi ai tiri dal campo
+            var shotCodes = {
+                '1000': {made: true},   // tiro realizzato
+                '1001': {made: false},  // tiro sbagliato
+                '1005': {made: false},  // tripla sbagliata (alternativa)
+                '1010': {made: true}    // tiro speciale
+            };
+
+            // Mappa zona (campo 6) a tipo di tiro
+            var zoneToType = {
+                '1': 'paint',      // area ristretta
+                '3': '3pt',        // tripla
+                '4': 'midrange'    // tiro da media
+            };
+
+            var shots = [];
+
+            for (var q = 0; q < film.length; q++) {
+                if (!Array.isArray(film[q])) continue;
+
+                for (var i = 0; i < film[q].length; i++) {
+                    var event = film[q][i];
+                    var actionCode = String(event['2']);
+
+                    // Controlla se è un tiro
+                    if (shotCodes[actionCode]) {
+                        // Campo 4 = X, Campo 5 = Y
+                        var x = parseInt(event['4']) || 0;
+                        var y = parseInt(event['5']) || 0;
+
+                        // Se non ha coordinate valide, salta
+                        if (x === 0 && y === 0) continue;
+
+                        var isHome = event['1'] === '1';
+                        var shotInfo = shotCodes[actionCode];
+
+                        // Determina tipo di tiro dal campo 6 (zona)
+                        var zone = String(event['6']);
+                        var shotType = zoneToType[zone] || 'unknown';
+
+                        // Se zona=0 (codice 1005 tripla sbagliata), inferisci dalla posizione
+                        if (zone === '0') {
+                            // Per 1005 è una tripla
+                            if (actionCode === '1005') {
+                                shotType = '3pt';
+                            } else {
+                                // Calcola distanza per inferire
+                                var basketX = isHome ? 0 : 360;
+                                var basketY = 120;
+                                var dist = Math.sqrt(Math.pow(x - basketX, 2) + Math.pow(y - basketY, 2));
+                                shotType = dist > 80 ? '3pt' : 'midrange';
+                            }
+                        }
+
+                        // Calcola distanza dal canestro
+                        var basketX = isHome ? 0 : 360;
+                        var basketY = 120;
+                        var distance = Math.sqrt(Math.pow(x - basketX, 2) + Math.pow(y - basketY, 2));
+
+                        shots.push({
+                            quarter: q + 1,
+                            is_home: isHome,
+                            player_code: event['3'] || '',
+                            x: x,
+                            y: y,
+                            distance: Math.round(distance),
+                            zone: zone,
+                            shot_type: shotType,
+                            made: shotInfo.made,
+                            game_time: parseInt(event['gt']) || 0,
+                            score: event['vurl'] || ''
+                        });
+                    }
+                }
+            }
+
+            return JSON.stringify(shots);
+        """)
+
+        if shots_data:
+            import json
+            return json.loads(shots_data)
+        return []
+
+    except Exception as e:
+        print(f"  Errore estrazione shooting chart: {e}")
+        return []
+
+
 def read_quarter_scores(soup):
     """
     Estrae i punteggi parziali per ogni quarter.
@@ -163,7 +337,7 @@ def get_scraped_games(existing_df):
     return set(existing_df['game_code'].unique())
 
 
-def scrape_single_game(driver, url, code, config, extract_pbp=False):
+def scrape_single_game(driver, url, code, config, extract_pbp=False, extract_shots=False):
     """
     Scarica i dati di una singola partita.
 
@@ -173,10 +347,12 @@ def scrape_single_game(driver, url, code, config, extract_pbp=False):
         code: codice della partita
         config: configurazione del campionato
         extract_pbp: se True, estrae anche play-by-play e parziali
+        extract_shots: se True, estrae anche la mappa dei tiri
 
     Returns:
-        Se extract_pbp=False: DataFrame con statistiche
-        Se extract_pbp=True: (DataFrame stats, lista pbp, dict parziali)
+        Se extract_pbp=False e extract_shots=False: DataFrame con statistiche
+        Se extract_pbp=True: (DataFrame stats, lista pbp, dict parziali, lista shots)
+        Se extract_shots=True (solo): (DataFrame stats, lista shots)
     """
     driver.get(url)
     time.sleep(2)
@@ -243,8 +419,27 @@ def scrape_single_game(driver, url, code, config, extract_pbp=False):
     game_stats['home_score'] = hscore
     game_stats['away_score'] = ascore
 
-    if not extract_pbp:
+    # Estrai tiri se richiesto
+    shots = []
+    if extract_shots or extract_pbp:
+        shots = read_shooting_chart(driver)
+        # Estrai mappa player_code -> nome
+        player_names = read_player_names(driver)
+        # Aggiungi metadati ai tiri
+        for shot in shots:
+            shot['game_code'] = code
+            shot['campionato'] = campionato_name
+            shot['home_team'] = home_team
+            shot['away_team'] = away_team
+            # Aggiungi nome giocatore
+            player_code = shot.get('player_code', '')
+            shot['player_name'] = player_names.get(player_code, '')
+
+    if not extract_pbp and not extract_shots:
         return game_stats
+
+    if extract_shots and not extract_pbp:
+        return game_stats, shots
 
     # Estrai play-by-play e parziali
     pbp_events = read_play_by_play(soup)
@@ -263,7 +458,7 @@ def scrape_single_game(driver, url, code, config, extract_pbp=False):
     quarter_scores['home_team'] = home_team
     quarter_scores['away_team'] = away_team
 
-    return game_stats, pbp_events, quarter_scores
+    return game_stats, pbp_events, quarter_scores, shots
 
 
 def scrape_campionato(config, driver, incremental=True, include_pbp=True):
@@ -274,7 +469,7 @@ def scrape_campionato(config, driver, incremental=True, include_pbp=True):
         config: dizionario con la configurazione del campionato
         driver: istanza del browser
         incremental: se True, scarica solo le partite nuove
-        include_pbp: se True, scarica anche play-by-play e parziali
+        include_pbp: se True, scarica anche play-by-play, parziali e mappa tiri
 
     Returns:
         DataFrame con tutte le statistiche (vecchie + nuove)
@@ -284,11 +479,12 @@ def scrape_campionato(config, driver, incremental=True, include_pbp=True):
     start_code = config['start_code']
     end_code = config.get('end_code')  # Può essere None
 
-    # File per pbp e parziali
+    # File per pbp, parziali e tiri
     output_dir = os.path.dirname(output_file)
     base_name = os.path.basename(output_file).replace('season_stats_', '').replace('.pkl', '')
     pbp_file = os.path.join(output_dir, f"pbp_{base_name}.pkl")
     quarters_file = os.path.join(output_dir, f"quarters_{base_name}.pkl")
+    shots_file = os.path.join(output_dir, f"shots_{base_name}.pkl")
 
     if end_code:
         print(f"\nScraping {base_name} - partite {start_code}-{end_code}...")
@@ -296,7 +492,7 @@ def scrape_campionato(config, driver, incremental=True, include_pbp=True):
         print(f"\nScraping {base_name} - da partita {start_code} (auto-stop dopo 5 vuote)...")
 
     if include_pbp:
-        print(f"  (include play-by-play e parziali)")
+        print(f"  (include play-by-play, parziali e mappa tiri)")
 
     # Carica dati esistenti
     existing_df = load_existing_data(output_file) if incremental else None
@@ -304,6 +500,7 @@ def scrape_campionato(config, driver, incremental=True, include_pbp=True):
 
     existing_pbp = load_existing_pbp(pbp_file) if (incremental and include_pbp) else None
     existing_quarters = load_existing_quarters(quarters_file) if (incremental and include_pbp) else None
+    existing_shots = load_existing_shots(shots_file) if (incremental and include_pbp) else None
 
     if scraped_codes:
         print(f"  Partite già scaricate: {len(scraped_codes)}")
@@ -314,6 +511,7 @@ def scrape_campionato(config, driver, incremental=True, include_pbp=True):
     new_games = []
     new_pbp_events = []
     new_quarters_list = []
+    new_shots_list = []
     skipped = 0
     empty_streak = 0  # Contatore pagine vuote consecutive (solo dopo max scraped)
     max_empty = 5     # Stop dopo 5 pagine vuote consecutive
@@ -341,13 +539,18 @@ def scrape_campionato(config, driver, incremental=True, include_pbp=True):
         if include_pbp:
             result = scrape_single_game(driver, url, code, config, extract_pbp=True)
             if result[0] is not None:
-                game_data, pbp_events, quarter_scores = result
+                game_data, pbp_events, quarter_scores, shots = result
                 new_pbp_events.extend(pbp_events)
                 new_quarters_list.append(quarter_scores)
+                new_shots_list.extend(shots)
             else:
                 game_data = None
+                pbp_events = []
+                shots = []
         else:
             game_data = scrape_single_game(driver, url, code, config, extract_pbp=False)
+            pbp_events = []
+            shots = []
 
         if game_data is not None:
             new_games.append(game_data)
@@ -356,8 +559,9 @@ def scrape_campionato(config, driver, incremental=True, include_pbp=True):
             hs = game_data['home_score'].iloc[0]
             aws = game_data['away_score'].iloc[0]
             n_pbp = len(pbp_events) if include_pbp else 0
-            pbp_info = f" ({n_pbp} eventi)" if include_pbp else ""
-            print(f"  {code}: {home} {hs}-{aws} {away}{pbp_info}")
+            n_shots = len(shots) if include_pbp else 0
+            extra_info = f" ({n_pbp} eventi, {n_shots} tiri)" if include_pbp else ""
+            print(f"  {code}: {home} {hs}-{aws} {away}{extra_info}")
 
             empty_streak = 0  # Reset contatore pagine vuote
 
@@ -422,6 +626,26 @@ def scrape_campionato(config, driver, incremental=True, include_pbp=True):
 
             print(f"  Play-by-play: {len(all_pbp_df)} eventi totali")
             print(f"  Parziali: {len(all_quarters_df)} partite")
+
+        # Salva tiri
+        if include_pbp and new_shots_list:
+            new_shots_df = pd.DataFrame(new_shots_list)
+
+            if existing_shots is not None and not existing_shots.empty:
+                all_shots_df = pd.concat([existing_shots, new_shots_df], ignore_index=True)
+            else:
+                all_shots_df = new_shots_df
+
+            # Rimuovi duplicati
+            all_shots_df = all_shots_df.drop_duplicates(
+                subset=['game_code', 'quarter', 'game_time', 'player_code', 'x', 'y'],
+                keep='last'
+            )
+
+            with open(shots_file, 'wb') as f:
+                pickle.dump(all_shots_df, f)
+
+            print(f"  Mappa tiri: {len(all_shots_df)} tiri totali")
 
         return overall_df
 
@@ -497,6 +721,16 @@ def get_scraped_pbp_games(existing_df):
     if existing_df is None or 'game_code' not in existing_df.columns:
         return set()
     return set(existing_df['game_code'].unique())
+
+
+def load_existing_shots(output_file):
+    """Carica dati tiri esistenti se il file esiste."""
+    if os.path.exists(output_file):
+        with open(output_file, 'rb') as f:
+            data = pickle.load(f)
+            print(f"  Caricati {len(data)} tiri da {output_file}")
+            return data
+    return None
 
 
 def enrich_pbp_dataframe(df):

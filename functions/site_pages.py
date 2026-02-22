@@ -41,6 +41,7 @@ from .pbp_analysis import (
     compute_player_quarter_activity,
     compute_team_player_distribution,
 )
+from .shots_analysis import load_shots_data
 
 
 # ============ HELPER ============
@@ -847,6 +848,885 @@ def generate_squadre_casa_trasferta(campionato_filter, camp_name):
         'page_title': 'Casa vs Trasferta',
         'subtitle': camp_name,
         'breadcrumb': f'{camp_name} / Squadre / Casa vs Trasferta'
+    }
+
+
+def generate_squadre_mappe_tiro(campionato_filter, camp_name):
+    """Genera contenuto pagina Mappe di Tiro con due sezioni: singoli tiri e aggregati."""
+    from .shots_analysis import load_shots_data, convert_canvas_to_court, get_team_games
+
+    shots_df = load_shots_data(campionato_filter)
+    if shots_df is None or len(shots_df) == 0:
+        return {
+            'content': '<p>Dati mappe di tiro non disponibili.</p>',
+            'title': 'Mappe di Tiro',
+            'page_title': 'Mappe di Tiro'
+        }
+
+    def get_player_name(shot):
+        """Ottieni il nome giocatore (da player_name se disponibile)."""
+        # Usa player_name se disponibile (nuovo formato dopo re-scrape)
+        if 'player_name' in shot and shot['player_name']:
+            return shot['player_name']
+        return None
+
+    def format_time(seconds):
+        """Formatta secondi in mm:ss."""
+        if not seconds:
+            return ''
+        m, s = divmod(int(seconds), 60)
+        return f"{m}:{s:02d}"
+
+    # Lista squadre (già normalizzate da load_shots_data)
+    home_teams = shots_df['home_team'].unique()
+    away_teams = shots_df['away_team'].unique()
+    all_teams = sorted(set(home_teams) | set(away_teams))
+
+    # Statistiche globali
+    valid_shots = shots_df[shots_df['x'] > 0]
+    total_shots = len(valid_shots)
+    total_made = valid_shots['made'].sum()
+    fg_pct = round(100 * total_made / total_shots, 1) if total_shots > 0 else 0
+
+    by_type = valid_shots.groupby('shot_type').agg(
+        shots=('made', 'count'),
+        made=('made', 'sum')
+    )
+    by_type['pct'] = (by_type['made'] / by_type['shots'] * 100).round(1)
+
+    paint_pct = by_type.loc['paint', 'pct'] if 'paint' in by_type.index else 0
+    three_pct = by_type.loc['3pt', 'pct'] if '3pt' in by_type.index else 0
+
+    # Prepara dati per ogni squadra
+    all_data = {}
+    for team in all_teams:
+        team_shots = shots_df[
+            ((shots_df['home_team'] == team) & (shots_df['is_home'])) |
+            ((shots_df['away_team'] == team) & (~shots_df['is_home']))
+        ]
+        team_shots = team_shots[team_shots['x'] > 0]
+
+        # Coordinate aggregate
+        made_coords, missed_coords = [], []
+        for _, shot in team_shots.iterrows():
+            x_plot, y_plot = convert_canvas_to_court(shot['x'], shot['y'], shot['is_home'], shot['quarter'])
+            if shot['made']:
+                made_coords.append([round(x_plot, 1), round(y_plot, 1)])
+            else:
+                missed_coords.append([round(x_plot, 1), round(y_plot, 1)])
+
+        team_data = {
+            'made': made_coords,
+            'missed': missed_coords,
+            'total': len(team_shots),
+            'made_count': len(made_coords),
+            'pct': round(100 * len(made_coords) / len(team_shots), 1) if len(team_shots) > 0 else 0,
+            'games': {}
+        }
+
+        # Dati per singola partita
+        games = get_team_games(shots_df, team)
+        for game in games:
+            game_code = game['game_code']
+            game_shots = team_shots[team_shots['game_code'] == game_code]
+
+            game_made, game_missed = [], []
+            for _, shot in game_shots.iterrows():
+                x_plot, y_plot = convert_canvas_to_court(shot['x'], shot['y'], shot['is_home'], shot['quarter'])
+                player_name = get_player_name(shot)
+                shot_info = {
+                    'x': round(x_plot, 1),
+                    'y': round(y_plot, 1),
+                    'q': shot['quarter'],
+                    'type': shot['shot_type'],
+                    'player': player_name if player_name else '',
+                    'time': format_time(shot.get('game_time', 0)),
+                    'score': shot.get('score', '')
+                }
+                if shot['made']:
+                    game_made.append(shot_info)
+                else:
+                    game_missed.append(shot_info)
+
+            team_data['games'][str(game_code)] = {
+                'label': game['label'],
+                'made': game_made,
+                'missed': game_missed,
+                'total': len(game_shots),
+                'made_count': len(game_made),
+                'pct': round(100 * len(game_made) / len(game_shots), 1) if len(game_shots) > 0 else 0
+            }
+
+        all_data[team] = team_data
+
+    data_json = json.dumps(all_data)
+
+    content = f'''
+    <!-- SEZIONE 1: Singoli tiri con filtro partita -->
+    <div class="content-section">
+        <h2 class="section-title">Singoli Tiri per Partita</h2>
+
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px;">
+            <div>
+                <label style="font-weight: 600; display: block; margin-bottom: 5px;">Squadra:</label>
+                <select id="team-select-1" onchange="onTeamChange1()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd; min-width: 250px;">
+                    {''.join(f'<option value="{t}">{t}</option>' for t in all_teams)}
+                </select>
+            </div>
+            <div>
+                <label style="font-weight: 600; display: block; margin-bottom: 5px;">Partita:</label>
+                <select id="game-select-1" onchange="updateShotsChart()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
+                    <option value="all">Tutte le partite</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="stats-1" style="margin-bottom: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px;"></div>
+        <div id="chart-1"></div>
+    </div>
+
+    <!-- SEZIONE 2: Hexbin e Heatmap aggregati -->
+    <div class="content-section">
+        <h2 class="section-title">Analisi Aggregata (Hexbin / Heatmap)</h2>
+
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px;">
+            <div>
+                <label style="font-weight: 600; display: block; margin-bottom: 5px;">Squadra:</label>
+                <select id="team-select-2" onchange="updateAggregateCharts()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd; min-width: 250px;">
+                    {''.join(f'<option value="{t}">{t}</option>' for t in all_teams)}
+                </select>
+            </div>
+        </div>
+
+        <div id="stats-2" style="margin-bottom: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px;"></div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <h3 style="font-size: 1rem; margin-bottom: 10px; color: #666; text-align: center;">Precisione per Zona</h3>
+                <div id="chart-hexbin"></div>
+            </div>
+            <div>
+                <h3 style="font-size: 1rem; margin-bottom: 10px; color: #666; text-align: center;">Volume Tiri</h3>
+                <div id="chart-heatmap"></div>
+            </div>
+        </div>
+
+        <h3 style="font-size: 1rem; margin: 25px 0 15px 0; color: #666; text-align: center;">Analisi per Settore</h3>
+        <div style="text-align: center; margin-bottom: 15px;">
+            <label style="margin-right: 15px; cursor: pointer;">
+                <input type="radio" name="sector-view" value="absolute" checked onchange="updateAggregateCharts()"> Valori Assoluti
+            </label>
+            <label style="cursor: pointer;">
+                <input type="radio" name="sector-view" value="diff" onchange="updateAggregateCharts()"> Differenza vs Media Campionato
+            </label>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <h4 id="title-pct" style="font-size: 0.9rem; margin-bottom: 10px; color: #666; text-align: center;">Percentuale Realizzazione</h4>
+                <div id="chart-sectors-pct"></div>
+            </div>
+            <div>
+                <h4 id="title-vol" style="font-size: 0.9rem; margin-bottom: 10px; color: #666; text-align: center;">Volume Tiri</h4>
+                <div id="chart-sectors-vol"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allData = {data_json};
+
+        const SCALE = 100 / 3;
+        const X_BORDER = 15 * SCALE / 2;
+        const Y_BASELINE = -1.575 * SCALE;
+        const Y_H_COURT_LINE = 14 * SCALE + Y_BASELINE;
+
+        function ellipseArc(xCenter, yCenter, a, b, startAngle, endAngle, N=200) {{
+            let path = '';
+            for (let i = 0; i < N; i++) {{
+                const t = startAngle + (endAngle - startAngle) * i / (N - 1);
+                const x = xCenter + a * Math.cos(t);
+                const y = yCenter + b * Math.sin(t);
+                if (i === 0) path = `M ${{x}}, ${{y}}`;
+                else path += `L${{x}}, ${{y}}`;
+            }}
+            return path;
+        }}
+
+        function getCourtShapes(lineColor='#333333') {{
+            const lw = 3;
+            const xPaint = 4.9 * SCALE / 2, yFt = 5.8 * SCALE + Y_BASELINE;
+            const rFt = 1.8 * SCALE, r3 = 6.75 * SCALE, c3 = 6.6 * SCALE;
+            const b3 = 2.99 * SCALE + Y_BASELINE, a3 = 12 / 180 * Math.PI;
+            return [
+                {{ type: 'rect', x0: -X_BORDER, y0: Y_BASELINE, x1: X_BORDER, y1: Y_H_COURT_LINE, line: {{ color: lineColor, width: lw }} }},
+                {{ type: 'rect', x0: -xPaint, y0: Y_BASELINE, x1: xPaint, y1: yFt, line: {{ color: lineColor, width: lw }} }},
+                {{ type: 'path', path: ellipseArc(0, yFt, rFt, rFt, 0, Math.PI), line: {{ color: lineColor, width: lw }} }},
+                {{ type: 'rect', x0: -2, y0: -7.25, x1: 2, y1: -12.5, line: {{ color: '#ec7607', width: lw }}, fillcolor: '#ec7607' }},
+                {{ type: 'circle', x0: -7.5, y0: -7.5, x1: 7.5, y1: 7.5, line: {{ color: '#ec7607', width: lw }} }},
+                {{ type: 'line', x0: -30, y0: -12.5, x1: 30, y1: -12.5, line: {{ color: '#ec7607', width: lw }} }},
+                {{ type: 'path', path: ellipseArc(0, 0, 40, 40, 0, Math.PI), line: {{ color: lineColor, width: lw }} }},
+                {{ type: 'path', path: ellipseArc(0, 0, r3, r3, a3, Math.PI - a3), line: {{ color: lineColor, width: lw }} }},
+                {{ type: 'line', x0: -c3, y0: Y_BASELINE, x1: -c3, y1: b3, line: {{ color: lineColor, width: lw }} }},
+                {{ type: 'line', x0: c3, y0: Y_BASELINE, x1: c3, y1: b3, line: {{ color: lineColor, width: lw }} }},
+                {{ type: 'path', path: ellipseArc(0, Y_H_COURT_LINE, rFt, rFt, 0, -Math.PI), line: {{ color: lineColor, width: lw }} }},
+            ];
+        }}
+
+        // Parquet texture SVG - listelli verticali con sfalsamento verticale
+        function generateParquetSvg() {{
+            const w = 1, h = 12; // listello 1px x 12px
+            const cols = 40, rows = 10;
+            const svgW = cols * w, svgH = rows * h;
+            const colors = ['#d4b07a', '#c49a60', '#d9bc8a', '#c9a66b', '#cfaa70', '#ba9058'];
+            let rects = '';
+            for (let col = 0; col < cols; col++) {{
+                const yOffset = (col % 2) * (h / 2); // sfalsamento verticale
+                for (let row = -1; row < rows + 1; row++) {{
+                    const x = col * w;
+                    const y = row * h + yOffset;
+                    const colorIdx = ((col + (row + 10) * 2) % colors.length + colors.length) % colors.length;
+                    const color = colors[colorIdx];
+                    rects += `<rect x='${{x}}' y='${{y}}' width='${{w}}' height='${{h}}' fill='${{color}}' stroke='#a5874d' stroke-width='0.1'/>`;
+                }}
+            }}
+            return `<svg xmlns='http://www.w3.org/2000/svg' width='${{svgW}}' height='${{svgH}}'>${{rects}}</svg>`;
+        }}
+        const parquetSvg = generateParquetSvg();
+        const parquetDataUrl = 'data:image/svg+xml;base64,' + btoa(parquetSvg);
+
+        function getBaseLayout(lineColor='#333333', height=500, withParquet=false) {{
+            const layout = {{
+                height: height, margin: {{ l: 10, r: 10, t: 20, b: 10 }},
+                paper_bgcolor: 'white', plot_bgcolor: withParquet ? 'rgba(0,0,0,0)' : 'white',
+                xaxis: {{ range: [-X_BORDER - 15, X_BORDER + 15], showgrid: false, zeroline: false, showline: false, ticks: '', showticklabels: false, fixedrange: true }},
+                yaxis: {{ range: [Y_BASELINE - 30, Y_H_COURT_LINE + 15], scaleanchor: 'x', scaleratio: 1, showgrid: false, zeroline: false, showline: false, ticks: '', showticklabels: false, fixedrange: true }},
+                shapes: getCourtShapes(lineColor),
+                showlegend: true,
+                legend: {{ x: 0.02, y: 0.02, bgcolor: 'rgba(255,255,255,0.8)' }}
+            }};
+            if (withParquet) {{
+                const pad = 20; // estensione oltre le linee
+                layout.images = [{{
+                    source: parquetDataUrl,
+                    xref: 'x', yref: 'y',
+                    x: -X_BORDER - pad, y: Y_H_COURT_LINE + pad,
+                    sizex: X_BORDER * 2 + pad * 2, sizey: Y_H_COURT_LINE - Y_BASELINE + pad * 2,
+                    sizing: 'stretch', layer: 'below', opacity: 0.85
+                }}];
+            }}
+            return layout;
+        }}
+
+        // === SEZIONE 1: Singoli tiri ===
+        function onTeamChange1() {{
+            const team = document.getElementById('team-select-1').value;
+            const gameSelect = document.getElementById('game-select-1');
+            gameSelect.innerHTML = '<option value="all">Tutte le partite</option>';
+            if (allData[team] && allData[team].games) {{
+                Object.entries(allData[team].games).forEach(([code, game]) => {{
+                    gameSelect.innerHTML += `<option value="${{code}}">${{game.label}}</option>`;
+                }});
+            }}
+            updateShotsChart();
+        }}
+
+        function updateShotsChart() {{
+            const team = document.getElementById('team-select-1').value;
+            const gameCode = document.getElementById('game-select-1').value;
+            if (!allData[team]) return;
+
+            const data = gameCode === 'all' ? allData[team] : allData[team].games[gameCode];
+            if (!data) return;
+
+            const label = gameCode === 'all' ? '' : ' - ' + data.label;
+            document.getElementById('stats-1').innerHTML = `<strong>${{team}}</strong>${{label}}: ${{data.total}} tiri, ${{data.made_count}} realizzati (${{data.pct}}%)`;
+
+            // Helper per creare hover text
+            const formatHover = (s, made) => {{
+                const typeLabels = {{'paint': 'Area', 'midrange': 'Media', '3pt': 'Tripla'}};
+                let text = `<b>${{made ? '✓ Realizzato' : '✗ Sbagliato'}}</b><br>`;
+                text += `Q${{s.q}} - ${{typeLabels[s.type] || s.type}}<br>`;
+                if (s.player) text += `Giocatore: ${{s.player}}<br>`;
+                if (s.time) text += `Tempo: ${{s.time}}<br>`;
+                if (s.score) text += `Punteggio: ${{s.score}}`;
+                return text;
+            }};
+
+            // Per dati aggregati (tutte le partite), usa il vecchio formato [x, y]
+            const isAggregated = gameCode === 'all';
+            const getX = (s) => isAggregated ? s[0] : s.x;
+            const getY = (s) => isAggregated ? s[1] : s.y;
+
+            const traces = [];
+            if (data.missed.length > 0) {{
+                traces.push({{
+                    x: data.missed.map(getX), y: data.missed.map(getY), mode: 'markers',
+                    marker: {{ size: 14, color: 'red', opacity: 0.85, symbol: 'x', line: {{ width: 0 }} }},
+                    name: `Sbagliati (${{data.missed.length}})`,
+                    text: isAggregated ? null : data.missed.map(s => formatHover(s, false)),
+                    hoverinfo: isAggregated ? 'name' : 'text'
+                }});
+            }}
+            if (data.made.length > 0) {{
+                traces.push({{
+                    x: data.made.map(getX), y: data.made.map(getY), mode: 'markers',
+                    marker: {{ size: 10, color: 'green', opacity: 0.85, symbol: 'circle', line: {{ width: 0 }} }},
+                    name: `Realizzati (${{data.made.length}})`,
+                    text: isAggregated ? null : data.made.map(s => formatHover(s, true)),
+                    hoverinfo: isAggregated ? 'name' : 'text'
+                }});
+            }}
+            Plotly.newPlot('chart-1', traces, getBaseLayout('#333333', 550, true));
+        }}
+
+        // === SEZIONE 2: Hexbin e Heatmap ===
+        function computeHexbin(coords, gridsize=15) {{
+            if (coords.length === 0) return {{ x: [], y: [], accs: [], freqs: [] }};
+            const hexSize = (X_BORDER * 2) / gridsize;
+            const bins = {{}};
+            coords.forEach(([x, y, made]) => {{
+                const bx = Math.floor((x + X_BORDER) / hexSize);
+                const by = Math.floor((y - Y_BASELINE) / hexSize);
+                const key = `${{bx}},${{by}}`;
+                if (!bins[key]) bins[key] = {{ x: 0, y: 0, made: 0, total: 0 }};
+                bins[key].x += x; bins[key].y += y; bins[key].made += made; bins[key].total += 1;
+            }});
+            const result = {{ x: [], y: [], accs: [], freqs: [] }};
+            const totalShots = coords.length;
+            Object.values(bins).forEach(bin => {{
+                if (bin.total >= 3) {{
+                    result.x.push(bin.x / bin.total);
+                    result.y.push(bin.y / bin.total);
+                    result.accs.push(bin.made / bin.total);
+                    result.freqs.push(bin.total / totalShots);
+                }}
+            }});
+            return result;
+        }}
+
+        function computeHeatmap(coords, nBins=40) {{
+            if (coords.length === 0) return null;
+            const xMin = -X_BORDER, xMax = X_BORDER;
+            const yMin = Y_BASELINE, yMax = Y_H_COURT_LINE;
+            const dx = (xMax - xMin) / nBins, dy = (yMax - yMin) / nBins;
+
+            // Crea griglia [x][y]
+            const grid = Array(nBins).fill(null).map(() => Array(nBins).fill(0));
+            coords.forEach(([x, y]) => {{
+                const xi = Math.min(nBins - 1, Math.max(0, Math.floor((x - xMin) / dx)));
+                const yi = Math.min(nBins - 1, Math.max(0, Math.floor((y - yMin) / dy)));
+                grid[xi][yi] += 1;
+            }});
+
+            // Smoothing semplice
+            const smoothed = grid.map(row => [...row]);
+            for (let i = 1; i < nBins - 1; i++) {{
+                for (let j = 1; j < nBins - 1; j++) {{
+                    smoothed[i][j] = (grid[i-1][j-1] + grid[i-1][j] + grid[i-1][j+1] +
+                                      grid[i][j-1] + grid[i][j] * 2 + grid[i][j+1] +
+                                      grid[i+1][j-1] + grid[i+1][j] + grid[i+1][j+1]) / 10;
+                }}
+            }}
+
+            // Trasponi per Plotly (z[y][x])
+            const z = Array(nBins).fill(null).map((_, yi) =>
+                Array(nBins).fill(null).map((_, xi) => smoothed[xi][yi])
+            );
+
+            const xEdges = Array(nBins + 1).fill(0).map((_, i) => xMin + i * dx);
+            const yEdges = Array(nBins + 1).fill(0).map((_, i) => yMin + i * dy);
+            return {{ z, x: xEdges, y: yEdges }};
+        }}
+
+        // Classificazione settori (12 zone come TwinPlay + paint diviso)
+        function classifySector(x, y) {{
+            const x_real = x / SCALE;
+            const y_real = y / SCALE;
+
+            // Boundaries (in metri)
+            const cornerW = 0.9;  // larghezza angolo 3pt
+            const paintW = 2.45;  // metà larghezza paint
+            const y_corner = 2.99 - 1.575;  // 1.415m
+            const y_ft = 5.8 - 1.575;  // 4.225m
+            const r3 = 6.75;
+            const rNear = 2.0;  // raggio area vicina
+
+            const d = Math.sqrt(x_real * x_real + y_real * y_real);
+
+            // Paint (diviso in vicina/lontana)
+            if (Math.abs(x_real) <= paintW && y_real < y_ft) {{
+                return d <= rNear ? 'paint_near' : 'paint_far';
+            }}
+
+            // Angoli 3pt (strisce laterali fino a y_corner)
+            if (x_real < -7.5 + cornerW && y_real < y_corner) return '3pt_corner_r';
+            if (x_real > 7.5 - cornerW && y_real < y_corner) return '3pt_corner_l';
+
+            // Angoli 2pt (mid-range vicino baseline)
+            if (x_real >= -7.5 + cornerW && x_real < -paintW && y_real < y_corner) return '2pt_corner_r';
+            if (x_real > paintW && x_real <= 7.5 - cornerW && y_real < y_corner) return '2pt_corner_l';
+
+            // Sopra y_corner: usa distanza dal canestro
+            if (d >= r3) {{
+                // 3pt
+                if (x_real < -paintW) return '3pt_wing_r';
+                if (x_real > paintW) return '3pt_wing_l';
+                return '3pt_center';
+            }} else {{
+                // 2pt mid-range
+                if (x_real < -paintW) return '2pt_wing_r';
+                if (x_real > paintW) return '2pt_wing_l';
+                return '2pt_center';
+            }}
+        }}
+
+        // Calcola medie campionato per zona
+        const leagueAvg = {{}};
+        const leagueMaxVol = {{}};
+        (function() {{
+            const allZones = {{}};
+            let totalLeagueShots = 0;
+            Object.values(allData).forEach(teamData => {{
+                const coords = [...teamData.made.map(c => [...c, 1]), ...teamData.missed.map(c => [...c, 0])];
+                totalLeagueShots += coords.length;
+                coords.forEach(([x, y, made]) => {{
+                    const zone = classifySector(x, y);
+                    if (!allZones[zone]) allZones[zone] = {{ shots: 0, made: 0 }};
+                    allZones[zone].shots++;
+                    allZones[zone].made += made;
+                }});
+            }});
+            Object.entries(allZones).forEach(([zone, data]) => {{
+                leagueAvg[zone] = {{
+                    pct: data.shots > 0 ? data.made / data.shots : 0,
+                    vol: totalLeagueShots > 0 ? data.shots / totalLeagueShots : 0
+                }};
+            }});
+            // Max volume per squadra (per scala colormap)
+            Object.values(allData).forEach(teamData => {{
+                const total = teamData.made.length + teamData.missed.length;
+                const coords = [...teamData.made.map(c => [...c, 1]), ...teamData.missed.map(c => [...c, 0])];
+                const zones = {{}};
+                coords.forEach(([x, y, made]) => {{
+                    const zone = classifySector(x, y);
+                    zones[zone] = (zones[zone] || 0) + 1;
+                }});
+                Object.entries(zones).forEach(([zone, shots]) => {{
+                    const vol = total > 0 ? shots / total : 0;
+                    leagueMaxVol[zone] = Math.max(leagueMaxVol[zone] || 0, vol);
+                }});
+            }});
+        }})();
+
+        function computeSectorStats(coords) {{
+            // Per ora solo zone che abbiamo definito
+            const sectors = {{
+                'paint_near': {{ name: 'Area Vicina', shots: 0, made: 0 }},
+                'paint_far': {{ name: 'Area Lontana', shots: 0, made: 0 }},
+                '2pt_corner_r': {{ name: '2PT Angolo DX', shots: 0, made: 0 }},
+                '2pt_corner_l': {{ name: '2PT Angolo SX', shots: 0, made: 0 }},
+                '3pt_corner_r': {{ name: '3PT Angolo DX', shots: 0, made: 0 }},
+                '3pt_corner_l': {{ name: '3PT Angolo SX', shots: 0, made: 0 }},
+                '2pt_wing_l': {{ name: '2PT Ala SX', shots: 0, made: 0 }},
+                '3pt_wing_l': {{ name: '3PT Ala SX', shots: 0, made: 0 }},
+                '2pt_wing_r': {{ name: '2PT Ala DX', shots: 0, made: 0 }},
+                '3pt_wing_r': {{ name: '3PT Ala DX', shots: 0, made: 0 }},
+                '2pt_center': {{ name: '2PT Centro', shots: 0, made: 0 }},
+                '3pt_center': {{ name: '3PT Centro', shots: 0, made: 0 }}
+            }};
+
+            coords.forEach(([x, y, made]) => {{
+                const sector = classifySector(x, y);
+                if (sectors[sector]) {{
+                    sectors[sector].shots++;
+                    sectors[sector].made += made;
+                }}
+            }});
+
+            return sectors;
+        }}
+
+        // Colormap RdYlGn per percentuale (come hexbin)
+        // Interpolazione colore continua
+        function interpolateColor(color1, color2, t) {{
+            const r1 = parseInt(color1.slice(1,3), 16), g1 = parseInt(color1.slice(3,5), 16), b1 = parseInt(color1.slice(5,7), 16);
+            const r2 = parseInt(color2.slice(1,3), 16), g2 = parseInt(color2.slice(3,5), 16), b2 = parseInt(color2.slice(5,7), 16);
+            const r = Math.round(r1 + (r2 - r1) * t), g = Math.round(g1 + (g2 - g1) * t), b = Math.round(b1 + (b2 - b1) * t);
+            return `rgb(${{r}},${{g}},${{b}})`;
+        }}
+
+        // Colormap continua rosso-giallo-verde per percentuali (0-100%)
+        function getPctColor(pct) {{
+            pct = Math.max(0, Math.min(1, pct));
+            const stops = [
+                {{ v: 0.00, c: '#d73027' }},  // rosso
+                {{ v: 0.35, c: '#f46d43' }},
+                {{ v: 0.45, c: '#fdae61' }},
+                {{ v: 0.50, c: '#fee08b' }},  // giallo
+                {{ v: 0.55, c: '#d9ef8b' }},
+                {{ v: 0.65, c: '#66bd63' }},
+                {{ v: 1.00, c: '#1a9850' }}   // verde
+            ];
+            for (let i = 0; i < stops.length - 1; i++) {{
+                if (pct <= stops[i+1].v) {{
+                    const t = (pct - stops[i].v) / (stops[i+1].v - stops[i].v);
+                    return interpolateColor(stops[i].c, stops[i+1].c, t);
+                }}
+            }}
+            return stops[stops.length - 1].c;
+        }}
+
+        // Colormap continua per volume (0-maxVol)
+        function getVolColor(vol, maxVol) {{
+            const t = Math.max(0, Math.min(1, vol / maxVol));
+            const stops = [
+                {{ v: 0.00, c: '#ffffcc' }},  // chiaro
+                {{ v: 0.25, c: '#ffeda0' }},
+                {{ v: 0.50, c: '#feb24c' }},
+                {{ v: 0.75, c: '#f03b20' }},
+                {{ v: 1.00, c: '#bd0026' }}   // scuro
+            ];
+            for (let i = 0; i < stops.length - 1; i++) {{
+                if (t <= stops[i+1].v) {{
+                    const frac = (t - stops[i].v) / (stops[i+1].v - stops[i].v);
+                    return interpolateColor(stops[i].c, stops[i+1].c, frac);
+                }}
+            }}
+            return stops[stops.length - 1].c;
+        }}
+
+        // Colormap divergente per differenza (rosso-bianco-verde)
+        function getDiffColor(diff) {{
+            // diff da -0.2 a +0.2 (20 punti percentuali)
+            const t = Math.max(-0.2, Math.min(0.2, diff));
+            if (t < 0) {{
+                // negativo: bianco -> rosso
+                return interpolateColor('#d73027', '#ffffff', 1 + t / 0.2);
+            }} else {{
+                // positivo: bianco -> verde
+                return interpolateColor('#ffffff', '#1a9850', t / 0.2);
+            }}
+        }}
+
+        function getZonePolygons() {{
+            const paintW = 2.45 * SCALE;  // metà larghezza paint (~82 units)
+            const y_corner = (2.99 - 1.575) * SCALE;  // fine angolo (~47 units)
+            const y_ft = (5.8 - 1.575) * SCALE;  // linea tiro libero / fine area (~141 units)
+            const r3 = 6.75 * SCALE;  // raggio 3pt (~225 units)
+            const cornerW = 0.9 * SCALE;  // larghezza angolo 3pt
+            const rNear = 2.0 * SCALE;
+
+            // Punti sull'arco 3pt
+            function arcPts(startAng, endAng, n=20) {{
+                const pts = [];
+                for (let i = 0; i <= n; i++) {{
+                    const a = startAng + (endAng - startAng) * i / n;
+                    pts.push([r3 * Math.cos(a), r3 * Math.sin(a)]);
+                }}
+                return pts;
+            }}
+
+            // Helper per path (useM=true per primo punto con M, false per solo L)
+            const toPath = (pts, useM=true) => pts.map((p, i) => `${{(i === 0 && useM) ? 'M' : 'L'}} ${{p[0].toFixed(1)}} ${{p[1].toFixed(1)}}`).join(' ');
+
+            // Semicerchio area vicina
+            const nearPts = [];
+            for (let i = 0; i <= 15; i++) {{
+                const a = Math.PI - Math.PI * i / 15;
+                nearPts.push([rNear * Math.cos(a), rNear * Math.sin(a)]);
+            }}
+
+            // === ALA SINISTRA ===
+            // Confine sinistro: x = paintW (linea verticale dal paint a metà campo)
+            // Confine destro: x = X_BORDER
+            // Confine basso: y = y_corner
+            // Confine alto: y = Y_H_COURT_LINE
+            // Discriminante 2pt/3pt: cerchio r3
+
+            // 2PT ALA SINISTRA: x > paintW, y > y_corner, dentro l'arco (d < r3)
+            // Forma: da (paintW, y_corner) -> su lungo x=paintW fino all'arco -> arco fino a y_corner -> chiude
+            const ang_at_paint = Math.acos(paintW / r3);  // angolo dove arco incontra x=paintW
+            const y_at_arc = r3 * Math.sin(ang_at_paint);  // y a quell'angolo
+            const ang_at_corner = Math.asin(y_corner / r3);  // angolo dove arco incontra y=y_corner
+            const x_arc_at_corner = r3 * Math.cos(ang_at_corner);
+
+            // 3PT ALA SINISTRA: x > paintW, y > y_corner, fuori dall'arco (d >= r3)
+            // Forma: dall'arco fino al bordo campo
+
+            return {{
+                // Solo AREA per ora (angoli OK)
+                'paint_near': {{
+                    path: `M ${{-paintW}} ${{Y_BASELINE}} L ${{-paintW}} 0 ` +
+                          nearPts.map(p => `L ${{p[0].toFixed(1)}} ${{p[1].toFixed(1)}}`).join(' ') +
+                          ` L ${{paintW}} 0 L ${{paintW}} ${{Y_BASELINE}} Z`,
+                    center: [0, Y_BASELINE / 2]
+                }},
+                'paint_far': {{
+                    path: `M ${{-paintW}} 0 ` +
+                          nearPts.map(p => `L ${{p[0].toFixed(1)}} ${{p[1].toFixed(1)}}`).join(' ') +
+                          ` L ${{paintW}} 0 L ${{paintW}} ${{y_ft}} L ${{-paintW}} ${{y_ft}} Z`,
+                    center: [0, (rNear + y_ft) / 2]
+                }},
+
+                // ANGOLI (già OK)
+                '2pt_corner_r': {{
+                    path: `M ${{-X_BORDER + cornerW}} ${{Y_BASELINE}} L ${{-X_BORDER + cornerW}} ${{y_corner}} L ${{-paintW}} ${{y_corner}} L ${{-paintW}} ${{Y_BASELINE}} Z`,
+                    center: [(-X_BORDER + cornerW - paintW) / 2, (Y_BASELINE + y_corner) / 2]
+                }},
+                '2pt_corner_l': {{
+                    path: `M ${{paintW}} ${{Y_BASELINE}} L ${{paintW}} ${{y_corner}} L ${{X_BORDER - cornerW}} ${{y_corner}} L ${{X_BORDER - cornerW}} ${{Y_BASELINE}} Z`,
+                    center: [(paintW + X_BORDER - cornerW) / 2, (Y_BASELINE + y_corner) / 2]
+                }},
+                '3pt_corner_r': {{
+                    path: `M ${{-X_BORDER}} ${{Y_BASELINE}} L ${{-X_BORDER}} ${{y_corner}} L ${{-X_BORDER + cornerW}} ${{y_corner}} L ${{-X_BORDER + cornerW}} ${{Y_BASELINE}} Z`,
+                    center: [-X_BORDER + cornerW / 2, (Y_BASELINE + y_corner) / 2]
+                }},
+                '3pt_corner_l': {{
+                    path: `M ${{X_BORDER - cornerW}} ${{Y_BASELINE}} L ${{X_BORDER - cornerW}} ${{y_corner}} L ${{X_BORDER}} ${{y_corner}} L ${{X_BORDER}} ${{Y_BASELINE}} Z`,
+                    center: [X_BORDER - cornerW / 2, (Y_BASELINE + y_corner) / 2]
+                }},
+
+                // === 2PT ALA SINISTRA ===
+                // Zona dentro l'arco 3pt, tra paint e angolo
+                // Bordi: paint (x=paintW), arco 3pt, y=y_corner, angolo 3pt (x=X_BORDER-cornerW)
+                '2pt_wing_l': {{
+                    path: `M ${{paintW}} ${{y_corner}} ` +  // start: intersezione paint/corner
+                          `L ${{paintW}} ${{y_at_arc}} ` +  // su fino all'arco
+                          toPath(arcPts(ang_at_paint, ang_at_corner, 10).slice(1), false) +  // arco fino a y_corner
+                          ` L ${{X_BORDER - cornerW}} ${{y_corner}} ` +  // linea a bordo angolo
+                          `L ${{paintW}} ${{y_corner}} Z`,  // torna a intersezione paint/corner
+                    center: [(paintW + x_arc_at_corner) / 2, (y_corner + y_at_arc) / 2]
+                }},
+
+                // === 3PT ALA SINISTRA ===
+                // Bordi:
+                // 1. Estensione paint (x=paintW) da metà campo fino all'arco
+                // 2. Arco 3pt da (paintW, y_at_arc) fino a (x_arc_at_corner, y_corner)
+                // 3. Linea orizzontale y=y_corner fino alla linea laterale
+                // 4. Linea laterale (x=X_BORDER) da y_corner a metà campo
+                // 5. Linea metà campo da X_BORDER a paintW
+
+                '3pt_wing_l': {{
+                    path: `M ${{paintW}} ${{Y_H_COURT_LINE}} ` +  // 1. top estensione paint
+                          `L ${{paintW}} ${{y_at_arc}} ` +  // 2. giù fino all'arco
+                          toPath(arcPts(ang_at_paint, ang_at_corner, 15).slice(1), false) +  // 3. arco fino a y_corner
+                          ` L ${{X_BORDER}} ${{y_corner}} ` +  // 4. destra fino a linea laterale
+                          `L ${{X_BORDER}} ${{Y_H_COURT_LINE}} ` +  // 5. su fino a metà campo
+                          `L ${{paintW}} ${{Y_H_COURT_LINE}} Z`,  // 6. chiudi
+                    center: [(paintW + X_BORDER) / 2, (y_corner + Y_H_COURT_LINE) / 2]
+                }},
+
+                // === ALA DESTRA (simmetrica, x negativo) ===
+                '2pt_wing_r': {{
+                    path: `M ${{-paintW}} ${{y_corner}} ` +  // start: intersezione paint/corner
+                          `L ${{-paintW}} ${{y_at_arc}} ` +  // su fino all'arco
+                          toPath(arcPts(Math.PI - ang_at_paint, Math.PI - ang_at_corner, 10).slice(1), false) +  // arco
+                          ` L ${{-X_BORDER + cornerW}} ${{y_corner}} ` +  // linea a bordo angolo
+                          `L ${{-paintW}} ${{y_corner}} Z`,  // torna a intersezione
+                    center: [(-paintW - x_arc_at_corner) / 2, (y_corner + y_at_arc) / 2]
+                }},
+                '3pt_wing_r': {{
+                    path: `M ${{-paintW}} ${{Y_H_COURT_LINE}} ` +  // top estensione paint
+                          `L ${{-paintW}} ${{y_at_arc}} ` +  // giù fino all'arco
+                          toPath(arcPts(Math.PI - ang_at_paint, Math.PI - ang_at_corner, 15).slice(1), false) +  // arco
+                          ` L ${{-X_BORDER}} ${{y_corner}} ` +  // sinistra fino a linea laterale
+                          `L ${{-X_BORDER}} ${{Y_H_COURT_LINE}} ` +  // su fino a metà campo
+                          `L ${{-paintW}} ${{Y_H_COURT_LINE}} Z`,  // chiudi
+                    center: [(-paintW - X_BORDER) / 2, (y_corner + Y_H_COURT_LINE) / 2]
+                }},
+
+                // === CENTRO ===
+                // 2pt centro: tra -paintW e paintW, da y_corner fino all'arco
+                '2pt_center': {{
+                    path: `M ${{-paintW}} ${{y_ft}} ` +  // start: angolo sx area
+                          `L ${{-paintW}} ${{y_at_arc}} ` +  // su fino all'arco
+                          toPath(arcPts(Math.PI - ang_at_paint, ang_at_paint, 20).slice(1), false) +  // arco da sx a dx
+                          ` L ${{paintW}} ${{y_ft}} ` +  // giù a dx area
+                          `L ${{-paintW}} ${{y_ft}} Z`,  // chiudi
+                    center: [0, (y_ft + y_at_arc) / 2]
+                }},
+                // 3pt centro: tra -paintW e paintW, dall'arco fino a metà campo
+                '3pt_center': {{
+                    path: `M ${{-paintW}} ${{Y_H_COURT_LINE}} ` +  // top sinistra
+                          `L ${{-paintW}} ${{y_at_arc}} ` +  // giù fino all'arco
+                          toPath(arcPts(Math.PI - ang_at_paint, ang_at_paint, 20).slice(1), false) +  // arco
+                          ` L ${{paintW}} ${{Y_H_COURT_LINE}} ` +  // su a destra
+                          `L ${{-paintW}} ${{Y_H_COURT_LINE}} Z`,  // chiudi
+                    center: [0, (y_at_arc + Y_H_COURT_LINE) / 2]
+                }}
+            }};
+        }}
+
+        function renderSectorMaps(sectors, totalShots) {{
+            const zones = getZonePolygons();
+            const isDiff = document.querySelector('input[name="sector-view"]:checked').value === 'diff';
+
+            // Calcola max volume per scala
+            let maxVol = 0;
+            Object.entries(zones).forEach(([key, zone]) => {{
+                const s = sectors[key];
+                if (s && s.shots >= 3) {{
+                    const vol = totalShots > 0 ? s.shots / totalShots : 0;
+                    maxVol = Math.max(maxVol, vol);
+                }}
+            }});
+            maxVol = Math.max(maxVol, 0.05);  // minimo 5%
+
+            // Aggiorna titoli
+            document.getElementById('title-pct').textContent = isDiff ? 'Diff. Precisione vs Media' : 'Percentuale Realizzazione';
+            document.getElementById('title-vol').textContent = isDiff ? 'Diff. Volume vs Media' : 'Volume Tiri';
+
+            // Mappa Percentuale
+            const pctShapes = [], pctAnnotations = [];
+            Object.entries(zones).forEach(([key, zone]) => {{
+                const s = sectors[key];
+                if (!s) return;
+                const pct = s.shots > 0 ? s.made / s.shots : 0;
+                const avgPct = leagueAvg[key] ? leagueAvg[key].pct : 0;
+                const diff = pct - avgPct;
+
+                let color, label;
+                if (isDiff) {{
+                    color = s.shots >= 3 ? getDiffColor(diff) : '#e9ecef';
+                    const sign = diff >= 0 ? '+' : '';
+                    label = `<b>${{sign}}${{(diff * 100).toFixed(0)}}%</b>`;
+                }} else {{
+                    color = s.shots >= 3 ? getPctColor(pct) : '#e9ecef';
+                    label = `<b>${{(pct * 100).toFixed(0)}}%</b>`;
+                }}
+
+                pctShapes.push({{
+                    type: 'path', path: zone.path,
+                    fillcolor: color,
+                    line: {{ color: '#333', width: 1.5 }}, opacity: 0.85
+                }});
+                if (s.shots >= 3) {{
+                    pctAnnotations.push({{
+                        x: zone.center[0], y: zone.center[1],
+                        text: label,
+                        showarrow: false, font: {{ size: 11, color: '#000' }},
+                        bgcolor: 'rgba(255,255,255,0.8)', borderpad: 2
+                    }});
+                }}
+            }});
+
+            const pctLayout = getBaseLayout('#333', 450);
+            pctLayout.shapes = [...pctShapes, ...getCourtShapes('#222')];
+            pctLayout.annotations = pctAnnotations;
+            pctLayout.showlegend = false;
+            Plotly.newPlot('chart-sectors-pct', [], pctLayout);
+
+            // Mappa Volume
+            const volShapes = [], volAnnotations = [];
+            Object.entries(zones).forEach(([key, zone]) => {{
+                const s = sectors[key];
+                if (!s) return;
+                const vol = totalShots > 0 ? s.shots / totalShots : 0;
+                const avgVol = leagueAvg[key] ? leagueAvg[key].vol : 0;
+                const diffVol = vol - avgVol;
+
+                let color, label;
+                if (isDiff) {{
+                    color = s.shots >= 3 ? getDiffColor(diffVol * 5) : '#e9ecef';  // scala x5 per visibilità
+                    const sign = diffVol >= 0 ? '+' : '';
+                    label = `<b>${{sign}}${{(diffVol * 100).toFixed(1)}}%</b>`;
+                }} else {{
+                    color = s.shots >= 3 ? getVolColor(vol, maxVol) : '#e9ecef';
+                    label = `<b>${{s.shots}}</b>`;
+                }}
+
+                volShapes.push({{
+                    type: 'path', path: zone.path,
+                    fillcolor: color,
+                    line: {{ color: '#333', width: 1.5 }}, opacity: 0.85
+                }});
+                if (s.shots >= 3) {{
+                    volAnnotations.push({{
+                        x: zone.center[0], y: zone.center[1],
+                        text: label,
+                        showarrow: false, font: {{ size: 11, color: '#000' }},
+                        bgcolor: 'rgba(255,255,255,0.8)', borderpad: 2
+                    }});
+                }}
+            }});
+
+            const volLayout = getBaseLayout('#333', 450);
+            volLayout.shapes = [...volShapes, ...getCourtShapes('#222')];
+            volLayout.annotations = volAnnotations;
+            volLayout.showlegend = false;
+            Plotly.newPlot('chart-sectors-vol', [], volLayout);
+        }}
+
+        function updateAggregateCharts() {{
+            const team = document.getElementById('team-select-2').value;
+            if (!allData[team]) return;
+
+            const data = allData[team];
+            document.getElementById('stats-2').innerHTML = `<strong>${{team}}</strong> (tutte le partite): ${{data.total}} tiri, ${{data.made_count}} realizzati (${{data.pct}}%)`;
+
+            const allCoords = [...data.made.map(c => [...c, 1]), ...data.missed.map(c => [...c, 0])];
+
+            // Sector stats
+            const sectorStats = computeSectorStats(allCoords);
+            renderSectorMaps(sectorStats, allCoords.length);
+
+            // HEXBIN
+            const hexData = computeHexbin(allCoords);
+            if (hexData.x.length > 0) {{
+                const maxFreq = 0.04;
+                const freqsCapped = hexData.freqs.map(f => Math.min(maxFreq, f));
+                const sizeRef = Math.max(...freqsCapped) / (18 * 18);
+                const hexTrace = {{
+                    x: hexData.x, y: hexData.y, mode: 'markers',
+                    marker: {{
+                        size: freqsCapped, sizemode: 'area', sizeref: sizeRef, sizemin: 4,
+                        color: hexData.accs, colorscale: [[0, 'red'], [0.5, 'yellow'], [1, 'green']],
+                        cmin: 0, cmax: 1,
+                        opacity: 0.9, symbol: 'hexagon', line: {{ width: 1, color: '#333' }},
+                        colorbar: {{
+                            title: {{ text: 'Precisione', side: 'right' }},
+                            tickformat: '.0%',
+                            len: 0.6,
+                            thickness: 15,
+                            x: 1.02
+                        }},
+                        showscale: true
+                    }},
+                    text: hexData.accs.map((a, i) => `Precisione: ${{(a * 100).toFixed(1)}}%<br>Volume: ${{(hexData.freqs[i] * 100).toFixed(1)}}%`),
+                    hoverinfo: 'text', showlegend: false
+                }};
+                const hexLayout = getBaseLayout('#333333', 450);
+                hexLayout.showlegend = false;
+                Plotly.newPlot('chart-hexbin', [hexTrace], hexLayout);
+            }}
+
+            // HEATMAP
+            const heatData = computeHeatmap(allCoords.map(c => [c[0], c[1]]));
+            if (heatData) {{
+                const zMax = Math.max(...heatData.z.flat());
+                const heatTrace = {{
+                    type: 'heatmap', x: heatData.x, y: heatData.y, z: heatData.z,
+                    colorscale: 'Hot', zsmooth: 'best', showscale: false, opacity: 0.85,
+                    hoverinfo: 'skip'
+                }};
+                const heatLayout = getBaseLayout('#ffffff', 450);
+                heatLayout.showlegend = false;
+                Plotly.newPlot('chart-heatmap', [heatTrace], heatLayout);
+            }}
+        }}
+
+        // Initialize
+        onTeamChange1();
+        updateAggregateCharts();
+    </script>
+    '''
+
+    return {
+        'content': content,
+        'title': f'Mappe di Tiro - {camp_name}',
+        'page_title': 'Mappe di Tiro',
+        'subtitle': camp_name,
+        'breadcrumb': f'{camp_name} / Squadre / Mappe di Tiro'
     }
 
 
@@ -4496,11 +5376,12 @@ def generate_all_pages():
         print(f"Generando pagine per: {camp_name}")
 
         try:
-            # Squadre (4 pagine)
+            # Squadre (5 pagine)
             pages[f'{path_prefix}/squadre/classifiche.html'] = generate_squadre_classifiche(camp_filter, camp_name)
             pages[f'{path_prefix}/squadre/andamento.html'] = generate_squadre_andamento_combined(camp_filter, camp_name)
             pages[f'{path_prefix}/squadre/profilo.html'] = generate_squadre_profilo_combined(camp_filter, camp_name)
             pages[f'{path_prefix}/squadre/risultati.html'] = generate_squadre_risultati_combined(camp_filter, camp_name)
+            pages[f'{path_prefix}/squadre/mappe-tiro.html'] = generate_squadre_mappe_tiro(camp_filter, camp_name)
 
             # Giocatori (5 pagine)
             pages[f'{path_prefix}/giocatori/statistiche.html'] = generate_giocatori_statistiche_combined(camp_filter, camp_name)

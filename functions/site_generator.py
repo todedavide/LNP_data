@@ -30,6 +30,7 @@ SITE_STRUCTURE = {
                     ('andamento', 'Andamento'),
                     ('profilo', 'Profilo'),
                     ('risultati', 'Risultati'),
+                    ('mappe-tiro', 'Mappe di Tiro'),
                 ]
             },
             'giocatori': {
@@ -62,6 +63,7 @@ SITE_STRUCTURE = {
                     ('andamento', 'Andamento'),
                     ('profilo', 'Profilo'),
                     ('risultati', 'Risultati'),
+                    ('mappe-tiro', 'Mappe di Tiro'),
                 ]
             },
             'giocatori': {
