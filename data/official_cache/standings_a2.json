@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-21T03:48:32.237009",
+  "updated_at": "2026-02-22T03:52:09.728059",
   "standings": [
     {
       "team": "Victoria Libertas Pesaro",
@@ -11,16 +11,16 @@
       "ps": 0
     },
     {
-      "team": "RSR Sebastiani Rieti",
-      "pts": 34,
-      "gp": 25,
-      "wins": 17,
+      "team": "Valtur Brindisi",
+      "pts": 36,
+      "gp": 26,
+      "wins": 18,
       "losses": 8,
       "pf": 0,
       "ps": 0
     },
     {
-      "team": "Valtur Brindisi",
+      "team": "RSR Sebastiani Rieti",
       "pts": 34,
       "gp": 25,
       "wins": 17,
@@ -92,7 +92,7 @@
       "ps": 0
     },
     {
-      "team": "Reale Mutua Torino",
+      "team": "Gemini Mestre",
       "pts": 24,
       "gp": 27,
       "wins": 12,
@@ -110,16 +110,16 @@
       "ps": 0
     },
     {
-      "team": "Wegreenit Urania Milano",
-      "pts": 22,
-      "gp": 26,
-      "wins": 11,
-      "losses": 15,
+      "team": "Reale Mutua Torino",
+      "pts": 24,
+      "gp": 28,
+      "wins": 12,
+      "losses": 16,
       "pf": 0,
       "ps": 0
     },
     {
-      "team": "Gemini Mestre",
+      "team": "Wegreenit Urania Milano",
       "pts": 22,
       "gp": 26,
       "wins": 11,
@@ -157,9 +157,9 @@
     {
       "team": "Estra Pistoia",
       "pts": 12,
-      "gp": 26,
+      "gp": 27,
       "wins": 6,
-      "losses": 20,
+      "losses": 21,
       "pf": 0,
       "ps": 0
     },

@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-02-21T03:48:25.161542",
+  "updated_at": "2026-02-22T03:52:02.946144",
   "standings": [
     {
       "team": "Virtus GVM Roma 1960",
       "pts": 44,
-      "gp": 26,
+      "gp": 27,
       "wins": 22,
-      "losses": 4,
-      "pf": 2031,
-      "ps": 1780
+      "losses": 5,
+      "pf": 2105,
+      "ps": 1861
     },
     {
       "team": "Paperdi Juvecaserta 2021",
@@ -56,6 +56,15 @@
       "ps": 2067
     },
     {
+      "team": "Tema Sinergie Faenza",
+      "pts": 30,
+      "gp": 26,
+      "wins": 15,
+      "losses": 11,
+      "pf": 2044,
+      "ps": 1977
+    },
+    {
       "team": "UP Andrea Costa Imola",
       "pts": 30,
       "gp": 26,
@@ -63,15 +72,6 @@
       "losses": 11,
       "pf": 1845,
       "ps": 1757
-    },
-    {
-      "team": "Tema Sinergie Faenza",
-      "pts": 28,
-      "gp": 25,
-      "wins": 14,
-      "losses": 11,
-      "pf": 1963,
-      "ps": 1903
     },
     {
       "team": "General Contractor Jesi",
@@ -128,24 +128,6 @@
       "ps": 2086
     },
     {
-      "team": "Virtus Imola",
-      "pts": 14,
-      "gp": 25,
-      "wins": 7,
-      "losses": 18,
-      "pf": 1827,
-      "ps": 2078
-    },
-    {
-      "team": "Consorzio Leonardo Dany Quarrata",
-      "pts": 14,
-      "gp": 25,
-      "wins": 7,
-      "losses": 18,
-      "pf": 1819,
-      "ps": 1980
-    },
-    {
       "team": "Power Basket Nocera",
       "pts": 14,
       "gp": 25,
@@ -155,22 +137,40 @@
       "ps": 1923
     },
     {
+      "team": "Consorzio Leonardo Dany Quarrata",
+      "pts": 14,
+      "gp": 26,
+      "wins": 7,
+      "losses": 19,
+      "pf": 1889,
+      "ps": 2064
+    },
+    {
+      "team": "Virtus Imola",
+      "pts": 14,
+      "gp": 26,
+      "wins": 7,
+      "losses": 19,
+      "pf": 1887,
+      "ps": 2140
+    },
+    {
       "team": "Ristopro Fabriano",
+      "pts": 14,
+      "gp": 27,
+      "wins": 7,
+      "losses": 20,
+      "pf": 2027,
+      "ps": 2207
+    },
+    {
+      "team": "Consultinvest Loreto Pesaro",
       "pts": 12,
       "gp": 26,
       "wins": 6,
       "losses": 20,
-      "pf": 1943,
-      "ps": 2137
-    },
-    {
-      "team": "Consultinvest Loreto Pesaro",
-      "pts": 10,
-      "gp": 25,
-      "wins": 5,
-      "losses": 20,
-      "pf": 1773,
-      "ps": 1957
+      "pf": 1835,
+      "ps": 2017
     }
   ]
 }

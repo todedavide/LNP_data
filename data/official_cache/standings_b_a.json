@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-21T03:48:16.883097",
+  "updated_at": "2026-02-22T03:51:55.185906",
   "standings": [
     {
       "team": "Elachem Vigevano 1955",
@@ -74,15 +74,6 @@
       "ps": 2058
     },
     {
-      "team": "Fabo Herons Montecatini",
-      "pts": 28,
-      "gp": 26,
-      "wins": 14,
-      "losses": 12,
-      "pf": 2206,
-      "ps": 2087
-    },
-    {
       "team": "Paffoni Fulgor Basket Omegna",
       "pts": 28,
       "gp": 26,
@@ -92,13 +83,22 @@
       "ps": 2047
     },
     {
-      "team": "Rimadesio Desio",
-      "pts": 26,
-      "gp": 25,
-      "wins": 13,
+      "team": "Fabo Herons Montecatini",
+      "pts": 28,
+      "gp": 26,
+      "wins": 14,
       "losses": 12,
-      "pf": 2168,
-      "ps": 2103
+      "pf": 2206,
+      "ps": 2087
+    },
+    {
+      "team": "Rimadesio Desio",
+      "pts": 28,
+      "gp": 26,
+      "wins": 14,
+      "losses": 12,
+      "pf": 2251,
+      "ps": 2170
     },
     {
       "team": "S4 Energia Vicenza",
@@ -112,11 +112,11 @@
     {
       "team": "LuxArm Lumezzane",
       "pts": 22,
-      "gp": 25,
+      "gp": 26,
       "wins": 11,
-      "losses": 14,
-      "pf": 1924,
-      "ps": 1973
+      "losses": 15,
+      "pf": 1991,
+      "ps": 2056
     },
     {
       "team": "Siaz Basket Piazza Armerina",
