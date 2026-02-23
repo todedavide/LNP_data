@@ -35,14 +35,36 @@ CAMPIONATI = {
 # Mappatura nomi squadre simili (da aggiornare ogni stagione)
 # Formato: (nome_variante, nome_standard) - il secondo nome è quello che verrà usato
 SIMILAR_TEAMS = [
+    # === SERIE A2 ===
     # Livorno
     ('Libertas Livorno 1947', 'Libertas Livorno'),
     ('Bi.Emme Service Libertas Livorno', 'Libertas Livorno'),
-    # Avellino
-    ('Gruppo Lombardi Avellino Basket', 'Avellino Basket'),
-    ('Unicusano Avellino Basket', 'Avellino Basket'),
+    # Avellino (3 nomi diversi!)
+    ('Avellino Basket', 'Avellino'),
+    ('Gruppo Lombardi Avellino Basket', 'Avellino'),
+    ('Unicusano Avellino Basket', 'Avellino'),
     # Fortitudo Bologna
     ('Flats Service Fortitudo Bologna', 'Fortitudo Bologna'),
+
+    # === SERIE B GIRONE A ===
+    # Vicenza
+    ('Pallacanestro Vicenza 2012', 'Vicenza'),
+    ('S4 Energia Vicenza', 'Vicenza'),
+
+    # === SERIE B GIRONE B ===
     # PSA Casoria
-    ('Malvin PSA Basket Casoria', 'PSA Basket Casoria'),
+    ('PSA Basket Casoria', 'PSA Casoria'),
+    ('Malvin PSA Basket Casoria', 'PSA Casoria'),
+    # Loreto Pesaro
+    ('Loreto Basket Pesaro', 'Loreto Pesaro'),
+    ('Consultinvest Loreto Pesaro', 'Loreto Pesaro'),
+    # Juvecaserta
+    ('Juvecaserta 2021', 'Juvecaserta'),
+    ('Paperdi Juvecaserta 2021', 'Juvecaserta'),
+    # Pielle Livorno
+    ('Pielle Livorno', 'Pielle Livorno'),
+    ('Verodol CBD Pielle Livorno', 'Pielle Livorno'),
+    # Faenza
+    ('Raggisolaris Faenza', 'Faenza'),
+    ('Tema Sinergie Faenza', 'Faenza'),
 ]

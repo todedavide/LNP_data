@@ -488,7 +488,7 @@ def generate_squadre_vittorie_sconfitte(campionato_filter, camp_name):
     <div class="content-section">
         <h2 class="section-title">
             Vittorie vs Sconfitte per Squadra
-            <span class="info-tooltip" title="Confronta le statistiche nelle partite vinte vs perse. Ordinate per influenza.">ⓘ</span>
+            <span class="info-tooltip" data-tip="Confronta le statistiche nelle partite vinte vs perse. Ordinate per influenza.">ⓘ</span>
         </h2>
 
         <div style="margin-bottom: 20px;">
@@ -584,11 +584,11 @@ def generate_squadre_vittorie_sconfitte(campionato_filter, camp_name):
             const maxPctAvv = Math.max(...statsAvv.map(r => Math.abs(r['Diff %'])));
 
             // Sezione Statistiche Fatte
-            html += '<h3 style="margin-bottom: 10px;">Statistiche fatte <span class="info-tooltip" title="Come cambiano le nostre statistiche quando la squadra vince vs quando perde.">ⓘ</span></h3>';
+            html += '<h3 style="margin-bottom: 10px;">Statistiche fatte <span class="info-tooltip" data-tip="Come cambiano le nostre statistiche quando la squadra vince vs quando perde.">ⓘ</span></h3>';
             html += renderStats(statsNoi, maxPctNoi);
 
             // Sezione Statistiche Subite
-            html += '<h3 style="margin: 20px 0 10px 0;">Statistiche subite <span class="info-tooltip" title="Come cambiano le statistiche degli avversari quando la squadra vince vs quando perde.">ⓘ</span></h3>';
+            html += '<h3 style="margin: 20px 0 10px 0;">Statistiche subite <span class="info-tooltip" data-tip="Come cambiano le statistiche degli avversari quando la squadra vince vs quando perde.">ⓘ</span></h3>';
             html += renderStats(statsAvv, maxPctAvv);
 
             contentDiv.innerHTML = html;
@@ -697,7 +697,7 @@ def generate_squadre_casa_trasferta(campionato_filter, camp_name):
     <div class="content-section">
         <h2 class="section-title">
             Casa vs Trasferta
-            <span class="info-tooltip" title="Confronta le performance delle squadre in casa vs in trasferta.">ⓘ</span>
+            <span class="info-tooltip" data-tip="Confronta le performance delle squadre in casa vs in trasferta.">ⓘ</span>
         </h2>
 
         <div style="margin-bottom: 20px;">
@@ -778,7 +778,7 @@ def generate_squadre_casa_trasferta(campionato_filter, camp_name):
             `;
 
             // Confronto statistiche - barra divergente basata su differenza %
-            html += '<h3 style="margin-bottom: 15px;">Statistiche per partita <span class="info-tooltip" title="Ordinato per impatto del fattore campo (differenza % maggiore in alto)">ⓘ</span></h3>';
+            html += '<h3 style="margin-bottom: 15px;">Statistiche per partita <span class="info-tooltip" data-tip="Ordinato per impatto del fattore campo (differenza % maggiore in alto)">ⓘ</span></h3>';
 
             // Calcola differenze percentuali e ordina
             const statsWithDiff = Object.keys(statLabels).map(stat => {{
@@ -848,6 +848,500 @@ def generate_squadre_casa_trasferta(campionato_filter, camp_name):
         'page_title': 'Casa vs Trasferta',
         'subtitle': camp_name,
         'breadcrumb': f'{camp_name} / Squadre / Casa vs Trasferta'
+    }
+
+
+def generate_squadre_efficienza(campionato_filter, camp_name):
+    """Genera pagina Efficienza con ORtg/DRtg, Pace e Four Factors."""
+    overall_df, sum_df, median_df = load_and_prepare_data(campionato_filter)
+    if overall_df is None:
+        return {'content': '<p>Dati non disponibili.</p>', 'title': 'Efficienza', 'page_title': 'Efficienza'}
+
+    # Calcola statistiche per squadra
+    team_efficiency = []
+
+    for team in overall_df['Team'].unique():
+        team_df = overall_df[overall_df['Team'] == team]
+
+        # Statistiche aggregate
+        games = team_df.groupby('game_code').agg({
+            'PT': 'sum',           # Punti segnati
+            'Gap': 'first',        # Differenza punti (per calcolare subiti)
+            '2PT': lambda x: x.str.split('/').apply(lambda s: int(s[0]) if '/' in str(s) else 0).sum(),  # 2PT made
+            '3PT': lambda x: x.str.split('/').apply(lambda s: int(s[0]) if '/' in str(s) else 0).sum(),  # 3PT made
+            'TL': lambda x: x.str.split('/').apply(lambda s: int(s[0]) if '/' in str(s) else 0).sum(),   # FT made
+            'RO': 'sum',           # Rimbalzi offensivi
+            'RD': 'sum',           # Rimbalzi difensivi
+            'PR': 'sum',           # Palle perse (TO)
+            'Minutes': 'sum'       # Minuti totali
+        }).reset_index()
+
+        # Estrai tentativi (attempted) da 2PT, 3PT, TL
+        for idx, row in team_df.groupby('game_code').first().iterrows():
+            pass  # placeholder
+
+        # Ricalcola con parsing corretto + stats avversarie
+        games_detailed = []
+        for game_code in team_df['game_code'].unique():
+            game_df = team_df[team_df['game_code'] == game_code]
+            opponent = game_df['Opponent'].iloc[0]
+            opp_df = overall_df[(overall_df['game_code'] == game_code) & (overall_df['Team'] == opponent)]
+
+            # Parse "made/att" format per la nostra squadra
+            fgm_2pt = fga_2pt = fgm_3pt = fga_3pt = ftm = fta = 0
+            for _, row in game_df.iterrows():
+                if pd.notna(row['2PT']) and '/' in str(row['2PT']):
+                    parts = str(row['2PT']).split('/')
+                    fgm_2pt += int(parts[0])
+                    fga_2pt += int(parts[1])
+                if pd.notna(row['3PT']) and '/' in str(row['3PT']):
+                    parts = str(row['3PT']).split('/')
+                    fgm_3pt += int(parts[0])
+                    fga_3pt += int(parts[1])
+                if pd.notna(row['TL']) and '/' in str(row['TL']):
+                    parts = str(row['TL']).split('/')
+                    ftm += int(parts[0])
+                    fta += int(parts[1])
+
+            # Parse stats avversarie
+            opp_fga_2pt = opp_fga_3pt = opp_fta = opp_tov = 0
+            for _, row in opp_df.iterrows():
+                if pd.notna(row['2PT']) and '/' in str(row['2PT']):
+                    opp_fga_2pt += int(str(row['2PT']).split('/')[1])
+                if pd.notna(row['3PT']) and '/' in str(row['3PT']):
+                    opp_fga_3pt += int(str(row['3PT']).split('/')[1])
+                if pd.notna(row['TL']) and '/' in str(row['TL']):
+                    opp_fta += int(str(row['TL']).split('/')[1])
+            opp_tov = opp_df['PP'].sum() if len(opp_df) > 0 else 0
+            opp_oreb = opp_df['RO'].sum() if len(opp_df) > 0 else 0
+
+            pts = game_df['PT'].sum()
+            gap = game_df['Gap'].iloc[0]
+            pts_allowed = pts - gap
+            oreb = game_df['RO'].sum()
+            dreb = game_df['RD'].sum()
+            tov = game_df['PP'].sum()  # PP = Palle Perse (non PR!)
+            minutes = game_df['Minutes'].sum()
+            opp_dreb = opp_df['RD'].sum() if len(opp_df) > 0 else 0
+
+            # Possessi avversari
+            opp_fga = opp_fga_2pt + opp_fga_3pt
+            opp_poss = opp_fga - opp_oreb + opp_tov + 0.44 * opp_fta
+
+            games_detailed.append({
+                'pts': pts, 'pts_allowed': pts_allowed,
+                'fgm_2pt': fgm_2pt, 'fga_2pt': fga_2pt,
+                'fgm_3pt': fgm_3pt, 'fga_3pt': fga_3pt,
+                'ftm': ftm, 'fta': fta,
+                'oreb': oreb, 'dreb': dreb, 'tov': tov,
+                'opp_dreb': opp_dreb, 'opp_poss': opp_poss,
+                'minutes': minutes
+            })
+
+        # Totali stagione
+        tot = {k: sum(g[k] for g in games_detailed) for k in games_detailed[0].keys()}
+        n_games = len(games_detailed)
+
+        # FGA totali e FGM totali
+        fga = tot['fga_2pt'] + tot['fga_3pt']
+        fgm = tot['fgm_2pt'] + tot['fgm_3pt']
+
+        # Possessions estimate: FGA - OREB + TOV + 0.44*FTA
+        poss = fga - tot['oreb'] + tot['tov'] + 0.44 * tot['fta']
+        poss = max(poss, 1)  # evita divisione per zero
+
+        # Possessi avversari (per DRtg corretto)
+        opp_poss = tot['opp_poss']
+        opp_poss = max(opp_poss, 1)
+
+        # ORtg (per 100 possessi nostri) e DRtg (per 100 possessi avversari)
+        ortg = (tot['pts'] / poss) * 100
+        drtg = (tot['pts_allowed'] / opp_poss) * 100  # Ora usa possessi avversari!
+
+        # Pace (possessi per 40 minuti di gioco)
+        total_minutes = tot['minutes'] / 5  # minuti squadra (5 giocatori)
+        pace = (poss / total_minutes) * 40 if total_minutes > 0 else 0
+
+        # Four Factors
+        # 1. eFG% = (FGM + 0.5 * 3PM) / FGA
+        efg_pct = ((fgm + 0.5 * tot['fgm_3pt']) / fga * 100) if fga > 0 else 0
+
+        # 2. TOV% = TOV / (FGA + 0.44*FTA + TOV)
+        tov_pct = (tot['tov'] / (fga + 0.44 * tot['fta'] + tot['tov']) * 100) if (fga + tot['tov']) > 0 else 0
+
+        # 3. OREB% = OREB / (OREB + Opp_DREB) - ora calcolato correttamente!
+        oreb_opportunities = tot['oreb'] + tot['opp_dreb']
+        oreb_pct = (tot['oreb'] / oreb_opportunities * 100) if oreb_opportunities > 0 else 0
+
+        # 4. FT Rate = FTA / FGA
+        ft_rate = (tot['fta'] / fga * 100) if fga > 0 else 0
+
+        team_efficiency.append({
+            'team': team,
+            'games': n_games,
+            'ortg': round(ortg, 1),
+            'drtg': round(drtg, 1),
+            'net_rtg': round(ortg - drtg, 1),
+            'pace': round(pace, 1),
+            'poss_per_game': round(poss / n_games, 1),
+            'efg_pct': round(efg_pct, 1),
+            'tov_pct': round(tov_pct, 1),
+            'oreb_pct': round(oreb_pct, 1),  # Ora è percentuale reale!
+            'ft_rate': round(ft_rate, 1),
+            'pts_per_game': round(tot['pts'] / n_games, 1),
+            'pts_allowed_per_game': round(tot['pts_allowed'] / n_games, 1)
+        })
+
+    eff_df = pd.DataFrame(team_efficiency)
+
+    # Calcola media campionato (ORtg medio = DRtg medio in un campionato chiuso)
+    # Uso la media di entrambi per avere un unico valore
+    avg_rating = (eff_df['ortg'].mean() + eff_df['drtg'].mean()) / 2
+    avg_pace = eff_df['pace'].mean()
+
+    # JSON per JavaScript
+    import json
+    eff_json = json.dumps(team_efficiency)
+
+    content = f'''
+    <div class="chart-container">
+        <h3 style="margin-bottom: 20px;">Offensive vs Defensive Rating
+            <span class="info-tooltip" data-tip="ORtg = punti segnati per 100 possessi. DRtg = punti subiti per 100 possessi. Alto-destra = squadre elite (attacco forte + difesa forte). Net Rating = ORtg - DRtg.">ⓘ</span>
+        </h3>
+        <div id="chart-ratings" style="height: 500px;"></div>
+
+        <h3 style="margin-top: 40px; margin-bottom: 20px;">Pace
+            <span class="info-tooltip" data-tip="Ritmo di gioco: possessi stimati per 40 minuti. Formula: FGA - OREB + TOV + 0.44*FTA. Media campionato: {avg_pace:.1f}">ⓘ</span>
+        </h3>
+        <div id="chart-pace" style="height: 400px;"></div>
+
+        <h3 style="margin-top: 40px; margin-bottom: 20px;">Four Factors
+            <span class="info-tooltip" data-tip="I 4 fattori chiave di Dean Oliver: eFG% (efficienza tiro pesata per 3pt), TOV% (palle perse per possesso), OREB (rimbalzi offensivi), FT Rate (tiri liberi tentati/FGA). Valori mostrati come percentile vs media campionato.">ⓘ</span>
+        </h3>
+        <div style="margin-bottom: 15px;">
+            <label for="team-select-ff" style="margin-right: 10px;">Confronta squadra:</label>
+            <select id="team-select-ff" onchange="updateFourFactors()" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+            </select>
+        </div>
+        <div id="chart-four-factors" style="height: 450px;"></div>
+
+        <h3 style="margin-top: 40px; margin-bottom: 20px;">Riepilogo Efficienza</h3>
+        <div id="table-container"></div>
+    </div>
+
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script>
+        const effData = {eff_json};
+        const avgRating = {avg_rating:.1f};  // Media campionato (uguale per ORtg e DRtg)
+        const avgPace = {avg_pace:.1f};
+
+        // 1. SCATTER PLOT ORtg vs DRtg
+        (function() {{
+            // Net Rating values for colorscale
+            const netRatings = effData.map(d => d.net_rtg);
+            const maxAbsNet = Math.max(...netRatings.map(Math.abs));
+
+            const trace = {{
+                x: effData.map(d => d.drtg),  // DRtg su asse X (invertito: basso = meglio)
+                y: effData.map(d => d.ortg),  // ORtg su asse Y
+                mode: 'markers+text',
+                type: 'scatter',
+                text: effData.map(d => d.team.split(' ').pop()),  // Ultima parola del nome
+                textposition: 'top center',
+                textfont: {{ size: 10 }},
+                marker: {{
+                    size: 15,
+                    color: netRatings,
+                    colorscale: [
+                        [0, '#dc2626'],      // Rosso (net rating negativo)
+                        [0.5, '#fafafa'],    // Bianco (net rating = 0)
+                        [1, '#16a34a']       // Verde (net rating positivo)
+                    ],
+                    cmin: -maxAbsNet,  // Scala simmetrica attorno a 0
+                    cmax: maxAbsNet,
+                    colorbar: {{
+                        title: 'Net Rating',
+                        titleside: 'right',
+                        thickness: 15,
+                        len: 0.6
+                    }},
+                    line: {{ width: 2, color: '#333' }}
+                }},
+                hovertemplate: '<b>%{{customdata[0]}}</b><br>ORtg: %{{y:.1f}}<br>DRtg: %{{x:.1f}}<br>Net: %{{customdata[1]:+.1f}}<extra></extra>',
+                customdata: effData.map(d => [d.team, d.net_rtg])
+            }};
+
+            const layout = {{
+                xaxis: {{
+                    title: 'Defensive Rating (più basso = meglio)',
+                    autorange: 'reversed',  // Inverti asse: sinistra = peggio, destra = meglio
+                    gridcolor: '#e5e5e5'
+                }},
+                yaxis: {{
+                    title: 'Offensive Rating (più alto = meglio)',
+                    gridcolor: '#e5e5e5'
+                }},
+                shapes: [
+                    // Linea verticale e orizzontale alla media campionato (si incrociano sulla diagonale)
+                    {{ type: 'line', x0: avgRating, x1: avgRating, y0: 0, y1: 1, yref: 'paper',
+                       line: {{ color: '#999', width: 1, dash: 'dash' }} }},
+                    {{ type: 'line', x0: 0, x1: 1, xref: 'paper', y0: avgRating, y1: avgRating,
+                       line: {{ color: '#999', width: 1, dash: 'dash' }} }},
+                    // Diagonale Net Rating = 0 (dove ORtg = DRtg)
+                    {{ type: 'line',
+                       x0: Math.min(...effData.map(d => d.drtg)) - 5,
+                       y0: Math.min(...effData.map(d => d.drtg)) - 5,
+                       x1: Math.max(...effData.map(d => d.drtg)) + 5,
+                       y1: Math.max(...effData.map(d => d.drtg)) + 5,
+                       line: {{ color: '#666', width: 1.5, dash: 'dot' }} }}
+                ],
+                annotations: [
+                    {{ x: 0.98, y: 0.98, xref: 'paper', yref: 'paper', text: '<b>ELITE</b>',
+                       showarrow: false, font: {{ size: 11, color: '#666' }}, xanchor: 'right' }},
+                    {{ x: 0.02, y: 0.98, xref: 'paper', yref: 'paper', text: '<b>OFFENSIVO</b>',
+                       showarrow: false, font: {{ size: 11, color: '#666' }}, xanchor: 'left' }},
+                    {{ x: 0.98, y: 0.02, xref: 'paper', yref: 'paper', text: '<b>DIFENSIVO</b>',
+                       showarrow: false, font: {{ size: 11, color: '#666' }}, xanchor: 'right' }},
+                    {{ x: 0.02, y: 0.02, xref: 'paper', yref: 'paper', text: '<b>IN DIFFICOLTA</b>',
+                       showarrow: false, font: {{ size: 11, color: '#666' }}, xanchor: 'left' }}
+                ],
+                margin: {{ t: 30, b: 60, l: 60, r: 30 }},
+                plot_bgcolor: '#fafafa'
+            }};
+
+            Plotly.newPlot('chart-ratings', [trace], layout, {{responsive: true}});
+        }})();
+
+        // 2. BAR CHART PACE
+        (function() {{
+            const sorted = [...effData].sort((a, b) => b.pace - a.pace);
+
+            const trace = {{
+                y: sorted.map(d => d.team),
+                x: sorted.map(d => d.pace),
+                type: 'bar',
+                orientation: 'h',
+                marker: {{
+                    color: sorted.map(d => d.pace >= avgPace ? '#3b82f6' : '#94a3b8')
+                }},
+                text: sorted.map(d => d.pace.toFixed(1)),
+                textposition: 'outside',
+                hovertemplate: '<b>%{{y}}</b><br>Pace: %{{x:.1f}}<br>Poss/gara: %{{customdata:.1f}}<extra></extra>',
+                customdata: sorted.map(d => d.poss_per_game)
+            }};
+
+            const layout = {{
+                xaxis: {{ title: 'Possessi per 40 minuti', gridcolor: '#e5e5e5' }},
+                yaxis: {{ automargin: true }},
+                shapes: [
+                    {{ type: 'line', x0: avgPace, x1: avgPace, y0: -0.5, y1: sorted.length - 0.5,
+                       line: {{ color: '#ef4444', width: 2, dash: 'dash' }} }}
+                ],
+                annotations: [
+                    {{ x: avgPace, y: sorted.length, text: 'Media', showarrow: false,
+                       font: {{ size: 10, color: '#ef4444' }}, yshift: 10 }}
+                ],
+                margin: {{ t: 30, b: 50, l: 150, r: 50 }},
+                plot_bgcolor: '#fafafa'
+            }};
+
+            Plotly.newPlot('chart-pace', [trace], layout, {{responsive: true}});
+        }})();
+
+        // 3. FOUR FACTORS RADAR
+        // Popola select
+        const select = document.getElementById('team-select-ff');
+        effData.sort((a, b) => a.team.localeCompare(b.team)).forEach(d => {{
+            const opt = document.createElement('option');
+            opt.value = d.team;
+            opt.textContent = d.team;
+            select.appendChild(opt);
+        }});
+
+        const N = effData.length;  // Numero squadre
+
+        // Calcola rank (1 = migliore) e scala a 0-100 (1° = 100, ultimo = ~5)
+        // highGood=true: valore alto = rank basso = meglio
+        // highGood=false: valore basso = rank basso = meglio
+        function getRank(arr, val, highGood) {{
+            const sorted = [...arr].sort((a, b) => highGood ? b - a : a - b);
+            const rank = sorted.indexOf(val) + 1;  // 1-based rank
+            // Scala: rank 1 = 100, rank N = 100/N (es. ~5 per 20 squadre)
+            return ((N - rank + 1) / N) * 100;
+        }}
+
+        const efgArr = effData.map(d => d.efg_pct);
+        const tovArr = effData.map(d => d.tov_pct);
+        const orebArr = effData.map(d => d.oreb_pct);
+        const ftArr = effData.map(d => d.ft_rate);
+
+        function updateFourFactors() {{
+            const team = select.value;
+            const d = effData.find(t => t.team === team);
+            if (!d) return;
+
+            const categories = ['eFG%', 'TOV%', 'OREB%', 'FT Rate'];
+
+            // Valori rank-based (1° = bordo esterno, ultimo = centro)
+            const teamValues = [
+                getRank(efgArr, d.efg_pct, true),      // Alto = meglio
+                getRank(tovArr, d.tov_pct, false),     // Basso = meglio
+                getRank(orebArr, d.oreb_pct, true),    // Alto = meglio
+                getRank(ftArr, d.ft_rate, true)        // Alto = meglio
+            ];
+
+            // Valori reali per hover
+            const realValues = [d.efg_pct, d.tov_pct, d.oreb_pct, d.ft_rate];
+
+            // Calcola rank effettivo per ogni stat
+            const ranks = [
+                [...efgArr].sort((a, b) => b - a).indexOf(d.efg_pct) + 1,
+                [...tovArr].sort((a, b) => a - b).indexOf(d.tov_pct) + 1,
+                [...orebArr].sort((a, b) => b - a).indexOf(d.oreb_pct) + 1,
+                [...ftArr].sort((a, b) => b - a).indexOf(d.ft_rate) + 1
+            ];
+
+            // Media al rank medio (N/2)
+            const avgRankValue = 50;
+            const avgValues = [avgRankValue, avgRankValue, avgRankValue, avgRankValue];
+
+            const teamTrace = {{
+                type: 'scatterpolar',
+                r: [...teamValues, teamValues[0]],
+                theta: [...categories, categories[0]],
+                fill: 'toself',
+                fillcolor: 'rgba(59, 130, 246, 0.3)',
+                line: {{ color: '#3b82f6', width: 2 }},
+                name: team,
+                customdata: [...ranks.map((r, i) => ({{ rank: r, val: realValues[i] }})), {{ rank: ranks[0], val: realValues[0] }}],
+                hovertemplate: '%{{theta}}: %{{customdata.val:.1f}}% (%{{customdata.rank}}°)<extra></extra>'
+            }};
+
+            const avgTrace = {{
+                type: 'scatterpolar',
+                r: [...avgValues, avgValues[0]],
+                theta: [...categories, categories[0]],
+                fill: 'toself',
+                fillcolor: 'rgba(156, 163, 175, 0.2)',
+                line: {{ color: '#9ca3af', width: 1, dash: 'dash' }},
+                name: 'Media Campionato',
+                hoverinfo: 'skip'
+            }};
+
+            const layout = {{
+                polar: {{
+                    radialaxis: {{
+                        visible: true,
+                        range: [0, 100],
+                        tickvals: [25, 50, 75, 100],
+                        ticktext: ['', `${{Math.round(N/2)}}°`, '', '1°']
+                    }},
+                    angularaxis: {{
+                        tickfont: {{ size: 12 }}
+                    }}
+                }},
+                showlegend: true,
+                legend: {{ x: 0.5, y: -0.1, xanchor: 'center', orientation: 'h' }},
+                margin: {{ t: 80, b: 80, l: 80, r: 80 }},
+                title: {{
+                    text: `<b>${{team}}</b>`,
+                    font: {{ size: 14 }},
+                    y: 0.95
+                }}
+            }};
+
+            Plotly.newPlot('chart-four-factors', [avgTrace, teamTrace], layout, {{responsive: true}});
+        }}
+
+        // Init
+        updateFourFactors();
+
+        // 4. TABELLA RIEPILOGO ORDINABILE
+        let tableSortKey = 'net_rtg';
+        let tableSortAsc = false;
+
+        // Definizione colonne: key, label, highGood (true=alto meglio, false=basso meglio)
+        const columns = [
+            {{ key: 'team', label: 'Squadra', highGood: null }},
+            {{ key: 'ortg', label: 'ORtg', highGood: true }},
+            {{ key: 'drtg', label: 'DRtg', highGood: false }},
+            {{ key: 'net_rtg', label: 'Net', highGood: true }},
+            {{ key: 'pace', label: 'Pace', highGood: null }},
+            {{ key: 'efg_pct', label: 'eFG%', highGood: true }},
+            {{ key: 'tov_pct', label: 'TOV%', highGood: false }},
+            {{ key: 'oreb_pct', label: 'OREB%', highGood: true }},
+            {{ key: 'ft_rate', label: 'FT Rate', highGood: true }}
+        ];
+
+        function renderTable() {{
+            const sorted = [...effData].sort((a, b) => {{
+                const va = a[tableSortKey], vb = b[tableSortKey];
+                if (typeof va === 'string') return tableSortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+                return tableSortAsc ? va - vb : vb - va;
+            }});
+
+            let html = `<table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                <thead><tr style="background: #f3f4f6; border-bottom: 2px solid #d1d5db;">`;
+
+            columns.forEach(col => {{
+                const arrow = tableSortKey === col.key ? (tableSortAsc ? ' ↑' : ' ↓') : '';
+                const hint = col.highGood === true ? '(↑)' : col.highGood === false ? '(↓)' : '';
+                html += `<th style="padding: 8px; text-align: ${{col.key === 'team' ? 'left' : 'center'}}; cursor: pointer; white-space: nowrap;" onclick="sortTable('${{col.key}}')">${{col.label}} <span style="color:#999;font-size:0.75rem;">${{hint}}</span>${{arrow}}</th>`;
+            }});
+            html += `</tr></thead><tbody>`;
+
+            sorted.forEach((d, i) => {{
+                const netColor = d.net_rtg > 0 ? '#22c55e' : d.net_rtg < 0 ? '#ef4444' : '#666';
+                const rowBg = i % 2 === 0 ? '#fff' : '#f9fafb';
+                html += `<tr style="background: ${{rowBg}}; border-bottom: 1px solid #e5e7eb;">
+                    <td style="padding: 6px 8px; font-weight: 500;">${{d.team}}</td>
+                    <td style="padding: 6px 8px; text-align: center;">${{d.ortg}}</td>
+                    <td style="padding: 6px 8px; text-align: center;">${{d.drtg}}</td>
+                    <td style="padding: 6px 8px; text-align: center; color: ${{netColor}}; font-weight: 600;">${{d.net_rtg > 0 ? '+' : ''}}${{d.net_rtg}}</td>
+                    <td style="padding: 6px 8px; text-align: center;">${{d.pace}}</td>
+                    <td style="padding: 6px 8px; text-align: center;">${{d.efg_pct}}%</td>
+                    <td style="padding: 6px 8px; text-align: center;">${{d.tov_pct}}%</td>
+                    <td style="padding: 6px 8px; text-align: center;">${{d.oreb_pct}}%</td>
+                    <td style="padding: 6px 8px; text-align: center;">${{d.ft_rate}}%</td>
+                </tr>`;
+            }});
+
+            html += `</tbody></table>
+            <div style="margin-top: 15px; padding: 12px; background: #f8fafc; border-radius: 8px; font-size: 0.8rem; color: #555;">
+                <strong>Legenda:</strong> (↑) = alto è meglio, (↓) = basso è meglio. Clicca sulle intestazioni per ordinare.<br>
+                <strong>ORtg</strong> = Punti segnati per 100 possessi |
+                <strong>DRtg</strong> = Punti subiti per 100 possessi avversari |
+                <strong>Net</strong> = ORtg - DRtg<br>
+                <strong>Pace</strong> = Possessi per 40 min |
+                <strong>eFG%</strong> = (FGM + 0.5×3PM) / FGA |
+                <strong>TOV%</strong> = Palle perse / possessi<br>
+                <strong>OREB%</strong> = Rimb.off. / (Rimb.off. + Rimb.dif. avversari) |
+                <strong>FT Rate</strong> = TL tentati / FGA
+            </div>`;
+
+            document.getElementById('table-container').innerHTML = html;
+        }}
+
+        function sortTable(key) {{
+            if (tableSortKey === key) {{
+                tableSortAsc = !tableSortAsc;
+            }} else {{
+                tableSortKey = key;
+                tableSortAsc = false;
+            }}
+            renderTable();
+        }}
+
+        renderTable();
+    </script>
+    '''
+
+    return {
+        'content': content,
+        'title': f'Efficienza - {camp_name}',
+        'page_title': 'Efficienza',
+        'subtitle': camp_name,
+        'breadcrumb': f'{camp_name} / Squadre / Efficienza'
     }
 
 
@@ -2346,7 +2840,7 @@ def generate_giocatori_radar(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Confronto Radar Giocatori <span class="info-tooltip" title="Confronta il profilo statistico di due giocatori. Valori normalizzati (0-100) dove 100 = miglior giocatore del campionato.">ⓘ</span></h2>
+        <h2 class="section-title">Confronto Radar Giocatori <span class="info-tooltip" data-tip="Confronta il profilo statistico di due giocatori. Valori normalizzati (0-100) dove 100 = miglior giocatore del campionato.">ⓘ</span></h2>
         <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
             <div>
                 <label style="font-weight: 600;">Giocatore 1:</label>
@@ -2518,7 +3012,7 @@ def generate_giocatori_consistenza(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Affidabilità Giocatori <span class="info-tooltip" title="Affidabilità (0-100) indica quanto un giocatore è costante. Alto = sai cosa aspettarti. Basso = imprevedibile. Aggiustato per numero partite.">ⓘ</span></h2>
+        <h2 class="section-title">Affidabilità Giocatori <span class="info-tooltip" data-tip="Affidabilità (0-100) indica quanto un giocatore è costante. Alto = sai cosa aspettarti. Basso = imprevedibile. Aggiustato per numero partite.">ⓘ</span></h2>
 
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
             <button id="btn-top" onclick="showView('top')" style="padding: 8px 16px; border: 2px solid #302B8F; border-radius: 6px; cursor: pointer; font-weight: 600; background: #302B8F; color: white;">
@@ -2629,7 +3123,7 @@ def generate_giocatori_simili(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Trova Giocatori Simili <span class="info-tooltip" title="Seleziona un giocatore per vedere chi ha un profilo statistico simile.">ⓘ</span></h2>
+        <h2 class="section-title">Trova Giocatori Simili <span class="info-tooltip" data-tip="Seleziona un giocatore per vedere chi ha un profilo statistico simile.">ⓘ</span></h2>
 
         <div style="margin-bottom: 20px;">
             <label style="font-weight: 600;">Giocatore:</label>
@@ -2772,7 +3266,7 @@ def generate_giocatori_forma(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Forma Recente - Chi è Hot/Cold <span class="info-tooltip" title="Confronto ultime 5 partite vs media stagionale. Positivi = in crescita. Negativi = in calo.">ⓘ</span></h2>
+        <h2 class="section-title">Forma Recente - Chi è Hot/Cold <span class="info-tooltip" data-tip="Confronto ultime 5 partite vs media stagionale. Positivi = in crescita. Negativi = in calo.">ⓘ</span></h2>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
             <!-- HOT Players -->
@@ -2939,7 +3433,7 @@ def generate_giocatori_casa_trasferta(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Casa vs Trasferta <span class="info-tooltip" title="Differenza di rendimento tra casa e trasferta. Blu = meglio in casa, Arancione = meglio in trasferta.">ⓘ</span></h2>
+        <h2 class="section-title">Casa vs Trasferta <span class="info-tooltip" data-tip="Differenza di rendimento tra casa e trasferta. Blu = meglio in casa, Arancione = meglio in trasferta.">ⓘ</span></h2>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
             <!-- Home Warriors -->
@@ -3123,7 +3617,7 @@ def generate_giocatori_distribuzione_tiri(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Distribuzione Tiri <span class="info-tooltip" title="Frequenza tiri/min (asse X) vs Efficienza % (asse Y). Dimensione = volume tiri. In alto a destra = ideale.">ⓘ</span></h2>
+        <h2 class="section-title">Distribuzione Tiri <span class="info-tooltip" data-tip="Frequenza tiri/min (asse X) vs Efficienza % (asse Y). Dimensione = volume tiri. In alto a destra = ideale.">ⓘ</span></h2>
 
         <div style="display: flex; gap: 8px; margin-bottom: 20px;">
             <button id="btn-3PT" onclick="showChart('3PT')" style="padding: 10px 20px; border: 2px solid #302B8F; border-radius: 8px; cursor: pointer; font-weight: 600; background: #302B8F; color: white;">Tiri da 3</button>
@@ -3337,7 +3831,7 @@ def generate_giocatori_impatto(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Impatto Giocatori <span class="info-tooltip" title="Metriche avanzate per valutare l'impatto dei giocatori sulla squadra.">ⓘ</span></h2>
+        <h2 class="section-title">Impatto Giocatori <span class="info-tooltip" data-tip="Metriche avanzate per valutare l'impatto dei giocatori sulla squadra.">ⓘ</span></h2>
 
         <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
             <button id="btn-pmraw" onclick="showSection('pmraw')" class="tab-active" style="padding: 10px 20px; border: 2px solid #302B8F; border-radius: 8px; cursor: pointer; font-weight: 600; background: #302B8F; color: white;">+/- per Minuto</button>
@@ -3905,7 +4399,7 @@ def generate_analisi_clustering(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Tipologie di Giocatori <span class="info-tooltip" title="Ogni giocatore viene assegnato all'archetipo più simile al suo profilo statistico, confrontando i percentili con il profilo ideale.">ⓘ</span></h2>
+        <h2 class="section-title">Tipologie di Giocatori <span class="info-tooltip" data-tip="Ogni giocatore viene assegnato all'archetipo più simile al suo profilo statistico, confrontando i percentili con il profilo ideale.">ⓘ</span></h2>
 
         <div id="archetype-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px;"></div>
 
@@ -4073,7 +4567,7 @@ def generate_analisi_dipendenza(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Dipendenza dai Top Scorer <span class="info-tooltip" title="Quanto ogni squadra dipende dai propri top 3 giocatori. Alta concentrazione = rischio in caso di infortunio.">ⓘ</span></h2>
+        <h2 class="section-title">Dipendenza dai Top Scorer <span class="info-tooltip" data-tip="Quanto ogni squadra dipende dai propri top 3 giocatori. Alta concentrazione = rischio in caso di infortunio.">ⓘ</span></h2>
 
         <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap; align-items: center;">
             <div>
@@ -4242,7 +4736,7 @@ def generate_analisi_quando_vince(campionato_filter, camp_name):
 
     content = f'''
     <div class="content-section">
-        <h2 class="section-title">Quando Vince Ogni Squadra <span class="info-tooltip" title="Quali condizioni statistiche caratterizzano le vittorie? Confronto tra situazioni sopra/sotto soglia.">ⓘ</span></h2>
+        <h2 class="section-title">Quando Vince Ogni Squadra <span class="info-tooltip" data-tip="Quali condizioni statistiche caratterizzano le vittorie? Confronto tra situazioni sopra/sotto soglia.">ⓘ</span></h2>
 
         <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
             <div>
@@ -4403,7 +4897,7 @@ def generate_partite_momenti_decisivi(campionato_filter, camp_name):
 
         content += f'''
         <div class="content-section">
-            <h2 class="section-title">🎯 Top Closer <span class="info-tooltip" title="Giocatori che segnano di più nei momenti clutch (ultimi 2 min, gap ≤5).">ⓘ</span></h2>
+            <h2 class="section-title">🎯 Top Closer <span class="info-tooltip" data-tip="Giocatori che segnano di più nei momenti clutch (ultimi 2 min, gap ≤5).">ⓘ</span></h2>
             {plotly_to_html(fig)}
         </div>
         '''
@@ -4518,7 +5012,7 @@ def generate_partite_momenti_decisivi(campionato_filter, camp_name):
 
         content += f'''
         <div class="content-section">
-            <h2 class="section-title">💪 Responsabilità nei Momenti Chiave <span class="info-tooltip" title="Chi si prende più tiri nei momenti clutch? TS% (True Shooting) misura l'efficienza complessiva.">ⓘ</span></h2>
+            <h2 class="section-title">💪 Responsabilità nei Momenti Chiave <span class="info-tooltip" data-tip="Chi si prende più tiri nei momenti clutch? TS% (True Shooting) misura l'efficienza complessiva.">ⓘ</span></h2>
             {plotly_to_html(fig_resp)}
             {resp_table}
         </div>
@@ -4555,7 +5049,7 @@ def generate_partite_momenti_decisivi(campionato_filter, camp_name):
 
             content += f'''
             <div class="content-section">
-                <h2 class="section-title">🦸 4° Quarto Heroes <span class="info-tooltip" title="Giocatori che aumentano la loro produzione nel 4° quarto rispetto ai primi tre. Il boost indica la % di miglioramento dei punti per partita.">ⓘ</span></h2>
+                <h2 class="section-title">🦸 4° Quarto Heroes <span class="info-tooltip" data-tip="Giocatori che aumentano la loro produzione nel 4° quarto rispetto ai primi tre. Il boost indica la % di miglioramento dei punti per partita.">ⓘ</span></h2>
                 {plotly_to_html(fig)}
             </div>
             '''
@@ -4631,7 +5125,7 @@ def generate_partite_momenti_decisivi(campionato_filter, camp_name):
 
             content += f'''
             <div class="content-section">
-                <h2 class="section-title">⏱️ Distribuzione Attività per Quarto (%) <span class="info-tooltip" title="Analisi dell'attività dei giocatori nei vari quarti (punti, rimbalzi, assist, falli, etc.). La % indica quanta parte della loro attività totale avviene nel 4° quarto.">ⓘ</span></h2>
+                <h2 class="section-title">⏱️ Distribuzione Attività per Quarto (%) <span class="info-tooltip" data-tip="Analisi dell'attività dei giocatori nei vari quarti (punti, rimbalzi, assist, falli, etc.). La % indica quanta parte della loro attività totale avviene nel 4° quarto.">ⓘ</span></h2>
                 {plotly_to_html(fig_q4)}
             </div>
             '''
@@ -4670,7 +5164,7 @@ def generate_partite_momenti_decisivi(campionato_filter, camp_name):
 
             content += f'''
             <div class="content-section">
-                <h2 class="section-title">📊 Attività Assoluta nel Q4 <span class="info-tooltip" title="Numero stimato di eventi (punti, rimbalzi, assist, etc.) nel 4° quarto per partita.">ⓘ</span></h2>
+                <h2 class="section-title">📊 Attività Assoluta nel Q4 <span class="info-tooltip" data-tip="Numero stimato di eventi (punti, rimbalzi, assist, etc.) nel 4° quarto per partita.">ⓘ</span></h2>
                 {plotly_to_html(fig_q4_abs)}
             </div>
             '''
@@ -4805,7 +5299,7 @@ def generate_partite_andamento(campionato_filter, camp_name):
 
             content += f'''
             <div class="content-section">
-                <h2 class="section-title">🏁 Partenze vs Chiusure <span class="info-tooltip" title="Valori positivi = squadre che migliorano nel finale. Valori negativi = squadre che partono forte.">ⓘ</span></h2>
+                <h2 class="section-title">🏁 Partenze vs Chiusure <span class="info-tooltip" data-tip="Valori positivi = squadre che migliorano nel finale. Valori negativi = squadre che partono forte.">ⓘ</span></h2>
                 {plotly_to_html(fig2)}
             </div>
             '''
@@ -4846,7 +5340,7 @@ def generate_partite_andamento(campionato_filter, camp_name):
 
             content += f'''
             <div class="content-section">
-                <h2 class="section-title">🔥 Parziali & Run <span class="info-tooltip" title="Un 'run' è una sequenza di 8+ punti consecutivi senza che l'avversario segni. Verde = run fatti, Rosso = run subiti.">ⓘ</span></h2>
+                <h2 class="section-title">🔥 Parziali & Run <span class="info-tooltip" data-tip="Un 'run' è una sequenza di 8+ punti consecutivi senza che l'avversario segni. Verde = run fatti, Rosso = run subiti.">ⓘ</span></h2>
                 {plotly_to_html(fig)}
             </div>
             '''
@@ -4947,7 +5441,7 @@ def generate_partite_andamento(campionato_filter, camp_name):
 
             content += f'''
             <div class="content-section">
-                <h2 class="section-title">👑 Comeback Kings <span class="info-tooltip" title="Rimonta = da -10 o peggio, tornare almeno a -2. Rimonta Vinta = finisce con vittoria. Rimonta Subita = avevi +10, avversario torna a -2.">ⓘ</span></h2>
+                <h2 class="section-title">👑 Comeback Kings <span class="info-tooltip" data-tip="Rimonta = da -10 o peggio, tornare almeno a -2. Rimonta Vinta = finisce con vittoria. Rimonta Subita = avevi +10, avversario torna a -2.">ⓘ</span></h2>
                 {plotly_to_html(fig)}
             </div>
             '''
@@ -5022,7 +5516,7 @@ def generate_partite_andamento(campionato_filter, camp_name):
 
                 content += f'''
                 <div class="content-section">
-                    <h2 class="section-title">🔍 Dettaglio Rimonte <span class="info-tooltip" title="Seleziona una squadra per vedere i dettagli di ogni rimonta.">ⓘ</span></h2>
+                    <h2 class="section-title">🔍 Dettaglio Rimonte <span class="info-tooltip" data-tip="Seleziona una squadra per vedere i dettagli di ogni rimonta.">ⓘ</span></h2>
 
                     <div style="margin-bottom: 20px;">
                         <label style="font-weight: 600;">Squadra:</label>
@@ -5128,7 +5622,7 @@ def generate_partite_andamento(campionato_filter, camp_name):
 
                 content += f'''
                 <div class="content-section">
-                    <h2 class="section-title">Dettaglio Rimonte Subite <span class="info-tooltip" title="Seleziona una squadra per vedere le partite in cui ha subito una rimonta.">ⓘ</span></h2>
+                    <h2 class="section-title">Dettaglio Rimonte Subite <span class="info-tooltip" data-tip="Seleziona una squadra per vedere le partite in cui ha subito una rimonta.">ⓘ</span></h2>
 
                     <div style="margin-bottom: 20px;">
                         <label style="font-weight: 600;">Squadra:</label>
@@ -5376,12 +5870,13 @@ def generate_all_pages():
         print(f"Generando pagine per: {camp_name}")
 
         try:
-            # Squadre (5 pagine)
+            # Squadre (6 pagine)
             pages[f'{path_prefix}/squadre/classifiche.html'] = generate_squadre_classifiche(camp_filter, camp_name)
             pages[f'{path_prefix}/squadre/andamento.html'] = generate_squadre_andamento_combined(camp_filter, camp_name)
             pages[f'{path_prefix}/squadre/profilo.html'] = generate_squadre_profilo_combined(camp_filter, camp_name)
             pages[f'{path_prefix}/squadre/risultati.html'] = generate_squadre_risultati_combined(camp_filter, camp_name)
             pages[f'{path_prefix}/squadre/mappe-tiro.html'] = generate_squadre_mappe_tiro(camp_filter, camp_name)
+            pages[f'{path_prefix}/squadre/efficienza.html'] = generate_squadre_efficienza(camp_filter, camp_name)
 
             # Giocatori (5 pagine)
             pages[f'{path_prefix}/giocatori/statistiche.html'] = generate_giocatori_statistiche_combined(camp_filter, camp_name)

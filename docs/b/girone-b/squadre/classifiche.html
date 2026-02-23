@@ -30,7 +30,7 @@
             display: flex;
             align-items: center;
             padding: 0 var(--tp-spacing-lg);
-            z-index: 1000;
+            z-index: 200000;
             box-shadow: var(--tp-shadow-md);
         }
 
@@ -247,17 +247,19 @@
             margin-left: 8px;
             vertical-align: middle;
             position: relative;
+            z-index: 1000;
             font-weight: 600;
             box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-            transition: transform 0.15s ease;
+            transition: transform 0.15s ease, z-index 0s;
         }
 
         .info-tooltip:hover {
             transform: scale(1.1);
+            z-index: 100000;
         }
 
         .info-tooltip:hover::after {
-            content: attr(title);
+            content: attr(data-tip);
             position: absolute;
             top: 100%;
             left: 50%;
@@ -371,7 +373,7 @@
     <div class="sidebar-competition">
         Serie B - Girone B
     </div>
-    <div class="sidebar-category">Squadre</div><a href="../../../b/girone-b/squadre/classifiche.html" class="sidebar-link active">Classifiche</a><a href="../../../b/girone-b/squadre/andamento.html" class="sidebar-link ">Andamento</a><a href="../../../b/girone-b/squadre/profilo.html" class="sidebar-link ">Profilo</a><a href="../../../b/girone-b/squadre/risultati.html" class="sidebar-link ">Risultati</a><a href="../../../b/girone-b/squadre/mappe-tiro.html" class="sidebar-link ">Mappe di Tiro</a><div class="sidebar-category">Giocatori</div><a href="../../../b/girone-b/giocatori/statistiche.html" class="sidebar-link ">Statistiche</a><a href="../../../b/girone-b/giocatori/profilo.html" class="sidebar-link ">Profilo</a><a href="../../../b/girone-b/giocatori/performance.html" class="sidebar-link ">Performance</a><a href="../../../b/girone-b/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../../b/girone-b/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
+    <div class="sidebar-category">Squadre</div><a href="../../../b/girone-b/squadre/classifiche.html" class="sidebar-link active">Classifiche</a><a href="../../../b/girone-b/squadre/andamento.html" class="sidebar-link ">Andamento</a><a href="../../../b/girone-b/squadre/profilo.html" class="sidebar-link ">Profilo</a><a href="../../../b/girone-b/squadre/risultati.html" class="sidebar-link ">Risultati</a><a href="../../../b/girone-b/squadre/mappe-tiro.html" class="sidebar-link ">Mappe di Tiro</a><a href="../../../b/girone-b/squadre/efficienza.html" class="sidebar-link ">Efficienza</a><div class="sidebar-category">Giocatori</div><a href="../../../b/girone-b/giocatori/statistiche.html" class="sidebar-link ">Statistiche</a><a href="../../../b/girone-b/giocatori/profilo.html" class="sidebar-link ">Profilo</a><a href="../../../b/girone-b/giocatori/performance.html" class="sidebar-link ">Performance</a><a href="../../../b/girone-b/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../../b/girone-b/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
     </nav>
 
     <main class="main">
@@ -424,30 +426,30 @@
     
             <tr style="background: white;">
                 <td style="padding: 10px 8px; font-weight: bold; text-align: center;">1</td>
-                <td style="padding: 10px 8px; font-weight: 600;">Verodol CBD Pielle Livorno</td>
+                <td style="padding: 10px 8px; font-weight: 600;">Pielle Livorno</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">44</td>
                 <td style="padding: 10px 8px; text-align: center;">27</td>
                 <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">22</td>
                 <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-weight: bold;">5</td>
-                <td style="padding: 10px 8px; text-align: center;">77.4</td>
-                <td style="padding: 10px 8px; text-align: center;">69.3</td>
-                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">+8.0</td>
-                <td style="padding: 10px 8px; text-align: center; font-family: monospace;"><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #22c55e; font-weight: bold;">V</span></td>
-                <td style="padding: 10px 8px; text-align: center; color: #666; font-size: 1.2em;">→</td>
+                <td style="padding: 10px 8px; text-align: center;">78.2</td>
+                <td style="padding: 10px 8px; text-align: center;">71.3</td>
+                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">+6.9</td>
+                <td style="padding: 10px 8px; text-align: center; font-family: monospace;"><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #22c55e; font-weight: bold;">V</span></td>
+                <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-size: 1.2em;">↓</td>
             </tr>
         
             <tr style="background: #f9f9f9;">
                 <td style="padding: 10px 8px; font-weight: bold; text-align: center;">2</td>
-                <td style="padding: 10px 8px; font-weight: 600;">Paperdi Juvecaserta 2021</td>
+                <td style="padding: 10px 8px; font-weight: 600;">Juvecaserta</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">44</td>
                 <td style="padding: 10px 8px; text-align: center;">27</td>
                 <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">22</td>
                 <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-weight: bold;">5</td>
-                <td style="padding: 10px 8px; text-align: center;">81.2</td>
-                <td style="padding: 10px 8px; text-align: center;">74.3</td>
-                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">+6.9</td>
-                <td style="padding: 10px 8px; text-align: center; font-family: monospace;"><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #22c55e; font-weight: bold;">V</span></td>
-                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-size: 1.2em;">↑</td>
+                <td style="padding: 10px 8px; text-align: center;">80.8</td>
+                <td style="padding: 10px 8px; text-align: center;">74.1</td>
+                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">+6.6</td>
+                <td style="padding: 10px 8px; text-align: center; font-family: monospace;"><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #22c55e; font-weight: bold;">V</span></td>
+                <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-size: 1.2em;">↓</td>
             </tr>
         
             <tr style="background: white;">
@@ -466,20 +468,6 @@
         
             <tr style="background: #f9f9f9;">
                 <td style="padding: 10px 8px; font-weight: bold; text-align: center;">4</td>
-                <td style="padding: 10px 8px; font-weight: 600;">Pielle Livorno</td>
-                <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">44</td>
-                <td style="padding: 10px 8px; text-align: center;">27</td>
-                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">22</td>
-                <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-weight: bold;">5</td>
-                <td style="padding: 10px 8px; text-align: center;">51.6</td>
-                <td style="padding: 10px 8px; text-align: center;">50.0</td>
-                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">+1.6</td>
-                <td style="padding: 10px 8px; text-align: center; font-family: monospace;"><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #22c55e; font-weight: bold;">V</span></td>
-                <td style="padding: 10px 8px; text-align: center; color: #666; font-size: 1.2em;">–</td>
-            </tr>
-        
-            <tr style="background: white;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">5</td>
                 <td style="padding: 10px 8px; font-weight: 600;">Benacquista Assicurazioni Latina</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">40</td>
                 <td style="padding: 10px 8px; text-align: center;">25</td>
@@ -492,8 +480,8 @@
                 <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-size: 1.2em;">↑</td>
             </tr>
         
-            <tr style="background: #f9f9f9;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">6</td>
+            <tr style="background: white;">
+                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">5</td>
                 <td style="padding: 10px 8px; font-weight: 600;">Luiss Roma</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">36</td>
                 <td style="padding: 10px 8px; text-align: center;">26</td>
@@ -506,8 +494,8 @@
                 <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-size: 1.2em;">↓</td>
             </tr>
         
-            <tr style="background: white;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">7</td>
+            <tr style="background: #f9f9f9;">
+                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">6</td>
                 <td style="padding: 10px 8px; font-weight: 600;">Allianz Pazienza San Severo</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">32</td>
                 <td style="padding: 10px 8px; text-align: center;">27</td>
@@ -520,8 +508,8 @@
                 <td style="padding: 10px 8px; text-align: center; color: #666; font-size: 1.2em;">→</td>
             </tr>
         
-            <tr style="background: #f9f9f9;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">8</td>
+            <tr style="background: white;">
+                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">7</td>
                 <td style="padding: 10px 8px; font-weight: 600;">UP Andrea Costa Imola</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">32</td>
                 <td style="padding: 10px 8px; text-align: center;">27</td>
@@ -534,36 +522,22 @@
                 <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-size: 1.2em;">↑</td>
             </tr>
         
+            <tr style="background: #f9f9f9;">
+                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">8</td>
+                <td style="padding: 10px 8px; font-weight: 600;">Faenza</td>
+                <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">30</td>
+                <td style="padding: 10px 8px; text-align: center;">26</td>
+                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">15</td>
+                <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-weight: bold;">11</td>
+                <td style="padding: 10px 8px; text-align: center;">77.5</td>
+                <td style="padding: 10px 8px; text-align: center;">74.9</td>
+                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">+2.6</td>
+                <td style="padding: 10px 8px; text-align: center; font-family: monospace;"><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #22c55e; font-weight: bold;">V</span></td>
+                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-size: 1.2em;">↑</td>
+            </tr>
+        
             <tr style="background: white;">
                 <td style="padding: 10px 8px; font-weight: bold; text-align: center;">9</td>
-                <td style="padding: 10px 8px; font-weight: 600;">Tema Sinergie Faenza</td>
-                <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">30</td>
-                <td style="padding: 10px 8px; text-align: center;">26</td>
-                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">15</td>
-                <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-weight: bold;">11</td>
-                <td style="padding: 10px 8px; text-align: center;">78.4</td>
-                <td style="padding: 10px 8px; text-align: center;">76.1</td>
-                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">+2.3</td>
-                <td style="padding: 10px 8px; text-align: center; font-family: monospace;"><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #22c55e; font-weight: bold;">V</span></td>
-                <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-size: 1.2em;">↓</td>
-            </tr>
-        
-            <tr style="background: #f9f9f9;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">10</td>
-                <td style="padding: 10px 8px; font-weight: 600;">Raggisolaris Faenza</td>
-                <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">30</td>
-                <td style="padding: 10px 8px; text-align: center;">26</td>
-                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">15</td>
-                <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-weight: bold;">11</td>
-                <td style="padding: 10px 8px; text-align: center;">66.4</td>
-                <td style="padding: 10px 8px; text-align: center;">62.8</td>
-                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">+3.6</td>
-                <td style="padding: 10px 8px; text-align: center; font-family: monospace;"><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #22c55e; font-weight: bold;">V</span></td>
-                <td style="padding: 10px 8px; text-align: center; color: #666; font-size: 1.2em;">–</td>
-            </tr>
-        
-            <tr style="background: white;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">11</td>
                 <td style="padding: 10px 8px; font-weight: 600;">General Contractor Jesi</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">24</td>
                 <td style="padding: 10px 8px; text-align: center;">26</td>
@@ -577,8 +551,8 @@
             </tr>
         
             <tr style="background: #f9f9f9;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">12</td>
-                <td style="padding: 10px 8px; font-weight: 600;">PSA Basket Casoria</td>
+                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">10</td>
+                <td style="padding: 10px 8px; font-weight: 600;">PSA Casoria</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">24</td>
                 <td style="padding: 10px 8px; text-align: center;">27</td>
                 <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">12</td>
@@ -591,7 +565,7 @@
             </tr>
         
             <tr style="background: white;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">13</td>
+                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">11</td>
                 <td style="padding: 10px 8px; font-weight: 600;">Umana San Giobbe Chiusi</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">22</td>
                 <td style="padding: 10px 8px; text-align: center;">25</td>
@@ -605,7 +579,7 @@
             </tr>
         
             <tr style="background: #f9f9f9;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">14</td>
+                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">12</td>
                 <td style="padding: 10px 8px; font-weight: 600;">OraSì Ravenna</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">22</td>
                 <td style="padding: 10px 8px; text-align: center;">27</td>
@@ -619,7 +593,7 @@
             </tr>
         
             <tr style="background: white;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">15</td>
+                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">13</td>
                 <td style="padding: 10px 8px; font-weight: 600;">Solbat Golfo Piombino</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">22</td>
                 <td style="padding: 10px 8px; text-align: center;">27</td>
@@ -633,7 +607,7 @@
             </tr>
         
             <tr style="background: #f9f9f9;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">16</td>
+                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">14</td>
                 <td style="padding: 10px 8px; font-weight: 600;">Adamant Ferrara</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">18</td>
                 <td style="padding: 10px 8px; text-align: center;">27</td>
@@ -647,7 +621,7 @@
             </tr>
         
             <tr style="background: white;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">17</td>
+                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">15</td>
                 <td style="padding: 10px 8px; font-weight: 600;">Power Basket Nocera</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">14</td>
                 <td style="padding: 10px 8px; text-align: center;">26</td>
@@ -661,7 +635,7 @@
             </tr>
         
             <tr style="background: #f9f9f9;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">18</td>
+                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">16</td>
                 <td style="padding: 10px 8px; font-weight: 600;">Consorzio Leonardo Dany Quarrata</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">14</td>
                 <td style="padding: 10px 8px; text-align: center;">26</td>
@@ -675,7 +649,7 @@
             </tr>
         
             <tr style="background: white;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">19</td>
+                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">17</td>
                 <td style="padding: 10px 8px; font-weight: 600;">Virtus Imola</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">14</td>
                 <td style="padding: 10px 8px; text-align: center;">26</td>
@@ -689,7 +663,7 @@
             </tr>
         
             <tr style="background: #f9f9f9;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">20</td>
+                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">18</td>
                 <td style="padding: 10px 8px; font-weight: 600;">Ristopro Fabriano</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">14</td>
                 <td style="padding: 10px 8px; text-align: center;">27</td>
@@ -703,45 +677,17 @@
             </tr>
         
             <tr style="background: white;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">21</td>
-                <td style="padding: 10px 8px; font-weight: 600;">Consultinvest Loreto Pesaro</td>
+                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">19</td>
+                <td style="padding: 10px 8px; font-weight: 600;">Loreto Pesaro</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">12</td>
                 <td style="padding: 10px 8px; text-align: center;">26</td>
                 <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">6</td>
                 <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-weight: bold;">20</td>
-                <td style="padding: 10px 8px; text-align: center;">69.2</td>
-                <td style="padding: 10px 8px; text-align: center;">74.9</td>
-                <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-weight: bold;">-5.7</td>
-                <td style="padding: 10px 8px; text-align: center; font-family: monospace;"><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #ef4444; font-weight: bold;">S</span></td>
-                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-size: 1.2em;">↑</td>
-            </tr>
-        
-            <tr style="background: #f9f9f9;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">22</td>
-                <td style="padding: 10px 8px; font-weight: 600;">Loreto Basket Pesaro</td>
-                <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">12</td>
-                <td style="padding: 10px 8px; text-align: center;">26</td>
-                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">6</td>
-                <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-weight: bold;">20</td>
-                <td style="padding: 10px 8px; text-align: center;">43.2</td>
-                <td style="padding: 10px 8px; text-align: center;">55.6</td>
-                <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-weight: bold;">-12.4</td>
+                <td style="padding: 10px 8px; text-align: center;">69.9</td>
+                <td style="padding: 10px 8px; text-align: center;">76.9</td>
+                <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-weight: bold;">-7.0</td>
                 <td style="padding: 10px 8px; text-align: center; font-family: monospace;"><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #22c55e; font-weight: bold;">V</span></td>
-                <td style="padding: 10px 8px; text-align: center; color: #666; font-size: 1.2em;">–</td>
-            </tr>
-        
-            <tr style="background: white;">
-                <td style="padding: 10px 8px; font-weight: bold; text-align: center;">23</td>
-                <td style="padding: 10px 8px; font-weight: 600;">Juvecaserta 2021</td>
-                <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">6</td>
-                <td style="padding: 10px 8px; text-align: center;">5</td>
-                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">3</td>
-                <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-weight: bold;">2</td>
-                <td style="padding: 10px 8px; text-align: center;">66.2</td>
-                <td style="padding: 10px 8px; text-align: center;">60.6</td>
-                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">+5.6</td>
-                <td style="padding: 10px 8px; text-align: center; font-family: monospace;"><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #ef4444; font-weight: bold;">S</span><span style="color: #22c55e; font-weight: bold;">V</span><span style="color: #22c55e; font-weight: bold;">V</span></td>
-                <td style="padding: 10px 8px; text-align: center; color: #666; font-size: 1.2em;">–</td>
+                <td style="padding: 10px 8px; text-align: center; color: #666; font-size: 1.2em;">→</td>
             </tr>
         </tbody></table></div>
     <script>
@@ -797,7 +743,7 @@
 
         <div class="site-footer">
             <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
-            <div>Ultimo aggiornamento: 23/02/2026 03:57</div>
+            <div>Ultimo aggiornamento: 23/02/2026 09:08</div>
         </div>
     </main>
 

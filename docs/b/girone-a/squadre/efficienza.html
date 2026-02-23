@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Efficienza - Serie B - Girone A - LNP Stats</title>
+    <link rel="icon" type="image/png" href="../../../static/favicon180x180.png">
+    <link rel="stylesheet" href="../../../static/twinplay_brand.css">
+    <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--tp-gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--tp-spacing-lg);
+            z-index: 200000;
+            box-shadow: var(--tp-shadow-md);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-md);
+        }
+
+        .header-logo img {
+            height: 36px;
+        }
+
+        .header-logo a {
+            color: white;
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .header-title {
+            margin-left: var(--tp-spacing-xl);
+            font-size: 1.1rem;
+            font-weight: 600;
+            font-family: var(--tp-font-primary);
+        }
+
+        .header-cta {
+            margin-left: auto;
+            background: #00F95B;
+            color: #000000;
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            border-radius: var(--tp-radius-md);
+            text-decoration: none;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .header-cta:hover {
+            background: #00D950;
+            transform: translateY(-1px);
+            box-shadow: var(--tp-shadow-sm);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: var(--tp-spacing-md);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--tp-light);
+        }
+
+        .sidebar-section-header {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            color: var(--tp-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--tp-spacing-sm);
+            transition: background 0.2s;
+        }
+
+        .sidebar-section-header:hover {
+            background: var(--tp-light);
+        }
+
+        .sidebar-section-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            font-size: 0.75rem;
+        }
+
+        .sidebar-section.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-subsection {
+            display: none;
+            background: var(--tp-light);
+        }
+
+        .sidebar-section.expanded .sidebar-subsection {
+            display: block;
+        }
+
+        .sidebar-category {
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: var(--tp-spacing-lg);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--tp-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: var(--tp-spacing-sm);
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: var(--tp-spacing-sm) var(--tp-spacing-lg);
+            padding-left: calc(var(--tp-spacing-lg) + 10px);
+            color: var(--tp-dark);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: white;
+            border-left-color: var(--tp-primary);
+        }
+
+        .sidebar-link.active {
+            background: white;
+            border-left-color: var(--tp-primary);
+            color: var(--tp-secondary);
+            font-weight: 600;
+        }
+
+        .sidebar-home-btn {
+            display: block;
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--tp-light);
+            transition: all 0.2s;
+        }
+
+        .sidebar-home-btn:hover {
+            background: var(--tp-light);
+            color: var(--tp-secondary);
+        }
+
+        .sidebar-competition {
+            padding: var(--tp-spacing-md) var(--tp-spacing-lg);
+            background: var(--tp-gradient-primary);
+            color: white;
+            font-family: var(--tp-font-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: var(--tp-spacing-sm);
+        }
+
+        .sidebar:empty + .main {
+            margin-left: 0;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: var(--tp-spacing-xl);
+            min-height: calc(100vh - var(--header-height));
+            background: var(--tp-light);
+        }
+
+        .content-section {
+            background: white;
+            border-radius: var(--tp-radius-lg);
+            padding: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-lg);
+            box-shadow: var(--tp-shadow-sm);
+        }
+
+        .section-title {
+            font-family: var(--tp-font-primary);
+            font-size: 1.25rem;
+            color: var(--tp-secondary);
+            margin-bottom: var(--tp-spacing-lg);
+            padding-bottom: var(--tp-spacing-sm);
+            border-bottom: 2px solid var(--tp-light);
+        }
+
+        /* Info tooltip */
+        .info-tooltip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            font-size: 13px;
+            font-style: normal;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            border-radius: 50%;
+            cursor: help;
+            margin-left: 8px;
+            vertical-align: middle;
+            position: relative;
+            z-index: 1000;
+            font-weight: 600;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            transition: transform 0.15s ease, z-index 0s;
+        }
+
+        .info-tooltip:hover {
+            transform: scale(1.1);
+            z-index: 100000;
+        }
+
+        .info-tooltip:hover::after {
+            content: attr(data-tip);
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e1b4b;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: normal;
+            width: 280px;
+            z-index: 99999;
+            margin-top: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            line-height: 1.5;
+            pointer-events: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--tp-spacing-lg);
+            margin-bottom: var(--tp-spacing-xl);
+        }
+
+        .stat-card {
+            background: var(--tp-gradient-primary);
+            color: white;
+            padding: var(--tp-spacing-lg);
+            border-radius: var(--tp-radius-lg);
+            text-align: center;
+        }
+
+        .stat-card.accent {
+            background: var(--tp-gradient-accent);
+            color: var(--tp-dark);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+        }
+
+        .stat-value {
+            font-family: var(--tp-font-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: var(--tp-spacing-xs);
+        }
+
+        /* Plotly responsive */
+        .js-plotly-plot {
+            width: 100% !important;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: var(--tp-spacing-lg);
+            color: var(--tp-gray);
+            font-size: 0.8rem;
+        }
+
+        .site-footer img {
+            height: 24px;
+            margin-bottom: var(--tp-spacing-sm);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="header-logo">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <a href="../../../index.html">LNP Stats</a>
+        </div>
+        <div class="header-title">Efficienza</div>
+        <a href="https://twinplay.ai" target="_blank" rel="noopener noreferrer" class="header-cta">Scopri TwinPlay.AI</a>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        
+    <a href="../../../index.html" class="sidebar-home-btn">
+        ← Cambia campionato
+    </a>
+    <div class="sidebar-competition">
+        Serie B - Girone A
+    </div>
+    <div class="sidebar-category">Squadre</div><a href="../../../b/girone-a/squadre/classifiche.html" class="sidebar-link ">Classifiche</a><a href="../../../b/girone-a/squadre/andamento.html" class="sidebar-link ">Andamento</a><a href="../../../b/girone-a/squadre/profilo.html" class="sidebar-link ">Profilo</a><a href="../../../b/girone-a/squadre/risultati.html" class="sidebar-link ">Risultati</a><a href="../../../b/girone-a/squadre/mappe-tiro.html" class="sidebar-link ">Mappe di Tiro</a><a href="../../../b/girone-a/squadre/efficienza.html" class="sidebar-link active">Efficienza</a><div class="sidebar-category">Giocatori</div><a href="../../../b/girone-a/giocatori/statistiche.html" class="sidebar-link ">Statistiche</a><a href="../../../b/girone-a/giocatori/profilo.html" class="sidebar-link ">Profilo</a><a href="../../../b/girone-a/giocatori/performance.html" class="sidebar-link ">Performance</a><a href="../../../b/girone-a/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../../b/girone-a/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
+    </nav>
+
+    <main class="main">
+        
+    <div class="chart-container">
+        <h3 style="margin-bottom: 20px;">Offensive vs Defensive Rating
+            <span class="info-tooltip" data-tip="ORtg = punti segnati per 100 possessi. DRtg = punti subiti per 100 possessi. Alto-destra = squadre elite (attacco forte + difesa forte). Net Rating = ORtg - DRtg.">ⓘ</span>
+        </h3>
+        <div id="chart-ratings" style="height: 500px;"></div>
+
+        <h3 style="margin-top: 40px; margin-bottom: 20px;">Pace
+            <span class="info-tooltip" data-tip="Ritmo di gioco: possessi stimati per 40 minuti. Formula: FGA - OREB + TOV + 0.44*FTA. Media campionato: 75.6">ⓘ</span>
+        </h3>
+        <div id="chart-pace" style="height: 400px;"></div>
+
+        <h3 style="margin-top: 40px; margin-bottom: 20px;">Four Factors
+            <span class="info-tooltip" data-tip="I 4 fattori chiave di Dean Oliver: eFG% (efficienza tiro pesata per 3pt), TOV% (palle perse per possesso), OREB (rimbalzi offensivi), FT Rate (tiri liberi tentati/FGA). Valori mostrati come percentile vs media campionato.">ⓘ</span>
+        </h3>
+        <div style="margin-bottom: 15px;">
+            <label for="team-select-ff" style="margin-right: 10px;">Confronta squadra:</label>
+            <select id="team-select-ff" onchange="updateFourFactors()" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+            </select>
+        </div>
+        <div id="chart-four-factors" style="height: 450px;"></div>
+
+        <h3 style="margin-top: 40px; margin-bottom: 20px;">Riepilogo Efficienza</h3>
+        <div id="table-container"></div>
+    </div>
+
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script>
+        const effData = [{"team": "Rimadesio Desio", "games": 26, "ortg": 109.8, "drtg": 106.2, "net_rtg": 3.6, "pace": 77.5, "poss_per_game": 78.7, "efg_pct": 52.8, "tov_pct": 13.3, "oreb_pct": 25.3, "ft_rate": 34.5, "pts_per_game": 86.4, "pts_allowed_per_game": 83.3}, {"team": "Elachem Vigevano 1955", "games": 26, "ortg": 111.7, "drtg": 99.7, "net_rtg": 12.0, "pace": 76.5, "poss_per_game": 76.6, "efg_pct": 54.4, "tov_pct": 13.7, "oreb_pct": 28.9, "ft_rate": 31.6, "pts_per_game": 85.5, "pts_allowed_per_game": 74.0}, {"team": "Foppiani Fulgor Fidenza", "games": 26, "ortg": 92.1, "drtg": 105.9, "net_rtg": -13.8, "pace": 76.9, "poss_per_game": 75.6, "efg_pct": 43.1, "tov_pct": 15.3, "oreb_pct": 29.9, "ft_rate": 33.8, "pts_per_game": 69.7, "pts_allowed_per_game": 78.0}, {"team": "Infodrive Capo d'Orlando", "games": 26, "ortg": 104.5, "drtg": 105.6, "net_rtg": -1.1, "pace": 75.0, "poss_per_game": 75.4, "efg_pct": 50.9, "tov_pct": 15.3, "oreb_pct": 21.4, "ft_rate": 36.6, "pts_per_game": 78.8, "pts_allowed_per_game": 78.8}, {"team": "Fiorenzuola Bees", "games": 27, "ortg": 95.3, "drtg": 101.5, "net_rtg": -6.2, "pace": 75.9, "poss_per_game": 73.5, "efg_pct": 48.7, "tov_pct": 18.3, "oreb_pct": 22.1, "ft_rate": 35.0, "pts_per_game": 70.0, "pts_allowed_per_game": 76.2}, {"team": "Siaz Basket Piazza Armerina", "games": 27, "ortg": 105.1, "drtg": 102.9, "net_rtg": 2.3, "pace": 72.0, "poss_per_game": 68.2, "efg_pct": 52.5, "tov_pct": 14.2, "oreb_pct": 20.9, "ft_rate": 30.7, "pts_per_game": 71.7, "pts_allowed_per_game": 72.3}, {"team": "SAE Scientifica-Soevis Legnano", "games": 25, "ortg": 108.4, "drtg": 103.3, "net_rtg": 5.1, "pace": 74.1, "poss_per_game": 73.2, "efg_pct": 52.8, "tov_pct": 14.4, "oreb_pct": 25.1, "ft_rate": 38.8, "pts_per_game": 79.3, "pts_allowed_per_game": 74.7}, {"team": "Vicenza", "games": 27, "ortg": 107.9, "drtg": 109.1, "net_rtg": -1.2, "pace": 71.8, "poss_per_game": 72.4, "efg_pct": 53.7, "tov_pct": 14.9, "oreb_pct": 25.5, "ft_rate": 35.6, "pts_per_game": 78.1, "pts_allowed_per_game": 78.7}, {"team": "La T Tecnica Gema Montecatini", "games": 27, "ortg": 112.5, "drtg": 102.5, "net_rtg": 10.0, "pace": 73.3, "poss_per_game": 72.7, "efg_pct": 54.9, "tov_pct": 14.6, "oreb_pct": 27.3, "ft_rate": 37.5, "pts_per_game": 81.8, "pts_allowed_per_game": 75.0}, {"team": "LuxArm Lumezzane", "games": 25, "ortg": 101.0, "drtg": 103.3, "net_rtg": -2.3, "pace": 75.5, "poss_per_game": 74.2, "efg_pct": 50.5, "tov_pct": 16.9, "oreb_pct": 24.9, "ft_rate": 37.4, "pts_per_game": 74.9, "pts_allowed_per_game": 77.6}, {"team": "Paffoni Fulgor Basket Omegna", "games": 27, "ortg": 107.5, "drtg": 104.2, "net_rtg": 3.3, "pace": 76.9, "poss_per_game": 75.8, "efg_pct": 51.7, "tov_pct": 13.1, "oreb_pct": 21.6, "ft_rate": 34.5, "pts_per_game": 81.5, "pts_allowed_per_game": 79.8}, {"team": "Novipi\u00f9 Monferrato Basket", "games": 27, "ortg": 97.4, "drtg": 111.2, "net_rtg": -13.8, "pace": 78.1, "poss_per_game": 76.4, "efg_pct": 47.1, "tov_pct": 14.4, "oreb_pct": 22.5, "ft_rate": 34.7, "pts_per_game": 74.4, "pts_allowed_per_game": 85.9}, {"team": "Bakery Basket Piacenza", "games": 27, "ortg": 93.4, "drtg": 114.0, "net_rtg": -20.6, "pace": 76.0, "poss_per_game": 74.5, "efg_pct": 47.0, "tov_pct": 16.0, "oreb_pct": 19.2, "ft_rate": 29.4, "pts_per_game": 69.6, "pts_allowed_per_game": 83.5}, {"team": "Logiman Orzinuovi", "games": 26, "ortg": 105.8, "drtg": 97.6, "net_rtg": 8.2, "pace": 76.7, "poss_per_game": 75.6, "efg_pct": 51.3, "tov_pct": 14.9, "oreb_pct": 28.7, "ft_rate": 36.9, "pts_per_game": 80.0, "pts_allowed_per_game": 73.6}, {"team": "UCC Assigeco Piacenza", "games": 26, "ortg": 104.1, "drtg": 103.4, "net_rtg": 0.7, "pace": 76.5, "poss_per_game": 75.9, "efg_pct": 50.3, "tov_pct": 14.3, "oreb_pct": 22.2, "ft_rate": 38.4, "pts_per_game": 79.0, "pts_allowed_per_game": 79.8}, {"team": "Moncada Energy Agrigento", "games": 25, "ortg": 98.2, "drtg": 103.9, "net_rtg": -5.7, "pace": 74.7, "poss_per_game": 75.3, "efg_pct": 46.8, "tov_pct": 14.9, "oreb_pct": 22.1, "ft_rate": 36.6, "pts_per_game": 73.9, "pts_allowed_per_game": 77.2}, {"team": "Rucker San Vendemiano", "games": 26, "ortg": 109.8, "drtg": 99.0, "net_rtg": 10.8, "pace": 78.1, "poss_per_game": 76.6, "efg_pct": 53.2, "tov_pct": 15.2, "oreb_pct": 28.0, "ft_rate": 34.5, "pts_per_game": 84.1, "pts_allowed_per_game": 74.7}, {"team": "Fabo Herons Montecatini", "games": 27, "ortg": 108.1, "drtg": 98.9, "net_rtg": 9.2, "pace": 76.9, "poss_per_game": 75.1, "efg_pct": 53.5, "tov_pct": 15.8, "oreb_pct": 24.0, "ft_rate": 36.9, "pts_per_game": 81.1, "pts_allowed_per_game": 76.9}, {"team": "TAV Treviglio Brianza Basket", "games": 27, "ortg": 106.6, "drtg": 106.8, "net_rtg": -0.3, "pace": 73.7, "poss_per_game": 74.9, "efg_pct": 50.4, "tov_pct": 14.7, "oreb_pct": 28.8, "ft_rate": 37.6, "pts_per_game": 79.8, "pts_allowed_per_game": 79.1}];
+        const avgRating = 104.2;  // Media campionato (uguale per ORtg e DRtg)
+        const avgPace = 75.6;
+
+        // 1. SCATTER PLOT ORtg vs DRtg
+        (function() {
+            // Net Rating values for colorscale
+            const netRatings = effData.map(d => d.net_rtg);
+            const maxAbsNet = Math.max(...netRatings.map(Math.abs));
+
+            const trace = {
+                x: effData.map(d => d.drtg),  // DRtg su asse X (invertito: basso = meglio)
+                y: effData.map(d => d.ortg),  // ORtg su asse Y
+                mode: 'markers+text',
+                type: 'scatter',
+                text: effData.map(d => d.team.split(' ').pop()),  // Ultima parola del nome
+                textposition: 'top center',
+                textfont: { size: 10 },
+                marker: {
+                    size: 15,
+                    color: netRatings,
+                    colorscale: [
+                        [0, '#dc2626'],      // Rosso (net rating negativo)
+                        [0.5, '#fafafa'],    // Bianco (net rating = 0)
+                        [1, '#16a34a']       // Verde (net rating positivo)
+                    ],
+                    cmin: -maxAbsNet,  // Scala simmetrica attorno a 0
+                    cmax: maxAbsNet,
+                    colorbar: {
+                        title: 'Net Rating',
+                        titleside: 'right',
+                        thickness: 15,
+                        len: 0.6
+                    },
+                    line: { width: 2, color: '#333' }
+                },
+                hovertemplate: '<b>%{customdata[0]}</b><br>ORtg: %{y:.1f}<br>DRtg: %{x:.1f}<br>Net: %{customdata[1]:+.1f}<extra></extra>',
+                customdata: effData.map(d => [d.team, d.net_rtg])
+            };
+
+            const layout = {
+                xaxis: {
+                    title: 'Defensive Rating (più basso = meglio)',
+                    autorange: 'reversed',  // Inverti asse: sinistra = peggio, destra = meglio
+                    gridcolor: '#e5e5e5'
+                },
+                yaxis: {
+                    title: 'Offensive Rating (più alto = meglio)',
+                    gridcolor: '#e5e5e5'
+                },
+                shapes: [
+                    // Linea verticale e orizzontale alla media campionato (si incrociano sulla diagonale)
+                    { type: 'line', x0: avgRating, x1: avgRating, y0: 0, y1: 1, yref: 'paper',
+                       line: { color: '#999', width: 1, dash: 'dash' } },
+                    { type: 'line', x0: 0, x1: 1, xref: 'paper', y0: avgRating, y1: avgRating,
+                       line: { color: '#999', width: 1, dash: 'dash' } },
+                    // Diagonale Net Rating = 0 (dove ORtg = DRtg)
+                    { type: 'line',
+                       x0: Math.min(...effData.map(d => d.drtg)) - 5,
+                       y0: Math.min(...effData.map(d => d.drtg)) - 5,
+                       x1: Math.max(...effData.map(d => d.drtg)) + 5,
+                       y1: Math.max(...effData.map(d => d.drtg)) + 5,
+                       line: { color: '#666', width: 1.5, dash: 'dot' } }
+                ],
+                annotations: [
+                    { x: 0.98, y: 0.98, xref: 'paper', yref: 'paper', text: '<b>ELITE</b>',
+                       showarrow: false, font: { size: 11, color: '#666' }, xanchor: 'right' },
+                    { x: 0.02, y: 0.98, xref: 'paper', yref: 'paper', text: '<b>OFFENSIVO</b>',
+                       showarrow: false, font: { size: 11, color: '#666' }, xanchor: 'left' },
+                    { x: 0.98, y: 0.02, xref: 'paper', yref: 'paper', text: '<b>DIFENSIVO</b>',
+                       showarrow: false, font: { size: 11, color: '#666' }, xanchor: 'right' },
+                    { x: 0.02, y: 0.02, xref: 'paper', yref: 'paper', text: '<b>IN DIFFICOLTA</b>',
+                       showarrow: false, font: { size: 11, color: '#666' }, xanchor: 'left' }
+                ],
+                margin: { t: 30, b: 60, l: 60, r: 30 },
+                plot_bgcolor: '#fafafa'
+            };
+
+            Plotly.newPlot('chart-ratings', [trace], layout, {responsive: true});
+        })();
+
+        // 2. BAR CHART PACE
+        (function() {
+            const sorted = [...effData].sort((a, b) => b.pace - a.pace);
+
+            const trace = {
+                y: sorted.map(d => d.team),
+                x: sorted.map(d => d.pace),
+                type: 'bar',
+                orientation: 'h',
+                marker: {
+                    color: sorted.map(d => d.pace >= avgPace ? '#3b82f6' : '#94a3b8')
+                },
+                text: sorted.map(d => d.pace.toFixed(1)),
+                textposition: 'outside',
+                hovertemplate: '<b>%{y}</b><br>Pace: %{x:.1f}<br>Poss/gara: %{customdata:.1f}<extra></extra>',
+                customdata: sorted.map(d => d.poss_per_game)
+            };
+
+            const layout = {
+                xaxis: { title: 'Possessi per 40 minuti', gridcolor: '#e5e5e5' },
+                yaxis: { automargin: true },
+                shapes: [
+                    { type: 'line', x0: avgPace, x1: avgPace, y0: -0.5, y1: sorted.length - 0.5,
+                       line: { color: '#ef4444', width: 2, dash: 'dash' } }
+                ],
+                annotations: [
+                    { x: avgPace, y: sorted.length, text: 'Media', showarrow: false,
+                       font: { size: 10, color: '#ef4444' }, yshift: 10 }
+                ],
+                margin: { t: 30, b: 50, l: 150, r: 50 },
+                plot_bgcolor: '#fafafa'
+            };
+
+            Plotly.newPlot('chart-pace', [trace], layout, {responsive: true});
+        })();
+
+        // 3. FOUR FACTORS RADAR
+        // Popola select
+        const select = document.getElementById('team-select-ff');
+        effData.sort((a, b) => a.team.localeCompare(b.team)).forEach(d => {
+            const opt = document.createElement('option');
+            opt.value = d.team;
+            opt.textContent = d.team;
+            select.appendChild(opt);
+        });
+
+        const N = effData.length;  // Numero squadre
+
+        // Calcola rank (1 = migliore) e scala a 0-100 (1° = 100, ultimo = ~5)
+        // highGood=true: valore alto = rank basso = meglio
+        // highGood=false: valore basso = rank basso = meglio
+        function getRank(arr, val, highGood) {
+            const sorted = [...arr].sort((a, b) => highGood ? b - a : a - b);
+            const rank = sorted.indexOf(val) + 1;  // 1-based rank
+            // Scala: rank 1 = 100, rank N = 100/N (es. ~5 per 20 squadre)
+            return ((N - rank + 1) / N) * 100;
+        }
+
+        const efgArr = effData.map(d => d.efg_pct);
+        const tovArr = effData.map(d => d.tov_pct);
+        const orebArr = effData.map(d => d.oreb_pct);
+        const ftArr = effData.map(d => d.ft_rate);
+
+        function updateFourFactors() {
+            const team = select.value;
+            const d = effData.find(t => t.team === team);
+            if (!d) return;
+
+            const categories = ['eFG%', 'TOV%', 'OREB%', 'FT Rate'];
+
+            // Valori rank-based (1° = bordo esterno, ultimo = centro)
+            const teamValues = [
+                getRank(efgArr, d.efg_pct, true),      // Alto = meglio
+                getRank(tovArr, d.tov_pct, false),     // Basso = meglio
+                getRank(orebArr, d.oreb_pct, true),    // Alto = meglio
+                getRank(ftArr, d.ft_rate, true)        // Alto = meglio
+            ];
+
+            // Valori reali per hover
+            const realValues = [d.efg_pct, d.tov_pct, d.oreb_pct, d.ft_rate];
+
+            // Calcola rank effettivo per ogni stat
+            const ranks = [
+                [...efgArr].sort((a, b) => b - a).indexOf(d.efg_pct) + 1,
+                [...tovArr].sort((a, b) => a - b).indexOf(d.tov_pct) + 1,
+                [...orebArr].sort((a, b) => b - a).indexOf(d.oreb_pct) + 1,
+                [...ftArr].sort((a, b) => b - a).indexOf(d.ft_rate) + 1
+            ];
+
+            // Media al rank medio (N/2)
+            const avgRankValue = 50;
+            const avgValues = [avgRankValue, avgRankValue, avgRankValue, avgRankValue];
+
+            const teamTrace = {
+                type: 'scatterpolar',
+                r: [...teamValues, teamValues[0]],
+                theta: [...categories, categories[0]],
+                fill: 'toself',
+                fillcolor: 'rgba(59, 130, 246, 0.3)',
+                line: { color: '#3b82f6', width: 2 },
+                name: team,
+                customdata: [...ranks.map((r, i) => ({ rank: r, val: realValues[i] })), { rank: ranks[0], val: realValues[0] }],
+                hovertemplate: '%{theta}: %{customdata.val:.1f}% (%{customdata.rank}°)<extra></extra>'
+            };
+
+            const avgTrace = {
+                type: 'scatterpolar',
+                r: [...avgValues, avgValues[0]],
+                theta: [...categories, categories[0]],
+                fill: 'toself',
+                fillcolor: 'rgba(156, 163, 175, 0.2)',
+                line: { color: '#9ca3af', width: 1, dash: 'dash' },
+                name: 'Media Campionato',
+                hoverinfo: 'skip'
+            };
+
+            const layout = {
+                polar: {
+                    radialaxis: {
+                        visible: true,
+                        range: [0, 100],
+                        tickvals: [25, 50, 75, 100],
+                        ticktext: ['', `${Math.round(N/2)}°`, '', '1°']
+                    },
+                    angularaxis: {
+                        tickfont: { size: 12 }
+                    }
+                },
+                showlegend: true,
+                legend: { x: 0.5, y: -0.1, xanchor: 'center', orientation: 'h' },
+                margin: { t: 80, b: 80, l: 80, r: 80 },
+                title: {
+                    text: `<b>${team}</b>`,
+                    font: { size: 14 },
+                    y: 0.95
+                }
+            };
+
+            Plotly.newPlot('chart-four-factors', [avgTrace, teamTrace], layout, {responsive: true});
+        }
+
+        // Init
+        updateFourFactors();
+
+        // 4. TABELLA RIEPILOGO ORDINABILE
+        let tableSortKey = 'net_rtg';
+        let tableSortAsc = false;
+
+        // Definizione colonne: key, label, highGood (true=alto meglio, false=basso meglio)
+        const columns = [
+            { key: 'team', label: 'Squadra', highGood: null },
+            { key: 'ortg', label: 'ORtg', highGood: true },
+            { key: 'drtg', label: 'DRtg', highGood: false },
+            { key: 'net_rtg', label: 'Net', highGood: true },
+            { key: 'pace', label: 'Pace', highGood: null },
+            { key: 'efg_pct', label: 'eFG%', highGood: true },
+            { key: 'tov_pct', label: 'TOV%', highGood: false },
+            { key: 'oreb_pct', label: 'OREB%', highGood: true },
+            { key: 'ft_rate', label: 'FT Rate', highGood: true }
+        ];
+
+        function renderTable() {
+            const sorted = [...effData].sort((a, b) => {
+                const va = a[tableSortKey], vb = b[tableSortKey];
+                if (typeof va === 'string') return tableSortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+                return tableSortAsc ? va - vb : vb - va;
+            });
+
+            let html = `<table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                <thead><tr style="background: #f3f4f6; border-bottom: 2px solid #d1d5db;">`;
+
+            columns.forEach(col => {
+                const arrow = tableSortKey === col.key ? (tableSortAsc ? ' ↑' : ' ↓') : '';
+                const hint = col.highGood === true ? '(↑)' : col.highGood === false ? '(↓)' : '';
+                html += `<th style="padding: 8px; text-align: ${col.key === 'team' ? 'left' : 'center'}; cursor: pointer; white-space: nowrap;" onclick="sortTable('${col.key}')">${col.label} <span style="color:#999;font-size:0.75rem;">${hint}</span>${arrow}</th>`;
+            });
+            html += `</tr></thead><tbody>`;
+
+            sorted.forEach((d, i) => {
+                const netColor = d.net_rtg > 0 ? '#22c55e' : d.net_rtg < 0 ? '#ef4444' : '#666';
+                const rowBg = i % 2 === 0 ? '#fff' : '#f9fafb';
+                html += `<tr style="background: ${rowBg}; border-bottom: 1px solid #e5e7eb;">
+                    <td style="padding: 6px 8px; font-weight: 500;">${d.team}</td>
+                    <td style="padding: 6px 8px; text-align: center;">${d.ortg}</td>
+                    <td style="padding: 6px 8px; text-align: center;">${d.drtg}</td>
+                    <td style="padding: 6px 8px; text-align: center; color: ${netColor}; font-weight: 600;">${d.net_rtg > 0 ? '+' : ''}${d.net_rtg}</td>
+                    <td style="padding: 6px 8px; text-align: center;">${d.pace}</td>
+                    <td style="padding: 6px 8px; text-align: center;">${d.efg_pct}%</td>
+                    <td style="padding: 6px 8px; text-align: center;">${d.tov_pct}%</td>
+                    <td style="padding: 6px 8px; text-align: center;">${d.oreb_pct}%</td>
+                    <td style="padding: 6px 8px; text-align: center;">${d.ft_rate}%</td>
+                </tr>`;
+            });
+
+            html += `</tbody></table>
+            <div style="margin-top: 15px; padding: 12px; background: #f8fafc; border-radius: 8px; font-size: 0.8rem; color: #555;">
+                <strong>Legenda:</strong> (↑) = alto è meglio, (↓) = basso è meglio. Clicca sulle intestazioni per ordinare.<br>
+                <strong>ORtg</strong> = Punti segnati per 100 possessi |
+                <strong>DRtg</strong> = Punti subiti per 100 possessi avversari |
+                <strong>Net</strong> = ORtg - DRtg<br>
+                <strong>Pace</strong> = Possessi per 40 min |
+                <strong>eFG%</strong> = (FGM + 0.5×3PM) / FGA |
+                <strong>TOV%</strong> = Palle perse / possessi<br>
+                <strong>OREB%</strong> = Rimb.off. / (Rimb.off. + Rimb.dif. avversari) |
+                <strong>FT Rate</strong> = TL tentati / FGA
+            </div>`;
+
+            document.getElementById('table-container').innerHTML = html;
+        }
+
+        function sortTable(key) {
+            if (tableSortKey === key) {
+                tableSortAsc = !tableSortAsc;
+            } else {
+                tableSortKey = key;
+                tableSortAsc = false;
+            }
+            renderTable();
+        }
+
+        renderTable();
+    </script>
+    
+
+        <div class="site-footer">
+            <img src="../../../static/twinplay_one_row.svg" alt="TwinPlay">
+            <div>Ultimo aggiornamento: 23/02/2026 09:08</div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Espandi sezione corrente
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('expanded');
+            });
+        });
+
+        // Espandi automaticamente la sezione attiva
+        const activeLink = document.querySelector('.sidebar-link.active');
+        if (activeLink) {
+            let parent = activeLink.closest('.sidebar-section');
+            if (parent) parent.classList.add('expanded');
+        }
+    </script>
+</body>
+</html>

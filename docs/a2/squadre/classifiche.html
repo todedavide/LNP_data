@@ -30,7 +30,7 @@
             display: flex;
             align-items: center;
             padding: 0 var(--tp-spacing-lg);
-            z-index: 1000;
+            z-index: 200000;
             box-shadow: var(--tp-shadow-md);
         }
 
@@ -247,17 +247,19 @@
             margin-left: 8px;
             vertical-align: middle;
             position: relative;
+            z-index: 1000;
             font-weight: 600;
             box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-            transition: transform 0.15s ease;
+            transition: transform 0.15s ease, z-index 0s;
         }
 
         .info-tooltip:hover {
             transform: scale(1.1);
+            z-index: 100000;
         }
 
         .info-tooltip:hover::after {
-            content: attr(title);
+            content: attr(data-tip);
             position: absolute;
             top: 100%;
             left: 50%;
@@ -371,7 +373,7 @@
     <div class="sidebar-competition">
         Serie A2
     </div>
-    <div class="sidebar-category">Squadre</div><a href="../../a2/squadre/classifiche.html" class="sidebar-link active">Classifiche</a><a href="../../a2/squadre/andamento.html" class="sidebar-link ">Andamento</a><a href="../../a2/squadre/profilo.html" class="sidebar-link ">Profilo</a><a href="../../a2/squadre/risultati.html" class="sidebar-link ">Risultati</a><a href="../../a2/squadre/mappe-tiro.html" class="sidebar-link ">Mappe di Tiro</a><div class="sidebar-category">Giocatori</div><a href="../../a2/giocatori/statistiche.html" class="sidebar-link ">Statistiche</a><a href="../../a2/giocatori/profilo.html" class="sidebar-link ">Profilo</a><a href="../../a2/giocatori/performance.html" class="sidebar-link ">Performance</a><a href="../../a2/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../a2/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
+    <div class="sidebar-category">Squadre</div><a href="../../a2/squadre/classifiche.html" class="sidebar-link active">Classifiche</a><a href="../../a2/squadre/andamento.html" class="sidebar-link ">Andamento</a><a href="../../a2/squadre/profilo.html" class="sidebar-link ">Profilo</a><a href="../../a2/squadre/risultati.html" class="sidebar-link ">Risultati</a><a href="../../a2/squadre/mappe-tiro.html" class="sidebar-link ">Mappe di Tiro</a><a href="../../a2/squadre/efficienza.html" class="sidebar-link ">Efficienza</a><div class="sidebar-category">Giocatori</div><a href="../../a2/giocatori/statistiche.html" class="sidebar-link ">Statistiche</a><a href="../../a2/giocatori/profilo.html" class="sidebar-link ">Profilo</a><a href="../../a2/giocatori/performance.html" class="sidebar-link ">Performance</a><a href="../../a2/giocatori/impatto.html" class="sidebar-link ">Impatto</a><a href="../../a2/giocatori/momenti-decisivi.html" class="sidebar-link ">Momenti Decisivi</a>
     </nav>
 
     <main class="main">
@@ -550,7 +552,7 @@
         
             <tr style="background: #f9f9f9;">
                 <td style="padding: 10px 8px; font-weight: bold; text-align: center;">10</td>
-                <td style="padding: 10px 8px; font-weight: 600;">Avellino Basket</td>
+                <td style="padding: 10px 8px; font-weight: 600;">Avellino</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">30</td>
                 <td style="padding: 10px 8px; text-align: center;">26</td>
                 <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">15</td>
@@ -755,7 +757,7 @@
 
         <div class="site-footer">
             <img src="../../static/twinplay_one_row.svg" alt="TwinPlay">
-            <div>Ultimo aggiornamento: 23/02/2026 03:57</div>
+            <div>Ultimo aggiornamento: 23/02/2026 09:08</div>
         </div>
     </main>
 

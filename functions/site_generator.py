@@ -31,6 +31,7 @@ SITE_STRUCTURE = {
                     ('profilo', 'Profilo'),
                     ('risultati', 'Risultati'),
                     ('mappe-tiro', 'Mappe di Tiro'),
+                    ('efficienza', 'Efficienza'),
                 ]
             },
             'giocatori': {
@@ -64,6 +65,7 @@ SITE_STRUCTURE = {
                     ('profilo', 'Profilo'),
                     ('risultati', 'Risultati'),
                     ('mappe-tiro', 'Mappe di Tiro'),
+                    ('efficienza', 'Efficienza'),
                 ]
             },
             'giocatori': {
@@ -118,7 +120,7 @@ def get_base_template():
             display: flex;
             align-items: center;
             padding: 0 var(--tp-spacing-lg);
-            z-index: 1000;
+            z-index: 200000;
             box-shadow: var(--tp-shadow-md);
         }}
 
@@ -335,17 +337,19 @@ def get_base_template():
             margin-left: 8px;
             vertical-align: middle;
             position: relative;
+            z-index: 1000;
             font-weight: 600;
             box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-            transition: transform 0.15s ease;
+            transition: transform 0.15s ease, z-index 0s;
         }}
 
         .info-tooltip:hover {{
             transform: scale(1.1);
+            z-index: 100000;
         }}
 
         .info-tooltip:hover::after {{
-            content: attr(title);
+            content: attr(data-tip);
             position: absolute;
             top: 100%;
             left: 50%;
