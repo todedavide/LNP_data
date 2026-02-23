@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-22T03:52:02.946144",
+  "updated_at": "2026-02-23T03:56:25.912395",
   "standings": [
     {
       "team": "Virtus GVM Roma 1960",
@@ -11,49 +11,58 @@
       "ps": 1861
     },
     {
-      "team": "Paperdi Juvecaserta 2021",
-      "pts": 42,
-      "gp": 26,
-      "wins": 21,
+      "team": "Verodol CBD Pielle Livorno",
+      "pts": 44,
+      "gp": 27,
+      "wins": 22,
       "losses": 5,
-      "pf": 2100,
-      "ps": 1931
+      "pf": 2165,
+      "ps": 1980
     },
     {
-      "team": "Verodol CBD Pielle Livorno",
-      "pts": 42,
-      "gp": 26,
-      "wins": 21,
+      "team": "Paperdi Juvecaserta 2021",
+      "pts": 44,
+      "gp": 27,
+      "wins": 22,
       "losses": 5,
-      "pf": 2062,
-      "ps": 1887
+      "pf": 2190,
+      "ps": 2010
     },
     {
       "team": "Benacquista Assicurazioni Latina",
-      "pts": 38,
-      "gp": 24,
-      "wins": 19,
+      "pts": 40,
+      "gp": 25,
+      "wins": 20,
       "losses": 5,
-      "pf": 1979,
-      "ps": 1807
+      "pf": 2065,
+      "ps": 1887
     },
     {
       "team": "Luiss Roma",
-      "pts": 34,
-      "gp": 25,
-      "wins": 17,
+      "pts": 36,
+      "gp": 26,
+      "wins": 18,
       "losses": 8,
-      "pf": 1915,
-      "ps": 1842
+      "pf": 1983,
+      "ps": 1904
+    },
+    {
+      "team": "UP Andrea Costa Imola",
+      "pts": 32,
+      "gp": 27,
+      "wins": 16,
+      "losses": 11,
+      "pf": 1918,
+      "ps": 1818
     },
     {
       "team": "Allianz Pazienza San Severo",
       "pts": 32,
-      "gp": 26,
+      "gp": 27,
       "wins": 16,
-      "losses": 10,
-      "pf": 2094,
-      "ps": 2067
+      "losses": 11,
+      "pf": 2173,
+      "ps": 2157
     },
     {
       "team": "Tema Sinergie Faenza",
@@ -65,15 +74,6 @@
       "ps": 1977
     },
     {
-      "team": "UP Andrea Costa Imola",
-      "pts": 30,
-      "gp": 26,
-      "wins": 15,
-      "losses": 11,
-      "pf": 1845,
-      "ps": 1757
-    },
-    {
       "team": "General Contractor Jesi",
       "pts": 24,
       "gp": 26,
@@ -83,58 +83,58 @@
       "ps": 1971
     },
     {
+      "team": "Malvin PSA Basket Casoria",
+      "pts": 24,
+      "gp": 27,
+      "wins": 12,
+      "losses": 15,
+      "pf": 1824,
+      "ps": 1885
+    },
+    {
       "team": "Umana San Giobbe Chiusi",
       "pts": 22,
-      "gp": 24,
+      "gp": 25,
       "wins": 11,
-      "losses": 13,
-      "pf": 1818,
-      "ps": 1857
+      "losses": 14,
+      "pf": 1880,
+      "ps": 1925
     },
     {
       "team": "Solbat Golfo Piombino",
       "pts": 22,
-      "gp": 26,
+      "gp": 27,
       "wins": 11,
-      "losses": 15,
-      "pf": 1951,
-      "ps": 2019
+      "losses": 16,
+      "pf": 2044,
+      "ps": 2122
     },
     {
       "team": "OraSì Ravenna",
       "pts": 22,
-      "gp": 26,
+      "gp": 27,
       "wins": 11,
-      "losses": 15,
-      "pf": 2008,
-      "ps": 1963
-    },
-    {
-      "team": "Malvin PSA Basket Casoria",
-      "pts": 22,
-      "gp": 26,
-      "wins": 11,
-      "losses": 15,
-      "pf": 1760,
-      "ps": 1823
+      "losses": 16,
+      "pf": 2070,
+      "ps": 2027
     },
     {
       "team": "Adamant Ferrara",
       "pts": 18,
-      "gp": 26,
+      "gp": 27,
       "wins": 9,
-      "losses": 17,
-      "pf": 2057,
-      "ps": 2086
+      "losses": 18,
+      "pf": 2118,
+      "ps": 2159
     },
     {
-      "team": "Power Basket Nocera",
+      "team": "Virtus Imola",
       "pts": 14,
-      "gp": 25,
+      "gp": 26,
       "wins": 7,
-      "losses": 18,
-      "pf": 1796,
-      "ps": 1923
+      "losses": 19,
+      "pf": 1887,
+      "ps": 2140
     },
     {
       "team": "Consorzio Leonardo Dany Quarrata",
@@ -146,13 +146,13 @@
       "ps": 2064
     },
     {
-      "team": "Virtus Imola",
+      "team": "Power Basket Nocera",
       "pts": 14,
       "gp": 26,
       "wins": 7,
       "losses": 19,
-      "pf": 1887,
-      "ps": 2140
+      "pf": 1876,
+      "ps": 2009
     },
     {
       "team": "Ristopro Fabriano",
