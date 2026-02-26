@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-25T03:52:35.751287",
+  "updated_at": "2026-02-26T03:51:41.626652",
   "standings": [
     {
       "team": "Victoria Libertas Pesaro",
@@ -12,9 +12,9 @@
     },
     {
       "team": "Valtur Brindisi",
-      "pts": 36,
-      "gp": 26,
-      "wins": 18,
+      "pts": 38,
+      "gp": 27,
+      "wins": 19,
       "losses": 8,
       "pf": 0,
       "ps": 0
@@ -139,9 +139,9 @@
     {
       "team": "Unieuro Forlì",
       "pts": 18,
-      "gp": 26,
+      "gp": 27,
       "wins": 9,
-      "losses": 17,
+      "losses": 18,
       "pf": 0,
       "ps": 0
     },
