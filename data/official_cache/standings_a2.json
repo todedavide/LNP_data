@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-27T03:50:38.869295",
+  "updated_at": "2026-02-28T03:39:48.553640",
   "standings": [
     {
       "team": "Victoria Libertas Pesaro",
@@ -92,6 +92,15 @@
       "ps": 0
     },
     {
+      "team": "Wegreenit Urania Milano",
+      "pts": 26,
+      "gp": 28,
+      "wins": 13,
+      "losses": 15,
+      "pf": 0,
+      "ps": 0
+    },
+    {
       "team": "Ferraroni Juvi Cremona",
       "pts": 26,
       "gp": 28,
@@ -101,20 +110,11 @@
       "ps": 0
     },
     {
-      "team": "Wegreenit Urania Milano",
-      "pts": 24,
-      "gp": 27,
-      "wins": 12,
-      "losses": 15,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "Gemini Mestre",
       "pts": 24,
-      "gp": 27,
+      "gp": 28,
       "wins": 12,
-      "losses": 15,
+      "losses": 16,
       "pf": 0,
       "ps": 0
     },
