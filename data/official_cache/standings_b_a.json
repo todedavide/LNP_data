@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-28T03:39:33.443937",
+  "updated_at": "2026-03-01T03:55:40.633540",
   "standings": [
     {
       "team": "Elachem Vigevano 1955",
@@ -83,6 +83,15 @@
       "ps": 2118
     },
     {
+      "team": "Fabo Herons Montecatini",
+      "pts": 30,
+      "gp": 28,
+      "wins": 15,
+      "losses": 13,
+      "pf": 2372,
+      "ps": 2244
+    },
+    {
       "team": "Rimadesio Desio",
       "pts": 28,
       "gp": 26,
@@ -99,15 +108,6 @@
       "losses": 13,
       "pf": 2111,
       "ps": 2126
-    },
-    {
-      "team": "Fabo Herons Montecatini",
-      "pts": 28,
-      "gp": 27,
-      "wins": 14,
-      "losses": 13,
-      "pf": 2285,
-      "ps": 2171
     },
     {
       "team": "LuxArm Lumezzane",
@@ -139,11 +139,11 @@
     {
       "team": "Fiorenzuola Bees",
       "pts": 20,
-      "gp": 27,
+      "gp": 28,
       "wins": 10,
-      "losses": 17,
-      "pf": 1937,
-      "ps": 2104
+      "losses": 18,
+      "pf": 2010,
+      "ps": 2191
     },
     {
       "team": "Foppiani Fulgor Fidenza",

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-28T03:39:40.343504",
+  "updated_at": "2026-03-01T03:55:48.146530",
   "standings": [
     {
       "team": "Virtus GVM Roma 1960",
@@ -30,30 +30,21 @@
     },
     {
       "team": "Benacquista Assicurazioni Latina",
-      "pts": 40,
-      "gp": 25,
-      "wins": 20,
+      "pts": 42,
+      "gp": 26,
+      "wins": 21,
       "losses": 5,
-      "pf": 2065,
-      "ps": 1887
+      "pf": 2149,
+      "ps": 1965
     },
     {
       "team": "Luiss Roma",
-      "pts": 36,
-      "gp": 26,
-      "wins": 18,
-      "losses": 8,
-      "pf": 1983,
-      "ps": 1904
-    },
-    {
-      "team": "UP Andrea Costa Imola",
-      "pts": 32,
+      "pts": 38,
       "gp": 27,
-      "wins": 16,
-      "losses": 11,
-      "pf": 1918,
-      "ps": 1818
+      "wins": 19,
+      "losses": 8,
+      "pf": 2046,
+      "ps": 1957
     },
     {
       "team": "Allianz Pazienza San Severo",
@@ -63,6 +54,15 @@
       "losses": 11,
       "pf": 2173,
       "ps": 2157
+    },
+    {
+      "team": "UP Andrea Costa Imola",
+      "pts": 32,
+      "gp": 28,
+      "wins": 16,
+      "losses": 12,
+      "pf": 1971,
+      "ps": 1881
     },
     {
       "team": "Tema Sinergie Faenza",
@@ -94,11 +94,11 @@
     {
       "team": "Umana San Giobbe Chiusi",
       "pts": 22,
-      "gp": 25,
+      "gp": 26,
       "wins": 11,
-      "losses": 14,
-      "pf": 1880,
-      "ps": 1925
+      "losses": 15,
+      "pf": 1955,
+      "ps": 2011
     },
     {
       "team": "Solbat Golfo Piombino",
@@ -121,11 +121,11 @@
     {
       "team": "Adamant Ferrara",
       "pts": 18,
-      "gp": 27,
+      "gp": 28,
       "wins": 9,
-      "losses": 18,
-      "pf": 2118,
-      "ps": 2159
+      "losses": 19,
+      "pf": 2196,
+      "ps": 2243
     },
     {
       "team": "Virtus Imola",
@@ -165,12 +165,12 @@
     },
     {
       "team": "Consultinvest Loreto Pesaro",
-      "pts": 12,
-      "gp": 26,
-      "wins": 6,
+      "pts": 14,
+      "gp": 27,
+      "wins": 7,
       "losses": 20,
-      "pf": 1835,
-      "ps": 2017
+      "pf": 1921,
+      "ps": 2092
     }
   ]
 }
