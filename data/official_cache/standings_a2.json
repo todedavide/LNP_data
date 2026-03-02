@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-01T03:55:55.222922",
+  "updated_at": "2026-03-02T03:52:04.468256",
   "standings": [
     {
       "team": "Victoria Libertas Pesaro",
@@ -157,17 +157,17 @@
     {
       "team": "Estra Pistoia",
       "pts": 12,
-      "gp": 27,
+      "gp": 28,
       "wins": 6,
-      "losses": 21,
+      "losses": 22,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Liofilchem Roseto",
-      "pts": 8,
-      "gp": 27,
-      "wins": 4,
+      "pts": 10,
+      "gp": 28,
+      "wins": 5,
       "losses": 23,
       "pf": 0,
       "ps": 0
