@@ -1,23 +1,23 @@
 {
-  "updated_at": "2026-03-04T03:49:24.372910",
+  "updated_at": "2026-03-05T03:52:01.942238",
   "standings": [
     {
       "team": "Verodol CBD Pielle Livorno",
+      "pts": 48,
+      "gp": 29,
+      "wins": 24,
+      "losses": 5,
+      "pf": 2344,
+      "ps": 2114
+    },
+    {
+      "team": "Virtus GVM Roma 1960",
       "pts": 46,
       "gp": 28,
       "wins": 23,
       "losses": 5,
-      "pf": 2258,
-      "ps": 2048
-    },
-    {
-      "team": "Virtus GVM Roma 1960",
-      "pts": 44,
-      "gp": 27,
-      "wins": 22,
-      "losses": 5,
-      "pf": 2105,
-      "ps": 1861
+      "pf": 2199,
+      "ps": 1941
     },
     {
       "team": "Paperdi Juvecaserta 2021",
@@ -30,21 +30,21 @@
     },
     {
       "team": "Benacquista Assicurazioni Latina",
-      "pts": 42,
-      "gp": 26,
-      "wins": 21,
+      "pts": 44,
+      "gp": 27,
+      "wins": 22,
       "losses": 5,
-      "pf": 2149,
-      "ps": 1965
+      "pf": 2237,
+      "ps": 2039
     },
     {
       "team": "Luiss Roma",
       "pts": 38,
-      "gp": 27,
+      "gp": 28,
       "wins": 19,
-      "losses": 8,
-      "pf": 2046,
-      "ps": 1957
+      "losses": 9,
+      "pf": 2115,
+      "ps": 2039
     },
     {
       "team": "Allianz Pazienza San Severo",
@@ -67,47 +67,47 @@
     {
       "team": "Tema Sinergie Faenza",
       "pts": 30,
-      "gp": 27,
+      "gp": 28,
       "wins": 15,
-      "losses": 12,
-      "pf": 2125,
-      "ps": 2060
+      "losses": 13,
+      "pf": 2191,
+      "ps": 2146
     },
     {
       "team": "Malvin PSA Basket Casoria",
-      "pts": 26,
-      "gp": 28,
-      "wins": 13,
+      "pts": 28,
+      "gp": 29,
+      "wins": 14,
       "losses": 15,
-      "pf": 1910,
-      "ps": 1962
+      "pf": 1982,
+      "ps": 2027
     },
     {
       "team": "General Contractor Jesi",
       "pts": 24,
-      "gp": 26,
+      "gp": 27,
       "wins": 12,
-      "losses": 14,
-      "pf": 2027,
-      "ps": 1971
+      "losses": 15,
+      "pf": 2103,
+      "ps": 2058
     },
     {
       "team": "Solbat Golfo Piombino",
       "pts": 24,
-      "gp": 28,
+      "gp": 29,
       "wins": 12,
-      "losses": 16,
-      "pf": 2120,
-      "ps": 2189
+      "losses": 17,
+      "pf": 2194,
+      "ps": 2277
     },
     {
       "team": "Umana San Giobbe Chiusi",
       "pts": 22,
-      "gp": 26,
+      "gp": 27,
       "wins": 11,
-      "losses": 15,
-      "pf": 1955,
-      "ps": 2011
+      "losses": 16,
+      "pf": 2020,
+      "ps": 2083
     },
     {
       "team": "OraSì Ravenna",
@@ -119,31 +119,40 @@
       "ps": 2116
     },
     {
-      "team": "Adamant Ferrara",
+      "team": "Consorzio Leonardo Dany Quarrata",
       "pts": 18,
       "gp": 28,
       "wins": 9,
       "losses": 19,
-      "pf": 2196,
-      "ps": 2243
+      "pf": 2054,
+      "ps": 2214
     },
     {
-      "team": "Consorzio Leonardo Dany Quarrata",
-      "pts": 16,
-      "gp": 27,
-      "wins": 8,
-      "losses": 19,
-      "pf": 1972,
-      "ps": 2145
-    },
-    {
-      "team": "Virtus Imola",
-      "pts": 14,
-      "gp": 27,
-      "wins": 7,
+      "team": "Adamant Ferrara",
+      "pts": 18,
+      "gp": 29,
+      "wins": 9,
       "losses": 20,
-      "pf": 1955,
-      "ps": 2233
+      "pf": 2274,
+      "ps": 2347
+    },
+    {
+      "team": "Power Basket Nocera",
+      "pts": 16,
+      "gp": 28,
+      "wins": 8,
+      "losses": 20,
+      "pf": 2047,
+      "ps": 2163
+    },
+    {
+      "team": "Ristopro Fabriano",
+      "pts": 16,
+      "gp": 29,
+      "wins": 8,
+      "losses": 21,
+      "pf": 2191,
+      "ps": 2369
     },
     {
       "team": "Consultinvest Loreto Pesaro",
@@ -155,22 +164,13 @@
       "ps": 2092
     },
     {
-      "team": "Power Basket Nocera",
-      "pts": 14,
-      "gp": 27,
-      "wins": 7,
-      "losses": 20,
-      "pf": 1943,
-      "ps": 2085
-    },
-    {
-      "team": "Ristopro Fabriano",
+      "team": "Virtus Imola",
       "pts": 14,
       "gp": 28,
       "wins": 7,
       "losses": 21,
-      "pf": 2104,
-      "ps": 2293
+      "pf": 2035,
+      "ps": 2327
     }
   ]
 }
