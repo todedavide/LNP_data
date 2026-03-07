@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-06T03:50:43.456142",
+  "updated_at": "2026-03-07T03:43:09.089787",
   "standings": [
     {
       "team": "Victoria Libertas Pesaro",
@@ -22,9 +22,9 @@
     {
       "team": "Flats Service Fortitudo Bologna",
       "pts": 36,
-      "gp": 27,
+      "gp": 28,
       "wins": 18,
-      "losses": 9,
+      "losses": 10,
       "pf": 0,
       "ps": 0
     },
@@ -66,9 +66,9 @@
     },
     {
       "team": "Bi.Emme Service Libertas Livorno",
-      "pts": 32,
-      "gp": 27,
-      "wins": 16,
+      "pts": 34,
+      "gp": 28,
+      "wins": 17,
       "losses": 11,
       "pf": 0,
       "ps": 0
@@ -84,19 +84,10 @@
     },
     {
       "team": "Unicusano Avellino Basket",
-      "pts": 30,
-      "gp": 26,
-      "wins": 15,
+      "pts": 32,
+      "gp": 27,
+      "wins": 16,
       "losses": 11,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Wegreenit Urania Milano",
-      "pts": 26,
-      "gp": 28,
-      "wins": 13,
-      "losses": 15,
       "pf": 0,
       "ps": 0
     },
@@ -106,6 +97,15 @@
       "gp": 28,
       "wins": 13,
       "losses": 15,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Wegreenit Urania Milano",
+      "pts": 26,
+      "gp": 29,
+      "wins": 13,
+      "losses": 16,
       "pf": 0,
       "ps": 0
     },

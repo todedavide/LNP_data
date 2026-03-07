@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-06T03:50:36.792599",
+  "updated_at": "2026-03-07T03:43:01.267482",
   "standings": [
     {
       "team": "Verodol CBD Pielle Livorno",
@@ -48,12 +48,12 @@
     },
     {
       "team": "Allianz Pazienza San Severo",
-      "pts": 34,
-      "gp": 28,
-      "wins": 17,
+      "pts": 36,
+      "gp": 29,
+      "wins": 18,
       "losses": 11,
-      "pf": 2262,
-      "ps": 2233
+      "pf": 2349,
+      "ps": 2316
     },
     {
       "team": "UP Andrea Costa Imola",
@@ -155,15 +155,6 @@
       "ps": 2369
     },
     {
-      "team": "Consultinvest Loreto Pesaro",
-      "pts": 14,
-      "gp": 27,
-      "wins": 7,
-      "losses": 20,
-      "pf": 1921,
-      "ps": 2092
-    },
-    {
       "team": "Virtus Imola",
       "pts": 14,
       "gp": 28,
@@ -171,6 +162,15 @@
       "losses": 21,
       "pf": 2035,
       "ps": 2327
+    },
+    {
+      "team": "Consultinvest Loreto Pesaro",
+      "pts": 14,
+      "gp": 28,
+      "wins": 7,
+      "losses": 21,
+      "pf": 2004,
+      "ps": 2179
     }
   ]
 }
