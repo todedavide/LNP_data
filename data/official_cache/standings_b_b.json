@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-03-07T03:43:01.267482",
+  "updated_at": "2026-03-08T03:50:29.295105",
   "standings": [
     {
       "team": "Verodol CBD Pielle Livorno",
-      "pts": 48,
-      "gp": 29,
-      "wins": 24,
+      "pts": 50,
+      "gp": 30,
+      "wins": 25,
       "losses": 5,
-      "pf": 2344,
-      "ps": 2114
+      "pf": 2417,
+      "ps": 2181
     },
     {
       "team": "Virtus GVM Roma 1960",
@@ -58,11 +58,11 @@
     {
       "team": "UP Andrea Costa Imola",
       "pts": 32,
-      "gp": 28,
+      "gp": 29,
       "wins": 16,
-      "losses": 12,
-      "pf": 1971,
-      "ps": 1881
+      "losses": 13,
+      "pf": 2038,
+      "ps": 1954
     },
     {
       "team": "Tema Sinergie Faenza",
@@ -119,13 +119,22 @@
       "ps": 2116
     },
     {
+      "team": "Power Basket Nocera",
+      "pts": 18,
+      "gp": 29,
+      "wins": 9,
+      "losses": 20,
+      "pf": 2139,
+      "ps": 2247
+    },
+    {
       "team": "Consorzio Leonardo Dany Quarrata",
       "pts": 18,
-      "gp": 28,
+      "gp": 29,
       "wins": 9,
-      "losses": 19,
-      "pf": 2054,
-      "ps": 2214
+      "losses": 20,
+      "pf": 2138,
+      "ps": 2306
     },
     {
       "team": "Adamant Ferrara",
@@ -135,15 +144,6 @@
       "losses": 20,
       "pf": 2274,
       "ps": 2347
-    },
-    {
-      "team": "Power Basket Nocera",
-      "pts": 16,
-      "gp": 28,
-      "wins": 8,
-      "losses": 20,
-      "pf": 2047,
-      "ps": 2163
     },
     {
       "team": "Ristopro Fabriano",
