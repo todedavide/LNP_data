@@ -203,8 +203,37 @@ def generate_squadre_classifiche(campionato_filter, camp_name):
         </thead>
         <tbody>
     '''
+    # Colori posizioni classifica per Serie A2 (20 squadre)
+    num_teams = len(records_df)
+    def get_position_color(pos, total):
+        if campionato_filter == 'a2':
+            if pos == 1:
+                return '#1b7a2b'  # Promozione diretta
+            elif 2 <= pos <= 7:
+                return '#a8e6a0'  # Playoff
+            elif 8 <= pos <= 13:
+                return '#b3d4fc'  # Play-In
+            elif 14 <= pos <= 15:
+                return '#ffffff'  # Salve
+            elif 16 <= pos <= 19:
+                return '#ffcc80'  # Playout
+            elif pos == 20:
+                return '#ef5350'  # Retrocessione diretta
+        elif campionato_filter in ('b_a', 'b_b'):
+            if 1 <= pos <= 6:
+                return '#a8e6a0'  # Playoff
+            elif 7 <= pos <= 12:
+                return '#b3d4fc'  # Play-In
+            elif 13 <= pos <= 14:
+                return '#ffffff'  # Salve
+            elif 15 <= pos <= 18:
+                return '#ffcc80'  # Playout
+            elif pos == 19:
+                return '#ef5350'  # Retrocessione diretta
+        return '#f9f9f9' if pos % 2 == 0 else 'white'
+
     for i, (_, row) in enumerate(records_df.iterrows(), 1):
-        bg = '#f9f9f9' if i % 2 == 0 else 'white'
+        bg = get_position_color(i, num_teams)
         diff_color = '#22c55e' if row['Diff'] > 0 else '#ef4444' if row['Diff'] < 0 else '#666'
 
         # Form con colori
@@ -215,14 +244,18 @@ def generate_squadre_classifiche(campionato_filter, camp_name):
             else:
                 form_html += '<span style="color: #ef4444; font-weight: bold;">S</span>'
 
+        text_color = 'color: white;' if bg == '#1b7a2b' or bg == '#ef5350' else ''
+        win_color = '#a8e6a0' if bg == '#1b7a2b' else '#22c55e'
+        loss_color = '#f8a0a0' if bg == '#1b7a2b' else '#ef4444'
+
         table_html += f'''
-            <tr style="background: {bg};">
+            <tr style="background: {bg}; {text_color}" data-pos-color="{bg}">
                 <td style="padding: 10px 8px; font-weight: bold; text-align: center;">{i}</td>
                 <td style="padding: 10px 8px; font-weight: 600;">{row['Squadra']}</td>
                 <td style="padding: 10px 8px; text-align: center; font-weight: bold; font-size: 1.1em;">{row['Punti']}</td>
                 <td style="padding: 10px 8px; text-align: center;">{row['GP']}</td>
-                <td style="padding: 10px 8px; text-align: center; color: #22c55e; font-weight: bold;">{row['V']}</td>
-                <td style="padding: 10px 8px; text-align: center; color: #ef4444; font-weight: bold;">{row['S']}</td>
+                <td style="padding: 10px 8px; text-align: center; color: {win_color}; font-weight: bold;">{row['V']}</td>
+                <td style="padding: 10px 8px; text-align: center; color: {loss_color}; font-weight: bold;">{row['S']}</td>
                 <td style="padding: 10px 8px; text-align: center;">{row['Fatti']}</td>
                 <td style="padding: 10px 8px; text-align: center;">{row['Subiti']}</td>
                 <td style="padding: 10px 8px; text-align: center; color: {diff_color}; font-weight: bold;">{row['Diff']:+.1f}</td>
@@ -267,9 +300,14 @@ def generate_squadre_classifiche(campionato_filter, camp_name):
                     }
                 });
 
-                // Reinserisce righe ordinate e ricalcola zebra + posizione
+                // Reinserisce righe ordinate e ricalcola posizione (mantiene colori posizione)
                 rows.forEach((row, idx) => {
-                    row.style.background = idx % 2 === 0 ? 'white' : '#f9f9f9';
+                    const posColor = row.getAttribute('data-pos-color');
+                    if (posColor) {
+                        row.style.background = posColor;
+                    } else {
+                        row.style.background = idx % 2 === 0 ? 'white' : '#f9f9f9';
+                    }
                     row.cells[0].textContent = idx + 1;
                     tbody.appendChild(row);
                 });
@@ -280,10 +318,33 @@ def generate_squadre_classifiche(campionato_filter, camp_name):
     })();
     </script>'''
 
+    # Legenda posizioni per Serie A2
+    legend_html = ''
+    if campionato_filter == 'a2':
+        items = [
+            '<span style="display: flex; align-items: center; gap: 5px;"><span style="width: 14px; height: 14px; background: #1b7a2b; border-radius: 3px; display: inline-block;"></span> Promozione diretta</span>',
+            '<span style="display: flex; align-items: center; gap: 5px;"><span style="width: 14px; height: 14px; background: #a8e6a0; border-radius: 3px; display: inline-block;"></span> Playoff</span>',
+            '<span style="display: flex; align-items: center; gap: 5px;"><span style="width: 14px; height: 14px; background: #b3d4fc; border-radius: 3px; display: inline-block;"></span> Play-In</span>',
+            '<span style="display: flex; align-items: center; gap: 5px;"><span style="width: 14px; height: 14px; background: #ffcc80; border-radius: 3px; display: inline-block;"></span> Playout</span>',
+        ]
+        if num_teams >= 20:
+            items.append('<span style="display: flex; align-items: center; gap: 5px;"><span style="width: 14px; height: 14px; background: #ef5350; border-radius: 3px; display: inline-block;"></span> Retrocessione diretta</span>')
+        legend_html = f'<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 0.85em;">{"".join(items)}</div>'
+    elif campionato_filter in ('b_a', 'b_b'):
+        legend_html = '''
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 0.85em;">
+            <span style="display: flex; align-items: center; gap: 5px;"><span style="width: 14px; height: 14px; background: #a8e6a0; border-radius: 3px; display: inline-block;"></span> Playoff</span>
+            <span style="display: flex; align-items: center; gap: 5px;"><span style="width: 14px; height: 14px; background: #b3d4fc; border-radius: 3px; display: inline-block;"></span> Play-In</span>
+            <span style="display: flex; align-items: center; gap: 5px;"><span style="width: 14px; height: 14px; background: #ffcc80; border-radius: 3px; display: inline-block;"></span> Playout</span>
+            <span style="display: flex; align-items: center; gap: 5px;"><span style="width: 14px; height: 14px; background: #ef5350; border-radius: 3px; display: inline-block;"></span> Retrocessione diretta</span>
+        </div>
+        '''
+
     content = f'''
     <div class="content-section">
         <h2 class="section-title">Classifica</h2>
         {table_html}
+        {legend_html}
     </div>
     '''
 

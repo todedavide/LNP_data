@@ -428,6 +428,9 @@ def merge_standings(calculated_standings, campionato):
 
         corrected.append(calc_team)
 
+    # Rimuovi squadre non presenti nella classifica ufficiale (es. squadre escluse)
+    corrected = [t for t in corrected if t.get('_verified', False)]
+
     # Riordina per punti (ufficiali)
     corrected.sort(key=lambda x: (-x['Punti'], -x.get('Win%', 0)))
 
