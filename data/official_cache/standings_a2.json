@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-03-08T03:50:36.956960",
+  "updated_at": "2026-03-09T03:53:10.370086",
   "standings": [
     {
       "team": "Victoria Libertas Pesaro",
-      "pts": 38,
-      "gp": 27,
-      "wins": 19,
+      "pts": 40,
+      "gp": 28,
+      "wins": 20,
       "losses": 8,
       "pf": 0,
       "ps": 0
@@ -13,9 +13,27 @@
     {
       "team": "Valtur Brindisi",
       "pts": 38,
-      "gp": 27,
+      "gp": 28,
       "wins": 19,
-      "losses": 8,
+      "losses": 9,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "RSR Sebastiani Rieti",
+      "pts": 36,
+      "gp": 27,
+      "wins": 18,
+      "losses": 9,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Dole Basket Rimini",
+      "pts": 36,
+      "gp": 28,
+      "wins": 18,
+      "losses": 10,
       "pf": 0,
       "ps": 0
     },
@@ -29,34 +47,25 @@
       "ps": 0
     },
     {
-      "team": "RSR Sebastiani Rieti",
-      "pts": 34,
-      "gp": 26,
-      "wins": 17,
-      "losses": 9,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Dole Basket Rimini",
-      "pts": 34,
-      "gp": 27,
-      "wins": 17,
-      "losses": 10,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "Givova Scafati",
-      "pts": 34,
-      "gp": 27,
-      "wins": 17,
+      "pts": 36,
+      "gp": 28,
+      "wins": 18,
       "losses": 10,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Bi.Emme Service Libertas Livorno",
+      "pts": 34,
+      "gp": 28,
+      "wins": 17,
+      "losses": 11,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Tezenis Verona",
       "pts": 34,
       "gp": 28,
       "wins": 17,
@@ -74,29 +83,11 @@
       "ps": 0
     },
     {
-      "team": "Tezenis Verona",
-      "pts": 32,
-      "gp": 27,
-      "wins": 16,
-      "losses": 11,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "Unicusano Avellino Basket",
       "pts": 32,
       "gp": 27,
       "wins": 16,
       "losses": 11,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Ferraroni Juvi Cremona",
-      "pts": 26,
-      "gp": 28,
-      "wins": 13,
-      "losses": 15,
       "pf": 0,
       "ps": 0
     },
@@ -119,11 +110,20 @@
       "ps": 0
     },
     {
+      "team": "Ferraroni Juvi Cremona",
+      "pts": 26,
+      "gp": 29,
+      "wins": 13,
+      "losses": 16,
+      "pf": 0,
+      "ps": 0
+    },
+    {
       "team": "Reale Mutua Torino",
       "pts": 24,
-      "gp": 28,
+      "gp": 29,
       "wins": 12,
-      "losses": 16,
+      "losses": 17,
       "pf": 0,
       "ps": 0
     },
@@ -157,18 +157,18 @@
     {
       "team": "Estra Pistoia",
       "pts": 12,
-      "gp": 28,
+      "gp": 29,
       "wins": 6,
-      "losses": 22,
+      "losses": 23,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Liofilchem Roseto",
       "pts": 10,
-      "gp": 28,
+      "gp": 29,
       "wins": 5,
-      "losses": 23,
+      "losses": 24,
       "pf": 0,
       "ps": 0
     }
