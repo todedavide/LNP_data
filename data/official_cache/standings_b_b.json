@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-09T03:53:03.132198",
+  "updated_at": "2026-03-10T03:49:47.632948",
   "standings": [
     {
       "team": "Verodol CBD Pielle Livorno",
@@ -67,11 +67,11 @@
     {
       "team": "Tema Sinergie Faenza",
       "pts": 30,
-      "gp": 28,
+      "gp": 29,
       "wins": 15,
-      "losses": 13,
-      "pf": 2191,
-      "ps": 2146
+      "losses": 14,
+      "pf": 2248,
+      "ps": 2218
     },
     {
       "team": "Malvin PSA Basket Casoria",
@@ -156,12 +156,12 @@
     },
     {
       "team": "Consultinvest Loreto Pesaro",
-      "pts": 14,
-      "gp": 28,
-      "wins": 7,
+      "pts": 16,
+      "gp": 29,
+      "wins": 8,
       "losses": 21,
-      "pf": 2004,
-      "ps": 2179
+      "pf": 2076,
+      "ps": 2236
     },
     {
       "team": "Virtus Imola",

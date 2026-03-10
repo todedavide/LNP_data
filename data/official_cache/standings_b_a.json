@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-09T03:52:56.159207",
+  "updated_at": "2026-03-10T03:49:40.658267",
   "standings": [
     {
       "team": "Elachem Vigevano 1955",
@@ -49,11 +49,11 @@
     {
       "team": "UCC Assigeco Piacenza",
       "pts": 34,
-      "gp": 28,
+      "gp": 29,
       "wins": 17,
-      "losses": 11,
-      "pf": 2243,
-      "ps": 2278
+      "losses": 12,
+      "pf": 2316,
+      "ps": 2358
     },
     {
       "team": "Infodrive Capo d'Orlando",
@@ -93,12 +93,12 @@
     },
     {
       "team": "Paffoni Fulgor Basket Omegna",
-      "pts": 30,
-      "gp": 29,
-      "wins": 15,
+      "pts": 32,
+      "gp": 30,
+      "wins": 16,
       "losses": 14,
-      "pf": 2310,
-      "ps": 2284
+      "pf": 2390,
+      "ps": 2357
     },
     {
       "team": "S4 Energia Vicenza",
