@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-13T03:51:10.596998",
+  "updated_at": "2026-03-14T03:49:58.286003",
   "standings": [
     {
       "team": "Elachem Vigevano 1955",
@@ -13,11 +13,11 @@
     {
       "team": "Rucker San Vendemiano",
       "pts": 42,
-      "gp": 28,
+      "gp": 29,
       "wins": 21,
-      "losses": 7,
-      "pf": 2344,
-      "ps": 2104
+      "losses": 8,
+      "pf": 2423,
+      "ps": 2194
     },
     {
       "team": "Logiman Orzinuovi",
@@ -74,6 +74,15 @@
       "ps": 2393
     },
     {
+      "team": "Paffoni Fulgor Basket Omegna",
+      "pts": 34,
+      "gp": 31,
+      "wins": 17,
+      "losses": 14,
+      "pf": 2480,
+      "ps": 2436
+    },
+    {
       "team": "TAV Treviglio Brianza Basket",
       "pts": 32,
       "gp": 28,
@@ -90,15 +99,6 @@
       "losses": 13,
       "pf": 2514,
       "ps": 2441
-    },
-    {
-      "team": "Paffoni Fulgor Basket Omegna",
-      "pts": 32,
-      "gp": 30,
-      "wins": 16,
-      "losses": 14,
-      "pf": 2390,
-      "ps": 2357
     },
     {
       "team": "S4 Energia Vicenza",

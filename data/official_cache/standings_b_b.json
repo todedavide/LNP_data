@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-13T03:51:17.307009",
+  "updated_at": "2026-03-14T03:50:05.561222",
   "standings": [
     {
       "team": "Verodol CBD Pielle Livorno",
@@ -92,6 +92,15 @@
       "ps": 2137
     },
     {
+      "team": "Umana San Giobbe Chiusi",
+      "pts": 26,
+      "gp": 29,
+      "wins": 13,
+      "losses": 16,
+      "pf": 2187,
+      "ps": 2244
+    },
+    {
       "team": "Solbat Golfo Piombino",
       "pts": 26,
       "gp": 30,
@@ -99,15 +108,6 @@
       "losses": 17,
       "pf": 2293,
       "ps": 2360
-    },
-    {
-      "team": "Umana San Giobbe Chiusi",
-      "pts": 24,
-      "gp": 28,
-      "wins": 12,
-      "losses": 16,
-      "pf": 2103,
-      "ps": 2164
     },
     {
       "team": "OraSì Ravenna",
@@ -128,15 +128,6 @@
       "ps": 2247
     },
     {
-      "team": "Consorzio Leonardo Dany Quarrata",
-      "pts": 18,
-      "gp": 29,
-      "wins": 9,
-      "losses": 20,
-      "pf": 2138,
-      "ps": 2306
-    },
-    {
       "team": "Adamant Ferrara",
       "pts": 18,
       "gp": 29,
@@ -153,6 +144,15 @@
       "losses": 21,
       "pf": 2279,
       "ps": 2455
+    },
+    {
+      "team": "Consorzio Leonardo Dany Quarrata",
+      "pts": 18,
+      "gp": 30,
+      "wins": 9,
+      "losses": 21,
+      "pf": 2218,
+      "ps": 2390
     },
     {
       "team": "Consultinvest Loreto Pesaro",
