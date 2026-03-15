@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-14T03:50:12.404926",
+  "updated_at": "2026-03-15T04:01:10.862564",
   "standings": [
     {
       "team": "Victoria Libertas Pesaro",
@@ -31,15 +31,6 @@
     {
       "team": "RSR Sebastiani Rieti",
       "pts": 36,
-      "gp": 27,
-      "wins": 18,
-      "losses": 9,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Dole Basket Rimini",
-      "pts": 36,
       "gp": 28,
       "wins": 18,
       "losses": 10,
@@ -56,7 +47,25 @@
       "ps": 0
     },
     {
+      "team": "Dole Basket Rimini",
+      "pts": 36,
+      "gp": 28,
+      "wins": 18,
+      "losses": 10,
+      "pf": 0,
+      "ps": 0
+    },
+    {
       "team": "Bi.Emme Service Libertas Livorno",
+      "pts": 34,
+      "gp": 28,
+      "wins": 17,
+      "losses": 11,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Unicusano Avellino Basket",
       "pts": 34,
       "gp": 28,
       "wins": 17,
@@ -79,15 +88,6 @@
       "gp": 29,
       "wins": 17,
       "losses": 12,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Unicusano Avellino Basket",
-      "pts": 32,
-      "gp": 27,
-      "wins": 16,
-      "losses": 11,
       "pf": 0,
       "ps": 0
     },

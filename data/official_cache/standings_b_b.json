@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-14T03:50:05.561222",
+  "updated_at": "2026-03-15T04:01:03.108295",
   "standings": [
     {
       "team": "Verodol CBD Pielle Livorno",
@@ -57,12 +57,12 @@
     },
     {
       "team": "UP Andrea Costa Imola",
-      "pts": 32,
-      "gp": 29,
-      "wins": 16,
+      "pts": 34,
+      "gp": 30,
+      "wins": 17,
       "losses": 13,
-      "pf": 2038,
-      "ps": 1954
+      "pf": 2113,
+      "ps": 2010
     },
     {
       "team": "Tema Sinergie Faenza",
@@ -112,11 +112,11 @@
     {
       "team": "OraSì Ravenna",
       "pts": 22,
-      "gp": 29,
+      "gp": 30,
       "wins": 11,
-      "losses": 18,
-      "pf": 2232,
-      "ps": 2204
+      "losses": 19,
+      "pf": 2288,
+      "ps": 2279
     },
     {
       "team": "Power Basket Nocera",
