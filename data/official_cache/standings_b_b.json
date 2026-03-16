@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-15T04:01:03.108295",
+  "updated_at": "2026-03-16T04:03:44.540983",
   "standings": [
     {
       "team": "Verodol CBD Pielle Livorno",
@@ -31,11 +31,11 @@
     {
       "team": "Paperdi Juvecaserta 2021",
       "pts": 44,
-      "gp": 28,
+      "gp": 29,
       "wins": 22,
-      "losses": 6,
-      "pf": 2271,
-      "ps": 2093
+      "losses": 7,
+      "pf": 2349,
+      "ps": 2179
     },
     {
       "team": "Luiss Roma",
@@ -74,6 +74,15 @@
       "ps": 2218
     },
     {
+      "team": "General Contractor Jesi",
+      "pts": 28,
+      "gp": 29,
+      "wins": 14,
+      "losses": 15,
+      "pf": 2273,
+      "ps": 2215
+    },
+    {
       "team": "Malvin PSA Basket Casoria",
       "pts": 28,
       "gp": 30,
@@ -81,15 +90,6 @@
       "losses": 16,
       "pf": 2061,
       "ps": 2111
-    },
-    {
-      "team": "General Contractor Jesi",
-      "pts": 26,
-      "gp": 28,
-      "wins": 13,
-      "losses": 15,
-      "pf": 2187,
-      "ps": 2137
     },
     {
       "team": "Umana San Giobbe Chiusi",
