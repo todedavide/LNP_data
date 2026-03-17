@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-16T04:03:37.059824",
+  "updated_at": "2026-03-17T03:51:08.826810",
   "standings": [
     {
       "team": "Elachem Vigevano 1955",
@@ -65,6 +65,15 @@
       "ps": 2286
     },
     {
+      "team": "TAV Treviglio Brianza Basket",
+      "pts": 34,
+      "gp": 29,
+      "wins": 17,
+      "losses": 12,
+      "pf": 2347,
+      "ps": 2290
+    },
+    {
       "team": "Fabo Herons Montecatini",
       "pts": 34,
       "gp": 30,
@@ -81,15 +90,6 @@
       "losses": 14,
       "pf": 2480,
       "ps": 2436
-    },
-    {
-      "team": "TAV Treviglio Brianza Basket",
-      "pts": 32,
-      "gp": 28,
-      "wins": 16,
-      "losses": 12,
-      "pf": 2249,
-      "ps": 2221
     },
     {
       "team": "Rimadesio Desio",
@@ -157,11 +157,11 @@
     {
       "team": "Foppiani Fulgor Fidenza",
       "pts": 10,
-      "gp": 28,
+      "gp": 29,
       "wins": 5,
-      "losses": 23,
-      "pf": 1980,
-      "ps": 2213
+      "losses": 24,
+      "pf": 2049,
+      "ps": 2311
     },
     {
       "team": "Bakery Basket Piacenza",
