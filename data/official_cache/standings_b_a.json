@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-20T03:50:32.723982",
+  "updated_at": "2026-03-21T03:46:40.866209",
   "standings": [
     {
       "team": "Elachem Vigevano 1955",
@@ -38,22 +38,22 @@
       "ps": 2251
     },
     {
-      "team": "SAE Scientifica-Soevis Legnano",
+      "team": "UCC Assigeco Piacenza",
       "pts": 36,
-      "gp": 29,
+      "gp": 30,
       "wins": 18,
-      "losses": 11,
-      "pf": 2295,
-      "ps": 2168
+      "losses": 12,
+      "pf": 2390,
+      "ps": 2428
     },
     {
-      "team": "UCC Assigeco Piacenza",
-      "pts": 34,
-      "gp": 29,
-      "wins": 17,
+      "team": "SAE Scientifica-Soevis Legnano",
+      "pts": 36,
+      "gp": 30,
+      "wins": 18,
       "losses": 12,
-      "pf": 2316,
-      "ps": 2358
+      "pf": 2365,
+      "ps": 2242
     },
     {
       "team": "Infodrive Capo d'Orlando",
