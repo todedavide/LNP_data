@@ -1,38 +1,29 @@
 {
-  "updated_at": "2026-03-21T03:46:55.052999",
+  "updated_at": "2026-03-22T03:53:40.945481",
   "standings": [
     {
       "team": "Victoria Libertas Pesaro",
-      "pts": 40,
-      "gp": 28,
-      "wins": 20,
+      "pts": 42,
+      "gp": 29,
+      "wins": 21,
       "losses": 8,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Valtur Brindisi",
-      "pts": 38,
-      "gp": 28,
-      "wins": 19,
+      "pts": 40,
+      "gp": 29,
+      "wins": 20,
       "losses": 9,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Flats Service Fortitudo Bologna",
-      "pts": 38,
-      "gp": 29,
-      "wins": 19,
-      "losses": 10,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "RSR Sebastiani Rieti",
-      "pts": 36,
-      "gp": 28,
-      "wins": 18,
+      "pts": 40,
+      "gp": 30,
+      "wins": 20,
       "losses": 10,
       "pf": 0,
       "ps": 0
@@ -47,25 +38,34 @@
       "ps": 0
     },
     {
-      "team": "Dole Basket Rimini",
+      "team": "Unicusano Avellino Basket",
       "pts": 36,
-      "gp": 28,
+      "gp": 29,
       "wins": 18,
-      "losses": 10,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Bi.Emme Service Libertas Livorno",
-      "pts": 34,
-      "gp": 28,
-      "wins": 17,
       "losses": 11,
       "pf": 0,
       "ps": 0
     },
     {
-      "team": "Unicusano Avellino Basket",
+      "team": "RSR Sebastiani Rieti",
+      "pts": 36,
+      "gp": 29,
+      "wins": 18,
+      "losses": 11,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Dole Basket Rimini",
+      "pts": 36,
+      "gp": 29,
+      "wins": 18,
+      "losses": 11,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Bi.Emme Service Libertas Livorno",
       "pts": 34,
       "gp": 28,
       "wins": 17,
@@ -101,7 +101,7 @@
       "ps": 0
     },
     {
-      "team": "Gemini Mestre",
+      "team": "Ferraroni Juvi Cremona",
       "pts": 26,
       "gp": 29,
       "wins": 13,
@@ -110,11 +110,11 @@
       "ps": 0
     },
     {
-      "team": "Ferraroni Juvi Cremona",
+      "team": "Gemini Mestre",
       "pts": 26,
-      "gp": 29,
+      "gp": 30,
       "wins": 13,
-      "losses": 16,
+      "losses": 17,
       "pf": 0,
       "ps": 0
     },
@@ -128,7 +128,7 @@
       "ps": 0
     },
     {
-      "team": "Sella Cento",
+      "team": "Unieuro Forlì",
       "pts": 20,
       "gp": 28,
       "wins": 10,
@@ -137,11 +137,11 @@
       "ps": 0
     },
     {
-      "team": "Unieuro Forlì",
+      "team": "Sella Cento",
       "pts": 20,
-      "gp": 28,
+      "gp": 29,
       "wins": 10,
-      "losses": 18,
+      "losses": 19,
       "pf": 0,
       "ps": 0
     },

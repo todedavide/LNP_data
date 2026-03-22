@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-21T03:46:47.863767",
+  "updated_at": "2026-03-22T03:53:33.133144",
   "standings": [
     {
       "team": "Verodol CBD Pielle Livorno",
@@ -11,6 +11,15 @@
       "ps": 2181
     },
     {
+      "team": "Virtus GVM Roma 1960",
+      "pts": 48,
+      "gp": 30,
+      "wins": 24,
+      "losses": 6,
+      "pf": 2376,
+      "ps": 2109
+    },
+    {
       "team": "Benacquista Assicurazioni Latina",
       "pts": 46,
       "gp": 28,
@@ -18,15 +27,6 @@
       "losses": 5,
       "pf": 2321,
       "ps": 2122
-    },
-    {
-      "team": "Virtus GVM Roma 1960",
-      "pts": 46,
-      "gp": 29,
-      "wins": 23,
-      "losses": 6,
-      "pf": 2282,
-      "ps": 2040
     },
     {
       "team": "Paperdi Juvecaserta 2021",
@@ -58,11 +58,11 @@
     {
       "team": "UP Andrea Costa Imola",
       "pts": 34,
-      "gp": 30,
+      "gp": 31,
       "wins": 17,
-      "losses": 13,
-      "pf": 2113,
-      "ps": 2010
+      "losses": 14,
+      "pf": 2177,
+      "ps": 2085
     },
     {
       "team": "Tema Sinergie Faenza",
@@ -75,12 +75,12 @@
     },
     {
       "team": "General Contractor Jesi",
-      "pts": 28,
-      "gp": 29,
-      "wins": 14,
+      "pts": 30,
+      "gp": 30,
+      "wins": 15,
       "losses": 15,
-      "pf": 2273,
-      "ps": 2215
+      "pf": 2348,
+      "ps": 2279
     },
     {
       "team": "Malvin PSA Basket Casoria",
@@ -137,15 +137,6 @@
       "ps": 2347
     },
     {
-      "team": "Ristopro Fabriano",
-      "pts": 18,
-      "gp": 30,
-      "wins": 9,
-      "losses": 21,
-      "pf": 2279,
-      "ps": 2455
-    },
-    {
       "team": "Consorzio Leonardo Dany Quarrata",
       "pts": 18,
       "gp": 30,
@@ -153,6 +144,15 @@
       "losses": 21,
       "pf": 2218,
       "ps": 2390
+    },
+    {
+      "team": "Ristopro Fabriano",
+      "pts": 18,
+      "gp": 31,
+      "wins": 9,
+      "losses": 22,
+      "pf": 2348,
+      "ps": 2549
     },
     {
       "team": "Consultinvest Loreto Pesaro",
