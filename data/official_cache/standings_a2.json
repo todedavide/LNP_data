@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-22T03:53:40.945481",
+  "updated_at": "2026-03-23T03:59:05.150798",
   "standings": [
     {
       "team": "Victoria Libertas Pesaro",
@@ -30,9 +30,9 @@
     },
     {
       "team": "Givova Scafati",
-      "pts": 36,
-      "gp": 28,
-      "wins": 18,
+      "pts": 38,
+      "gp": 29,
+      "wins": 19,
       "losses": 10,
       "pf": 0,
       "ps": 0
@@ -56,6 +56,15 @@
       "ps": 0
     },
     {
+      "team": "Tezenis Verona",
+      "pts": 36,
+      "gp": 29,
+      "wins": 18,
+      "losses": 11,
+      "pf": 0,
+      "ps": 0
+    },
+    {
       "team": "Dole Basket Rimini",
       "pts": 36,
       "gp": 29,
@@ -67,24 +76,6 @@
     {
       "team": "Bi.Emme Service Libertas Livorno",
       "pts": 34,
-      "gp": 28,
-      "wins": 17,
-      "losses": 11,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Tezenis Verona",
-      "pts": 34,
-      "gp": 28,
-      "wins": 17,
-      "losses": 11,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "UEB Gesteco Cividale",
-      "pts": 34,
       "gp": 29,
       "wins": 17,
       "losses": 12,
@@ -92,20 +83,38 @@
       "ps": 0
     },
     {
-      "team": "Wegreenit Urania Milano",
-      "pts": 26,
-      "gp": 29,
-      "wins": 13,
-      "losses": 16,
+      "team": "UEB Gesteco Cividale",
+      "pts": 34,
+      "gp": 30,
+      "wins": 17,
+      "losses": 13,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Ferraroni Juvi Cremona",
-      "pts": 26,
-      "gp": 29,
-      "wins": 13,
+      "pts": 28,
+      "gp": 30,
+      "wins": 14,
       "losses": 16,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Wegreenit Urania Milano",
+      "pts": 26,
+      "gp": 30,
+      "wins": 13,
+      "losses": 17,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Reale Mutua Torino",
+      "pts": 26,
+      "gp": 30,
+      "wins": 13,
+      "losses": 17,
       "pf": 0,
       "ps": 0
     },
@@ -119,24 +128,6 @@
       "ps": 0
     },
     {
-      "team": "Reale Mutua Torino",
-      "pts": 24,
-      "gp": 29,
-      "wins": 12,
-      "losses": 17,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Unieuro Forlì",
-      "pts": 20,
-      "gp": 28,
-      "wins": 10,
-      "losses": 18,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "Sella Cento",
       "pts": 20,
       "gp": 29,
@@ -146,10 +137,19 @@
       "ps": 0
     },
     {
+      "team": "Unieuro Forlì",
+      "pts": 20,
+      "gp": 29,
+      "wins": 10,
+      "losses": 19,
+      "pf": 0,
+      "ps": 0
+    },
+    {
       "team": "Crifo Wines Ruvo di Puglia",
-      "pts": 16,
-      "gp": 28,
-      "wins": 8,
+      "pts": 18,
+      "gp": 29,
+      "wins": 9,
       "losses": 20,
       "pf": 0,
       "ps": 0
@@ -157,9 +157,9 @@
     {
       "team": "Estra Pistoia",
       "pts": 12,
-      "gp": 29,
+      "gp": 30,
       "wins": 6,
-      "losses": 23,
+      "losses": 24,
       "pf": 0,
       "ps": 0
     },
