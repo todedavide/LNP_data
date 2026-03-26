@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-03-25T03:51:53.045892",
+  "updated_at": "2026-03-26T04:00:40.879070",
   "standings": [
     {
       "team": "Elachem Vigevano 1955",
-      "pts": 46,
-      "gp": 29,
-      "wins": 23,
+      "pts": 48,
+      "gp": 30,
+      "wins": 24,
       "losses": 6,
-      "pf": 2474,
-      "ps": 2146
+      "pf": 2557,
+      "ps": 2203
     },
     {
       "team": "Logiman Orzinuovi",
@@ -20,15 +20,6 @@
       "ps": 2219
     },
     {
-      "team": "Rucker San Vendemiano",
-      "pts": 42,
-      "gp": 30,
-      "wins": 21,
-      "losses": 9,
-      "pf": 2493,
-      "ps": 2271
-    },
-    {
       "team": "La T Tecnica Gema Montecatini",
       "pts": 42,
       "gp": 31,
@@ -36,6 +27,15 @@
       "losses": 10,
       "pf": 2531,
       "ps": 2324
+    },
+    {
+      "team": "Rucker San Vendemiano",
+      "pts": 42,
+      "gp": 31,
+      "wins": 21,
+      "losses": 10,
+      "pf": 2550,
+      "ps": 2354
     },
     {
       "team": "UCC Assigeco Piacenza",

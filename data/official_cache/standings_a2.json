@@ -1,26 +1,35 @@
 {
-  "updated_at": "2026-03-25T03:52:07.597144",
+  "updated_at": "2026-03-26T04:00:55.261471",
   "standings": [
     {
       "team": "Victoria Libertas Pesaro",
       "pts": 42,
-      "gp": 29,
+      "gp": 30,
       "wins": 21,
-      "losses": 8,
+      "losses": 9,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Valtur Brindisi",
-      "pts": 40,
-      "gp": 29,
-      "wins": 20,
+      "pts": 42,
+      "gp": 30,
+      "wins": 21,
       "losses": 9,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Flats Service Fortitudo Bologna",
+      "pts": 42,
+      "gp": 31,
+      "wins": 21,
+      "losses": 10,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Givova Scafati",
       "pts": 40,
       "gp": 30,
       "wins": 20,
@@ -29,61 +38,52 @@
       "ps": 0
     },
     {
-      "team": "Givova Scafati",
-      "pts": 38,
-      "gp": 29,
-      "wins": 19,
-      "losses": 10,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Unicusano Avellino Basket",
-      "pts": 36,
-      "gp": 29,
-      "wins": 18,
-      "losses": 11,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "RSR Sebastiani Rieti",
-      "pts": 36,
-      "gp": 29,
-      "wins": 18,
+      "pts": 38,
+      "gp": 30,
+      "wins": 19,
       "losses": 11,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Tezenis Verona",
-      "pts": 36,
-      "gp": 29,
-      "wins": 18,
+      "pts": 38,
+      "gp": 30,
+      "wins": 19,
       "losses": 11,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Unicusano Avellino Basket",
+      "pts": 36,
+      "gp": 30,
+      "wins": 18,
+      "losses": 12,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Dole Basket Rimini",
       "pts": 36,
-      "gp": 29,
+      "gp": 30,
       "wins": 18,
-      "losses": 11,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Bi.Emme Service Libertas Livorno",
-      "pts": 34,
-      "gp": 29,
-      "wins": 17,
       "losses": 12,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "UEB Gesteco Cividale",
+      "pts": 36,
+      "gp": 31,
+      "wins": 18,
+      "losses": 13,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Bi.Emme Service Libertas Livorno",
       "pts": 34,
       "gp": 30,
       "wins": 17,
@@ -94,26 +94,17 @@
     {
       "team": "Ferraroni Juvi Cremona",
       "pts": 28,
-      "gp": 30,
+      "gp": 31,
       "wins": 14,
-      "losses": 16,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Wegreenit Urania Milano",
-      "pts": 26,
-      "gp": 30,
-      "wins": 13,
       "losses": 17,
       "pf": 0,
       "ps": 0
     },
     {
-      "team": "Reale Mutua Torino",
-      "pts": 26,
-      "gp": 30,
-      "wins": 13,
+      "team": "Wegreenit Urania Milano",
+      "pts": 28,
+      "gp": 31,
+      "wins": 14,
       "losses": 17,
       "pf": 0,
       "ps": 0
@@ -128,37 +119,46 @@
       "ps": 0
     },
     {
-      "team": "Sella Cento",
-      "pts": 20,
-      "gp": 29,
-      "wins": 10,
-      "losses": 19,
+      "team": "Reale Mutua Torino",
+      "pts": 26,
+      "gp": 31,
+      "wins": 13,
+      "losses": 18,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Unieuro Forlì",
-      "pts": 20,
-      "gp": 29,
-      "wins": 10,
+      "pts": 22,
+      "gp": 30,
+      "wins": 11,
       "losses": 19,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Sella Cento",
+      "pts": 20,
+      "gp": 30,
+      "wins": 10,
+      "losses": 20,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Crifo Wines Ruvo di Puglia",
       "pts": 18,
-      "gp": 29,
+      "gp": 30,
       "wins": 9,
-      "losses": 20,
+      "losses": 21,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Estra Pistoia",
-      "pts": 12,
-      "gp": 30,
-      "wins": 6,
+      "pts": 14,
+      "gp": 31,
+      "wins": 7,
       "losses": 24,
       "pf": 0,
       "ps": 0
@@ -166,9 +166,9 @@
     {
       "team": "Liofilchem Roseto",
       "pts": 10,
-      "gp": 29,
+      "gp": 30,
       "wins": 5,
-      "losses": 24,
+      "losses": 25,
       "pf": 0,
       "ps": 0
     }

@@ -1,6 +1,15 @@
 {
-  "updated_at": "2026-03-25T03:52:00.039976",
+  "updated_at": "2026-03-26T04:00:47.599331",
   "standings": [
+    {
+      "team": "Benacquista Assicurazioni Latina",
+      "pts": 50,
+      "gp": 30,
+      "wins": 25,
+      "losses": 5,
+      "pf": 2492,
+      "ps": 2288
+    },
     {
       "team": "Verodol CBD Pielle Livorno",
       "pts": 50,
@@ -9,15 +18,6 @@
       "losses": 6,
       "pf": 2502,
       "ps": 2268
-    },
-    {
-      "team": "Benacquista Assicurazioni Latina",
-      "pts": 48,
-      "gp": 29,
-      "wins": 24,
-      "losses": 5,
-      "pf": 2408,
-      "ps": 2207
     },
     {
       "team": "Virtus GVM Roma 1960",
@@ -83,15 +83,6 @@
       "ps": 2279
     },
     {
-      "team": "Umana San Giobbe Chiusi",
-      "pts": 28,
-      "gp": 30,
-      "wins": 14,
-      "losses": 16,
-      "pf": 2278,
-      "ps": 2324
-    },
-    {
       "team": "Solbat Golfo Piombino",
       "pts": 28,
       "gp": 31,
@@ -99,6 +90,15 @@
       "losses": 17,
       "pf": 2369,
       "ps": 2422
+    },
+    {
+      "team": "Umana San Giobbe Chiusi",
+      "pts": 28,
+      "gp": 31,
+      "wins": 14,
+      "losses": 17,
+      "pf": 2359,
+      "ps": 2408
     },
     {
       "team": "Malvin PSA Basket Casoria",
