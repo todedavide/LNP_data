@@ -1,6 +1,15 @@
 {
-  "updated_at": "2026-03-28T03:51:15.981533",
+  "updated_at": "2026-03-29T04:02:41.397574",
   "standings": [
+    {
+      "team": "Verodol CBD Pielle Livorno",
+      "pts": 52,
+      "gp": 32,
+      "wins": 26,
+      "losses": 6,
+      "pf": 2574,
+      "ps": 2332
+    },
     {
       "team": "Benacquista Assicurazioni Latina",
       "pts": 50,
@@ -11,22 +20,13 @@
       "ps": 2288
     },
     {
-      "team": "Verodol CBD Pielle Livorno",
+      "team": "Virtus GVM Roma 1960",
       "pts": 50,
       "gp": 31,
       "wins": 25,
       "losses": 6,
-      "pf": 2502,
-      "ps": 2268
-    },
-    {
-      "team": "Virtus GVM Roma 1960",
-      "pts": 48,
-      "gp": 30,
-      "wins": 24,
-      "losses": 6,
-      "pf": 2376,
-      "ps": 2109
+      "pf": 2456,
+      "ps": 2154
     },
     {
       "team": "Paperdi Juvecaserta 2021",
@@ -49,11 +49,11 @@
     {
       "team": "Luiss Roma",
       "pts": 38,
-      "gp": 30,
+      "gp": 31,
       "wins": 19,
-      "losses": 11,
-      "pf": 2252,
-      "ps": 2190
+      "losses": 12,
+      "pf": 2297,
+      "ps": 2270
     },
     {
       "team": "UP Andrea Costa Imola",
@@ -139,11 +139,11 @@
     {
       "team": "Consultinvest Loreto Pesaro",
       "pts": 18,
-      "gp": 30,
+      "gp": 31,
       "wins": 9,
-      "losses": 21,
-      "pf": 2145,
-      "ps": 2304
+      "losses": 22,
+      "pf": 2209,
+      "ps": 2376
     },
     {
       "team": "Ristopro Fabriano",

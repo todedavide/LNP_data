@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-28T03:51:23.475045",
+  "updated_at": "2026-03-29T04:02:47.327758",
   "standings": [
     {
       "team": "Victoria Libertas Pesaro",
@@ -11,16 +11,16 @@
       "ps": 0
     },
     {
-      "team": "Valtur Brindisi",
+      "team": "Flats Service Fortitudo Bologna",
       "pts": 42,
-      "gp": 30,
+      "gp": 31,
       "wins": 21,
-      "losses": 9,
+      "losses": 10,
       "pf": 0,
       "ps": 0
     },
     {
-      "team": "Flats Service Fortitudo Bologna",
+      "team": "Valtur Brindisi",
       "pts": 42,
       "gp": 31,
       "wins": 21,
@@ -92,6 +92,15 @@
       "ps": 0
     },
     {
+      "team": "Gemini Mestre",
+      "pts": 28,
+      "gp": 31,
+      "wins": 14,
+      "losses": 17,
+      "pf": 0,
+      "ps": 0
+    },
+    {
       "team": "Ferraroni Juvi Cremona",
       "pts": 28,
       "gp": 31,
@@ -101,28 +110,19 @@
       "ps": 0
     },
     {
+      "team": "Reale Mutua Torino",
+      "pts": 28,
+      "gp": 32,
+      "wins": 14,
+      "losses": 18,
+      "pf": 0,
+      "ps": 0
+    },
+    {
       "team": "Wegreenit Urania Milano",
       "pts": 28,
-      "gp": 31,
+      "gp": 32,
       "wins": 14,
-      "losses": 17,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Gemini Mestre",
-      "pts": 26,
-      "gp": 30,
-      "wins": 13,
-      "losses": 17,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Reale Mutua Torino",
-      "pts": 26,
-      "gp": 31,
-      "wins": 13,
       "losses": 18,
       "pf": 0,
       "ps": 0
