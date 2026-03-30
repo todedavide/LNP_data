@@ -1,20 +1,20 @@
 {
-  "updated_at": "2026-03-29T04:02:47.327758",
+  "updated_at": "2026-03-30T04:06:26.509629",
   "standings": [
     {
       "team": "Victoria Libertas Pesaro",
-      "pts": 42,
-      "gp": 30,
-      "wins": 21,
+      "pts": 44,
+      "gp": 31,
+      "wins": 22,
       "losses": 9,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Flats Service Fortitudo Bologna",
-      "pts": 42,
-      "gp": 31,
-      "wins": 21,
+      "pts": 44,
+      "gp": 32,
+      "wins": 22,
       "losses": 10,
       "pf": 0,
       "ps": 0
@@ -30,51 +30,51 @@
     },
     {
       "team": "Givova Scafati",
-      "pts": 40,
-      "gp": 30,
-      "wins": 20,
+      "pts": 42,
+      "gp": 31,
+      "wins": 21,
       "losses": 10,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "RSR Sebastiani Rieti",
-      "pts": 38,
-      "gp": 30,
-      "wins": 19,
+      "pts": 40,
+      "gp": 31,
+      "wins": 20,
       "losses": 11,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Tezenis Verona",
-      "pts": 38,
-      "gp": 30,
-      "wins": 19,
+      "pts": 40,
+      "gp": 31,
+      "wins": 20,
       "losses": 11,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "UEB Gesteco Cividale",
+      "pts": 38,
+      "gp": 32,
+      "wins": 19,
+      "losses": 13,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Unicusano Avellino Basket",
       "pts": 36,
-      "gp": 30,
+      "gp": 31,
       "wins": 18,
-      "losses": 12,
+      "losses": 13,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Dole Basket Rimini",
-      "pts": 36,
-      "gp": 30,
-      "wins": 18,
-      "losses": 12,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "UEB Gesteco Cividale",
       "pts": 36,
       "gp": 31,
       "wins": 18,
@@ -85,9 +85,9 @@
     {
       "team": "Bi.Emme Service Libertas Livorno",
       "pts": 34,
-      "gp": 30,
+      "gp": 31,
       "wins": 17,
-      "losses": 13,
+      "losses": 14,
       "pf": 0,
       "ps": 0
     },
@@ -130,44 +130,44 @@
     {
       "team": "Unieuro Forlì",
       "pts": 22,
-      "gp": 30,
+      "gp": 31,
       "wins": 11,
-      "losses": 19,
+      "losses": 20,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Sella Cento",
       "pts": 20,
-      "gp": 30,
+      "gp": 31,
       "wins": 10,
-      "losses": 20,
+      "losses": 21,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Crifo Wines Ruvo di Puglia",
       "pts": 18,
-      "gp": 30,
+      "gp": 31,
       "wins": 9,
-      "losses": 21,
+      "losses": 22,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Estra Pistoia",
       "pts": 14,
-      "gp": 31,
+      "gp": 32,
       "wins": 7,
-      "losses": 24,
+      "losses": 25,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Liofilchem Roseto",
-      "pts": 10,
-      "gp": 30,
-      "wins": 5,
+      "pts": 12,
+      "gp": 31,
+      "wins": 6,
       "losses": 25,
       "pf": 0,
       "ps": 0
