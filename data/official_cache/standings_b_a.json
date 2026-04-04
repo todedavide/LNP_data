@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-03T03:59:38.678856",
+  "updated_at": "2026-04-04T03:51:14.686341",
   "standings": [
     {
       "team": "Elachem Vigevano 1955",
@@ -11,6 +11,15 @@
       "ps": 2274
     },
     {
+      "team": "La T Tecnica Gema Montecatini",
+      "pts": 46,
+      "gp": 33,
+      "wins": 23,
+      "losses": 10,
+      "pf": 2710,
+      "ps": 2482
+    },
+    {
       "team": "Logiman Orzinuovi",
       "pts": 44,
       "gp": 31,
@@ -18,15 +27,6 @@
       "losses": 9,
       "pf": 2439,
       "ps": 2291
-    },
-    {
-      "team": "La T Tecnica Gema Montecatini",
-      "pts": 44,
-      "gp": 32,
-      "wins": 22,
-      "losses": 10,
-      "pf": 2616,
-      "ps": 2408
     },
     {
       "team": "Rucker San Vendemiano",
@@ -148,11 +148,11 @@
     {
       "team": "Novipiù Monferrato Basket",
       "pts": 16,
-      "gp": 32,
+      "gp": 33,
       "wins": 8,
-      "losses": 24,
-      "pf": 2496,
-      "ps": 2783
+      "losses": 25,
+      "pf": 2570,
+      "ps": 2877
     },
     {
       "team": "Foppiani Fulgor Fidenza",

@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-04-03T03:59:52.084823",
+  "updated_at": "2026-04-04T03:51:27.143218",
   "standings": [
     {
       "team": "Victoria Libertas Pesaro",
-      "pts": 44,
-      "gp": 31,
-      "wins": 22,
+      "pts": 46,
+      "gp": 32,
+      "wins": 23,
       "losses": 9,
       "pf": 0,
       "ps": 0
@@ -49,9 +49,9 @@
     {
       "team": "Tezenis Verona",
       "pts": 40,
-      "gp": 31,
+      "gp": 32,
       "wins": 20,
-      "losses": 11,
+      "losses": 12,
       "pf": 0,
       "ps": 0
     },
