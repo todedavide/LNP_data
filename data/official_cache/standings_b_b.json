@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-04-11T03:53:40.350099",
+  "updated_at": "2026-04-12T04:05:23.455481",
   "standings": [
     {
       "team": "Virtus GVM Roma 1960",
-      "pts": 52,
-      "gp": 32,
-      "wins": 26,
+      "pts": 54,
+      "gp": 33,
+      "wins": 27,
       "losses": 6,
-      "pf": 2525,
-      "ps": 2196
+      "pf": 2607,
+      "ps": 2256
     },
     {
       "team": "Benacquista Assicurazioni Latina",
@@ -128,15 +128,6 @@
       "ps": 2479
     },
     {
-      "team": "Consorzio Leonardo Dany Quarrata",
-      "pts": 20,
-      "gp": 32,
-      "wins": 10,
-      "losses": 22,
-      "pf": 2373,
-      "ps": 2554
-    },
-    {
       "team": "Adamant Ferrara",
       "pts": 20,
       "gp": 32,
@@ -153,6 +144,15 @@
       "losses": 23,
       "pf": 2505,
       "ps": 2709
+    },
+    {
+      "team": "Consorzio Leonardo Dany Quarrata",
+      "pts": 20,
+      "gp": 33,
+      "wins": 10,
+      "losses": 23,
+      "pf": 2433,
+      "ps": 2636
     },
     {
       "team": "Consultinvest Loreto Pesaro",

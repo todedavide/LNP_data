@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-11T03:53:46.874092",
+  "updated_at": "2026-04-12T04:05:30.604113",
   "standings": [
     {
       "team": "Victoria Libertas Pesaro",
@@ -38,20 +38,20 @@
       "ps": 0
     },
     {
+      "team": "UEB Gesteco Cividale",
+      "pts": 44,
+      "gp": 35,
+      "wins": 22,
+      "losses": 13,
+      "pf": 0,
+      "ps": 0
+    },
+    {
       "team": "Tezenis Verona",
       "pts": 42,
       "gp": 33,
       "wins": 21,
       "losses": 12,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "UEB Gesteco Cividale",
-      "pts": 42,
-      "gp": 34,
-      "wins": 21,
-      "losses": 13,
       "pf": 0,
       "ps": 0
     },
@@ -166,9 +166,9 @@
     {
       "team": "Estra Pistoia",
       "pts": 14,
-      "gp": 33,
+      "gp": 34,
       "wins": 7,
-      "losses": 26,
+      "losses": 27,
       "pf": 0,
       "ps": 0
     }

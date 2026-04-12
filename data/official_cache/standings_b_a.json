@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-11T03:53:33.442563",
+  "updated_at": "2026-04-12T04:05:16.704527",
   "standings": [
     {
       "team": "Elachem Vigevano 1955",
@@ -94,11 +94,20 @@
     {
       "team": "Rimadesio Desio",
       "pts": 34,
-      "gp": 32,
+      "gp": 33,
       "wins": 17,
-      "losses": 15,
-      "pf": 2770,
-      "ps": 2711
+      "losses": 16,
+      "pf": 2840,
+      "ps": 2786
+    },
+    {
+      "team": "S4 Energia Vicenza",
+      "pts": 32,
+      "gp": 33,
+      "wins": 16,
+      "losses": 17,
+      "pf": 2552,
+      "ps": 2595
     },
     {
       "team": "Moncada Energy Agrigento",
@@ -108,15 +117,6 @@
       "losses": 17,
       "pf": 2367,
       "ps": 2396
-    },
-    {
-      "team": "S4 Energia Vicenza",
-      "pts": 30,
-      "gp": 32,
-      "wins": 15,
-      "losses": 17,
-      "pf": 2477,
-      "ps": 2525
     },
     {
       "team": "Siaz Basket Piazza Armerina",
