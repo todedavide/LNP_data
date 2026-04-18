@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-17T04:06:00.775968",
+  "updated_at": "2026-04-18T04:00:13.387326",
   "standings": [
     {
       "team": "Virtus GVM Roma 1960",
@@ -31,20 +31,20 @@
     {
       "team": "Benacquista Assicurazioni Latina",
       "pts": 52,
-      "gp": 33,
+      "gp": 34,
       "wins": 26,
-      "losses": 7,
-      "pf": 2685,
-      "ps": 2503
+      "losses": 8,
+      "pf": 2755,
+      "ps": 2588
     },
     {
       "team": "Allianz Pazienza San Severo",
-      "pts": 44,
-      "gp": 34,
-      "wins": 22,
+      "pts": 46,
+      "gp": 35,
+      "wins": 23,
       "losses": 12,
-      "pf": 2758,
-      "ps": 2700
+      "pf": 2843,
+      "ps": 2770
     },
     {
       "team": "Luiss Roma",

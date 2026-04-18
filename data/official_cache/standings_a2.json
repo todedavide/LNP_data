@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-17T04:06:09.362829",
+  "updated_at": "2026-04-18T04:00:19.469497",
   "standings": [
     {
       "team": "Givova Scafati",
@@ -29,6 +29,15 @@
       "ps": 0
     },
     {
+      "team": "UEB Gesteco Cividale",
+      "pts": 46,
+      "gp": 36,
+      "wins": 23,
+      "losses": 13,
+      "pf": 0,
+      "ps": 0
+    },
+    {
       "team": "Valtur Brindisi",
       "pts": 44,
       "gp": 34,
@@ -47,15 +56,6 @@
       "ps": 0
     },
     {
-      "team": "UEB Gesteco Cividale",
-      "pts": 44,
-      "gp": 35,
-      "wins": 22,
-      "losses": 13,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "RSR Sebastiani Rieti",
       "pts": 42,
       "gp": 34,
@@ -67,9 +67,9 @@
     {
       "team": "Dole Basket Rimini",
       "pts": 42,
-      "gp": 34,
+      "gp": 35,
       "wins": 21,
-      "losses": 13,
+      "losses": 14,
       "pf": 0,
       "ps": 0
     },

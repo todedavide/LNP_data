@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-17T04:05:53.879498",
+  "updated_at": "2026-04-18T04:00:06.738593",
   "standings": [
     {
       "team": "Elachem Vigevano 1955",
@@ -11,15 +11,6 @@
       "ps": 2497
     },
     {
-      "team": "La T Tecnica Gema Montecatini",
-      "pts": 48,
-      "gp": 34,
-      "wins": 24,
-      "losses": 10,
-      "pf": 2778,
-      "ps": 2544
-    },
-    {
       "team": "Logiman Orzinuovi",
       "pts": 48,
       "gp": 34,
@@ -29,13 +20,22 @@
       "ps": 2486
     },
     {
-      "team": "Rucker San Vendemiano",
-      "pts": 44,
-      "gp": 33,
-      "wins": 22,
+      "team": "La T Tecnica Gema Montecatini",
+      "pts": 48,
+      "gp": 35,
+      "wins": 24,
       "losses": 11,
-      "pf": 2701,
-      "ps": 2511
+      "pf": 2857,
+      "ps": 2636
+    },
+    {
+      "team": "Rucker San Vendemiano",
+      "pts": 46,
+      "gp": 34,
+      "wins": 23,
+      "losses": 11,
+      "pf": 2793,
+      "ps": 2590
     },
     {
       "team": "Fabo Herons Montecatini",
