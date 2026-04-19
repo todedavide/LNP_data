@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-18T04:00:06.738593",
+  "updated_at": "2026-04-19T04:06:48.387872",
   "standings": [
     {
       "team": "Elachem Vigevano 1955",
@@ -66,12 +66,12 @@
     },
     {
       "team": "Paffoni Fulgor Basket Omegna",
-      "pts": 38,
-      "gp": 34,
-      "wins": 19,
+      "pts": 40,
+      "gp": 35,
+      "wins": 20,
       "losses": 15,
-      "pf": 2723,
-      "ps": 2671
+      "pf": 2807,
+      "ps": 2750
     },
     {
       "team": "UCC Assigeco Piacenza",
@@ -94,11 +94,11 @@
     {
       "team": "Rimadesio Desio",
       "pts": 34,
-      "gp": 34,
+      "gp": 35,
       "wins": 17,
-      "losses": 17,
-      "pf": 2903,
-      "ps": 2873
+      "losses": 18,
+      "pf": 2986,
+      "ps": 2961
     },
     {
       "team": "Moncada Energy Agrigento",
@@ -121,11 +121,11 @@
     {
       "team": "Siaz Basket Piazza Armerina",
       "pts": 30,
-      "gp": 34,
+      "gp": 35,
       "wins": 15,
-      "losses": 19,
-      "pf": 2553,
-      "ps": 2584
+      "losses": 20,
+      "pf": 2632,
+      "ps": 2668
     },
     {
       "team": "LuxArm Lumezzane",
@@ -138,12 +138,12 @@
     },
     {
       "team": "Fiorenzuola Bees",
-      "pts": 26,
-      "gp": 34,
-      "wins": 13,
+      "pts": 28,
+      "gp": 35,
+      "wins": 14,
       "losses": 21,
-      "pf": 2530,
-      "ps": 2704
+      "pf": 2618,
+      "ps": 2787
     },
     {
       "team": "Novipiù Monferrato Basket",

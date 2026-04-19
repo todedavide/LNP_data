@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-18T04:00:19.469497",
+  "updated_at": "2026-04-19T04:07:01.207864",
   "standings": [
     {
       "team": "Givova Scafati",
@@ -58,9 +58,9 @@
     {
       "team": "RSR Sebastiani Rieti",
       "pts": 42,
-      "gp": 34,
+      "gp": 35,
       "wins": 21,
-      "losses": 13,
+      "losses": 14,
       "pf": 0,
       "ps": 0
     },
@@ -84,9 +84,9 @@
     },
     {
       "team": "Bi.Emme Service Libertas Livorno",
-      "pts": 36,
-      "gp": 34,
-      "wins": 18,
+      "pts": 38,
+      "gp": 35,
+      "wins": 19,
       "losses": 16,
       "pf": 0,
       "ps": 0
@@ -101,16 +101,16 @@
       "ps": 0
     },
     {
-      "team": "Reale Mutua Torino",
-      "pts": 30,
-      "gp": 34,
-      "wins": 15,
+      "team": "Wegreenit Urania Milano",
+      "pts": 32,
+      "gp": 35,
+      "wins": 16,
       "losses": 19,
       "pf": 0,
       "ps": 0
     },
     {
-      "team": "Wegreenit Urania Milano",
+      "team": "Reale Mutua Torino",
       "pts": 30,
       "gp": 34,
       "wins": 15,
@@ -121,9 +121,9 @@
     {
       "team": "Gemini Mestre",
       "pts": 28,
-      "gp": 34,
+      "gp": 35,
       "wins": 14,
-      "losses": 20,
+      "losses": 21,
       "pf": 0,
       "ps": 0
     },

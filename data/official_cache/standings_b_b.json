@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-18T04:00:13.387326",
+  "updated_at": "2026-04-19T04:06:55.142680",
   "standings": [
     {
       "team": "Virtus GVM Roma 1960",
@@ -11,15 +11,6 @@
       "ps": 2340
     },
     {
-      "team": "Verodol CBD Pielle Livorno",
-      "pts": 54,
-      "gp": 34,
-      "wins": 27,
-      "losses": 7,
-      "pf": 2731,
-      "ps": 2484
-    },
-    {
       "team": "Paperdi Juvecaserta 2021",
       "pts": 54,
       "gp": 34,
@@ -27,6 +18,15 @@
       "losses": 7,
       "pf": 2766,
       "ps": 2566
+    },
+    {
+      "team": "Verodol CBD Pielle Livorno",
+      "pts": 54,
+      "gp": 35,
+      "wins": 27,
+      "losses": 8,
+      "pf": 2802,
+      "ps": 2561
     },
     {
       "team": "Benacquista Assicurazioni Latina",
@@ -48,12 +48,12 @@
     },
     {
       "team": "Luiss Roma",
-      "pts": 40,
-      "gp": 34,
-      "wins": 20,
+      "pts": 42,
+      "gp": 35,
+      "wins": 21,
       "losses": 14,
-      "pf": 2524,
-      "ps": 2505
+      "pf": 2601,
+      "ps": 2576
     },
     {
       "team": "UP Andrea Costa Imola",
@@ -146,22 +146,22 @@
       "ps": 2783
     },
     {
-      "team": "Consorzio Leonardo Dany Quarrata",
+      "team": "Consultinvest Loreto Pesaro",
       "pts": 20,
       "gp": 34,
       "wins": 10,
       "losses": 24,
-      "pf": 2483,
-      "ps": 2689
+      "pf": 2419,
+      "ps": 2587
     },
     {
-      "team": "Consultinvest Loreto Pesaro",
-      "pts": 18,
-      "gp": 33,
-      "wins": 9,
-      "losses": 24,
-      "pf": 2336,
-      "ps": 2515
+      "team": "Consorzio Leonardo Dany Quarrata",
+      "pts": 20,
+      "gp": 35,
+      "wins": 10,
+      "losses": 25,
+      "pf": 2555,
+      "ps": 2772
     },
     {
       "team": "Virtus Imola",
