@@ -1,23 +1,32 @@
 {
-  "updated_at": "2026-04-19T04:06:48.387872",
+  "updated_at": "2026-04-20T04:11:23.459071",
   "standings": [
     {
       "team": "Elachem Vigevano 1955",
       "pts": 54,
-      "gp": 34,
+      "gp": 35,
       "wins": 27,
-      "losses": 7,
-      "pf": 2890,
-      "ps": 2497
+      "losses": 8,
+      "pf": 2965,
+      "ps": 2575
     },
     {
       "team": "Logiman Orzinuovi",
-      "pts": 48,
-      "gp": 34,
-      "wins": 24,
+      "pts": 50,
+      "gp": 35,
+      "wins": 25,
       "losses": 10,
-      "pf": 2688,
-      "ps": 2486
+      "pf": 2783,
+      "ps": 2561
+    },
+    {
+      "team": "Rucker San Vendemiano",
+      "pts": 48,
+      "gp": 35,
+      "wins": 24,
+      "losses": 11,
+      "pf": 2892,
+      "ps": 2661
     },
     {
       "team": "La T Tecnica Gema Montecatini",
@@ -29,40 +38,31 @@
       "ps": 2636
     },
     {
-      "team": "Rucker San Vendemiano",
-      "pts": 46,
-      "gp": 34,
-      "wins": 23,
-      "losses": 11,
-      "pf": 2793,
-      "ps": 2590
-    },
-    {
-      "team": "Fabo Herons Montecatini",
+      "team": "TAV Treviglio Brianza Basket",
       "pts": 42,
       "gp": 35,
       "wins": 21,
       "losses": 14,
-      "pf": 2981,
-      "ps": 2783
+      "pf": 2812,
+      "ps": 2754
     },
     {
-      "team": "TAV Treviglio Brianza Basket",
-      "pts": 40,
-      "gp": 34,
-      "wins": 20,
-      "losses": 14,
-      "pf": 2734,
-      "ps": 2679
+      "team": "Fabo Herons Montecatini",
+      "pts": 42,
+      "gp": 36,
+      "wins": 21,
+      "losses": 15,
+      "pf": 3054,
+      "ps": 2861
     },
     {
       "team": "SAE Scientifica-Soevis Legnano",
       "pts": 40,
-      "gp": 34,
+      "gp": 35,
       "wins": 20,
-      "losses": 14,
-      "pf": 2664,
-      "ps": 2520
+      "losses": 15,
+      "pf": 2725,
+      "ps": 2592
     },
     {
       "team": "Paffoni Fulgor Basket Omegna",
@@ -76,20 +76,38 @@
     {
       "team": "UCC Assigeco Piacenza",
       "pts": 38,
-      "gp": 34,
+      "gp": 35,
       "wins": 19,
-      "losses": 15,
-      "pf": 2718,
-      "ps": 2760
+      "losses": 16,
+      "pf": 2793,
+      "ps": 2855
     },
     {
       "team": "Infodrive Capo d'Orlando",
-      "pts": 36,
-      "gp": 34,
-      "wins": 18,
+      "pts": 38,
+      "gp": 35,
+      "wins": 19,
       "losses": 16,
-      "pf": 2665,
-      "ps": 2707
+      "pf": 2737,
+      "ps": 2768
+    },
+    {
+      "team": "Moncada Energy Agrigento",
+      "pts": 34,
+      "gp": 35,
+      "wins": 17,
+      "losses": 18,
+      "pf": 2615,
+      "ps": 2630
+    },
+    {
+      "team": "S4 Energia Vicenza",
+      "pts": 34,
+      "gp": 35,
+      "wins": 17,
+      "losses": 18,
+      "pf": 2725,
+      "ps": 2749
     },
     {
       "team": "Rimadesio Desio",
@@ -101,22 +119,13 @@
       "ps": 2961
     },
     {
-      "team": "Moncada Energy Agrigento",
-      "pts": 32,
-      "gp": 34,
-      "wins": 16,
-      "losses": 18,
-      "pf": 2531,
-      "ps": 2560
-    },
-    {
-      "team": "S4 Energia Vicenza",
-      "pts": 32,
-      "gp": 34,
-      "wins": 16,
-      "losses": 18,
-      "pf": 2627,
-      "ps": 2671
+      "team": "LuxArm Lumezzane",
+      "pts": 30,
+      "gp": 35,
+      "wins": 15,
+      "losses": 20,
+      "pf": 2709,
+      "ps": 2778
     },
     {
       "team": "Siaz Basket Piazza Armerina",
@@ -126,15 +135,6 @@
       "losses": 20,
       "pf": 2632,
       "ps": 2668
-    },
-    {
-      "team": "LuxArm Lumezzane",
-      "pts": 28,
-      "gp": 34,
-      "wins": 14,
-      "losses": 20,
-      "pf": 2631,
-      "ps": 2705
     },
     {
       "team": "Fiorenzuola Bees",
@@ -148,29 +148,29 @@
     {
       "team": "Novipiù Monferrato Basket",
       "pts": 18,
-      "gp": 34,
+      "gp": 35,
       "wins": 9,
-      "losses": 25,
-      "pf": 2662,
-      "ps": 2952
+      "losses": 26,
+      "pf": 2740,
+      "ps": 3050
     },
     {
       "team": "Foppiani Fulgor Fidenza",
       "pts": 10,
-      "gp": 34,
+      "gp": 35,
       "wins": 5,
-      "losses": 29,
-      "pf": 2417,
-      "ps": 2753
+      "losses": 30,
+      "pf": 2487,
+      "ps": 2837
     },
     {
       "team": "Bakery Basket Piacenza",
       "pts": 8,
-      "gp": 34,
+      "gp": 35,
       "wins": 4,
-      "losses": 30,
-      "pf": 2376,
-      "ps": 2812
+      "losses": 31,
+      "pf": 2447,
+      "ps": 2911
     }
   ]
 }
