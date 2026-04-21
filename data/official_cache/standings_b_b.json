@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-20T04:11:31.354610",
+  "updated_at": "2026-04-21T04:06:04.036290",
   "standings": [
     {
       "team": "Virtus GVM Roma 1960",
@@ -20,6 +20,15 @@
       "ps": 2647
     },
     {
+      "team": "Benacquista Assicurazioni Latina",
+      "pts": 54,
+      "gp": 35,
+      "wins": 27,
+      "losses": 8,
+      "pf": 2828,
+      "ps": 2660
+    },
+    {
       "team": "Verodol CBD Pielle Livorno",
       "pts": 54,
       "gp": 35,
@@ -27,15 +36,6 @@
       "losses": 8,
       "pf": 2802,
       "ps": 2561
-    },
-    {
-      "team": "Benacquista Assicurazioni Latina",
-      "pts": 52,
-      "gp": 34,
-      "wins": 26,
-      "losses": 8,
-      "pf": 2755,
-      "ps": 2588
     },
     {
       "team": "Allianz Pazienza San Severo",
@@ -57,12 +57,12 @@
     },
     {
       "team": "UP Andrea Costa Imola",
-      "pts": 38,
-      "gp": 34,
-      "wins": 19,
+      "pts": 40,
+      "gp": 35,
+      "wins": 20,
       "losses": 15,
-      "pf": 2364,
-      "ps": 2272
+      "pf": 2444,
+      "ps": 2335
     },
     {
       "team": "Tema Sinergie Faenza",
@@ -85,11 +85,11 @@
     {
       "team": "Malvin PSA Basket Casoria",
       "pts": 34,
-      "gp": 35,
+      "gp": 36,
       "wins": 17,
-      "losses": 18,
-      "pf": 2432,
-      "ps": 2444
+      "losses": 19,
+      "pf": 2504,
+      "ps": 2517
     },
     {
       "team": "Umana San Giobbe Chiusi",
@@ -103,11 +103,11 @@
     {
       "team": "Solbat Golfo Piombino",
       "pts": 30,
-      "gp": 34,
+      "gp": 35,
       "wins": 15,
-      "losses": 19,
-      "pf": 2575,
-      "ps": 2645
+      "losses": 20,
+      "pf": 2638,
+      "ps": 2725
     },
     {
       "team": "Power Basket Nocera",
