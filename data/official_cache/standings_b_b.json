@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-22T04:04:33.741356",
+  "updated_at": "2026-04-23T04:06:28.626492",
   "standings": [
     {
       "team": "Virtus GVM Roma 1960",
@@ -66,21 +66,21 @@
     },
     {
       "team": "Tema Sinergie Faenza",
-      "pts": 34,
-      "gp": 34,
-      "wins": 17,
+      "pts": 36,
+      "gp": 35,
+      "wins": 18,
       "losses": 17,
-      "pf": 2631,
-      "ps": 2604
+      "pf": 2720,
+      "ps": 2678
     },
     {
       "team": "General Contractor Jesi",
       "pts": 34,
-      "gp": 34,
+      "gp": 35,
       "wins": 17,
-      "losses": 17,
-      "pf": 2657,
-      "ps": 2590
+      "losses": 18,
+      "pf": 2737,
+      "ps": 2674
     },
     {
       "team": "Malvin PSA Basket Casoria",
@@ -94,11 +94,11 @@
     {
       "team": "Umana San Giobbe Chiusi",
       "pts": 32,
-      "gp": 34,
+      "gp": 35,
       "wins": 16,
-      "losses": 18,
-      "pf": 2605,
-      "ps": 2639
+      "losses": 19,
+      "pf": 2679,
+      "ps": 2728
     },
     {
       "team": "Solbat Golfo Piombino",
@@ -147,12 +147,12 @@
     },
     {
       "team": "Consultinvest Loreto Pesaro",
-      "pts": 20,
-      "gp": 34,
-      "wins": 10,
+      "pts": 22,
+      "gp": 35,
+      "wins": 11,
       "losses": 24,
-      "pf": 2419,
-      "ps": 2587
+      "pf": 2503,
+      "ps": 2667
     },
     {
       "team": "Consorzio Leonardo Dany Quarrata",
