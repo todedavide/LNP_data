@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-18T03:11:55.877264",
+  "updated_at": "2026-09-19T03:11:01.862400",
   "standings": [
     {
       "team": "Allianz Pazienza Cestistica San Severo",
@@ -92,15 +92,6 @@
       "ps": 0
     },
     {
-      "team": "Pielle Livorno",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "PSA Napoli Est",
       "pts": 0,
       "gp": 0,
@@ -147,6 +138,15 @@
     },
     {
       "team": "Umana San Giobbe Chiusi",
+      "pts": 0,
+      "gp": 0,
+      "wins": 0,
+      "losses": 0,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Verodol CBD Pielle Livorno",
       "pts": 0,
       "gp": 0,
       "wins": 0,
