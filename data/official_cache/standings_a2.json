@@ -1,6 +1,24 @@
 {
-  "updated_at": "2026-09-26T03:11:06.860676",
+  "updated_at": "2026-09-27T03:11:50.506076",
   "standings": [
+    {
+      "team": "Unieuro Forlì",
+      "pts": 2,
+      "gp": 1,
+      "wins": 1,
+      "losses": 0,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "UEB Gesteco Cividale",
+      "pts": 0,
+      "gp": 1,
+      "wins": 0,
+      "losses": 1,
+      "pf": 0,
+      "ps": 0
+    },
     {
       "team": "Banco di Sardegna Sassari",
       "pts": 0,
@@ -129,24 +147,6 @@
     },
     {
       "team": "Sella Cento",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "UEB Gesteco Cividale",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Unieuro Forlì",
       "pts": 0,
       "gp": 0,
       "wins": 0,

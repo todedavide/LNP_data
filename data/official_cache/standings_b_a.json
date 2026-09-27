@@ -1,6 +1,24 @@
 {
-  "updated_at": "2026-09-26T03:10:53.864497",
+  "updated_at": "2026-09-27T03:11:37.963313",
   "standings": [
+    {
+      "team": "SAE Scientifica-Soevis Legnano Knights",
+      "pts": 2,
+      "gp": 1,
+      "wins": 1,
+      "losses": 0,
+      "pf": 71,
+      "ps": 68
+    },
+    {
+      "team": "UCC Assigeco Piacenza",
+      "pts": 0,
+      "gp": 1,
+      "wins": 0,
+      "losses": 1,
+      "pf": 68,
+      "ps": 71
+    },
     {
       "team": "A2A Leonessa Brescia",
       "pts": 0,
@@ -128,15 +146,6 @@
       "ps": 0
     },
     {
-      "team": "SAE Scientifica-Soevis Legnano Knights",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "Siaz Basket Piazza Armerina",
       "pts": 0,
       "gp": 0,
@@ -155,22 +164,13 @@
       "ps": 0
     },
     {
-      "team": "UCC Assigeco Piacenza",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
+      "team": "SAE Scientifica-Soevis Legnano Knights",
+      "pts": 2,
+      "gp": 1,
+      "wins": 1,
       "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "A2A Leonessa Brescia",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
+      "pf": 71,
+      "ps": 68
     }
   ]
 }
