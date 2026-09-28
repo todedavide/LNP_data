@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-27T03:11:37.963313",
+  "updated_at": "2026-09-28T03:14:53.623579",
   "standings": [
     {
       "team": "SAE Scientifica-Soevis Legnano Knights",
@@ -11,6 +11,78 @@
       "ps": 68
     },
     {
+      "team": "Rimadesio Desio",
+      "pts": 2,
+      "gp": 1,
+      "wins": 1,
+      "losses": 0,
+      "pf": 94,
+      "ps": 91
+    },
+    {
+      "team": "Moncada Energy Agrigento",
+      "pts": 2,
+      "gp": 1,
+      "wins": 1,
+      "losses": 0,
+      "pf": 91,
+      "ps": 68
+    },
+    {
+      "team": "Infodrive Capo d'Orlando",
+      "pts": 2,
+      "gp": 1,
+      "wins": 1,
+      "losses": 0,
+      "pf": 84,
+      "ps": 63
+    },
+    {
+      "team": "Rucker San Vendemiano",
+      "pts": 2,
+      "gp": 1,
+      "wins": 1,
+      "losses": 0,
+      "pf": 85,
+      "ps": 64
+    },
+    {
+      "team": "Redel Reggio Calabria",
+      "pts": 2,
+      "gp": 1,
+      "wins": 1,
+      "losses": 0,
+      "pf": 70,
+      "ps": 59
+    },
+    {
+      "team": "Adamant Ferrara",
+      "pts": 2,
+      "gp": 1,
+      "wins": 1,
+      "losses": 0,
+      "pf": 76,
+      "ps": 69
+    },
+    {
+      "team": "A2A Leonessa Brescia",
+      "pts": 2,
+      "gp": 1,
+      "wins": 1,
+      "losses": 0,
+      "pf": 84,
+      "ps": 73
+    },
+    {
+      "team": "Andrea Costa Imola",
+      "pts": 0,
+      "gp": 1,
+      "wins": 0,
+      "losses": 1,
+      "pf": 68,
+      "ps": 91
+    },
+    {
       "team": "UCC Assigeco Piacenza",
       "pts": 0,
       "gp": 1,
@@ -20,58 +92,58 @@
       "ps": 71
     },
     {
-      "team": "A2A Leonessa Brescia",
+      "team": "LuxArm Lumezzane",
       "pts": 0,
-      "gp": 0,
+      "gp": 1,
       "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
+      "losses": 1,
+      "pf": 63,
+      "ps": 84
     },
     {
-      "team": "Adamant Ferrara",
+      "team": "Paffoni Fulgor Basket Omegna",
       "pts": 0,
-      "gp": 0,
+      "gp": 1,
       "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Andrea Costa Imola",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Fiorenzuola Bees",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Infodrive Capo d'Orlando",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
+      "losses": 1,
+      "pf": 64,
+      "ps": 85
     },
     {
       "team": "Logiman Orzinuovi",
       "pts": 0,
-      "gp": 0,
+      "gp": 1,
       "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
+      "losses": 1,
+      "pf": 69,
+      "ps": 76
+    },
+    {
+      "team": "TAV Treviglio Brianza Basket",
+      "pts": 0,
+      "gp": 1,
+      "wins": 0,
+      "losses": 1,
+      "pf": 59,
+      "ps": 70
+    },
+    {
+      "team": "S4 Energia Vicenza",
+      "pts": 0,
+      "gp": 1,
+      "wins": 0,
+      "losses": 1,
+      "pf": 73,
+      "ps": 84
+    },
+    {
+      "team": "Fiorenzuola Bees",
+      "pts": 0,
+      "gp": 1,
+      "wins": 0,
+      "losses": 1,
+      "pf": 91,
+      "ps": 94
     },
     {
       "team": "LTC Group Sangiorgese Basket",
@@ -83,79 +155,7 @@
       "ps": 0
     },
     {
-      "team": "LuxArm Lumezzane",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Moncada Energy Agrigento",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Paffoni Fulgor Basket Omegna",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Redel Reggio Calabria",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Rimadesio Desio",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Rucker San Vendemiano",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "S4 Energia Vicenza",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "Siaz Basket Piazza Armerina",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "TAV Treviglio Brianza Basket",
       "pts": 0,
       "gp": 0,
       "wins": 0,
