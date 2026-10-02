@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-01T03:16:29.630385",
+  "updated_at": "2026-10-02T03:12:39.988811",
   "standings": [
     {
       "team": "SAE Scientifica-Soevis Legnano Knights",
@@ -70,8 +70,8 @@
       "gp": 1,
       "wins": 1,
       "losses": 0,
-      "pf": 84,
-      "ps": 73
+      "pf": 83,
+      "ps": 76
     },
     {
       "team": "Andrea Costa Imola",
@@ -133,8 +133,8 @@
       "gp": 1,
       "wins": 0,
       "losses": 1,
-      "pf": 73,
-      "ps": 84
+      "pf": 76,
+      "ps": 83
     },
     {
       "team": "Fiorenzuola Bees",
