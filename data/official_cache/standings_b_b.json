@@ -1,23 +1,14 @@
 {
-  "updated_at": "2026-10-03T03:21:28.244680",
+  "updated_at": "2026-10-04T04:08:15.176516",
   "standings": [
     {
       "team": "Benacquista Assicurazioni Latina",
-      "pts": 2,
-      "gp": 1,
-      "wins": 1,
+      "pts": 4,
+      "gp": 2,
+      "wins": 2,
       "losses": 0,
-      "pf": 82,
-      "ps": 75
-    },
-    {
-      "team": "Luiss Roma",
-      "pts": 2,
-      "gp": 1,
-      "wins": 1,
-      "losses": 0,
-      "pf": 79,
-      "ps": 71
+      "pf": 164,
+      "ps": 130
     },
     {
       "team": "OraSì Ravenna",
@@ -72,6 +63,15 @@
       "losses": 0,
       "pf": 83,
       "ps": 81
+    },
+    {
+      "team": "Luiss Roma",
+      "pts": 2,
+      "gp": 2,
+      "wins": 1,
+      "losses": 1,
+      "pf": 134,
+      "ps": 153
     },
     {
       "team": "Basketball Club Lucca",

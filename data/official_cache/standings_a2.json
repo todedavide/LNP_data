@@ -1,6 +1,24 @@
 {
-  "updated_at": "2026-10-03T03:21:34.180837",
+  "updated_at": "2026-10-04T04:08:20.876752",
   "standings": [
+    {
+      "team": "Unieuro Forlì",
+      "pts": 4,
+      "gp": 2,
+      "wins": 2,
+      "losses": 0,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Libertas Livorno 1947",
+      "pts": 4,
+      "gp": 2,
+      "wins": 2,
+      "losses": 0,
+      "pf": 0,
+      "ps": 0
+    },
     {
       "team": "Flats Service Fortitudo Bologna",
       "pts": 2,
@@ -30,24 +48,6 @@
     },
     {
       "team": "Valtur Brindisi",
-      "pts": 2,
-      "gp": 1,
-      "wins": 1,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Unieuro Forlì",
-      "pts": 2,
-      "gp": 1,
-      "wins": 1,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Libertas Livorno 1947",
       "pts": 2,
       "gp": 1,
       "wins": 1,
@@ -148,9 +148,9 @@
     {
       "team": "Sella Cento",
       "pts": 0,
-      "gp": 1,
+      "gp": 2,
       "wins": 0,
-      "losses": 1,
+      "losses": 2,
       "pf": 0,
       "ps": 0
     },
@@ -175,9 +175,9 @@
     {
       "team": "Gemini Mestre",
       "pts": 0,
-      "gp": 1,
+      "gp": 2,
       "wins": 1,
-      "losses": 0,
+      "losses": 1,
       "pf": 0,
       "ps": 0
     }

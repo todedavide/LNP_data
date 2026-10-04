@@ -1,6 +1,15 @@
 {
-  "updated_at": "2026-10-03T03:21:21.483792",
+  "updated_at": "2026-10-04T04:08:08.039520",
   "standings": [
+    {
+      "team": "Rimadesio Desio",
+      "pts": 4,
+      "gp": 2,
+      "wins": 2,
+      "losses": 0,
+      "pf": 172,
+      "ps": 163
+    },
     {
       "team": "SAE Scientifica-Soevis Legnano Knights",
       "pts": 2,
@@ -9,15 +18,6 @@
       "losses": 0,
       "pf": 71,
       "ps": 68
-    },
-    {
-      "team": "Rimadesio Desio",
-      "pts": 2,
-      "gp": 1,
-      "wins": 1,
-      "losses": 0,
-      "pf": 94,
-      "ps": 91
     },
     {
       "team": "Moncada Energy Agrigento",
@@ -36,15 +36,6 @@
       "losses": 0,
       "pf": 84,
       "ps": 63
-    },
-    {
-      "team": "Rucker San Vendemiano",
-      "pts": 2,
-      "gp": 1,
-      "wins": 1,
-      "losses": 0,
-      "pf": 85,
-      "ps": 64
     },
     {
       "team": "Myenergy Reggio Calabria",
@@ -75,12 +66,30 @@
     },
     {
       "team": "Andrea Costa Imola",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
+      "pts": 2,
+      "gp": 2,
+      "wins": 1,
       "losses": 1,
-      "pf": 68,
-      "ps": 91
+      "pf": 129,
+      "ps": 150
+    },
+    {
+      "team": "Logiman Orzinuovi",
+      "pts": 2,
+      "gp": 2,
+      "wins": 1,
+      "losses": 1,
+      "pf": 155,
+      "ps": 142
+    },
+    {
+      "team": "Rucker San Vendemiano",
+      "pts": 2,
+      "gp": 2,
+      "wins": 1,
+      "losses": 1,
+      "pf": 144,
+      "ps": 125
     },
     {
       "team": "UCC Assigeco Piacenza",
@@ -103,20 +112,11 @@
     {
       "team": "Paffoni Fulgor Basket Omegna",
       "pts": 0,
-      "gp": 1,
+      "gp": 2,
       "wins": 0,
-      "losses": 1,
-      "pf": 64,
-      "ps": 85
-    },
-    {
-      "team": "Logiman Orzinuovi",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
-      "losses": 1,
-      "pf": 69,
-      "ps": 76
+      "losses": 2,
+      "pf": 130,
+      "ps": 171
     },
     {
       "team": "TAV Treviglio Brianza Basket",
@@ -146,6 +146,15 @@
       "ps": 94
     },
     {
+      "team": "Siaz Basket Piazza Armerina",
+      "pts": 0,
+      "gp": 1,
+      "wins": 0,
+      "losses": 1,
+      "pf": 72,
+      "ps": 78
+    },
+    {
       "team": "LTC Group Sangiorgese Basket",
       "pts": 0,
       "gp": 0,
@@ -155,22 +164,13 @@
       "ps": 0
     },
     {
-      "team": "Siaz Basket Piazza Armerina",
-      "pts": 0,
-      "gp": 0,
-      "wins": 0,
+      "team": "Rimadesio Desio",
+      "pts": 4,
+      "gp": 2,
+      "wins": 2,
       "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "SAE Scientifica-Soevis Legnano Knights",
-      "pts": 2,
-      "gp": 1,
-      "wins": 1,
-      "losses": 0,
-      "pf": 71,
-      "ps": 68
+      "pf": 172,
+      "ps": 163
     }
   ]
 }
