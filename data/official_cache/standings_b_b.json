@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-04T04:08:15.176516",
+  "updated_at": "2026-10-05T03:17:50.985790",
   "standings": [
     {
       "team": "Benacquista Assicurazioni Latina",
@@ -12,57 +12,75 @@
     },
     {
       "team": "OraSì Ravenna",
+      "pts": 4,
+      "gp": 2,
+      "wins": 2,
+      "losses": 0,
+      "pf": 154,
+      "ps": 137
+    },
+    {
+      "team": "Liofilchem Roseto",
+      "pts": 4,
+      "gp": 2,
+      "wins": 2,
+      "losses": 0,
+      "pf": 181,
+      "ps": 153
+    },
+    {
+      "team": "Virtus GVM Roma 1960",
       "pts": 2,
       "gp": 1,
       "wins": 1,
       "losses": 0,
-      "pf": 78,
-      "ps": 65
+      "pf": 81,
+      "ps": 51
     },
     {
       "team": "Solbat Golfo Piombino",
       "pts": 2,
-      "gp": 1,
+      "gp": 2,
       "wins": 1,
-      "losses": 0,
-      "pf": 88,
-      "ps": 77
+      "losses": 1,
+      "pf": 139,
+      "ps": 158
     },
     {
-      "team": "Ristopro Fabriano",
+      "team": "Verodol CBD Pielle Livorno",
       "pts": 2,
-      "gp": 1,
+      "gp": 2,
       "wins": 1,
-      "losses": 0,
-      "pf": 80,
-      "ps": 72
+      "losses": 1,
+      "pf": 165,
+      "ps": 144
     },
     {
-      "team": "Liofilchem Roseto",
+      "team": "PSA Napoli Est",
       "pts": 2,
-      "gp": 1,
+      "gp": 2,
       "wins": 1,
-      "losses": 0,
-      "pf": 98,
-      "ps": 83
+      "losses": 1,
+      "pf": 156,
+      "ps": 151
     },
     {
       "team": "Consorzio Leonardo Dany Quarrata",
       "pts": 2,
-      "gp": 1,
+      "gp": 2,
       "wins": 1,
-      "losses": 0,
-      "pf": 88,
-      "ps": 79
+      "losses": 1,
+      "pf": 159,
+      "ps": 163
     },
     {
-      "team": "Sendero Mens Sana Siena",
+      "team": "Ristopro Fabriano",
       "pts": 2,
-      "gp": 1,
+      "gp": 2,
       "wins": 1,
-      "losses": 0,
-      "pf": 83,
-      "ps": 81
+      "losses": 1,
+      "pf": 136,
+      "ps": 158
     },
     {
       "team": "Luiss Roma",
@@ -74,94 +92,76 @@
       "ps": 153
     },
     {
-      "team": "Basketball Club Lucca",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
-      "losses": 1,
-      "pf": 81,
-      "ps": 83
-    },
-    {
-      "team": "Verodol CBD Pielle Livorno",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
-      "losses": 1,
-      "pf": 79,
-      "ps": 88
-    },
-    {
-      "team": "Allianz Pazienza Cestistica San Severo",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
-      "losses": 1,
-      "pf": 83,
-      "ps": 98
-    },
-    {
       "team": "Tema Sinergie Faenza",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
+      "pts": 2,
+      "gp": 2,
+      "wins": 1,
       "losses": 1,
-      "pf": 75,
-      "ps": 82
+      "pf": 165,
+      "ps": 158
     },
     {
       "team": "Umana San Giobbe Chiusi",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
+      "pts": 2,
+      "gp": 2,
+      "wins": 1,
       "losses": 1,
-      "pf": 65,
-      "ps": 78
+      "pf": 145,
+      "ps": 149
+    },
+    {
+      "team": "Sendero Mens Sana Siena",
+      "pts": 2,
+      "gp": 2,
+      "wins": 1,
+      "losses": 1,
+      "pf": 155,
+      "ps": 157
     },
     {
       "team": "Fabo Herons Montecatini",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
+      "pts": 2,
+      "gp": 2,
+      "wins": 1,
       "losses": 1,
-      "pf": 77,
-      "ps": 88
+      "pf": 146,
+      "ps": 137
     },
     {
-      "team": "Consultinvest Loreto Pesaro",
+      "team": "Felice Scandone Avellino",
       "pts": 0,
       "gp": 1,
       "wins": 0,
       "losses": 1,
       "pf": 71,
-      "ps": 79
-    },
-    {
-      "team": "PSA Napoli Est",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
-      "losses": 1,
-      "pf": 72,
       "ps": 80
     },
     {
-      "team": "Felice Scandone Avellino",
+      "team": "Basketball Club Lucca",
       "pts": 0,
-      "gp": 0,
+      "gp": 2,
       "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
+      "losses": 2,
+      "pf": 130,
+      "ps": 152
     },
     {
-      "team": "Virtus GVM Roma 1960",
+      "team": "Allianz Pazienza Cestistica San Severo",
       "pts": 0,
-      "gp": 0,
+      "gp": 2,
       "wins": 0,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
+      "losses": 2,
+      "pf": 159,
+      "ps": 188
+    },
+    {
+      "team": "Consultinvest Loreto Pesaro",
+      "pts": 0,
+      "gp": 2,
+      "wins": 0,
+      "losses": 2,
+      "pf": 141,
+      "ps": 162
     }
   ]
 }

@@ -1,6 +1,33 @@
 {
-  "updated_at": "2026-10-04T04:08:20.876752",
+  "updated_at": "2026-10-05T03:17:56.667918",
   "standings": [
+    {
+      "team": "Flats Service Fortitudo Bologna",
+      "pts": 4,
+      "gp": 2,
+      "wins": 2,
+      "losses": 0,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "CMT Orange Tools Pesaro",
+      "pts": 4,
+      "gp": 2,
+      "wins": 2,
+      "losses": 0,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Valtur Brindisi",
+      "pts": 4,
+      "gp": 2,
+      "wins": 2,
+      "losses": 0,
+      "pf": 0,
+      "ps": 0
+    },
     {
       "team": "Unieuro Forlì",
       "pts": 4,
@@ -20,37 +47,19 @@
       "ps": 0
     },
     {
-      "team": "Flats Service Fortitudo Bologna",
-      "pts": 2,
-      "gp": 1,
-      "wins": 1,
+      "team": "RSR Sebastiani Rieti",
+      "pts": 4,
+      "gp": 2,
+      "wins": 2,
       "losses": 0,
       "pf": 0,
       "ps": 0
     },
     {
-      "team": "CMT Orange Tools Pesaro",
-      "pts": 2,
-      "gp": 1,
-      "wins": 1,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Banco di Sardegna Sassari",
-      "pts": 2,
-      "gp": 1,
-      "wins": 1,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Valtur Brindisi",
-      "pts": 2,
-      "gp": 1,
-      "wins": 1,
+      "team": "Halley Campania Avellino Basket",
+      "pts": 4,
+      "gp": 2,
+      "wins": 2,
       "losses": 0,
       "pf": 0,
       "ps": 0
@@ -58,90 +67,99 @@
     {
       "team": "Dole Basket Rimini",
       "pts": 2,
-      "gp": 1,
+      "gp": 2,
       "wins": 1,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "RSR Sebastiani Rieti",
-      "pts": 2,
-      "gp": 1,
-      "wins": 1,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Halley Campania Avellino Basket",
-      "pts": 2,
-      "gp": 1,
-      "wins": 1,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Elachem Vigevano 1955",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
-      "losses": 1,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Lumos Pistoia Basket",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
-      "losses": 1,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Ferraroni Juvi Cremona 1952",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
-      "losses": 1,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Crifo Wines Ruvo di Puglia",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
       "losses": 1,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "La T Tecnica Gema Montecatini",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
+      "pts": 2,
+      "gp": 2,
+      "wins": 1,
       "losses": 1,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Reale Mutua Torino",
+      "pts": 2,
+      "gp": 2,
+      "wins": 1,
+      "losses": 1,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "UEB Gesteco Cividale",
+      "pts": 2,
+      "gp": 2,
+      "wins": 1,
+      "losses": 1,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Banco di Sardegna Sassari",
+      "pts": 2,
+      "gp": 2,
+      "wins": 1,
+      "losses": 1,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Elachem Vigevano 1955",
+      "pts": 0,
+      "gp": 2,
+      "wins": 0,
+      "losses": 2,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Lumos Pistoia Basket",
+      "pts": 0,
+      "gp": 2,
+      "wins": 0,
+      "losses": 2,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Ferraroni Juvi Cremona 1952",
+      "pts": 0,
+      "gp": 2,
+      "wins": 0,
+      "losses": 2,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Crifo Wines Ruvo di Puglia",
+      "pts": 0,
+      "gp": 2,
+      "wins": 0,
+      "losses": 2,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Wegreenit Urania Milano",
       "pts": 0,
-      "gp": 1,
+      "gp": 2,
       "wins": 0,
-      "losses": 1,
+      "losses": 2,
       "pf": 0,
       "ps": 0
     },
     {
-      "team": "Juvecaserta 2021",
+      "team": "ProValue Juvecaserta 2021",
       "pts": 0,
-      "gp": 1,
+      "gp": 2,
       "wins": 0,
-      "losses": 1,
+      "losses": 2,
       "pf": 0,
       "ps": 0
     },
@@ -151,24 +169,6 @@
       "gp": 2,
       "wins": 0,
       "losses": 2,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Reale Mutua Torino",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
-      "losses": 1,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "UEB Gesteco Cividale",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
-      "losses": 1,
       "pf": 0,
       "ps": 0
     },
