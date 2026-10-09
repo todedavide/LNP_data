@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-08T03:15:00.866897",
+  "updated_at": "2026-10-09T03:15:25.101248",
   "standings": [
     {
       "team": "Rimadesio Desio",
@@ -101,6 +101,15 @@
       "ps": 142
     },
     {
+      "team": "Siaz Basket Piazza Armerina",
+      "pts": 2,
+      "gp": 2,
+      "wins": 1,
+      "losses": 1,
+      "pf": 144,
+      "ps": 135
+    },
+    {
       "team": "Rucker San Vendemiano",
       "pts": 2,
       "gp": 2,
@@ -130,11 +139,11 @@
     {
       "team": "LTC Group Sangiorgese Basket",
       "pts": 0,
-      "gp": 1,
+      "gp": 2,
       "wins": 0,
-      "losses": 1,
-      "pf": 73,
-      "ps": 80
+      "losses": 2,
+      "pf": 130,
+      "ps": 152
     },
     {
       "team": "Paffoni Fulgor Basket Omegna",
@@ -153,15 +162,6 @@
       "losses": 2,
       "pf": 132,
       "ps": 175
-    },
-    {
-      "team": "Siaz Basket Piazza Armerina",
-      "pts": 0,
-      "gp": 1,
-      "wins": 0,
-      "losses": 1,
-      "pf": 72,
-      "ps": 78
     },
     {
       "team": "Rimadesio Desio",
