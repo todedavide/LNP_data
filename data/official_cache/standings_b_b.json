@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-10T03:15:31.925858",
+  "updated_at": "2026-10-11T03:17:03.569905",
   "standings": [
     {
       "team": "Benacquista Assicurazioni Latina",
@@ -29,6 +29,15 @@
       "ps": 153
     },
     {
+      "team": "Fabo Herons Montecatini",
+      "pts": 4,
+      "gp": 3,
+      "wins": 2,
+      "losses": 1,
+      "pf": 226,
+      "ps": 214
+    },
+    {
       "team": "Virtus Roma GVM",
       "pts": 2,
       "gp": 1,
@@ -38,15 +47,6 @@
       "ps": 51
     },
     {
-      "team": "Solbat Golfo Piombino",
-      "pts": 2,
-      "gp": 2,
-      "wins": 1,
-      "losses": 1,
-      "pf": 139,
-      "ps": 158
-    },
-    {
       "team": "Verodol CBD Pielle Livorno",
       "pts": 2,
       "gp": 2,
@@ -54,24 +54,6 @@
       "losses": 1,
       "pf": 165,
       "ps": 144
-    },
-    {
-      "team": "PSA Napoli Est",
-      "pts": 2,
-      "gp": 2,
-      "wins": 1,
-      "losses": 1,
-      "pf": 156,
-      "ps": 151
-    },
-    {
-      "team": "Consorzio Leonardo Dany Quarrata",
-      "pts": 2,
-      "gp": 2,
-      "wins": 1,
-      "losses": 1,
-      "pf": 159,
-      "ps": 163
     },
     {
       "team": "Ristopro Fabriano",
@@ -90,6 +72,15 @@
       "losses": 1,
       "pf": 134,
       "ps": 153
+    },
+    {
+      "team": "Solbat Golfo Piombino",
+      "pts": 2,
+      "gp": 2,
+      "wins": 1,
+      "losses": 1,
+      "pf": 139,
+      "ps": 158
     },
     {
       "team": "Tema Sinergie Faenza",
@@ -119,13 +110,22 @@
       "ps": 157
     },
     {
-      "team": "Fabo Herons Montecatini",
+      "team": "PSA Napoli Est",
       "pts": 2,
       "gp": 2,
       "wins": 1,
       "losses": 1,
-      "pf": 146,
-      "ps": 137
+      "pf": 156,
+      "ps": 151
+    },
+    {
+      "team": "Consorzio Leonardo Dany Quarrata",
+      "pts": 2,
+      "gp": 3,
+      "wins": 1,
+      "losses": 2,
+      "pf": 236,
+      "ps": 243
     },
     {
       "team": "Felice Scandone Avellino",

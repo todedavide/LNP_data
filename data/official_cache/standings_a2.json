@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-10T03:15:37.904757",
+  "updated_at": "2026-10-11T03:17:09.310687",
   "standings": [
     {
       "team": "Flats Service Fortitudo Bologna",
@@ -65,16 +65,16 @@
       "ps": 0
     },
     {
-      "team": "Dole Basket Rimini",
-      "pts": 2,
-      "gp": 2,
-      "wins": 1,
+      "team": "Banco di Sardegna Sassari",
+      "pts": 4,
+      "gp": 3,
+      "wins": 2,
       "losses": 1,
       "pf": 0,
       "ps": 0
     },
     {
-      "team": "La T Tecnica Gema Montecatini",
+      "team": "Dole Basket Rimini",
       "pts": 2,
       "gp": 2,
       "wins": 1,
@@ -101,11 +101,20 @@
       "ps": 0
     },
     {
-      "team": "Banco di Sardegna Sassari",
+      "team": "La T Tecnica Gema Montecatini",
       "pts": 2,
       "gp": 2,
       "wins": 1,
       "losses": 1,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Crifo Wines Ruvo di Puglia",
+      "pts": 2,
+      "gp": 3,
+      "wins": 1,
+      "losses": 2,
       "pf": 0,
       "ps": 0
     },
@@ -137,20 +146,11 @@
       "ps": 0
     },
     {
-      "team": "Crifo Wines Ruvo di Puglia",
-      "pts": 0,
-      "gp": 2,
-      "wins": 0,
-      "losses": 2,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "Wegreenit Urania Milano",
       "pts": 0,
-      "gp": 2,
+      "gp": 3,
       "wins": 0,
-      "losses": 2,
+      "losses": 3,
       "pf": 0,
       "ps": 0
     },
@@ -175,9 +175,9 @@
     {
       "team": "Gemini Mestre",
       "pts": 0,
-      "gp": 2,
+      "gp": 3,
       "wins": 1,
-      "losses": 1,
+      "losses": 2,
       "pf": 0,
       "ps": 0
     }
