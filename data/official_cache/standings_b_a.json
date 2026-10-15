@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-14T03:11:15.102663",
+  "updated_at": "2026-10-15T03:10:58.112854",
   "standings": [
     {
       "team": "Adamant Ferrara",
@@ -16,8 +16,8 @@
       "gp": 3,
       "wins": 3,
       "losses": 0,
-      "pf": 250,
-      "ps": 221
+      "pf": 251,
+      "ps": 218
     },
     {
       "team": "Infodrive Capo d'Orlando",
@@ -160,8 +160,8 @@
       "gp": 3,
       "wins": 0,
       "losses": 3,
-      "pf": 187,
-      "ps": 253
+      "pf": 184,
+      "ps": 254
     },
     {
       "team": "Adamant Ferrara",
