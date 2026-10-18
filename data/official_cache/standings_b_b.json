@@ -1,6 +1,15 @@
 {
-  "updated_at": "2026-10-17T03:10:49.377845",
+  "updated_at": "2026-10-18T03:11:15.085835",
   "standings": [
+    {
+      "team": "Liofilchem Roseto",
+      "pts": 6,
+      "gp": 3,
+      "wins": 3,
+      "losses": 0,
+      "pf": 289,
+      "ps": 246
+    },
     {
       "team": "OraSì Ravenna",
       "pts": 6,
@@ -11,13 +20,13 @@
       "ps": 206
     },
     {
-      "team": "Liofilchem Roseto",
+      "team": "Fabo Herons Montecatini",
       "pts": 6,
-      "gp": 3,
+      "gp": 4,
       "wins": 3,
-      "losses": 0,
-      "pf": 289,
-      "ps": 246
+      "losses": 1,
+      "pf": 302,
+      "ps": 287
     },
     {
       "team": "Virtus Roma GVM",
@@ -56,24 +65,6 @@
       "ps": 225
     },
     {
-      "team": "Fabo Herons Montecatini",
-      "pts": 4,
-      "gp": 3,
-      "wins": 2,
-      "losses": 1,
-      "pf": 226,
-      "ps": 214
-    },
-    {
-      "team": "Sendero Mens Sana Siena",
-      "pts": 4,
-      "gp": 3,
-      "wins": 2,
-      "losses": 1,
-      "pf": 255,
-      "ps": 231
-    },
-    {
       "team": "Ristopro Fabriano",
       "pts": 4,
       "gp": 3,
@@ -83,6 +74,24 @@
       "ps": 229
     },
     {
+      "team": "Consorzio Leonardo Dany Quarrata",
+      "pts": 4,
+      "gp": 4,
+      "wins": 2,
+      "losses": 2,
+      "pf": 322,
+      "ps": 325
+    },
+    {
+      "team": "Sendero Mens Sana Siena",
+      "pts": 4,
+      "gp": 4,
+      "wins": 2,
+      "losses": 2,
+      "pf": 337,
+      "ps": 317
+    },
+    {
       "team": "Tema Sinergie Faenza",
       "pts": 2,
       "gp": 3,
@@ -90,15 +99,6 @@
       "losses": 2,
       "pf": 234,
       "ps": 236
-    },
-    {
-      "team": "PSA Napoli Est",
-      "pts": 2,
-      "gp": 3,
-      "wins": 1,
-      "losses": 2,
-      "pf": 223,
-      "ps": 231
     },
     {
       "team": "Allianz Pazienza Cestistica San Severo",
@@ -128,13 +128,13 @@
       "ps": 251
     },
     {
-      "team": "Consorzio Leonardo Dany Quarrata",
+      "team": "PSA Napoli Est",
       "pts": 2,
       "gp": 3,
       "wins": 1,
       "losses": 2,
-      "pf": 236,
-      "ps": 243
+      "pf": 223,
+      "ps": 231
     },
     {
       "team": "Felice Scandone Avellino",
@@ -157,11 +157,11 @@
     {
       "team": "Consultinvest Loreto Pesaro",
       "pts": 0,
-      "gp": 3,
+      "gp": 4,
       "wins": 0,
-      "losses": 3,
-      "pf": 206,
-      "ps": 256
+      "losses": 4,
+      "pf": 279,
+      "ps": 332
     }
   ]
 }

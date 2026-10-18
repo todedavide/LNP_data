@@ -1,35 +1,35 @@
 {
-  "updated_at": "2026-10-17T03:10:55.139960",
+  "updated_at": "2026-10-18T03:11:20.503587",
   "standings": [
     {
       "team": "Flats Service Fortitudo Bologna",
-      "pts": 6,
-      "gp": 3,
-      "wins": 3,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "CMT Orange Tools Pesaro",
-      "pts": 6,
-      "gp": 3,
-      "wins": 3,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Valtur Brindisi",
-      "pts": 6,
-      "gp": 3,
-      "wins": 3,
+      "pts": 8,
+      "gp": 4,
+      "wins": 4,
       "losses": 0,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Libertas Livorno 1947",
+      "pts": 8,
+      "gp": 4,
+      "wins": 4,
+      "losses": 0,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Halley Campania Avellino Basket",
+      "pts": 8,
+      "gp": 4,
+      "wins": 4,
+      "losses": 0,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "CMT Orange Tools Pesaro",
       "pts": 6,
       "gp": 3,
       "wins": 3,
@@ -47,19 +47,28 @@
       "ps": 0
     },
     {
-      "team": "Halley Campania Avellino Basket",
+      "team": "Reale Mutua Torino",
       "pts": 6,
-      "gp": 3,
+      "gp": 4,
       "wins": 3,
-      "losses": 0,
+      "losses": 1,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Banco di Sardegna Sassari",
-      "pts": 4,
-      "gp": 3,
-      "wins": 2,
+      "pts": 6,
+      "gp": 4,
+      "wins": 3,
+      "losses": 1,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Valtur Brindisi",
+      "pts": 6,
+      "gp": 4,
+      "wins": 3,
       "losses": 1,
       "pf": 0,
       "ps": 0
@@ -74,34 +83,7 @@
       "ps": 0
     },
     {
-      "team": "Reale Mutua Torino",
-      "pts": 4,
-      "gp": 3,
-      "wins": 2,
-      "losses": 1,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "Dole Basket Rimini",
-      "pts": 2,
-      "gp": 3,
-      "wins": 1,
-      "losses": 2,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "UEB Gesteco Cividale",
-      "pts": 2,
-      "gp": 3,
-      "wins": 1,
-      "losses": 2,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Sella Cento",
       "pts": 2,
       "gp": 3,
       "wins": 1,
@@ -121,9 +103,27 @@
     {
       "team": "La T Tecnica Gema Montecatini",
       "pts": 2,
-      "gp": 3,
+      "gp": 4,
       "wins": 1,
-      "losses": 2,
+      "losses": 3,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Sella Cento",
+      "pts": 2,
+      "gp": 4,
+      "wins": 1,
+      "losses": 3,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "UEB Gesteco Cividale",
+      "pts": 2,
+      "gp": 4,
+      "wins": 1,
+      "losses": 3,
       "pf": 0,
       "ps": 0
     },
@@ -157,9 +157,9 @@
     {
       "team": "Wegreenit Urania Milano",
       "pts": 0,
-      "gp": 3,
+      "gp": 4,
       "wins": 0,
-      "losses": 3,
+      "losses": 4,
       "pf": 0,
       "ps": 0
     },
