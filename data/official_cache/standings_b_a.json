@@ -1,122 +1,122 @@
 {
-  "updated_at": "2026-10-18T03:11:07.921700",
+  "updated_at": "2026-10-19T03:11:31.478794",
   "standings": [
     {
-      "team": "Adamant Ferrara",
-      "pts": 6,
-      "gp": 3,
-      "wins": 3,
-      "losses": 0,
-      "pf": 231,
-      "ps": 191
-    },
-    {
       "team": "A2A Leonessa Brescia",
-      "pts": 6,
-      "gp": 3,
-      "wins": 3,
+      "pts": 8,
+      "gp": 4,
+      "wins": 4,
       "losses": 0,
-      "pf": 251,
-      "ps": 218
+      "pf": 331,
+      "ps": 280
     },
     {
-      "team": "Infodrive Capo d'Orlando",
-      "pts": 4,
-      "gp": 3,
-      "wins": 2,
-      "losses": 1,
-      "pf": 236,
-      "ps": 209
-    },
-    {
-      "team": "SAE Scientifica-Soevis Legnano Knights",
-      "pts": 4,
-      "gp": 3,
-      "wins": 2,
-      "losses": 1,
-      "pf": 205,
-      "ps": 192
-    },
-    {
-      "team": "LuxArm Lumezzane",
-      "pts": 4,
-      "gp": 3,
-      "wins": 2,
-      "losses": 1,
-      "pf": 207,
-      "ps": 209
-    },
-    {
-      "team": "Moncada Energy Agrigento",
-      "pts": 4,
-      "gp": 3,
-      "wins": 2,
-      "losses": 1,
-      "pf": 225,
-      "ps": 215
+      "team": "Adamant Ferrara",
+      "pts": 8,
+      "gp": 4,
+      "wins": 4,
+      "losses": 0,
+      "pf": 294,
+      "ps": 252
     },
     {
       "team": "Logiman Orzinuovi",
-      "pts": 4,
-      "gp": 3,
-      "wins": 2,
+      "pts": 6,
+      "gp": 4,
+      "wins": 3,
       "losses": 1,
-      "pf": 238,
-      "ps": 193
+      "pf": 311,
+      "ps": 261
+    },
+    {
+      "team": "LuxArm Lumezzane",
+      "pts": 6,
+      "gp": 4,
+      "wins": 3,
+      "losses": 1,
+      "pf": 278,
+      "ps": 274
     },
     {
       "team": "Myenergy Reggio Calabria",
       "pts": 4,
-      "gp": 3,
+      "gp": 4,
       "wins": 2,
-      "losses": 1,
-      "pf": 218,
-      "ps": 218
+      "losses": 2,
+      "pf": 286,
+      "ps": 291
+    },
+    {
+      "team": "Moncada Energy Agrigento",
+      "pts": 4,
+      "gp": 4,
+      "wins": 2,
+      "losses": 2,
+      "pf": 301,
+      "ps": 293
+    },
+    {
+      "team": "SAE Scientifica-Soevis Legnano Knights",
+      "pts": 4,
+      "gp": 4,
+      "wins": 2,
+      "losses": 2,
+      "pf": 255,
+      "ps": 247
+    },
+    {
+      "team": "Andrea Costa Imola",
+      "pts": 4,
+      "gp": 4,
+      "wins": 2,
+      "losses": 2,
+      "pf": 235,
+      "ps": 283
+    },
+    {
+      "team": "TAV Treviglio Brianza Basket",
+      "pts": 4,
+      "gp": 4,
+      "wins": 2,
+      "losses": 2,
+      "pf": 309,
+      "ps": 307
+    },
+    {
+      "team": "Rucker San Vendemiano",
+      "pts": 4,
+      "gp": 4,
+      "wins": 2,
+      "losses": 2,
+      "pf": 308,
+      "ps": 287
     },
     {
       "team": "UCC Assigeco Piacenza",
       "pts": 4,
-      "gp": 3,
+      "gp": 4,
       "wins": 2,
-      "losses": 1,
-      "pf": 222,
-      "ps": 192
+      "losses": 2,
+      "pf": 299,
+      "ps": 273
     },
     {
       "team": "Rimadesio Desio",
       "pts": 4,
-      "gp": 3,
+      "gp": 4,
       "wins": 2,
-      "losses": 1,
-      "pf": 239,
-      "ps": 242
+      "losses": 2,
+      "pf": 301,
+      "ps": 322
     },
     {
-      "team": "Andrea Costa Imola",
-      "pts": 2,
-      "gp": 3,
-      "wins": 1,
+      "team": "Infodrive Capo d'Orlando",
+      "pts": 4,
+      "gp": 4,
+      "wins": 2,
       "losses": 2,
-      "pf": 180,
-      "ps": 233
-    },
-    {
-      "team": "TAV Treviglio Brianza Basket",
-      "pts": 2,
-      "gp": 3,
-      "wins": 1,
-      "losses": 2,
-      "pf": 209,
-      "ps": 230
-    },
-    {
-      "team": "Fiorenzuola Bees",
-      "pts": 2,
-      "gp": 3,
-      "wins": 1,
-      "losses": 2,
-      "pf": 241,
-      "ps": 239
+      "pf": 313,
+      "ps": 309
     },
     {
       "team": "Siaz Basket Piazza Armerina",
@@ -128,22 +128,22 @@
       "ps": 198
     },
     {
-      "team": "Rucker San Vendemiano",
+      "team": "Fiorenzuola Bees",
       "pts": 2,
-      "gp": 3,
+      "gp": 4,
       "wins": 1,
-      "losses": 2,
-      "pf": 227,
-      "ps": 210
+      "losses": 3,
+      "pf": 302,
+      "ps": 302
     },
     {
       "team": "LTC Group Sangiorgese Basket",
-      "pts": 0,
-      "gp": 3,
-      "wins": 0,
+      "pts": 2,
+      "gp": 4,
+      "wins": 1,
       "losses": 3,
-      "pf": 200,
-      "ps": 234
+      "pf": 278,
+      "ps": 310
     },
     {
       "team": "Paffoni Fulgor Basket Omegna",
@@ -157,20 +157,20 @@
     {
       "team": "S4 Energia Vicenza",
       "pts": 0,
-      "gp": 3,
+      "gp": 4,
       "wins": 0,
-      "losses": 3,
-      "pf": 184,
-      "ps": 254
+      "losses": 4,
+      "pf": 249,
+      "ps": 325
     },
     {
-      "team": "Adamant Ferrara",
-      "pts": 6,
-      "gp": 3,
-      "wins": 3,
+      "team": "A2A Leonessa Brescia",
+      "pts": 8,
+      "gp": 4,
+      "wins": 4,
       "losses": 0,
-      "pf": 231,
-      "ps": 191
+      "pf": 331,
+      "ps": 280
     }
   ]
 }
