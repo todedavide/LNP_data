@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-20T03:11:18.693433",
+  "updated_at": "2026-10-21T03:11:40.363294",
   "standings": [
     {
       "team": "A2A Leonessa Brescia",
@@ -38,22 +38,13 @@
       "ps": 274
     },
     {
-      "team": "Myenergy Reggio Calabria",
+      "team": "Andrea Costa Imola",
       "pts": 4,
       "gp": 4,
       "wins": 2,
       "losses": 2,
-      "pf": 286,
-      "ps": 291
-    },
-    {
-      "team": "Moncada Energy Agrigento",
-      "pts": 4,
-      "gp": 4,
-      "wins": 2,
-      "losses": 2,
-      "pf": 301,
-      "ps": 293
+      "pf": 235,
+      "ps": 283
     },
     {
       "team": "SAE Scientifica-Soevis Legnano Knights",
@@ -65,22 +56,13 @@
       "ps": 247
     },
     {
-      "team": "Andrea Costa Imola",
+      "team": "Myenergy Reggio Calabria",
       "pts": 4,
       "gp": 4,
       "wins": 2,
       "losses": 2,
-      "pf": 235,
-      "ps": 283
-    },
-    {
-      "team": "TAV Treviglio Brianza Basket",
-      "pts": 4,
-      "gp": 4,
-      "wins": 2,
-      "losses": 2,
-      "pf": 309,
-      "ps": 307
+      "pf": 286,
+      "ps": 291
     },
     {
       "team": "Rucker San Vendemiano",
@@ -92,6 +74,24 @@
       "ps": 287
     },
     {
+      "team": "Moncada Energy Agrigento",
+      "pts": 4,
+      "gp": 4,
+      "wins": 2,
+      "losses": 2,
+      "pf": 301,
+      "ps": 293
+    },
+    {
+      "team": "TAV Treviglio Brianza Basket",
+      "pts": 4,
+      "gp": 4,
+      "wins": 2,
+      "losses": 2,
+      "pf": 309,
+      "ps": 307
+    },
+    {
       "team": "UCC Assigeco Piacenza",
       "pts": 4,
       "gp": 4,
@@ -101,15 +101,6 @@
       "ps": 273
     },
     {
-      "team": "Rimadesio Desio",
-      "pts": 4,
-      "gp": 4,
-      "wins": 2,
-      "losses": 2,
-      "pf": 301,
-      "ps": 322
-    },
-    {
       "team": "Infodrive Capo d'Orlando",
       "pts": 4,
       "gp": 4,
@@ -117,6 +108,15 @@
       "losses": 2,
       "pf": 313,
       "ps": 309
+    },
+    {
+      "team": "Rimadesio Desio",
+      "pts": 4,
+      "gp": 4,
+      "wins": 2,
+      "losses": 2,
+      "pf": 301,
+      "ps": 322
     },
     {
       "team": "Siaz Basket Piazza Armerina",

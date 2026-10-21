@@ -1,6 +1,15 @@
 {
-  "updated_at": "2026-10-20T03:11:25.507197",
+  "updated_at": "2026-10-21T03:11:47.659454",
   "standings": [
+    {
+      "team": "Ristopro Fabriano",
+      "pts": 6,
+      "gp": 4,
+      "wins": 3,
+      "losses": 1,
+      "pf": 295,
+      "ps": 305
+    },
     {
       "team": "Virtus Roma GVM",
       "pts": 6,
@@ -11,13 +20,13 @@
       "ps": 191
     },
     {
-      "team": "Ristopro Fabriano",
+      "team": "Liofilchem Roseto",
       "pts": 6,
       "gp": 4,
       "wins": 3,
       "losses": 1,
-      "pf": 295,
-      "ps": 305
+      "pf": 365,
+      "ps": 324
     },
     {
       "team": "OraSì Ravenna",
@@ -38,15 +47,6 @@
       "ps": 287
     },
     {
-      "team": "Liofilchem Roseto",
-      "pts": 6,
-      "gp": 4,
-      "wins": 3,
-      "losses": 1,
-      "pf": 365,
-      "ps": 324
-    },
-    {
       "team": "Benacquista Assicurazioni Latina",
       "pts": 4,
       "gp": 3,
@@ -65,15 +65,6 @@
       "ps": 325
     },
     {
-      "team": "Tema Sinergie Faenza",
-      "pts": 4,
-      "gp": 4,
-      "wins": 2,
-      "losses": 2,
-      "pf": 322,
-      "ps": 302
-    },
-    {
       "team": "Sendero Mens Sana Siena",
       "pts": 4,
       "gp": 4,
@@ -81,6 +72,15 @@
       "losses": 2,
       "pf": 337,
       "ps": 317
+    },
+    {
+      "team": "Tema Sinergie Faenza",
+      "pts": 4,
+      "gp": 4,
+      "wins": 2,
+      "losses": 2,
+      "pf": 322,
+      "ps": 302
     },
     {
       "team": "Luiss Roma",
@@ -92,15 +92,6 @@
       "ps": 340
     },
     {
-      "team": "Umana San Giobbe Chiusi",
-      "pts": 4,
-      "gp": 4,
-      "wins": 2,
-      "losses": 2,
-      "pf": 324,
-      "ps": 316
-    },
-    {
       "team": "Verodol CBD Pielle Livorno",
       "pts": 4,
       "gp": 4,
@@ -108,6 +99,15 @@
       "losses": 2,
       "pf": 324,
       "ps": 285
+    },
+    {
+      "team": "Umana San Giobbe Chiusi",
+      "pts": 4,
+      "gp": 4,
+      "wins": 2,
+      "losses": 2,
+      "pf": 324,
+      "ps": 316
     },
     {
       "team": "Allianz Pazienza Cestistica San Severo",

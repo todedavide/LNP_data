@@ -1,24 +1,6 @@
 {
-  "updated_at": "2026-10-20T03:11:31.203656",
+  "updated_at": "2026-10-21T03:11:53.392515",
   "standings": [
-    {
-      "team": "Flats Service Fortitudo Bologna",
-      "pts": 8,
-      "gp": 4,
-      "wins": 4,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "CMT Orange Tools Pesaro",
-      "pts": 8,
-      "gp": 4,
-      "wins": 4,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
     {
       "team": "Libertas Livorno 1947",
       "pts": 8,
@@ -29,7 +11,25 @@
       "ps": 0
     },
     {
+      "team": "Flats Service Fortitudo Bologna",
+      "pts": 8,
+      "gp": 4,
+      "wins": 4,
+      "losses": 0,
+      "pf": 0,
+      "ps": 0
+    },
+    {
       "team": "Halley Campania Avellino Basket",
+      "pts": 8,
+      "gp": 4,
+      "wins": 4,
+      "losses": 0,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "CMT Orange Tools Pesaro",
       "pts": 8,
       "gp": 4,
       "wins": 4,
@@ -56,7 +56,7 @@
       "ps": 0
     },
     {
-      "team": "Banco di Sardegna Sassari",
+      "team": "Valtur Brindisi",
       "pts": 6,
       "gp": 4,
       "wins": 3,
@@ -65,7 +65,7 @@
       "ps": 0
     },
     {
-      "team": "Valtur Brindisi",
+      "team": "Banco di Sardegna Sassari",
       "pts": 6,
       "gp": 4,
       "wins": 3,
@@ -110,15 +110,6 @@
       "ps": 0
     },
     {
-      "team": "La T Tecnica Gema Montecatini",
-      "pts": 2,
-      "gp": 4,
-      "wins": 1,
-      "losses": 3,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "ProValue Juvecaserta 2021",
       "pts": 2,
       "gp": 4,
@@ -146,11 +137,11 @@
       "ps": 0
     },
     {
-      "team": "Elachem Vigevano 1955",
-      "pts": 0,
+      "team": "La T Tecnica Gema Montecatini",
+      "pts": 2,
       "gp": 4,
-      "wins": 0,
-      "losses": 4,
+      "wins": 1,
+      "losses": 3,
       "pf": 0,
       "ps": 0
     },
@@ -178,6 +169,15 @@
       "gp": 4,
       "wins": 1,
       "losses": 3,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Elachem Vigevano 1955",
+      "pts": 0,
+      "gp": 4,
+      "wins": 0,
+      "losses": 4,
       "pf": 0,
       "ps": 0
     }
