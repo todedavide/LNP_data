@@ -1,11 +1,29 @@
 {
-  "updated_at": "2026-10-21T03:11:53.392515",
+  "updated_at": "2026-10-22T03:11:07.195159",
   "standings": [
     {
       "team": "Libertas Livorno 1947",
-      "pts": 8,
-      "gp": 4,
-      "wins": 4,
+      "pts": 10,
+      "gp": 5,
+      "wins": 5,
+      "losses": 0,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Halley Campania Avellino Basket",
+      "pts": 10,
+      "gp": 5,
+      "wins": 5,
+      "losses": 0,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "CMT Orange Tools Pesaro",
+      "pts": 10,
+      "gp": 5,
+      "wins": 5,
       "losses": 0,
       "pf": 0,
       "ps": 0
@@ -13,36 +31,27 @@
     {
       "team": "Flats Service Fortitudo Bologna",
       "pts": 8,
-      "gp": 4,
+      "gp": 5,
       "wins": 4,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Halley Campania Avellino Basket",
-      "pts": 8,
-      "gp": 4,
-      "wins": 4,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "CMT Orange Tools Pesaro",
-      "pts": 8,
-      "gp": 4,
-      "wins": 4,
-      "losses": 0,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Unieuro Forlì",
-      "pts": 6,
-      "gp": 4,
-      "wins": 3,
       "losses": 1,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "RSR Sebastiani Rieti",
+      "pts": 8,
+      "gp": 5,
+      "wins": 4,
+      "losses": 1,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Dole Basket Rimini",
+      "pts": 6,
+      "gp": 5,
+      "wins": 3,
+      "losses": 2,
       "pf": 0,
       "ps": 0
     },
@@ -56,56 +65,83 @@
       "ps": 0
     },
     {
+      "team": "Unieuro Forlì",
+      "pts": 6,
+      "gp": 5,
+      "wins": 3,
+      "losses": 2,
+      "pf": 0,
+      "ps": 0
+    },
+    {
       "team": "Valtur Brindisi",
       "pts": 6,
-      "gp": 4,
+      "gp": 5,
       "wins": 3,
-      "losses": 1,
+      "losses": 2,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Banco di Sardegna Sassari",
       "pts": 6,
-      "gp": 4,
+      "gp": 5,
       "wins": 3,
-      "losses": 1,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "RSR Sebastiani Rieti",
-      "pts": 6,
-      "gp": 4,
-      "wins": 3,
-      "losses": 1,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Dole Basket Rimini",
-      "pts": 4,
-      "gp": 4,
-      "wins": 2,
       "losses": 2,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Lumos Pistoia Basket",
+      "pts": 4,
+      "gp": 5,
+      "wins": 2,
+      "losses": 3,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Gemini Mestre",
+      "pts": 2,
+      "gp": 5,
+      "wins": 2,
+      "losses": 3,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "UEB Gesteco Cividale",
       "pts": 2,
-      "gp": 4,
+      "gp": 5,
       "wins": 1,
-      "losses": 3,
+      "losses": 4,
       "pf": 0,
       "ps": 0
     },
     {
-      "team": "Lumos Pistoia Basket",
+      "team": "Crifo Wines Ruvo di Puglia",
       "pts": 2,
-      "gp": 4,
+      "gp": 5,
       "wins": 1,
-      "losses": 3,
+      "losses": 4,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Sella Cento",
+      "pts": 2,
+      "gp": 5,
+      "wins": 1,
+      "losses": 4,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Wegreenit Urania Milano",
+      "pts": 2,
+      "gp": 5,
+      "wins": 1,
+      "losses": 4,
       "pf": 0,
       "ps": 0
     },
@@ -119,65 +155,29 @@
       "ps": 0
     },
     {
-      "team": "Sella Cento",
+      "team": "Elachem Vigevano 1955",
       "pts": 2,
-      "gp": 4,
+      "gp": 5,
       "wins": 1,
-      "losses": 3,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Crifo Wines Ruvo di Puglia",
-      "pts": 2,
-      "gp": 4,
-      "wins": 1,
-      "losses": 3,
+      "losses": 4,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "La T Tecnica Gema Montecatini",
       "pts": 2,
-      "gp": 4,
+      "gp": 5,
       "wins": 1,
-      "losses": 3,
+      "losses": 4,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Ferraroni Juvi Cremona 1952",
       "pts": 0,
-      "gp": 4,
+      "gp": 5,
       "wins": 0,
-      "losses": 4,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Wegreenit Urania Milano",
-      "pts": 0,
-      "gp": 4,
-      "wins": 0,
-      "losses": 4,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Gemini Mestre",
-      "pts": 0,
-      "gp": 4,
-      "wins": 1,
-      "losses": 3,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Elachem Vigevano 1955",
-      "pts": 0,
-      "gp": 4,
-      "wins": 0,
-      "losses": 4,
+      "losses": 5,
       "pf": 0,
       "ps": 0
     }

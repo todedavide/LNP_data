@@ -1,6 +1,15 @@
 {
-  "updated_at": "2026-10-21T03:11:47.659454",
+  "updated_at": "2026-10-22T03:11:02.183473",
   "standings": [
+    {
+      "team": "Virtus Roma GVM",
+      "pts": 8,
+      "gp": 4,
+      "wins": 4,
+      "losses": 0,
+      "pf": 333,
+      "ps": 253
+    },
     {
       "team": "Ristopro Fabriano",
       "pts": 6,
@@ -9,15 +18,6 @@
       "losses": 1,
       "pf": 295,
       "ps": 305
-    },
-    {
-      "team": "Virtus Roma GVM",
-      "pts": 6,
-      "gp": 3,
-      "wins": 3,
-      "losses": 0,
-      "pf": 257,
-      "ps": 191
     },
     {
       "team": "Liofilchem Roseto",
@@ -130,11 +130,11 @@
     {
       "team": "Felice Scandone Avellino",
       "pts": 2,
-      "gp": 3,
+      "gp": 4,
       "wins": 1,
-      "losses": 2,
-      "pf": 217,
-      "ps": 227
+      "losses": 3,
+      "pf": 279,
+      "ps": 303
     },
     {
       "team": "Solbat Golfo Piombino",
