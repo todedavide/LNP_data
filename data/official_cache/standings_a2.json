@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-24T03:10:52.430079",
+  "updated_at": "2026-10-25T03:11:23.092083",
   "standings": [
     {
       "team": "Libertas Livorno 1947",
@@ -101,20 +101,20 @@
       "ps": 0
     },
     {
+      "team": "UEB Gesteco Cividale",
+      "pts": 4,
+      "gp": 6,
+      "wins": 2,
+      "losses": 4,
+      "pf": 0,
+      "ps": 0
+    },
+    {
       "team": "Gemini Mestre",
       "pts": 2,
       "gp": 5,
       "wins": 2,
       "losses": 3,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "UEB Gesteco Cividale",
-      "pts": 2,
-      "gp": 5,
-      "wins": 1,
-      "losses": 4,
       "pf": 0,
       "ps": 0
     },
@@ -137,20 +137,20 @@
       "ps": 0
     },
     {
-      "team": "Wegreenit Urania Milano",
-      "pts": 2,
-      "gp": 5,
-      "wins": 1,
-      "losses": 4,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "ProValue Juvecaserta 2021",
       "pts": 2,
       "gp": 4,
       "wins": 1,
       "losses": 3,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Wegreenit Urania Milano",
+      "pts": 2,
+      "gp": 6,
+      "wins": 1,
+      "losses": 5,
       "pf": 0,
       "ps": 0
     },

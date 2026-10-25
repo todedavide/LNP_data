@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-24T03:10:46.760810",
+  "updated_at": "2026-10-25T03:11:17.367450",
   "standings": [
     {
       "team": "Virtus Roma GVM",
@@ -11,22 +11,13 @@
       "ps": 253
     },
     {
-      "team": "Ristopro Fabriano",
-      "pts": 6,
-      "gp": 4,
-      "wins": 3,
+      "team": "Fabo Herons Montecatini",
+      "pts": 8,
+      "gp": 5,
+      "wins": 4,
       "losses": 1,
-      "pf": 295,
-      "ps": 305
-    },
-    {
-      "team": "Liofilchem Roseto",
-      "pts": 6,
-      "gp": 4,
-      "wins": 3,
-      "losses": 1,
-      "pf": 365,
-      "ps": 324
+      "pf": 379,
+      "ps": 362
     },
     {
       "team": "OraSì Ravenna",
@@ -38,22 +29,31 @@
       "ps": 291
     },
     {
-      "team": "Fabo Herons Montecatini",
+      "team": "Ristopro Fabriano",
       "pts": 6,
       "gp": 4,
       "wins": 3,
       "losses": 1,
-      "pf": 302,
-      "ps": 287
+      "pf": 295,
+      "ps": 305
     },
     {
-      "team": "Benacquista Assicurazioni Latina",
-      "pts": 4,
-      "gp": 3,
-      "wins": 2,
-      "losses": 1,
-      "pf": 257,
-      "ps": 238
+      "team": "Tema Sinergie Faenza",
+      "pts": 6,
+      "gp": 5,
+      "wins": 3,
+      "losses": 2,
+      "pf": 405,
+      "ps": 362
+    },
+    {
+      "team": "Liofilchem Roseto",
+      "pts": 6,
+      "gp": 5,
+      "wins": 3,
+      "losses": 2,
+      "pf": 440,
+      "ps": 401
     },
     {
       "team": "Consorzio Leonardo Dany Quarrata",
@@ -65,6 +65,15 @@
       "ps": 325
     },
     {
+      "team": "Benacquista Assicurazioni Latina",
+      "pts": 4,
+      "gp": 3,
+      "wins": 2,
+      "losses": 1,
+      "pf": 257,
+      "ps": 238
+    },
+    {
       "team": "Sendero Mens Sana Siena",
       "pts": 4,
       "gp": 4,
@@ -72,15 +81,6 @@
       "losses": 2,
       "pf": 337,
       "ps": 317
-    },
-    {
-      "team": "Tema Sinergie Faenza",
-      "pts": 4,
-      "gp": 4,
-      "wins": 2,
-      "losses": 2,
-      "pf": 322,
-      "ps": 302
     },
     {
       "team": "Luiss Roma",
@@ -157,11 +157,11 @@
     {
       "team": "Consultinvest Loreto Pesaro",
       "pts": 0,
-      "gp": 4,
+      "gp": 5,
       "wins": 0,
-      "losses": 4,
-      "pf": 279,
-      "ps": 332
+      "losses": 5,
+      "pf": 339,
+      "ps": 415
     }
   ]
 }

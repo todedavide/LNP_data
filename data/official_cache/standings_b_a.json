@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-10-24T03:10:39.780523",
+  "updated_at": "2026-10-25T03:11:10.573767",
   "standings": [
     {
       "team": "A2A Leonessa Brescia",
-      "pts": 8,
-      "gp": 4,
-      "wins": 4,
+      "pts": 10,
+      "gp": 5,
+      "wins": 5,
       "losses": 0,
-      "pf": 331,
-      "ps": 280
+      "pf": 406,
+      "ps": 352
     },
     {
       "team": "Adamant Ferrara",
@@ -38,6 +38,24 @@
       "ps": 274
     },
     {
+      "team": "Myenergy Reggio Calabria",
+      "pts": 6,
+      "gp": 5,
+      "wins": 3,
+      "losses": 2,
+      "pf": 358,
+      "ps": 359
+    },
+    {
+      "team": "TAV Treviglio Brianza Basket",
+      "pts": 6,
+      "gp": 5,
+      "wins": 3,
+      "losses": 2,
+      "pf": 391,
+      "ps": 384
+    },
+    {
       "team": "Andrea Costa Imola",
       "pts": 4,
       "gp": 4,
@@ -49,20 +67,11 @@
     {
       "team": "SAE Scientifica-Soevis Legnano Knights",
       "pts": 4,
-      "gp": 4,
+      "gp": 5,
       "wins": 2,
-      "losses": 2,
-      "pf": 255,
-      "ps": 247
-    },
-    {
-      "team": "Myenergy Reggio Calabria",
-      "pts": 4,
-      "gp": 4,
-      "wins": 2,
-      "losses": 2,
-      "pf": 286,
-      "ps": 291
+      "losses": 3,
+      "pf": 327,
+      "ps": 322
     },
     {
       "team": "Rucker San Vendemiano",
@@ -81,15 +90,6 @@
       "losses": 2,
       "pf": 301,
       "ps": 293
-    },
-    {
-      "team": "TAV Treviglio Brianza Basket",
-      "pts": 4,
-      "gp": 4,
-      "wins": 2,
-      "losses": 2,
-      "pf": 309,
-      "ps": 307
     },
     {
       "team": "UCC Assigeco Piacenza",
@@ -112,11 +112,11 @@
     {
       "team": "Rimadesio Desio",
       "pts": 4,
-      "gp": 4,
+      "gp": 5,
       "wins": 2,
-      "losses": 2,
-      "pf": 301,
-      "ps": 322
+      "losses": 3,
+      "pf": 378,
+      "ps": 404
     },
     {
       "team": "Siaz Basket Piazza Armerina",
@@ -148,11 +148,11 @@
     {
       "team": "Paffoni Fulgor Basket Omegna",
       "pts": 0,
-      "gp": 3,
+      "gp": 4,
       "wins": 0,
-      "losses": 3,
-      "pf": 192,
-      "ps": 234
+      "losses": 4,
+      "pf": 260,
+      "ps": 306
     },
     {
       "team": "S4 Energia Vicenza",
@@ -165,12 +165,12 @@
     },
     {
       "team": "A2A Leonessa Brescia",
-      "pts": 8,
-      "gp": 4,
-      "wins": 4,
+      "pts": 10,
+      "gp": 5,
+      "wins": 5,
       "losses": 0,
-      "pf": 331,
-      "ps": 280
+      "pf": 406,
+      "ps": 352
     }
   ]
 }
