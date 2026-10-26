@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-25T03:11:10.573767",
+  "updated_at": "2026-10-26T03:13:57.267363",
   "standings": [
     {
       "team": "A2A Leonessa Brescia",
@@ -13,29 +13,29 @@
     {
       "team": "Adamant Ferrara",
       "pts": 8,
-      "gp": 4,
+      "gp": 5,
       "wins": 4,
-      "losses": 0,
-      "pf": 294,
-      "ps": 252
+      "losses": 1,
+      "pf": 359,
+      "ps": 329
     },
     {
       "team": "Logiman Orzinuovi",
-      "pts": 6,
-      "gp": 4,
-      "wins": 3,
+      "pts": 8,
+      "gp": 5,
+      "wins": 4,
       "losses": 1,
-      "pf": 311,
-      "ps": 261
+      "pf": 403,
+      "ps": 326
     },
     {
       "team": "LuxArm Lumezzane",
-      "pts": 6,
-      "gp": 4,
-      "wins": 3,
+      "pts": 8,
+      "gp": 5,
+      "wins": 4,
       "losses": 1,
-      "pf": 278,
-      "ps": 274
+      "pf": 355,
+      "ps": 350
     },
     {
       "team": "Myenergy Reggio Calabria",
@@ -47,6 +47,24 @@
       "ps": 359
     },
     {
+      "team": "Rucker San Vendemiano",
+      "pts": 6,
+      "gp": 5,
+      "wins": 3,
+      "losses": 2,
+      "pf": 391,
+      "ps": 349
+    },
+    {
+      "team": "UCC Assigeco Piacenza",
+      "pts": 6,
+      "gp": 5,
+      "wins": 3,
+      "losses": 2,
+      "pf": 382,
+      "ps": 354
+    },
+    {
       "team": "TAV Treviglio Brianza Basket",
       "pts": 6,
       "gp": 5,
@@ -56,13 +74,22 @@
       "ps": 384
     },
     {
+      "team": "Moncada Energy Agrigento",
+      "pts": 4,
+      "gp": 5,
+      "wins": 2,
+      "losses": 3,
+      "pf": 377,
+      "ps": 370
+    },
+    {
       "team": "Andrea Costa Imola",
       "pts": 4,
-      "gp": 4,
+      "gp": 5,
       "wins": 2,
-      "losses": 2,
-      "pf": 235,
-      "ps": 283
+      "losses": 3,
+      "pf": 311,
+      "ps": 361
     },
     {
       "team": "SAE Scientifica-Soevis Legnano Knights",
@@ -72,42 +99,6 @@
       "losses": 3,
       "pf": 327,
       "ps": 322
-    },
-    {
-      "team": "Rucker San Vendemiano",
-      "pts": 4,
-      "gp": 4,
-      "wins": 2,
-      "losses": 2,
-      "pf": 308,
-      "ps": 287
-    },
-    {
-      "team": "Moncada Energy Agrigento",
-      "pts": 4,
-      "gp": 4,
-      "wins": 2,
-      "losses": 2,
-      "pf": 301,
-      "ps": 293
-    },
-    {
-      "team": "UCC Assigeco Piacenza",
-      "pts": 4,
-      "gp": 4,
-      "wins": 2,
-      "losses": 2,
-      "pf": 299,
-      "ps": 273
-    },
-    {
-      "team": "Infodrive Capo d'Orlando",
-      "pts": 4,
-      "gp": 4,
-      "wins": 2,
-      "losses": 2,
-      "pf": 313,
-      "ps": 309
     },
     {
       "team": "Rimadesio Desio",
@@ -120,30 +111,48 @@
     },
     {
       "team": "Siaz Basket Piazza Armerina",
-      "pts": 2,
-      "gp": 3,
-      "wins": 1,
+      "pts": 4,
+      "gp": 4,
+      "wins": 2,
       "losses": 2,
-      "pf": 206,
-      "ps": 198
+      "pf": 283,
+      "ps": 263
+    },
+    {
+      "team": "Infodrive Capo d'Orlando",
+      "pts": 4,
+      "gp": 5,
+      "wins": 2,
+      "losses": 3,
+      "pf": 378,
+      "ps": 401
     },
     {
       "team": "Fiorenzuola Bees",
       "pts": 2,
-      "gp": 4,
+      "gp": 5,
       "wins": 1,
-      "losses": 3,
-      "pf": 302,
-      "ps": 302
+      "losses": 4,
+      "pf": 383,
+      "ps": 385
     },
     {
       "team": "LTC Group Sangiorgese Basket",
       "pts": 2,
-      "gp": 4,
+      "gp": 5,
       "wins": 1,
-      "losses": 3,
-      "pf": 278,
-      "ps": 310
+      "losses": 4,
+      "pf": 340,
+      "ps": 393
+    },
+    {
+      "team": "S4 Energia Vicenza",
+      "pts": 2,
+      "gp": 5,
+      "wins": 1,
+      "losses": 4,
+      "pf": 327,
+      "ps": 401
     },
     {
       "team": "Paffoni Fulgor Basket Omegna",
@@ -153,15 +162,6 @@
       "losses": 4,
       "pf": 260,
       "ps": 306
-    },
-    {
-      "team": "S4 Energia Vicenza",
-      "pts": 0,
-      "gp": 4,
-      "wins": 0,
-      "losses": 4,
-      "pf": 249,
-      "ps": 325
     },
     {
       "team": "A2A Leonessa Brescia",
