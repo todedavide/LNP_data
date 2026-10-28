@@ -1,4 +1,185 @@
 {
-  "updated_at": "2026-10-27T03:12:04.108455",
-  "standings": []
+  "updated_at": "2026-10-28T03:09:45.629451",
+  "standings": [
+    {
+      "team": "Libertas Livorno 1947",
+      "pts": 12,
+      "gp": 6,
+      "wins": 6,
+      "losses": 0,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Halley Campania Avellino Basket",
+      "pts": 10,
+      "gp": 6,
+      "wins": 5,
+      "losses": 1,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "CMT Orange Tools Pesaro",
+      "pts": 10,
+      "gp": 6,
+      "wins": 5,
+      "losses": 1,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Flats Service Fortitudo Bologna",
+      "pts": 8,
+      "gp": 6,
+      "wins": 4,
+      "losses": 2,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Dole Basket Rimini",
+      "pts": 8,
+      "gp": 6,
+      "wins": 4,
+      "losses": 2,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Reale Mutua Torino",
+      "pts": 8,
+      "gp": 5,
+      "wins": 4,
+      "losses": 1,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "RSR Sebastiani Rieti",
+      "pts": 8,
+      "gp": 6,
+      "wins": 4,
+      "losses": 2,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Valtur Brindisi",
+      "pts": 8,
+      "gp": 6,
+      "wins": 4,
+      "losses": 2,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Lumos Pistoia Basket",
+      "pts": 6,
+      "gp": 6,
+      "wins": 3,
+      "losses": 3,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Unieuro Forlì",
+      "pts": 6,
+      "gp": 6,
+      "wins": 3,
+      "losses": 3,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Banco di Sardegna Sassari",
+      "pts": 6,
+      "gp": 6,
+      "wins": 3,
+      "losses": 3,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "UEB Gesteco Cividale",
+      "pts": 4,
+      "gp": 6,
+      "wins": 2,
+      "losses": 4,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Sella Cento",
+      "pts": 4,
+      "gp": 6,
+      "wins": 2,
+      "losses": 4,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "ProValue Juvecaserta 2021",
+      "pts": 4,
+      "gp": 5,
+      "wins": 2,
+      "losses": 3,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Crifo Wines Ruvo di Puglia",
+      "pts": 4,
+      "gp": 6,
+      "wins": 2,
+      "losses": 4,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Elachem Vigevano 1955",
+      "pts": 4,
+      "gp": 6,
+      "wins": 2,
+      "losses": 4,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Wegreenit Urania Milano",
+      "pts": 2,
+      "gp": 6,
+      "wins": 1,
+      "losses": 5,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Gemini Mestre",
+      "pts": 2,
+      "gp": 6,
+      "wins": 2,
+      "losses": 4,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "La T Tecnica Gema Montecatini",
+      "pts": 2,
+      "gp": 6,
+      "wins": 1,
+      "losses": 5,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Ferraroni Juvi Cremona 1952",
+      "pts": 0,
+      "gp": 6,
+      "wins": 0,
+      "losses": 6,
+      "pf": 0,
+      "ps": 0
+    }
+  ]
 }
