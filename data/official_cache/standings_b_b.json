@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-28T03:09:39.940121",
+  "updated_at": "2026-10-29T03:09:33.393750",
   "standings": [
     {
       "team": "Virtus Roma GVM",
@@ -31,11 +31,11 @@
     {
       "team": "Benacquista Assicurazioni Latina",
       "pts": 6,
-      "gp": 4,
+      "gp": 5,
       "wins": 3,
-      "losses": 1,
-      "pf": 349,
-      "ps": 319
+      "losses": 2,
+      "pf": 416,
+      "ps": 400
     },
     {
       "team": "Verodol CBD Pielle Livorno",
@@ -92,15 +92,6 @@
       "ps": 400
     },
     {
-      "team": "Felice Scandone Avellino",
-      "pts": 4,
-      "gp": 5,
-      "wins": 2,
-      "losses": 3,
-      "pf": 383,
-      "ps": 400
-    },
-    {
       "team": "Allianz Pazienza Cestistica San Severo",
       "pts": 4,
       "gp": 5,
@@ -108,6 +99,24 @@
       "losses": 3,
       "pf": 401,
       "ps": 426
+    },
+    {
+      "team": "PSA Napoli Est",
+      "pts": 4,
+      "gp": 5,
+      "wins": 2,
+      "losses": 3,
+      "pf": 379,
+      "ps": 382
+    },
+    {
+      "team": "Felice Scandone Avellino",
+      "pts": 4,
+      "gp": 5,
+      "wins": 2,
+      "losses": 3,
+      "pf": 383,
+      "ps": 400
     },
     {
       "team": "Consorzio Leonardo Dany Quarrata",
@@ -126,15 +135,6 @@
       "losses": 3,
       "pf": 396,
       "ps": 444
-    },
-    {
-      "team": "PSA Napoli Est",
-      "pts": 2,
-      "gp": 4,
-      "wins": 1,
-      "losses": 3,
-      "pf": 298,
-      "ps": 315
     },
     {
       "team": "Basketball Club Lucca",

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-28T03:09:33.022771",
+  "updated_at": "2026-10-29T03:09:26.372031",
   "standings": [
     {
       "team": "A2A Leonessa Brescia",
@@ -112,11 +112,11 @@
     {
       "team": "Siaz Basket Piazza Armerina",
       "pts": 4,
-      "gp": 4,
+      "gp": 5,
       "wins": 2,
-      "losses": 2,
-      "pf": 283,
-      "ps": 263
+      "losses": 3,
+      "pf": 357,
+      "ps": 349
     },
     {
       "team": "Infodrive Capo d'Orlando",
@@ -137,6 +137,15 @@
       "ps": 385
     },
     {
+      "team": "Paffoni Fulgor Basket Omegna",
+      "pts": 2,
+      "gp": 5,
+      "wins": 1,
+      "losses": 4,
+      "pf": 346,
+      "ps": 380
+    },
+    {
       "team": "LTC Group Sangiorgese Basket",
       "pts": 2,
       "gp": 5,
@@ -153,15 +162,6 @@
       "losses": 4,
       "pf": 327,
       "ps": 401
-    },
-    {
-      "team": "Paffoni Fulgor Basket Omegna",
-      "pts": 0,
-      "gp": 4,
-      "wins": 0,
-      "losses": 4,
-      "pf": 260,
-      "ps": 306
     },
     {
       "team": "A2A Leonessa Brescia",
