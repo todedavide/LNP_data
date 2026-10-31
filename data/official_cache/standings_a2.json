@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-30T03:09:58.871540",
+  "updated_at": "2026-10-31T03:07:52.708960",
   "standings": [
     {
       "team": "Libertas Livorno 1947",
@@ -20,29 +20,20 @@
       "ps": 0
     },
     {
+      "team": "Dole Basket Rimini",
+      "pts": 10,
+      "gp": 7,
+      "wins": 5,
+      "losses": 2,
+      "pf": 0,
+      "ps": 0
+    },
+    {
       "team": "CMT Orange Tools Pesaro",
       "pts": 10,
       "gp": 6,
       "wins": 5,
       "losses": 1,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Flats Service Fortitudo Bologna",
-      "pts": 8,
-      "gp": 6,
-      "wins": 4,
-      "losses": 2,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Dole Basket Rimini",
-      "pts": 8,
-      "gp": 6,
-      "wins": 4,
-      "losses": 2,
       "pf": 0,
       "ps": 0
     },
@@ -74,7 +65,16 @@
       "ps": 0
     },
     {
-      "team": "Lumos Pistoia Basket",
+      "team": "Flats Service Fortitudo Bologna",
+      "pts": 8,
+      "gp": 6,
+      "wins": 4,
+      "losses": 2,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Unieuro Forlì",
       "pts": 6,
       "gp": 6,
       "wins": 3,
@@ -83,7 +83,7 @@
       "ps": 0
     },
     {
-      "team": "Unieuro Forlì",
+      "team": "Lumos Pistoia Basket",
       "pts": 6,
       "gp": 6,
       "wins": 3,
@@ -102,9 +102,9 @@
     },
     {
       "team": "UEB Gesteco Cividale",
-      "pts": 4,
-      "gp": 6,
-      "wins": 2,
+      "pts": 6,
+      "gp": 7,
+      "wins": 3,
       "losses": 4,
       "pf": 0,
       "ps": 0
@@ -112,9 +112,9 @@
     {
       "team": "Sella Cento",
       "pts": 4,
-      "gp": 6,
+      "gp": 7,
       "wins": 2,
-      "losses": 4,
+      "losses": 5,
       "pf": 0,
       "ps": 0
     },
@@ -146,20 +146,20 @@
       "ps": 0
     },
     {
-      "team": "Wegreenit Urania Milano",
-      "pts": 2,
-      "gp": 6,
-      "wins": 1,
-      "losses": 5,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "Gemini Mestre",
       "pts": 2,
       "gp": 6,
       "wins": 2,
       "losses": 4,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Wegreenit Urania Milano",
+      "pts": 2,
+      "gp": 7,
+      "wins": 1,
+      "losses": 6,
       "pf": 0,
       "ps": 0
     },
