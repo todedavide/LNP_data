@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-31T03:07:52.708960",
+  "updated_at": "2026-11-01T03:09:14.504378",
   "standings": [
     {
       "team": "Libertas Livorno 1947",
@@ -56,7 +56,7 @@
       "ps": 0
     },
     {
-      "team": "Valtur Brindisi",
+      "team": "Flats Service Fortitudo Bologna",
       "pts": 8,
       "gp": 6,
       "wins": 4,
@@ -65,11 +65,11 @@
       "ps": 0
     },
     {
-      "team": "Flats Service Fortitudo Bologna",
+      "team": "Valtur Brindisi",
       "pts": 8,
-      "gp": 6,
+      "gp": 7,
       "wins": 4,
-      "losses": 2,
+      "losses": 3,
       "pf": 0,
       "ps": 0
     },
@@ -110,20 +110,29 @@
       "ps": 0
     },
     {
-      "team": "Sella Cento",
-      "pts": 4,
-      "gp": 7,
-      "wins": 2,
-      "losses": 5,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "ProValue Juvecaserta 2021",
       "pts": 4,
       "gp": 5,
       "wins": 2,
       "losses": 3,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Gemini Mestre",
+      "pts": 4,
+      "gp": 7,
+      "wins": 3,
+      "losses": 4,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Sella Cento",
+      "pts": 4,
+      "gp": 7,
+      "wins": 2,
+      "losses": 5,
       "pf": 0,
       "ps": 0
     },
@@ -139,15 +148,6 @@
     {
       "team": "Elachem Vigevano 1955",
       "pts": 4,
-      "gp": 6,
-      "wins": 2,
-      "losses": 4,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Gemini Mestre",
-      "pts": 2,
       "gp": 6,
       "wins": 2,
       "losses": 4,

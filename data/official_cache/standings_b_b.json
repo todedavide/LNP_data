@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-31T03:07:47.847442",
+  "updated_at": "2026-11-01T03:09:09.418812",
   "standings": [
     {
       "team": "Virtus Roma GVM",
@@ -9,6 +9,15 @@
       "losses": 0,
       "pf": 425,
       "ps": 330
+    },
+    {
+      "team": "Benacquista Assicurazioni Latina",
+      "pts": 8,
+      "gp": 6,
+      "wins": 4,
+      "losses": 2,
+      "pf": 503,
+      "ps": 474
     },
     {
       "team": "Fabo Herons Montecatini",
@@ -29,15 +38,6 @@
       "ps": 376
     },
     {
-      "team": "Benacquista Assicurazioni Latina",
-      "pts": 6,
-      "gp": 5,
-      "wins": 3,
-      "losses": 2,
-      "pf": 416,
-      "ps": 400
-    },
-    {
       "team": "Verodol CBD Pielle Livorno",
       "pts": 6,
       "gp": 5,
@@ -56,15 +56,6 @@
       "ps": 397
     },
     {
-      "team": "Liofilchem Roseto",
-      "pts": 6,
-      "gp": 5,
-      "wins": 3,
-      "losses": 2,
-      "pf": 440,
-      "ps": 401
-    },
-    {
       "team": "Tema Sinergie Faenza",
       "pts": 6,
       "gp": 5,
@@ -72,6 +63,15 @@
       "losses": 2,
       "pf": 405,
       "ps": 362
+    },
+    {
+      "team": "Liofilchem Roseto",
+      "pts": 6,
+      "gp": 5,
+      "wins": 3,
+      "losses": 2,
+      "pf": 440,
+      "ps": 401
     },
     {
       "team": "Umana San Giobbe Chiusi",
@@ -121,11 +121,11 @@
     {
       "team": "Consorzio Leonardo Dany Quarrata",
       "pts": 4,
-      "gp": 5,
+      "gp": 6,
       "wins": 2,
-      "losses": 3,
-      "pf": 388,
-      "ps": 418
+      "losses": 4,
+      "pf": 462,
+      "ps": 505
     },
     {
       "team": "Luiss Roma",
