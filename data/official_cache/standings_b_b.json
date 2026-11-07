@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-11-06T03:07:56.047165",
+  "updated_at": "2026-11-07T03:08:12.740878",
   "standings": [
     {
       "team": "Virtus Roma GVM",
-      "pts": 12,
-      "gp": 6,
-      "wins": 6,
+      "pts": 14,
+      "gp": 7,
+      "wins": 7,
       "losses": 0,
-      "pf": 502,
-      "ps": 399
+      "pf": 587,
+      "ps": 459
     },
     {
       "team": "Fabo Herons Montecatini",
@@ -22,11 +22,11 @@
     {
       "team": "Benacquista Assicurazioni Latina",
       "pts": 8,
-      "gp": 6,
+      "gp": 7,
       "wins": 4,
-      "losses": 2,
-      "pf": 503,
-      "ps": 474
+      "losses": 3,
+      "pf": 563,
+      "ps": 559
     },
     {
       "team": "Verodol CBD Pielle Livorno",
