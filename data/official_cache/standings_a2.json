@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-07T03:08:18.805528",
+  "updated_at": "2026-11-08T03:08:17.831803",
   "standings": [
     {
       "team": "Libertas Livorno 1947",
@@ -21,18 +21,9 @@
     },
     {
       "team": "Flats Service Fortitudo Bologna",
-      "pts": 10,
-      "gp": 7,
-      "wins": 5,
-      "losses": 2,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Dole Basket Rimini",
-      "pts": 10,
-      "gp": 7,
-      "wins": 5,
+      "pts": 12,
+      "gp": 8,
+      "wins": 6,
       "losses": 2,
       "pf": 0,
       "ps": 0
@@ -47,7 +38,7 @@
       "ps": 0
     },
     {
-      "team": "CMT Orange Tools Pesaro",
+      "team": "Dole Basket Rimini",
       "pts": 10,
       "gp": 7,
       "wins": 5,
@@ -65,29 +56,47 @@
       "ps": 0
     },
     {
-      "team": "Unieuro Forlì",
-      "pts": 8,
-      "gp": 7,
-      "wins": 4,
+      "team": "Valtur Brindisi",
+      "pts": 10,
+      "gp": 8,
+      "wins": 5,
       "losses": 3,
       "pf": 0,
       "ps": 0
     },
     {
-      "team": "Valtur Brindisi",
-      "pts": 8,
-      "gp": 7,
-      "wins": 4,
+      "team": "CMT Orange Tools Pesaro",
+      "pts": 10,
+      "gp": 8,
+      "wins": 5,
       "losses": 3,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Unieuro Forlì",
+      "pts": 8,
+      "gp": 8,
+      "wins": 4,
+      "losses": 4,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "UEB Gesteco Cividale",
+      "pts": 8,
+      "gp": 8,
+      "wins": 4,
+      "losses": 4,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Banco di Sardegna Sassari",
       "pts": 8,
-      "gp": 7,
+      "gp": 8,
       "wins": 4,
-      "losses": 3,
+      "losses": 4,
       "pf": 0,
       "ps": 0
     },
@@ -101,28 +110,10 @@
       "ps": 0
     },
     {
-      "team": "UEB Gesteco Cividale",
-      "pts": 6,
-      "gp": 7,
-      "wins": 3,
-      "losses": 4,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "ProValue Juvecaserta 2021",
-      "pts": 4,
-      "gp": 6,
-      "wins": 2,
-      "losses": 4,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "Gemini Mestre",
-      "pts": 4,
-      "gp": 7,
-      "wins": 3,
+      "pts": 6,
+      "gp": 8,
+      "wins": 4,
       "losses": 4,
       "pf": 0,
       "ps": 0
@@ -133,6 +124,15 @@
       "gp": 8,
       "wins": 2,
       "losses": 6,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "ProValue Juvecaserta 2021",
+      "pts": 4,
+      "gp": 6,
+      "wins": 2,
+      "losses": 4,
       "pf": 0,
       "ps": 0
     },
@@ -157,9 +157,9 @@
     {
       "team": "Wegreenit Urania Milano",
       "pts": 2,
-      "gp": 7,
+      "gp": 8,
       "wins": 1,
-      "losses": 6,
+      "losses": 7,
       "pf": 0,
       "ps": 0
     },

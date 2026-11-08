@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-07T03:08:12.740878",
+  "updated_at": "2026-11-08T03:08:12.589662",
   "standings": [
     {
       "team": "Virtus Roma GVM",
@@ -12,12 +12,12 @@
     },
     {
       "team": "Fabo Herons Montecatini",
-      "pts": 10,
-      "gp": 6,
-      "wins": 5,
+      "pts": 12,
+      "gp": 7,
+      "wins": 6,
       "losses": 1,
-      "pf": 458,
-      "ps": 435
+      "pf": 527,
+      "ps": 502
     },
     {
       "team": "Benacquista Assicurazioni Latina",
@@ -40,11 +40,11 @@
     {
       "team": "Tema Sinergie Faenza",
       "pts": 8,
-      "gp": 6,
+      "gp": 7,
       "wins": 4,
-      "losses": 2,
-      "pf": 484,
-      "ps": 430
+      "losses": 3,
+      "pf": 551,
+      "ps": 499
     },
     {
       "team": "Umana San Giobbe Chiusi",
@@ -83,6 +83,15 @@
       "ps": 455
     },
     {
+      "team": "Sendero Mens Sana Siena",
+      "pts": 6,
+      "gp": 6,
+      "wins": 3,
+      "losses": 3,
+      "pf": 498,
+      "ps": 481
+    },
+    {
       "team": "Liofilchem Roseto",
       "pts": 6,
       "gp": 6,
@@ -92,13 +101,13 @@
       "ps": 478
     },
     {
-      "team": "Sendero Mens Sana Siena",
+      "team": "Luiss Roma",
       "pts": 6,
-      "gp": 6,
+      "gp": 7,
       "wins": 3,
-      "losses": 3,
-      "pf": 498,
-      "ps": 481
+      "losses": 4,
+      "pf": 552,
+      "ps": 601
     },
     {
       "team": "Basketball Club Lucca",
@@ -130,20 +139,11 @@
     {
       "team": "Consorzio Leonardo Dany Quarrata",
       "pts": 4,
-      "gp": 6,
+      "gp": 7,
       "wins": 2,
-      "losses": 4,
-      "pf": 462,
-      "ps": 505
-    },
-    {
-      "team": "Luiss Roma",
-      "pts": 4,
-      "gp": 6,
-      "wins": 2,
-      "losses": 4,
-      "pf": 466,
-      "ps": 521
+      "losses": 5,
+      "pf": 542,
+      "ps": 591
     },
     {
       "team": "Solbat Golfo Piombino",

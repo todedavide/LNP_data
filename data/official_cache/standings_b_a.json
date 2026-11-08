@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-07T03:08:05.674676",
+  "updated_at": "2026-11-08T03:08:06.027903",
   "standings": [
     {
       "team": "LuxArm Lumezzane",
@@ -38,15 +38,6 @@
       "ps": 436
     },
     {
-      "team": "Logiman Orzinuovi",
-      "pts": 8,
-      "gp": 6,
-      "wins": 4,
-      "losses": 2,
-      "pf": 485,
-      "ps": 413
-    },
-    {
       "team": "TAV Treviglio Brianza Basket",
       "pts": 8,
       "gp": 6,
@@ -56,13 +47,22 @@
       "ps": 448
     },
     {
-      "team": "Rimadesio Desio",
-      "pts": 6,
+      "team": "Logiman Orzinuovi",
+      "pts": 8,
       "gp": 6,
-      "wins": 3,
+      "wins": 4,
+      "losses": 2,
+      "pf": 485,
+      "ps": 413
+    },
+    {
+      "team": "Rimadesio Desio",
+      "pts": 8,
+      "gp": 7,
+      "wins": 4,
       "losses": 3,
-      "pf": 445,
-      "ps": 470
+      "pf": 525,
+      "ps": 544
     },
     {
       "team": "Myenergy Reggio Calabria",
@@ -101,13 +101,13 @@
       "ps": 466
     },
     {
-      "team": "LTC Group Sangiorgese Basket",
+      "team": "Moncada Energy Agrigento",
       "pts": 4,
       "gp": 6,
       "wins": 2,
       "losses": 4,
-      "pf": 406,
-      "ps": 455
+      "pf": 441,
+      "ps": 444
     },
     {
       "team": "Fiorenzuola Bees",
@@ -119,22 +119,31 @@
       "ps": 449
     },
     {
-      "team": "Moncada Energy Agrigento",
+      "team": "Paffoni Fulgor Basket Omegna",
       "pts": 4,
-      "gp": 6,
+      "gp": 7,
       "wins": 2,
-      "losses": 4,
-      "pf": 441,
-      "ps": 444
+      "losses": 5,
+      "pf": 468,
+      "ps": 517
+    },
+    {
+      "team": "LTC Group Sangiorgese Basket",
+      "pts": 4,
+      "gp": 7,
+      "wins": 2,
+      "losses": 5,
+      "pf": 480,
+      "ps": 535
     },
     {
       "team": "Andrea Costa Imola",
       "pts": 4,
-      "gp": 6,
+      "gp": 7,
       "wins": 2,
-      "losses": 4,
-      "pf": 375,
-      "ps": 429
+      "losses": 5,
+      "pf": 431,
+      "ps": 502
     },
     {
       "team": "SAE Scientifica-Soevis Legnano Knights",
@@ -144,15 +153,6 @@
       "losses": 4,
       "pf": 392,
       "ps": 397
-    },
-    {
-      "team": "Paffoni Fulgor Basket Omegna",
-      "pts": 2,
-      "gp": 6,
-      "wins": 1,
-      "losses": 5,
-      "pf": 395,
-      "ps": 461
     },
     {
       "team": "S4 Energia Vicenza",
