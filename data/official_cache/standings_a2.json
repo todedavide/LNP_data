@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-08T03:08:17.831803",
+  "updated_at": "2026-11-09T03:08:47.456280",
   "standings": [
     {
       "team": "Libertas Livorno 1947",
@@ -12,9 +12,9 @@
     },
     {
       "team": "Halley Campania Avellino Basket",
-      "pts": 12,
-      "gp": 7,
-      "wins": 6,
+      "pts": 14,
+      "gp": 8,
+      "wins": 7,
       "losses": 1,
       "pf": 0,
       "ps": 0
@@ -29,25 +29,25 @@
       "ps": 0
     },
     {
-      "team": "Reale Mutua Torino",
-      "pts": 10,
-      "gp": 6,
-      "wins": 5,
-      "losses": 1,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "Dole Basket Rimini",
-      "pts": 10,
-      "gp": 7,
-      "wins": 5,
+      "pts": 12,
+      "gp": 8,
+      "wins": 6,
       "losses": 2,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "RSR Sebastiani Rieti",
+      "pts": 12,
+      "gp": 8,
+      "wins": 6,
+      "losses": 2,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Reale Mutua Torino",
       "pts": 10,
       "gp": 7,
       "wins": 5,
@@ -92,7 +92,7 @@
       "ps": 0
     },
     {
-      "team": "Banco di Sardegna Sassari",
+      "team": "Lumos Pistoia Basket",
       "pts": 8,
       "gp": 8,
       "wins": 4,
@@ -101,10 +101,10 @@
       "ps": 0
     },
     {
-      "team": "Lumos Pistoia Basket",
-      "pts": 6,
-      "gp": 7,
-      "wins": 3,
+      "team": "Banco di Sardegna Sassari",
+      "pts": 8,
+      "gp": 8,
+      "wins": 4,
       "losses": 4,
       "pf": 0,
       "ps": 0
@@ -130,27 +130,27 @@
     {
       "team": "ProValue Juvecaserta 2021",
       "pts": 4,
-      "gp": 6,
+      "gp": 7,
       "wins": 2,
-      "losses": 4,
+      "losses": 5,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Crifo Wines Ruvo di Puglia",
       "pts": 4,
-      "gp": 7,
+      "gp": 8,
       "wins": 2,
-      "losses": 5,
+      "losses": 6,
       "pf": 0,
       "ps": 0
     },
     {
       "team": "Elachem Vigevano 1955",
       "pts": 4,
-      "gp": 7,
+      "gp": 8,
       "wins": 2,
-      "losses": 5,
+      "losses": 6,
       "pf": 0,
       "ps": 0
     },
@@ -164,19 +164,19 @@
       "ps": 0
     },
     {
-      "team": "La T Tecnica Gema Montecatini",
+      "team": "Ferraroni Juvi Cremona 1952",
       "pts": 2,
-      "gp": 7,
+      "gp": 8,
       "wins": 1,
-      "losses": 6,
+      "losses": 7,
       "pf": 0,
       "ps": 0
     },
     {
-      "team": "Ferraroni Juvi Cremona 1952",
-      "pts": 0,
-      "gp": 7,
-      "wins": 0,
+      "team": "La T Tecnica Gema Montecatini",
+      "pts": 2,
+      "gp": 8,
+      "wins": 1,
       "losses": 7,
       "pf": 0,
       "ps": 0

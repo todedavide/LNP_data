@@ -1,59 +1,59 @@
 {
-  "updated_at": "2026-11-08T03:08:06.027903",
+  "updated_at": "2026-11-09T03:08:35.477554",
   "standings": [
     {
       "team": "LuxArm Lumezzane",
-      "pts": 10,
-      "gp": 6,
-      "wins": 5,
+      "pts": 12,
+      "gp": 7,
+      "wins": 6,
       "losses": 1,
-      "pf": 436,
-      "ps": 399
+      "pf": 534,
+      "ps": 494
+    },
+    {
+      "team": "UCC Assigeco Piacenza",
+      "pts": 10,
+      "gp": 7,
+      "wins": 5,
+      "losses": 2,
+      "pf": 550,
+      "ps": 495
     },
     {
       "team": "Adamant Ferrara",
       "pts": 10,
-      "gp": 6,
+      "gp": 7,
       "wins": 5,
-      "losses": 1,
-      "pf": 440,
-      "ps": 406
+      "losses": 2,
+      "pf": 505,
+      "ps": 478
+    },
+    {
+      "team": "Logiman Orzinuovi",
+      "pts": 10,
+      "gp": 7,
+      "wins": 5,
+      "losses": 2,
+      "pf": 571,
+      "ps": 494
     },
     {
       "team": "A2A Leonessa Brescia",
       "pts": 10,
-      "gp": 6,
+      "gp": 7,
       "wins": 5,
-      "losses": 1,
-      "pf": 467,
-      "ps": 432
-    },
-    {
-      "team": "UCC Assigeco Piacenza",
-      "pts": 8,
-      "gp": 6,
-      "wins": 4,
       "losses": 2,
-      "pf": 469,
-      "ps": 436
+      "pf": 548,
+      "ps": 518
     },
     {
       "team": "TAV Treviglio Brianza Basket",
       "pts": 8,
-      "gp": 6,
+      "gp": 7,
       "wins": 4,
-      "losses": 2,
-      "pf": 465,
-      "ps": 448
-    },
-    {
-      "team": "Logiman Orzinuovi",
-      "pts": 8,
-      "gp": 6,
-      "wins": 4,
-      "losses": 2,
-      "pf": 485,
-      "ps": 413
+      "losses": 3,
+      "pf": 537,
+      "ps": 529
     },
     {
       "team": "Rimadesio Desio",
@@ -65,58 +65,67 @@
       "ps": 544
     },
     {
-      "team": "Myenergy Reggio Calabria",
-      "pts": 6,
-      "gp": 6,
-      "wins": 3,
+      "team": "Siaz Basket Piazza Armerina",
+      "pts": 8,
+      "gp": 7,
+      "wins": 4,
       "losses": 3,
-      "pf": 424,
-      "ps": 426
+      "pf": 518,
+      "ps": 482
+    },
+    {
+      "team": "Myenergy Reggio Calabria",
+      "pts": 8,
+      "gp": 7,
+      "wins": 4,
+      "losses": 3,
+      "pf": 488,
+      "ps": 483
+    },
+    {
+      "team": "Infodrive Capo d'Orlando",
+      "pts": 8,
+      "gp": 7,
+      "wins": 4,
+      "losses": 3,
+      "pf": 544,
+      "ps": 551
     },
     {
       "team": "Rucker San Vendemiano",
       "pts": 6,
-      "gp": 6,
+      "gp": 7,
       "wins": 3,
-      "losses": 3,
-      "pf": 468,
-      "ps": 430
+      "losses": 4,
+      "pf": 553,
+      "ps": 521
     },
     {
-      "team": "Siaz Basket Piazza Armerina",
+      "team": "SAE Scientifica-Soevis Legnano Knights",
       "pts": 6,
-      "gp": 6,
+      "gp": 7,
       "wins": 3,
-      "losses": 3,
-      "pf": 437,
-      "ps": 410
-    },
-    {
-      "team": "Infodrive Capo d'Orlando",
-      "pts": 6,
-      "gp": 6,
-      "wins": 3,
-      "losses": 3,
-      "pf": 453,
-      "ps": 466
+      "losses": 4,
+      "pf": 464,
+      "ps": 462
     },
     {
       "team": "Moncada Energy Agrigento",
       "pts": 4,
-      "gp": 6,
+      "gp": 7,
       "wins": 2,
-      "losses": 4,
-      "pf": 441,
-      "ps": 444
+      "losses": 5,
+      "pf": 500,
+      "ps": 525
     },
     {
       "team": "Fiorenzuola Bees",
       "pts": 4,
-      "gp": 6,
+      "gp": 7,
       "wins": 2,
-      "losses": 4,
-      "pf": 451,
-      "ps": 449
+      "losses": 5,
+      "pf": 546,
+      "ps": 547
     },
     {
       "team": "Paffoni Fulgor Basket Omegna",
@@ -146,31 +155,22 @@
       "ps": 502
     },
     {
-      "team": "SAE Scientifica-Soevis Legnano Knights",
-      "pts": 4,
-      "gp": 6,
-      "wins": 2,
-      "losses": 4,
-      "pf": 392,
-      "ps": 397
-    },
-    {
       "team": "S4 Energia Vicenza",
       "pts": 2,
-      "gp": 6,
+      "gp": 7,
       "wins": 1,
-      "losses": 5,
-      "pf": 389,
-      "ps": 467
+      "losses": 6,
+      "pf": 446,
+      "ps": 531
     },
     {
       "team": "LuxArm Lumezzane",
-      "pts": 10,
-      "gp": 6,
-      "wins": 5,
+      "pts": 12,
+      "gp": 7,
+      "wins": 6,
       "losses": 1,
-      "pf": 436,
-      "ps": 399
+      "pf": 534,
+      "ps": 494
     }
   ]
 }

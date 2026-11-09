@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-08T03:08:12.589662",
+  "updated_at": "2026-11-09T03:08:42.280946",
   "standings": [
     {
       "team": "Virtus Roma GVM",
@@ -20,6 +20,33 @@
       "ps": 502
     },
     {
+      "team": "Verodol CBD Pielle Livorno",
+      "pts": 10,
+      "gp": 7,
+      "wins": 5,
+      "losses": 2,
+      "pf": 565,
+      "ps": 491
+    },
+    {
+      "team": "Umana San Giobbe Chiusi",
+      "pts": 10,
+      "gp": 7,
+      "wins": 5,
+      "losses": 2,
+      "pf": 584,
+      "ps": 524
+    },
+    {
+      "team": "PSA Napoli Est",
+      "pts": 8,
+      "gp": 7,
+      "wins": 4,
+      "losses": 3,
+      "pf": 553,
+      "ps": 540
+    },
+    {
       "team": "Benacquista Assicurazioni Latina",
       "pts": 8,
       "gp": 7,
@@ -29,13 +56,13 @@
       "ps": 559
     },
     {
-      "team": "Verodol CBD Pielle Livorno",
+      "team": "Ristopro Fabriano",
       "pts": 8,
-      "gp": 6,
+      "gp": 7,
       "wins": 4,
-      "losses": 2,
-      "pf": 485,
-      "ps": 430
+      "losses": 3,
+      "pf": 552,
+      "ps": 567
     },
     {
       "team": "Tema Sinergie Faenza",
@@ -47,58 +74,40 @@
       "ps": 499
     },
     {
-      "team": "Umana San Giobbe Chiusi",
-      "pts": 8,
-      "gp": 6,
-      "wins": 4,
-      "losses": 2,
-      "pf": 514,
-      "ps": 466
-    },
-    {
-      "team": "Ristopro Fabriano",
-      "pts": 6,
-      "gp": 6,
-      "wins": 3,
-      "losses": 3,
-      "pf": 460,
-      "ps": 494
-    },
-    {
-      "team": "PSA Napoli Est",
-      "pts": 6,
-      "gp": 6,
-      "wins": 3,
-      "losses": 3,
-      "pf": 460,
-      "ps": 455
-    },
-    {
-      "team": "OraSì Ravenna",
-      "pts": 6,
-      "gp": 6,
-      "wins": 3,
-      "losses": 3,
-      "pf": 452,
-      "ps": 455
-    },
-    {
       "team": "Sendero Mens Sana Siena",
-      "pts": 6,
-      "gp": 6,
-      "wins": 3,
+      "pts": 8,
+      "gp": 7,
+      "wins": 4,
       "losses": 3,
-      "pf": 498,
-      "ps": 481
+      "pf": 586,
+      "ps": 564
+    },
+    {
+      "team": "Felice Scandone Avellino",
+      "pts": 6,
+      "gp": 7,
+      "wins": 3,
+      "losses": 4,
+      "pf": 531,
+      "ps": 551
     },
     {
       "team": "Liofilchem Roseto",
       "pts": 6,
-      "gp": 6,
+      "gp": 7,
       "wins": 3,
-      "losses": 3,
-      "pf": 509,
-      "ps": 478
+      "losses": 4,
+      "pf": 581,
+      "ps": 558
+    },
+    {
+      "team": "OraSì Ravenna",
+      "pts": 6,
+      "gp": 7,
+      "wins": 3,
+      "losses": 4,
+      "pf": 537,
+      "ps": 548
     },
     {
       "team": "Luiss Roma",
@@ -112,29 +121,20 @@
     {
       "team": "Basketball Club Lucca",
       "pts": 4,
-      "gp": 6,
+      "gp": 7,
       "wins": 2,
-      "losses": 4,
-      "pf": 448,
-      "ps": 466
-    },
-    {
-      "team": "Felice Scandone Avellino",
-      "pts": 4,
-      "gp": 6,
-      "wins": 2,
-      "losses": 4,
-      "pf": 451,
-      "ps": 479
+      "losses": 5,
+      "pf": 521,
+      "ps": 558
     },
     {
       "team": "Allianz Pazienza Cestistica San Severo",
       "pts": 4,
-      "gp": 6,
+      "gp": 7,
       "wins": 2,
-      "losses": 4,
-      "pf": 473,
-      "ps": 508
+      "losses": 5,
+      "pf": 556,
+      "ps": 596
     },
     {
       "team": "Consorzio Leonardo Dany Quarrata",
@@ -148,20 +148,20 @@
     {
       "team": "Solbat Golfo Piombino",
       "pts": 4,
-      "gp": 6,
+      "gp": 7,
       "wins": 2,
-      "losses": 4,
-      "pf": 429,
-      "ps": 491
+      "losses": 5,
+      "pf": 487,
+      "ps": 561
     },
     {
       "team": "Consultinvest Loreto Pesaro",
       "pts": 0,
-      "gp": 6,
+      "gp": 7,
       "wins": 0,
-      "losses": 6,
-      "pf": 403,
-      "ps": 490
+      "losses": 7,
+      "pf": 464,
+      "ps": 570
     }
   ]
 }
