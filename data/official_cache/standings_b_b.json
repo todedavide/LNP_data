@@ -1,23 +1,32 @@
 {
-  "updated_at": "2026-11-11T03:07:34.342143",
+  "updated_at": "2026-11-12T03:08:21.357470",
   "standings": [
     {
       "team": "Virtus Roma GVM",
-      "pts": 14,
-      "gp": 7,
-      "wins": 7,
+      "pts": 16,
+      "gp": 8,
+      "wins": 8,
       "losses": 0,
-      "pf": 587,
-      "ps": 459
+      "pf": 681,
+      "ps": 542
     },
     {
       "team": "Fabo Herons Montecatini",
       "pts": 12,
-      "gp": 7,
+      "gp": 8,
       "wins": 6,
-      "losses": 1,
-      "pf": 527,
-      "ps": 502
+      "losses": 2,
+      "pf": 601,
+      "ps": 584
+    },
+    {
+      "team": "Benacquista Assicurazioni Latina",
+      "pts": 10,
+      "gp": 8,
+      "wins": 5,
+      "losses": 3,
+      "pf": 635,
+      "ps": 623
     },
     {
       "team": "Verodol CBD Pielle Livorno",
@@ -31,11 +40,47 @@
     {
       "team": "Umana San Giobbe Chiusi",
       "pts": 10,
-      "gp": 7,
+      "gp": 8,
       "wins": 5,
-      "losses": 2,
-      "pf": 584,
-      "ps": 524
+      "losses": 3,
+      "pf": 660,
+      "ps": 620
+    },
+    {
+      "team": "Tema Sinergie Faenza",
+      "pts": 10,
+      "gp": 8,
+      "wins": 5,
+      "losses": 3,
+      "pf": 630,
+      "ps": 566
+    },
+    {
+      "team": "Sendero Mens Sana Siena",
+      "pts": 10,
+      "gp": 8,
+      "wins": 5,
+      "losses": 3,
+      "pf": 662,
+      "ps": 634
+    },
+    {
+      "team": "Ristopro Fabriano",
+      "pts": 10,
+      "gp": 8,
+      "wins": 5,
+      "losses": 3,
+      "pf": 634,
+      "ps": 641
+    },
+    {
+      "team": "Liofilchem Roseto",
+      "pts": 8,
+      "gp": 8,
+      "wins": 4,
+      "losses": 4,
+      "pf": 677,
+      "ps": 634
     },
     {
       "team": "PSA Napoli Est",
@@ -47,67 +92,31 @@
       "ps": 540
     },
     {
-      "team": "Benacquista Assicurazioni Latina",
-      "pts": 8,
-      "gp": 7,
-      "wins": 4,
-      "losses": 3,
-      "pf": 563,
-      "ps": 559
-    },
-    {
-      "team": "Ristopro Fabriano",
-      "pts": 8,
-      "gp": 7,
-      "wins": 4,
-      "losses": 3,
-      "pf": 552,
-      "ps": 567
-    },
-    {
-      "team": "Tema Sinergie Faenza",
-      "pts": 8,
-      "gp": 7,
-      "wins": 4,
-      "losses": 3,
-      "pf": 551,
-      "ps": 499
-    },
-    {
-      "team": "Sendero Mens Sana Siena",
-      "pts": 8,
-      "gp": 7,
-      "wins": 4,
-      "losses": 3,
-      "pf": 586,
-      "ps": 564
+      "team": "Solbat Golfo Piombino",
+      "pts": 6,
+      "gp": 8,
+      "wins": 3,
+      "losses": 5,
+      "pf": 571,
+      "ps": 628
     },
     {
       "team": "Felice Scandone Avellino",
       "pts": 6,
-      "gp": 7,
+      "gp": 8,
       "wins": 3,
-      "losses": 4,
-      "pf": 531,
-      "ps": 551
-    },
-    {
-      "team": "Liofilchem Roseto",
-      "pts": 6,
-      "gp": 7,
-      "wins": 3,
-      "losses": 4,
-      "pf": 581,
-      "ps": 558
+      "losses": 5,
+      "pf": 598,
+      "ps": 635
     },
     {
       "team": "OraSì Ravenna",
       "pts": 6,
-      "gp": 7,
+      "gp": 8,
       "wins": 3,
-      "losses": 4,
-      "pf": 537,
-      "ps": 548
+      "losses": 5,
+      "pf": 620,
+      "ps": 642
     },
     {
       "team": "Luiss Roma",
@@ -121,11 +130,11 @@
     {
       "team": "Basketball Club Lucca",
       "pts": 4,
-      "gp": 7,
+      "gp": 8,
       "wins": 2,
-      "losses": 5,
-      "pf": 521,
-      "ps": 558
+      "losses": 6,
+      "pf": 585,
+      "ps": 630
     },
     {
       "team": "Allianz Pazienza Cestistica San Severo",
@@ -139,29 +148,20 @@
     {
       "team": "Consorzio Leonardo Dany Quarrata",
       "pts": 4,
-      "gp": 7,
+      "gp": 8,
       "wins": 2,
-      "losses": 5,
-      "pf": 542,
-      "ps": 591
-    },
-    {
-      "team": "Solbat Golfo Piombino",
-      "pts": 4,
-      "gp": 7,
-      "wins": 2,
-      "losses": 5,
-      "pf": 487,
-      "ps": 561
+      "losses": 6,
+      "pf": 609,
+      "ps": 670
     },
     {
       "team": "Consultinvest Loreto Pesaro",
       "pts": 0,
-      "gp": 7,
+      "gp": 8,
       "wins": 0,
-      "losses": 7,
-      "pf": 464,
-      "ps": 570
+      "losses": 8,
+      "pf": 534,
+      "ps": 646
     }
   ]
 }
