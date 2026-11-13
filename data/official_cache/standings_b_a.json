@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T03:08:14.445691",
+  "updated_at": "2026-11-13T03:07:44.044668",
   "standings": [
     {
       "team": "LuxArm Lumezzane",
@@ -146,15 +146,6 @@
       "ps": 601
     },
     {
-      "team": "Andrea Costa Imola",
-      "pts": 4,
-      "gp": 8,
-      "wins": 2,
-      "losses": 6,
-      "pf": 497,
-      "ps": 587
-    },
-    {
       "team": "S4 Energia Vicenza",
       "pts": 2,
       "gp": 8,
@@ -162,6 +153,15 @@
       "losses": 7,
       "pf": 515,
       "ps": 625
+    },
+    {
+      "team": "Andrea Costa Imola",
+      "pts": 1,
+      "gp": 8,
+      "wins": 2,
+      "losses": 6,
+      "pf": 497,
+      "ps": 587
     },
     {
       "team": "LuxArm Lumezzane",
