@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T03:07:51.110494",
+  "updated_at": "2026-11-14T03:07:38.333344",
   "standings": [
     {
       "team": "Virtus Roma GVM",
@@ -11,6 +11,15 @@
       "ps": 542
     },
     {
+      "team": "Verodol CBD Pielle Livorno",
+      "pts": 12,
+      "gp": 8,
+      "wins": 6,
+      "losses": 2,
+      "pf": 647,
+      "ps": 562
+    },
+    {
       "team": "Fabo Herons Montecatini",
       "pts": 12,
       "gp": 8,
@@ -18,6 +27,15 @@
       "losses": 2,
       "pf": 601,
       "ps": 584
+    },
+    {
+      "team": "Skills4u Napoli Est",
+      "pts": 10,
+      "gp": 8,
+      "wins": 5,
+      "losses": 3,
+      "pf": 646,
+      "ps": 632
     },
     {
       "team": "Benacquista Assicurazioni Latina",
@@ -29,15 +47,6 @@
       "ps": 623
     },
     {
-      "team": "Verodol CBD Pielle Livorno",
-      "pts": 10,
-      "gp": 7,
-      "wins": 5,
-      "losses": 2,
-      "pf": 565,
-      "ps": 491
-    },
-    {
       "team": "Umana San Giobbe Chiusi",
       "pts": 10,
       "gp": 8,
@@ -45,6 +54,15 @@
       "losses": 3,
       "pf": 660,
       "ps": 620
+    },
+    {
+      "team": "Ristopro Fabriano",
+      "pts": 10,
+      "gp": 8,
+      "wins": 5,
+      "losses": 3,
+      "pf": 634,
+      "ps": 641
     },
     {
       "team": "Tema Sinergie Faenza",
@@ -65,15 +83,6 @@
       "ps": 634
     },
     {
-      "team": "Ristopro Fabriano",
-      "pts": 10,
-      "gp": 8,
-      "wins": 5,
-      "losses": 3,
-      "pf": 634,
-      "ps": 641
-    },
-    {
       "team": "Liofilchem Roseto",
       "pts": 8,
       "gp": 8,
@@ -81,15 +90,6 @@
       "losses": 4,
       "pf": 677,
       "ps": 634
-    },
-    {
-      "team": "PSA Napoli Est",
-      "pts": 8,
-      "gp": 7,
-      "wins": 4,
-      "losses": 3,
-      "pf": 553,
-      "ps": 540
     },
     {
       "team": "Solbat Golfo Piombino",
@@ -121,11 +121,11 @@
     {
       "team": "Luiss Roma",
       "pts": 6,
-      "gp": 7,
+      "gp": 8,
       "wins": 3,
-      "losses": 4,
-      "pf": 552,
-      "ps": 601
+      "losses": 5,
+      "pf": 644,
+      "ps": 694
     },
     {
       "team": "Basketball Club Lucca",
@@ -139,11 +139,11 @@
     {
       "team": "Allianz Pazienza Cestistica San Severo",
       "pts": 4,
-      "gp": 7,
+      "gp": 8,
       "wins": 2,
-      "losses": 5,
-      "pf": 556,
-      "ps": 596
+      "losses": 6,
+      "pf": 627,
+      "ps": 678
     },
     {
       "team": "Consorzio Leonardo Dany Quarrata",
