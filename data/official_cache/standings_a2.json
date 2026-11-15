@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T03:07:43.972795",
+  "updated_at": "2026-11-15T03:08:37.154530",
   "standings": [
     {
       "team": "Libertas Livorno 1947",
@@ -34,6 +34,15 @@
       "gp": 9,
       "wins": 7,
       "losses": 2,
+      "pf": 0,
+      "ps": 0
+    },
+    {
+      "team": "Lumos Pistoia Basket",
+      "pts": 12,
+      "gp": 10,
+      "wins": 6,
+      "losses": 4,
       "pf": 0,
       "ps": 0
     },
@@ -101,15 +110,6 @@
       "ps": 0
     },
     {
-      "team": "Lumos Pistoia Basket",
-      "pts": 10,
-      "gp": 9,
-      "wins": 5,
-      "losses": 4,
-      "pf": 0,
-      "ps": 0
-    },
-    {
       "team": "Gemini Mestre",
       "pts": 6,
       "gp": 9,
@@ -166,9 +166,9 @@
     {
       "team": "Wegreenit Urania Milano",
       "pts": 2,
-      "gp": 9,
+      "gp": 10,
       "wins": 1,
-      "losses": 8,
+      "losses": 9,
       "pf": 0,
       "ps": 0
     },

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T03:07:31.750188",
+  "updated_at": "2026-11-15T03:08:24.532758",
   "standings": [
     {
       "team": "LuxArm Lumezzane",
@@ -29,6 +29,15 @@
       "ps": 587
     },
     {
+      "team": "SAE Scientifica-Soevis Legnano Knights",
+      "pts": 10,
+      "gp": 9,
+      "wins": 5,
+      "losses": 4,
+      "pf": 612,
+      "ps": 589
+    },
+    {
       "team": "Siaz Basket Piazza Armerina",
       "pts": 10,
       "gp": 8,
@@ -38,13 +47,31 @@
       "ps": 548
     },
     {
+      "team": "TAV Treviglio Brianza Basket",
+      "pts": 10,
+      "gp": 9,
+      "wins": 5,
+      "losses": 4,
+      "pf": 694,
+      "ps": 674
+    },
+    {
+      "team": "Rimadesio Desio",
+      "pts": 10,
+      "gp": 9,
+      "wins": 5,
+      "losses": 4,
+      "pf": 678,
+      "ps": 677
+    },
+    {
       "team": "Adamant Ferrara",
       "pts": 10,
-      "gp": 8,
+      "gp": 9,
       "wins": 5,
-      "losses": 3,
-      "pf": 573,
-      "ps": 564
+      "losses": 4,
+      "pf": 644,
+      "ps": 656
     },
     {
       "team": "Logiman Orzinuovi",
@@ -56,40 +83,13 @@
       "ps": 578
     },
     {
-      "team": "TAV Treviglio Brianza Basket",
-      "pts": 10,
-      "gp": 8,
-      "wins": 5,
-      "losses": 3,
-      "pf": 631,
-      "ps": 598
-    },
-    {
       "team": "Infodrive Capo d'Orlando",
       "pts": 10,
-      "gp": 8,
+      "gp": 9,
       "wins": 5,
-      "losses": 3,
-      "pf": 624,
-      "ps": 623
-    },
-    {
-      "team": "SAE Scientifica-Soevis Legnano Knights",
-      "pts": 8,
-      "gp": 8,
-      "wins": 4,
       "losses": 4,
-      "pf": 536,
-      "ps": 526
-    },
-    {
-      "team": "Rimadesio Desio",
-      "pts": 8,
-      "gp": 8,
-      "wins": 4,
-      "losses": 4,
-      "pf": 587,
-      "ps": 618
+      "pf": 683,
+      "ps": 714
     },
     {
       "team": "Myenergy Reggio Calabria",
@@ -128,6 +128,15 @@
       "ps": 593
     },
     {
+      "team": "Paffoni Fulgor Basket Omegna",
+      "pts": 6,
+      "gp": 9,
+      "wins": 3,
+      "losses": 6,
+      "pf": 627,
+      "ps": 672
+    },
+    {
       "team": "Fiorenzuola Bees",
       "pts": 4,
       "gp": 8,
@@ -135,15 +144,6 @@
       "losses": 6,
       "pf": 618,
       "ps": 627
-    },
-    {
-      "team": "Paffoni Fulgor Basket Omegna",
-      "pts": 4,
-      "gp": 8,
-      "wins": 2,
-      "losses": 6,
-      "pf": 535,
-      "ps": 601
     },
     {
       "team": "S4 Energia Vicenza",

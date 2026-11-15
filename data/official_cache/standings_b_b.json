@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T03:07:38.333344",
+  "updated_at": "2026-11-15T03:08:31.278912",
   "standings": [
     {
       "team": "Virtus Roma GVM",
@@ -11,6 +11,15 @@
       "ps": 542
     },
     {
+      "team": "Fabo Herons Montecatini",
+      "pts": 14,
+      "gp": 9,
+      "wins": 7,
+      "losses": 2,
+      "pf": 688,
+      "ps": 666
+    },
+    {
       "team": "Verodol CBD Pielle Livorno",
       "pts": 12,
       "gp": 8,
@@ -18,15 +27,6 @@
       "losses": 2,
       "pf": 647,
       "ps": 562
-    },
-    {
-      "team": "Fabo Herons Montecatini",
-      "pts": 12,
-      "gp": 8,
-      "wins": 6,
-      "losses": 2,
-      "pf": 601,
-      "ps": 584
     },
     {
       "team": "Skills4u Napoli Est",
@@ -139,11 +139,11 @@
     {
       "team": "Allianz Pazienza Cestistica San Severo",
       "pts": 4,
-      "gp": 8,
+      "gp": 9,
       "wins": 2,
-      "losses": 6,
-      "pf": 627,
-      "ps": 678
+      "losses": 7,
+      "pf": 709,
+      "ps": 765
     },
     {
       "team": "Consorzio Leonardo Dany Quarrata",
