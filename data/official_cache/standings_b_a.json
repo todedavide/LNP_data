@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-19T03:07:56.448178",
+  "updated_at": "2026-11-20T03:08:05.870127",
   "standings": [
     {
       "team": "LuxArm Lumezzane",
@@ -137,6 +137,15 @@
       "ps": 672
     },
     {
+      "team": "Andrea Costa Imola",
+      "pts": 6,
+      "gp": 9,
+      "wins": 3,
+      "losses": 6,
+      "pf": 575,
+      "ps": 660
+    },
+    {
       "team": "LTC Group Sangiorgese Basket",
       "pts": 6,
       "gp": 9,
@@ -144,15 +153,6 @@
       "losses": 6,
       "pf": 646,
       "ps": 704
-    },
-    {
-      "team": "Andrea Costa Imola *",
-      "pts": 3,
-      "gp": 9,
-      "wins": 3,
-      "losses": 6,
-      "pf": 575,
-      "ps": 660
     },
     {
       "team": "S4 Energia Vicenza",
