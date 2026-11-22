@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-21T03:08:16.361816",
+  "updated_at": "2026-11-22T03:07:51.687344",
   "standings": [
     {
       "team": "LuxArm Lumezzane",
@@ -9,6 +9,15 @@
       "losses": 1,
       "pf": 681,
       "ps": 627
+    },
+    {
+      "team": "Logiman Orzinuovi",
+      "pts": 14,
+      "gp": 10,
+      "wins": 7,
+      "losses": 3,
+      "pf": 826,
+      "ps": 721
     },
     {
       "team": "A2A Leonessa Brescia",
@@ -29,13 +38,13 @@
       "ps": 654
     },
     {
-      "team": "Logiman Orzinuovi",
+      "team": "TAV Treviglio Brianza Basket",
       "pts": 12,
-      "gp": 9,
+      "gp": 10,
       "wins": 6,
-      "losses": 3,
-      "pf": 747,
-      "ps": 667
+      "losses": 4,
+      "pf": 785,
+      "ps": 754
     },
     {
       "team": "SAE Scientifica-Soevis Legnano Knights",
@@ -47,6 +56,15 @@
       "ps": 589
     },
     {
+      "team": "Rimadesio Desio",
+      "pts": 10,
+      "gp": 10,
+      "wins": 5,
+      "losses": 5,
+      "pf": 732,
+      "ps": 756
+    },
+    {
       "team": "Siaz Basket Piazza Armerina",
       "pts": 10,
       "gp": 9,
@@ -54,24 +72,6 @@
       "losses": 4,
       "pf": 674,
       "ps": 621
-    },
-    {
-      "team": "Rimadesio Desio",
-      "pts": 10,
-      "gp": 9,
-      "wins": 5,
-      "losses": 4,
-      "pf": 678,
-      "ps": 677
-    },
-    {
-      "team": "TAV Treviglio Brianza Basket",
-      "pts": 10,
-      "gp": 9,
-      "wins": 5,
-      "losses": 4,
-      "pf": 694,
-      "ps": 674
     },
     {
       "team": "Adamant Ferrara",
@@ -121,11 +121,11 @@
     {
       "team": "Fiorenzuola Bees",
       "pts": 6,
-      "gp": 9,
+      "gp": 10,
       "wins": 3,
-      "losses": 6,
-      "pf": 707,
-      "ps": 709
+      "losses": 7,
+      "pf": 787,
+      "ps": 800
     },
     {
       "team": "Paffoni Fulgor Basket Omegna",

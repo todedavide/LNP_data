@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-21T03:08:29.099020",
+  "updated_at": "2026-11-22T03:08:04.160036",
   "standings": [
     {
       "team": "Libertas Livorno 1947",
@@ -30,9 +30,9 @@
     },
     {
       "team": "Dole Basket Rimini",
-      "pts": 14,
-      "gp": 10,
-      "wins": 7,
+      "pts": 16,
+      "gp": 11,
+      "wins": 8,
       "losses": 3,
       "pf": 0,
       "ps": 0
@@ -58,9 +58,9 @@
     {
       "team": "Reale Mutua Torino",
       "pts": 12,
-      "gp": 9,
+      "gp": 10,
       "wins": 6,
-      "losses": 3,
+      "losses": 4,
       "pf": 0,
       "ps": 0
     },
@@ -74,10 +74,10 @@
       "ps": 0
     },
     {
-      "team": "Unieuro Forlì",
-      "pts": 10,
-      "gp": 10,
-      "wins": 5,
+      "team": "UEB Gesteco Cividale",
+      "pts": 12,
+      "gp": 11,
+      "wins": 6,
       "losses": 5,
       "pf": 0,
       "ps": 0
@@ -92,7 +92,7 @@
       "ps": 0
     },
     {
-      "team": "CMT Orange Tools Pesaro",
+      "team": "Unieuro Forlì",
       "pts": 10,
       "gp": 10,
       "wins": 5,
@@ -101,7 +101,7 @@
       "ps": 0
     },
     {
-      "team": "UEB Gesteco Cividale",
+      "team": "CMT Orange Tools Pesaro",
       "pts": 10,
       "gp": 10,
       "wins": 5,
@@ -130,9 +130,9 @@
     {
       "team": "ProValue Juvecaserta 2021",
       "pts": 6,
-      "gp": 9,
+      "gp": 10,
       "wins": 3,
-      "losses": 6,
+      "losses": 7,
       "pf": 0,
       "ps": 0
     },

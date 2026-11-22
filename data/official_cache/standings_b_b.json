@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-11-21T03:08:23.220719",
+  "updated_at": "2026-11-22T03:07:58.412243",
   "standings": [
     {
       "team": "Virtus Roma GVM",
-      "pts": 16,
-      "gp": 9,
-      "wins": 8,
+      "pts": 18,
+      "gp": 10,
+      "wins": 9,
       "losses": 1,
-      "pf": 751,
-      "ps": 618
+      "pf": 822,
+      "ps": 679
     },
     {
       "team": "Verodol CBD Pielle Livorno",
@@ -20,22 +20,22 @@
       "ps": 650
     },
     {
-      "team": "Fabo Herons Montecatini",
+      "team": "Umana San Giobbe Chiusi",
       "pts": 14,
-      "gp": 9,
+      "gp": 10,
       "wins": 7,
-      "losses": 2,
-      "pf": 688,
-      "ps": 666
+      "losses": 3,
+      "pf": 852,
+      "ps": 776
     },
     {
-      "team": "Umana San Giobbe Chiusi",
-      "pts": 12,
-      "gp": 9,
-      "wins": 6,
+      "team": "Fabo Herons Montecatini",
+      "pts": 14,
+      "gp": 10,
+      "wins": 7,
       "losses": 3,
-      "pf": 759,
-      "ps": 700
+      "pf": 749,
+      "ps": 737
     },
     {
       "team": "Ristopro Fabriano",
@@ -54,6 +54,15 @@
       "losses": 3,
       "pf": 746,
       "ps": 714
+    },
+    {
+      "team": "OraSì Ravenna",
+      "pts": 10,
+      "gp": 10,
+      "wins": 5,
+      "losses": 5,
+      "pf": 773,
+      "ps": 784
     },
     {
       "team": "Liofilchem Roseto",
@@ -92,15 +101,6 @@
       "ps": 725
     },
     {
-      "team": "OraSì Ravenna",
-      "pts": 8,
-      "gp": 9,
-      "wins": 4,
-      "losses": 5,
-      "pf": 703,
-      "ps": 715
-    },
-    {
       "team": "Felice Scandone Avellino",
       "pts": 8,
       "gp": 9,
@@ -121,11 +121,11 @@
     {
       "team": "Consorzio Leonardo Dany Quarrata",
       "pts": 6,
-      "gp": 9,
+      "gp": 10,
       "wins": 3,
-      "losses": 6,
-      "pf": 685,
-      "ps": 740
+      "losses": 7,
+      "pf": 754,
+      "ps": 810
     },
     {
       "team": "Solbat Golfo Piombino",
@@ -157,11 +157,11 @@
     {
       "team": "Consultinvest Loreto Pesaro",
       "pts": 0,
-      "gp": 9,
+      "gp": 10,
       "wins": 0,
-      "losses": 9,
-      "pf": 616,
-      "ps": 746
+      "losses": 10,
+      "pf": 692,
+      "ps": 839
     }
   ]
 }
