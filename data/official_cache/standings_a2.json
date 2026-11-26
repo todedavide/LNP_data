@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-25T03:08:21.293499",
+  "updated_at": "2026-11-26T03:08:54.466795",
   "standings": [
     {
       "team": "Libertas Livorno 1947",
@@ -47,6 +47,15 @@
       "ps": 0
     },
     {
+      "team": "Reale Mutua Torino",
+      "pts": 14,
+      "gp": 11,
+      "wins": 7,
+      "losses": 4,
+      "pf": 0,
+      "ps": 0
+    },
+    {
       "team": "Lumos Pistoia Basket",
       "pts": 14,
       "gp": 11,
@@ -60,15 +69,6 @@
       "pts": 14,
       "gp": 11,
       "wins": 7,
-      "losses": 4,
-      "pf": 0,
-      "ps": 0
-    },
-    {
-      "team": "Reale Mutua Torino",
-      "pts": 12,
-      "gp": 10,
-      "wins": 6,
       "losses": 4,
       "pf": 0,
       "ps": 0
@@ -130,9 +130,9 @@
     {
       "team": "ProValue Juvecaserta 2021",
       "pts": 6,
-      "gp": 10,
+      "gp": 11,
       "wins": 3,
-      "losses": 7,
+      "losses": 8,
       "pf": 0,
       "ps": 0
     },
