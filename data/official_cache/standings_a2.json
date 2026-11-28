@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-27T03:08:26.133009",
+  "updated_at": "2026-11-28T03:08:43.491387",
   "standings": [
     {
       "team": "Libertas Livorno 1947",
@@ -30,9 +30,9 @@
     },
     {
       "team": "Dole Basket Rimini",
-      "pts": 16,
-      "gp": 11,
-      "wins": 8,
+      "pts": 18,
+      "gp": 12,
+      "wins": 9,
       "losses": 3,
       "pf": 0,
       "ps": 0
@@ -121,9 +121,9 @@
     {
       "team": "CMT Orange Tools Pesaro",
       "pts": 10,
-      "gp": 11,
+      "gp": 12,
       "wins": 5,
-      "losses": 6,
+      "losses": 7,
       "pf": 0,
       "ps": 0
     },
